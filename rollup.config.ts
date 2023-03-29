@@ -39,57 +39,34 @@ const pages = recurseFiles(PAGES_SRC)
     return true
   })
 
-// export default [...pages.map(pagePath => {
-//   const pageRelPath = path.relative(PAGES_SRC, pagePath)
-//   return {
-//     input: pagePath,
-//     output: {
-//       file: isProd
-//         ? path.join('dist/prod/pages', pageRelPath)
-//         : path.join('dist/dev/pages', pageRelPath),
-//       format: 'esm'
-//     },
-//     plugins: [
-//       html(),
-//       myPlugin(),
-//       copy({
-//         targets: [{
-//           src: pagePath,
-//           dest: isProd
-//             ? path.join('dist/prod/pages', pageRelPath, '..')
-//             : path.join('dist/dev/pages', pageRelPath, '..')
-//         }]
-//       })
-//     ]
-//   }
-// })]
-
-export default {
-  input: pages,
+export default [...pages.map(pagePath => {
+  const pageRelPath = path.relative(PAGES_SRC, pagePath)
+  return {
+    input: pagePath,
+    output: {
+      file: isProd
+        ? path.join('dist/prod/pages', pageRelPath)
+        : path.join('dist/dev/pages', pageRelPath)
+    },
+    plugins: [html(), myPlugin(), copy({
+      targets: [{
+        src: pagePath,
+        dest: isProd
+          ? path.join('dist/prod/pages', pageRelPath, '../')
+          : path.join('dist/dev/pages', pageRelPath, '../')
+      }]
+    })]
+  }
+}), {
+  input: 'src/shared/**/*.ts',
   output: {
     dir: isProd
-      ? path.join('dist/prod/pages')
-      : path.join('dist/dev/pages')
+      ? 'dist/prod/shared'
+      : 'dist/dev/shared'
   },
-  plugins: [html(), myPlugin(), copy({
-    targets: [{
-      src: 'src/pages/**/*.html',
-      dest: isProd  
-        ? 'dist/prod/pages'
-        : 'dist/dev/pages'
-    }]
-  })]
-}
-
-// export default [...pages.map(pagePath => {
-//   const pageRelPath = path.relative(PAGES_SRC, pagePath)
-//   return {
-//     input: pagePath,
-//     output: {
-//       file: isProd
-//         ? path.join('dist/prod/pages', pageRelPath)
-//         : path.join('dist/dev/pages', pageRelPath)
-//     },
-//     plugins: [html(), myPlugin()]
-//   }
-// })]
+  plugins: [{
+    transform: (...args: any[]) => {
+      console.log(args)
+    }
+  }]
+}]
