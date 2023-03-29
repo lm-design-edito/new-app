@@ -4,7 +4,7 @@ import clc from 'cli-color'
 import typescript from '@rollup/plugin-typescript'
 import terser from '@rollup/plugin-terser'
 import html from '@rollup/plugin-html'
-import myPlugin from './rollup-plugins/my-plugin'
+import myPlugin from './plugins/my-plugin'
 import copy from 'rollup-plugin-copy'
 
 const isProd = process.env.NODE_ENV === 'production'
