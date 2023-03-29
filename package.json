@@ -1,0 +1,28 @@
+{
+  "name": "new-app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "rollup -c -w --configPlugin typescript",
+    "build": "npx cross-env NODE_ENV=production rollup -c --configPlugin typescript"
+  },
+  "author": "Maxime Fabas",
+  "license": "ISC",
+  "devDependencies": {
+    "@rollup/plugin-html": "^1.0.2",
+    "@rollup/plugin-terser": "^0.4.0",
+    "@rollup/plugin-typescript": "^11.0.0",
+    "@rollup/pluginutils": "^5.0.2",
+    "@types/cli-color": "^2.0.2",
+    "@types/fs-extra": "^11.0.1",
+    "@types/node": "^18.15.10",
+    "cli-color": "^2.0.3",
+    "fs-extra": "^11.1.1",
+    "rollup": "^3.20.2",
+    "rollup-plugin-copy": "^3.4.0",
+    "tslib": "^2.5.0",
+    "typescript": "^5.0.2"
+  }
+}
