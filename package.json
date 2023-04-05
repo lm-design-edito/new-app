@@ -5,19 +5,31 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "rollup -c -w --configPlugin typescript",
-    "build": "npx cross-env NODE_ENV=production rollup -c --configPlugin typescript"
+    "dev": "rm -rf dist/dev && npx ts-node --esm scripts/build.ts dev",
+    "dev:watch": "npx ts-node --esm scripts/build.ts dev watch",
+    "prod": "rm -rf dist/prod && npx ts-node --esm scripts/build.ts prod",
+    "prod:watch": "npx ts-node --esm scripts/build.ts prod watch"
   },
   "author": "Maxime Fabas",
   "license": "ISC",
+  "dependencies": {
+    "cheerio.v1.0.0-rc.12": "npm:cheerio@^1.0.0-rc.12",
+    "d3.v7.8.3": "npm:d3@^7.8.3",
+    "p5.v1.6.0": "npm:p5@^1.6.0",
+    "preact.v10.13.2": "npm:preact@^10.13.2"
+  },
   "devDependencies": {
+    "@rollup/plugin-commonjs": "^24.0.1",
     "@rollup/plugin-html": "^1.0.2",
+    "@rollup/plugin-node-resolve": "^15.0.2",
     "@rollup/plugin-terser": "^0.4.0",
     "@rollup/plugin-typescript": "^11.0.0",
     "@rollup/pluginutils": "^5.0.2",
     "@types/cli-color": "^2.0.2",
+    "@types/d3.v7.8.3": "npm:@types/d3@^7.4.0",
     "@types/fs-extra": "^11.0.1",
     "@types/node": "^18.15.10",
+    "@types/p5.v1.6.0": "npm:@types/p5@^1.6.0",
     "cli-color": "^2.0.3",
     "fs-extra": "^11.1.1",
     "rollup": "^3.20.2",
