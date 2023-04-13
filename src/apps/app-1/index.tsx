@@ -1,13 +1,9 @@
-import * as preact from 'preact.v10.13.2'
-import util1 from '../../utils/util-1'
+import { Component } from 'preact'
 
-console.log('I imported util 1', util1)
-console.log('app 1')
-// [WIP] import json, svg, jpg and scss module
+import.meta.url
 
-// [WIP] do JSX
-export default class MyApp extends preact.Component {
+export default class App extends Component {
   render () {
-    return preact.createElement('div', {}, 'I am some app.')
+    return <div>I am app.</div>
   }
 }

@@ -1,75 +1,145 @@
-import packageJson from '../package.json' assert { type: 'json' }
-import path from 'node:path'
-import { watch, RollupWatchOptions } from 'rollup'
-import glob from 'glob'
-import resolve from '@rollup/plugin-node-resolve'
-import commonjs from '@rollup/plugin-commonjs'
-import typescript from '@rollup/plugin-typescript'
-import terser from '@rollup/plugin-terser'
+import { promises as fs } from 'node:fs'
+import { join } from 'node:path'
+import { build, BuildOptions } from 'esbuild'
+import { watch } from 'chokidar'
+import { debounce } from 'throttle-debounce'
+import chalk from 'chalk'
+import * as config from './config.js'
 
-const args = process.argv.slice(2)
-const isProd = args.includes('prod')
-const shouldWatch = args.includes('watch')
-
-const CWD = process.cwd()
-const APPSPATHS = glob.sync(path.join(CWD, 'src/apps/**/index.tsx'))
-const PAGESPATHS = glob.sync(path.join(CWD, 'src/pages/**/index.html'))
-const libsList = Object.keys(packageJson.dependencies)
-
-const options: RollupWatchOptions[] = [...PAGESPATHS.map(PAGEPATH => {
-  const pageName = PAGEPATH
-    .replace(/\/index.html$/, '')
-    .split('/')
-    .at(-1)
-  console.log(pageName)
-  return {
-    input: { [`pages/${pageName}/index.html`]: PAGEPATH },
-    output: {
-      dir: isProd ? 'dist/prod' : 'dist/dev'
-    }
-  }
-}), {
-  input: { 'shared/scripts/index': 'src/shared/scripts/index.ts' },
-  output: {
-    preserveModules: !isProd,
-    format: 'es',
-    dir: isProd ? 'dist/prod' : 'dist/dev',
-    manualChunks: !isProd ? undefined : id => {
-      if (!isProd) return
-      if (id.includes('node_modules')) {
-        for (const libName of libsList) {
-          if (id.includes(libName)) return `libs/${libName}/index`
-        }
-      }
-      for (const APPPATH of APPSPATHS) {
-        if (id.includes(APPPATH)) {
-          const now = Date.now()
-          const uuid = Math.random().toString(36).slice(2)
-          const defaultAppName = `no-name-${now}-${uuid}`
-          const appName = APPPATH
-            .replace(/\/index\.tsx$/, '')
-            .split('/').at(-1) ?? defaultAppName
-          return `apps/${appName}/index`
-        }
-      }
-    }
+/* BUNDLE OPTIONS * * * * * * * * * * * * */
+const bundleOptions = (otherEntries: BuildOptions['entryPoints']): BuildOptions => ({
+  outdir: config.DST,
+  entryPoints: {
+    'shared/scripts/index': config.SRC_SCRIPT,
+    ...otherEntries,
   },
-  plugins: [
-    resolve(),
-    commonjs(),
-    typescript(),
-    isProd && terser()
-  ]
-}]
-
-const watcher = watch(options)
-watcher.on('event', event => {
-  if ('result' in event) event.result?.close()
-  console.log(event)
-  if (shouldWatch) return
-  if (event.code === 'END'
-    || event.code === 'ERROR') {
-    watcher.close()
-    process.exit(0)
-  }
+  format: 'esm',
+  bundle: true,
+  splitting: true,
+  chunkNames: 'chunks/[name].[hash]',
+  minify: config.isProd,
+  sourcemap: true,
+  treeShaking: true,
+  target: ['es2020']
 })
+
+/* MAIN * * * * * * * * * * * * */
+main()
+async function main () {
+  await makeDist()
+  // Prod
+  if (config.isProd) return await Promise.all([
+    copyFonts(),
+    copyAssets(),
+    bundleJs()
+  ])
+  // Dev
+  const watcher = watch([config.SRC, config.MODULES])
+  const debouncedWatchCallback = debounce(50, async () => {
+    const copyPromise = Promise.all([copyFonts(), copyAssets()])
+    const bundleStartTime = Date.now()
+    let bundleEndTime = bundleStartTime
+    const bundlePromise = bundleJs()
+    bundlePromise.then(() => {
+      bundleEndTime = Date.now()
+      const buildTime = bundleEndTime - bundleStartTime
+      const message = chalk.bold(`\nBuilt in ${buildTime}ms.\n`)
+      console.log(message)
+    })
+    return await Promise.all([copyPromise, bundlePromise])
+  })
+  watcher.on('all', async (event, path) => {
+    const event10char = new Array(10).fill(' ')
+    event10char.splice(0, event.length, ...event.split(''))
+    const message = [
+      chalk.blueBright(event10char.join('')),
+      chalk.grey(path)
+    ].join(' ')
+    console.log(message)
+    debouncedWatchCallback()
+  })
+}
+
+/* HELPERS * * * * * * * * * * * * */
+
+async function makeDist () {
+  const { mkdir } = fs
+  return await mkdir(config.DST, { recursive: true })
+}
+
+async function copyFonts () {
+  const { cp } = fs
+  try {
+    const result = await cp(
+      `${config.SRC_FONTS}/`,
+      `${config.DST_FONTS}/`,
+      { recursive: true, force: true }
+    )
+    return result
+  } catch (err) {
+    console.log('ERR in copyFonts')
+    console.log(err)
+    return
+  }
+}
+
+async function copyAssets () {
+  const { cp } = fs
+  try {
+    const result = await cp(
+      `${config.SRC_ASSETS}/`,
+      `${config.DST_ASSETS}/`,
+      { recursive: true, force: true }
+    )
+    return result
+  } catch (err) {
+    console.log('ERR in copyAssets')
+    console.log(err)
+    return
+  }
+}
+
+async function listApps () {
+  const { readdir, lstat, access } = fs
+  const rawList = await readdir(config.SRC_APPS)
+  const list = (await Promise.all(rawList.map(async name => {
+    const path = join(config.SRC_APPS, name)
+    const stats = await lstat(path)
+    const isDirectory = stats.isDirectory()
+    if (!isDirectory) return false
+    try {
+      await access(join(path, 'index.tsx'))
+      return join(path, 'index.tsx')
+    } catch (err) {
+      return false
+    }
+  }))).filter((path): path is string => path !== false)
+  return list
+}
+
+async function getLibs () {
+  const { readFile } = fs
+  const packageJson = await readFile(config.PACKAGEJSON, { encoding: 'utf-8' })
+  const { dependencies } = JSON.parse(packageJson)
+  return dependencies
+}
+
+async function bundleJs () {
+  const appsEntryPoints: { [key: string]: string } = {}
+  const appsList = await listApps()
+  appsList.forEach(path => {
+    const appName = path.split('/').at(-2)
+    appsEntryPoints[`apps/${appName}/index`] = path
+  })
+  const libsEntryPoints: { [key: string]: string } = {}
+  const libsObj = await getLibs()
+  const libsList = Object.keys(libsObj)
+  libsList.forEach(libName => {
+    libsEntryPoints[`lib/${libName}`] = libName
+  })
+  const built = await build(bundleOptions({
+    ...appsEntryPoints,
+    ...libsEntryPoints
+  }))
+  return built
+}
