@@ -1,9 +1,12 @@
 import { promises as fs } from 'node:fs'
 import { join, relative, isAbsolute } from 'node:path'
 import { build, BuildOptions } from 'esbuild'
+import stylePlugin from 'esbuild-style-plugin'
+import sass from 'sass'
 import { watch } from 'chokidar'
 import { debounce } from 'throttle-debounce'
 import chalk from 'chalk'
+import { glob } from 'glob'
 import * as config from './config.js'
 
 /* BUNDLE OPTIONS * * * * * * * * * * * * */
@@ -20,21 +23,31 @@ const bundleOptions = (otherEntries: BuildOptions['entryPoints']): BuildOptions 
   minify: config.isProd,
   sourcemap: true,
   treeShaking: true,
-  target: ['es2020']
+  target: ['es2020'],
+  plugins: [
+    stylePlugin({ extract: false })
+  ]
 })
 
 /* MAIN * * * * * * * * * * * * */
 main()
 async function main () {
+  await rmDist()
   await makeDist()
   // Prod
   if (config.isProd) {
-    const buildTimes = await copyAndBundle({ fonts: true, assets: true, shared: true })
+    const buildTimes = await copyAndBundle({
+      fonts: true,
+      assets: true,
+      scripts: true,
+      styles: true
+    })
     const messages = [
-      `fonts copy:  ${buildTimes.fonts}ms`,
-      `assets copy: ${buildTimes.assets}ms`,
-      `bundle:      ${buildTimes.bundle}ms`,
-      chalk.bold(`total:       ${buildTimes.total}ms`)
+      `fonts: ${buildTimes.fonts}ms`,
+      `assets: ${buildTimes.assets}ms`,
+      `styles: ${buildTimes.styles}ms`,
+      `scripts: ${buildTimes.scripts}ms`,
+      chalk.bold(`total: ${buildTimes.total}ms`)
     ]
     console.log(`\n${messages.join('\n')}\n`)
     return
@@ -44,30 +57,36 @@ async function main () {
   const pathsToBuild = {
     fonts: true,
     assets: true,
-    shared: true
+    scripts: true,
+    styles: true
   }
   const debouncedWatchCallback = debounce(50, async () => {
     const buildTimes = await copyAndBundle(pathsToBuild)
-    pathsToBuild.fonts = false,
+    pathsToBuild.fonts = false
     pathsToBuild.assets = false
-    pathsToBuild.shared = false
+    pathsToBuild.scripts = false
+    pathsToBuild.styles = false
     const messages = [
-      `fonts copy:  ${buildTimes.fonts}ms`,
-      `assets copy: ${buildTimes.assets}ms`,
-      `bundle:      ${buildTimes.bundle}ms`,
-      chalk.bold(`total:       ${buildTimes.total}ms`)
+      `fonts: ${buildTimes.fonts}ms`,
+      `assets: ${buildTimes.assets}ms`,
+      `styles: ${buildTimes.styles}ms`,
+      `scripts: ${buildTimes.scripts}ms`,
+      chalk.bold(`total: ${buildTimes.total}ms`)
     ]
     console.log(`\n${messages.join('\n')}\n`)
   })
   watcher.on('all', async (event, path) => {
     const relPathToFonts = relative(config.SRC_FONTS, path)
     const relPathToAssets = relative(config.SRC_ASSETS, path)
+    const relPathToStyles = relative(config.SRC_STYLES, path)
     const isInFonts = !relPathToFonts.startsWith('..') && !isAbsolute(relPathToFonts)
     const isInAssets = !relPathToAssets.startsWith('..') && !isAbsolute(relPathToAssets)
-    const isInShared = !isInFonts && !isInAssets
+    const isInStyles = !relPathToStyles.startsWith('..') && !isAbsolute(relPathToStyles)
+    const isInScripts = !isInFonts && !isInAssets && !isInStyles
     if (isInFonts) { pathsToBuild.fonts = true }
     if (isInAssets) { pathsToBuild.assets = true }
-    if (isInShared) { pathsToBuild.shared = true }
+    if (isInScripts) { pathsToBuild.scripts = true }
+    if (isInStyles) { pathsToBuild.styles = true }
     const event10char = new Array(10).fill(' ')
     event10char.splice(0, event.length, ...event.split(''))
     const message = [
@@ -81,12 +100,21 @@ async function main () {
 
 /* HELPERS * * * * * * * * * * * * */
 
+async function rmDist () {
+  const { rm } = fs
+  try {
+    await rm(config.DST, { recursive: true, force: true })
+  } catch (err) {
+    
+  }
+}
+
 async function makeDist () {
   const { mkdir } = fs
   return await mkdir(config.DST, { recursive: true })
 }
 
-async function copyFonts () {
+async function processFonts () {
   const { cp } = fs
   try {
     const result = await cp(
@@ -96,13 +124,13 @@ async function copyFonts () {
     )
     return result
   } catch (err) {
-    console.log('ERR in copyFonts')
+    console.log('ERR in processFonts')
     console.log(err)
     return
   }
 }
 
-async function copyAssets () {
+async function processAssets () {
   const { cp } = fs
   try {
     const result = await cp(
@@ -112,10 +140,29 @@ async function copyAssets () {
     )
     return result
   } catch (err) {
-    console.log('ERR in copyAssets')
+    console.log('ERR in processAssets')
     console.log(err)
     return
   }
+}
+
+async function processStyles () {
+  const { mkdir, writeFile } = fs
+  const scssFiles = await glob(`${config.SRC_STYLES}/**/*.scss`)
+  for (const filePath of scssFiles) {
+    const relToSrc = relative(config.SRC_STYLES, filePath)
+    const dstPath = join(config.DST_STYLES, relToSrc.replace(/\.scss$/, '.css'))
+    const { css, sourceMap } = sass.compile(filePath, {
+      sourceMap: true,
+      style: config.isProd
+        ? 'compressed'
+        : 'expanded'
+    })
+    await mkdir(join(dstPath, '..'), { recursive: true })
+    await writeFile(dstPath, `${css}\n`, { encoding: 'utf-8' })
+    await writeFile(`${dstPath}.map`, `${JSON.stringify(sourceMap, null, 2)}\n`, { encoding: 'utf-8' })
+  }
+  return scssFiles
 }
 
 async function listApps () {
@@ -143,7 +190,7 @@ async function getLibs () {
   return dependencies
 }
 
-async function bundleJs () {
+async function processScripts () {
   const appsEntryPoints: { [key: string]: string } = {}
   const appsList = await listApps()
   appsList.forEach(path => {
@@ -163,19 +210,39 @@ async function bundleJs () {
   return built
 }
 
-async function copyAndBundle (pathsToBuild: { fonts: boolean, assets: boolean, shared: boolean }) {
+async function copyAndBundle (pathsToBuild: {
+  fonts: boolean,
+  assets: boolean,
+  scripts: boolean,
+  styles: boolean
+}) {
   const now = Date.now()
-  const times = { fonts: now, assets: now, bundle: now, total: now }
-  const fontsPromise = pathsToBuild.fonts === true ? copyFonts() : new Promise(resolve => resolve(true))
+  const times = {
+    fonts: now,
+    assets: now,
+    scripts: now,
+    styles: now,
+    total: now
+  }
+  // pathsToBuild = {
+  //   fonts: false,
+  //   assets: false,
+  //   styles: true,
+  //   scripts: false
+  // }
+  const fontsPromise = pathsToBuild.fonts === true ? processFonts() : new Promise(r => r(true))
   fontsPromise.then(() => { times.fonts = Date.now() - times.fonts })
-  const assetsPromise = pathsToBuild.assets === true ? copyAssets() : new Promise(resolve => resolve(true))
+  const assetsPromise = pathsToBuild.assets === true ? processAssets() : new Promise(r => r(true))
   assetsPromise.then(() => { times.assets = Date.now() - times.assets })
-  const bundlePromise = pathsToBuild.shared === true ? bundleJs() : new Promise(resolve => resolve(true))
-  bundlePromise.then(() => { times.bundle = Date.now() - times.bundle })
+  const stylesPromise = pathsToBuild.styles === true ? processStyles() : new Promise(r => r(true))
+  stylesPromise.then(() => { times.styles = Date.now() - times.styles })
+  const scriptsPromise = pathsToBuild.scripts === true ? processScripts() : new Promise(r => r(true))
+  scriptsPromise.then(() => { times.scripts = Date.now() - times.scripts })
   await Promise.all([
     fontsPromise,
     assetsPromise,
-    bundlePromise
+    stylesPromise,
+    scriptsPromise
   ])
   times.total = Date.now() - times.total
   return times
