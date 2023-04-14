@@ -25,6 +25,7 @@
     "morgan": "^1.10.0",
     "nodemon": "^2.0.22",
     "prompts": "^2.4.2",
+    "rsync": "^0.6.1",
     "throttle-debounce": "^5.0.0",
     "tree-cli": "^0.6.7",
     "ts-node": "^10.9.1",
@@ -41,7 +42,7 @@
     "build-server:prod": "npx tsc --project server/tsconfig.json",
     "start-server:dev": "nodemon server/dist/app.js",
     "start-server:prod": "node server/dist/app.js",
-    "dev": "npx concurrently -n 'build-src,build-srv,serve----' 'npm run build-source:dev' 'npm run build-server:dev' 'npm run start-server:dev'",
+    "dev": "npx concurrently -n 'build-src,build-srv,serve    ' 'npm run build-source:dev' 'npm run build-server:dev' 'npm run start-server:dev'",
     "prod": "npm run build-source:prod && npm run build-server:prod && npm run start-server:prod",
     "start": "npm run dev",
     "publish": "npx tsc --project scripts/tsconfig.json && node scripts/dist/publish.js"

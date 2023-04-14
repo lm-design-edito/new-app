@@ -1,5 +1,5 @@
 import { promises as fs } from 'node:fs'
-import { join } from 'node:path'
+import { join, relative, isAbsolute } from 'node:path'
 import { build, BuildOptions } from 'esbuild'
 import { watch } from 'chokidar'
 import { debounce } from 'throttle-debounce'
@@ -28,27 +28,46 @@ main()
 async function main () {
   await makeDist()
   // Prod
-  if (config.isProd) return await Promise.all([
-    copyFonts(),
-    copyAssets(),
-    bundleJs()
-  ])
+  if (config.isProd) {
+    const buildTimes = await copyAndBundle({ fonts: true, assets: true, shared: true })
+    const messages = [
+      `fonts copy:  ${buildTimes.fonts}ms`,
+      `assets copy: ${buildTimes.assets}ms`,
+      `bundle:      ${buildTimes.bundle}ms`,
+      chalk.bold(`total:       ${buildTimes.total}ms`)
+    ]
+    console.log(`\n${messages.join('\n')}\n`)
+    return
+  }
   // Dev
   const watcher = watch([config.SRC, config.MODULES])
+  const pathsToBuild = {
+    fonts: true,
+    assets: true,
+    shared: true
+  }
   const debouncedWatchCallback = debounce(50, async () => {
-    const copyPromise = Promise.all([copyFonts(), copyAssets()])
-    const bundleStartTime = Date.now()
-    let bundleEndTime = bundleStartTime
-    const bundlePromise = bundleJs()
-    bundlePromise.then(() => {
-      bundleEndTime = Date.now()
-      const buildTime = bundleEndTime - bundleStartTime
-      const message = chalk.bold(`\nBuilt in ${buildTime}ms.\n`)
-      console.log(message)
-    })
-    return await Promise.all([copyPromise, bundlePromise])
+    const buildTimes = await copyAndBundle(pathsToBuild)
+    pathsToBuild.fonts = false,
+    pathsToBuild.assets = false
+    pathsToBuild.shared = false
+    const messages = [
+      `fonts copy:  ${buildTimes.fonts}ms`,
+      `assets copy: ${buildTimes.assets}ms`,
+      `bundle:      ${buildTimes.bundle}ms`,
+      chalk.bold(`total:       ${buildTimes.total}ms`)
+    ]
+    console.log(`\n${messages.join('\n')}\n`)
   })
   watcher.on('all', async (event, path) => {
+    const relPathToFonts = relative(config.SRC_FONTS, path)
+    const relPathToAssets = relative(config.SRC_ASSETS, path)
+    const isInFonts = !relPathToFonts.startsWith('..') && !isAbsolute(relPathToFonts)
+    const isInAssets = !relPathToAssets.startsWith('..') && !isAbsolute(relPathToAssets)
+    const isInShared = !isInFonts && !isInAssets
+    if (isInFonts) { pathsToBuild.fonts = true }
+    if (isInAssets) { pathsToBuild.assets = true }
+    if (isInShared) { pathsToBuild.shared = true }
     const event10char = new Array(10).fill(' ')
     event10char.splice(0, event.length, ...event.split(''))
     const message = [
@@ -142,4 +161,22 @@ async function bundleJs () {
     ...libsEntryPoints
   }))
   return built
+}
+
+async function copyAndBundle (pathsToBuild: { fonts: boolean, assets: boolean, shared: boolean }) {
+  const now = Date.now()
+  const times = { fonts: now, assets: now, bundle: now, total: now }
+  const fontsPromise = pathsToBuild.fonts === true ? copyFonts() : new Promise(resolve => resolve(true))
+  fontsPromise.then(() => { times.fonts = Date.now() - times.fonts })
+  const assetsPromise = pathsToBuild.assets === true ? copyAssets() : new Promise(resolve => resolve(true))
+  assetsPromise.then(() => { times.assets = Date.now() - times.assets })
+  const bundlePromise = pathsToBuild.shared === true ? bundleJs() : new Promise(resolve => resolve(true))
+  bundlePromise.then(() => { times.bundle = Date.now() - times.bundle })
+  await Promise.all([
+    fontsPromise,
+    assetsPromise,
+    bundlePromise
+  ])
+  times.total = Date.now() - times.total
+  return times
 }

@@ -6,6 +6,8 @@ import logger from 'morgan'
 import Debug from 'debug'
 import http from 'http'
 
+const { readFile, readdir } = fs.promises
+
 const CWD = process.cwd()
 const abs = (...paths: string[]) => join(CWD, ...paths)
 
@@ -28,8 +30,6 @@ app.use(express.urlencoded({ extended: false }))
 app.use(cookieParser())
 app.use(express.static(PUBLIC))
 
-const { readFile } = fs.promises
-
 app.use('/favicon.ico', async (_, res) => {
   const fileContent = await readFile(FAVICON)
   res.type('image/x-icon')
@@ -39,13 +39,12 @@ app.use('/favicon.ico', async (_, res) => {
 const generateHomePage = (names: string[]) => `<html>
   <head><meta charsed="utf-8"></head>
   <body>${names.map(name => (
-    `<a href="/${name}">${name}</a><br />`
+    `<a href="/pages/${name}">${name}</a><br />`
   ))}</body>
 </html>`
 
-app.use('/', async (req, res, next) => {
+app.use('/pages', async (req, res, next) => {
   if (req.path === '/') {
-    const { readdir } = fs.promises
     const pages = await readdir(PAGES)
     res.type('text/html')
     return res.send(generateHomePage(pages))
@@ -91,5 +90,6 @@ function onListening() {
   const addr = server.address()
   const bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr?.port
   debug('Listening on ' + bind)
+  console.log('Listening on ' + bind)
 }
 
