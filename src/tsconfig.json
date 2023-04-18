@@ -11,6 +11,10 @@
     "skipLibCheck": true,
     "types": [
       "esbuild-style-plugin"
+    ],
+    "lib": [
+      "DOM",
+      "DOM.Iterable"
     ]
   }
 }

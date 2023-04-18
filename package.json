@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "preact.v10.13.2": "npm:preact@^10.13.2"
+    "preact": "^10.13.2"
   },
   "devDependencies": {
     "@types/chalk": "^2.2.0",
