@@ -1,88 +1,54 @@
-import injectCssRule from '../../utils/dynamic-css'
-import parseTextbase, { Base } from '../../utils/txt-base'
-import { tsvToSheetBase as parseSheetbase } from '../../utils/sheet-base'
+import { injectDefaultStyles } from '../../utils/lm-page-styles'
+import {
+  getInlineConfigInstructrions,
+  getRemoteConfigInstructions,
+  Instructions
+} from '../../utils/lm-page-config'
+import {
+  makePageDatabase,
+  filterPageDatabase
+} from '../../utils/lm-page-database'
 
-type PageConfig = {
-  id?: string
-  dataSources?: Array<{
-    type: 'sheet'|'doc',
-    url: string
-  }>
-  hideHeader?: boolean
+/* * * * * * * * * * * * * * * * * * * * * *
+ * URLS
+ * * * * * * * * * * * * * * * * * * * * * */
+export const ROOT_URL = new URL('../../', import.meta.url)            // ROOT
+export const SHARED_URL = new URL('shared/', ROOT_URL)                // shared/
+export const ASSETS_URL = new URL('assets/', SHARED_URL)              // assets/
+export const FONTS_URL = new URL('fonts/', SHARED_URL)                // fonts/
+export const SCRIPTS_URL = new URL('scripts/', SHARED_URL)            // scripts/
+export const SCRIPTS_INDEX_URL = new URL(import.meta.url)             // scripts/index.js
+export const STYLES_URL = new URL('styles/', SHARED_URL)              // styles/
+export const STYLES_INDEX_URL = new URL('index.css', STYLES_URL)      // styles/index.css
+
+/* * * * * * * * * * * * * * * * * * * * * *
+ * INIT
+ * * * * * * * * * * * * * * * * * * * * * */
+const searchParams = new URLSearchParams(SCRIPTS_INDEX_URL.search)
+const shouldntInit = searchParams.has('noInit')
+if (!shouldntInit) initPage()
+export async function initPage () {
+  // Load styles (dont await)
+  injectDefaultStyles()
+
+  // Read inline config
+  const inlineConfigInstructions = getInlineConfigInstructrions()
+  const inlinePageConfig = inlineConfigInstructions.toConfig()
+
+  // Load & filter data sources
+  const inlineDataSources = inlinePageConfig.dataSources
+  const unfilteredPageDatabase = await makePageDatabase(inlineDataSources)
+  const pageDatabase = inlinePageConfig.id !== undefined
+    ? filterPageDatabase(unfilteredPageDatabase.clone(), inlinePageConfig.id)
+    : unfilteredPageDatabase
+
+  // Merge remote configs
+  const pageConfigCollection = pageDatabase.get('PAGE_CONFIG')
+  const remoteConfigInstructions = getRemoteConfigInstructions(pageConfigCollection)
+  const pageConfigInstructions = Instructions.merge(
+    inlineConfigInstructions,
+    remoteConfigInstructions
+  )
+  console.log('pageConfig', pageConfigInstructions.toConfig())
+  console.log('pageDatabase', pageDatabase)
 }
-
-async function initPage () {
-  // Load styles
-  const STYLES_DIR = new URL('../styles/', import.meta.url)
-  const STYLES_INDEX = new URL('./index.css', STYLES_DIR)
-  window.fetch(STYLES_INDEX)
-    .then(res => res.text())
-    .then(cssData => injectCssRule(cssData.trim()))
-
-  // Read config
-  const configTags = [...document.querySelectorAll('.lm-page-config')]
-  const pageConfig: PageConfig = configTags.reduce((config, tag) => {
-    const optionName = tag.getAttribute('value')
-    const optionValue = tag.innerHTML
-    switch (optionName) {
-      case 'id':
-        config.id = optionValue
-        break
-      case 'sheetbaseUrl':
-        if (config.dataSources === undefined) {
-          config.dataSources = [{
-            type: 'sheet',
-            url: optionValue
-          }]
-        } else {
-          config.dataSources.push({
-            type: 'sheet',
-            url: optionValue
-          })
-        }
-        break
-      case 'textbaseUrl':
-        if (config.dataSources === undefined) {
-          config.dataSources = [{
-            type: 'doc',
-            url: optionValue
-          }]
-        } else {
-          config.dataSources.push({
-            type: 'doc',
-            url: optionValue
-          })
-        }
-        break
-      case 'hideHeader':
-        const falsyValues = ['false', 'faux', 'non', 'no', '']
-        if (falsyValues.includes(optionValue.toLowerCase().trim())) { config.hideHeader = false }
-        else { config.hideHeader = true }
-        break
-      default: break
-    }
-    return config
-  }, {} as PageConfig)
-  console.log(pageConfig)
-
-  // Load data
-  // const pageDatabase = new Base()
-  const allSourcesReq = pageConfig.dataSources?.map(async dataSource => {
-    try {
-      const rawData = await window.fetch(dataSource.url)
-      const strData = await rawData.text()
-      console.log(dataSource.url)
-      console.log(strData)
-      const parsed = dataSource.type === 'doc'
-        ? parseTextbase(strData)
-        : parseSheetbase(strData)
-      console.log(parsed)
-      return parsed
-    } catch (err) {
-      return null
-    }
-  })
-  console.log(allSourcesReq)
-}
-
-initPage()

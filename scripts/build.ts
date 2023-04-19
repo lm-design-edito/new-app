@@ -87,10 +87,10 @@ async function main () {
     if (isInAssets) { pathsToBuild.assets = true }
     if (isInScripts) { pathsToBuild.scripts = true }
     if (isInStyles) { pathsToBuild.styles = true }
-    const event10char = new Array(10).fill(' ')
-    event10char.splice(0, event.length, ...event.split(''))
+    const event6char = new Array(6).fill(' ')
+    event6char.splice(0, event.length, ...event.split(''))
     const message = [
-      chalk.blueBright(event10char.join('')),
+      chalk.blueBright(event6char.join('')),
       chalk.grey(path)
     ].join(' ')
     console.log(message)
@@ -103,15 +103,18 @@ async function main () {
 async function rmDist () {
   const { rm } = fs
   try {
-    await rm(config.DST, { recursive: true, force: true })
-  } catch (err) {
-    
-  }
+    await rm(config.DST, {
+      recursive: true,
+      force: true
+    })
+  } catch (err) {}
 }
 
 async function makeDist () {
   const { mkdir } = fs
-  return await mkdir(config.DST, { recursive: true })
+  return await mkdir(config.DST, {
+    recursive: true
+  })
 }
 
 async function processFonts () {
@@ -224,12 +227,6 @@ async function copyAndBundle (pathsToBuild: {
     styles: now,
     total: now
   }
-  // pathsToBuild = {
-  //   fonts: false,
-  //   assets: false,
-  //   styles: true,
-  //   scripts: false
-  // }
   const fontsPromise = pathsToBuild.fonts === true ? processFonts() : new Promise(r => r(true))
   fontsPromise.then(() => { times.fonts = Date.now() - times.fonts })
   const assetsPromise = pathsToBuild.assets === true ? processAssets() : new Promise(r => r(true))

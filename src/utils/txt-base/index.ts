@@ -1,7 +1,46 @@
-import {
-  masterTransformer,
-  PrimitiveValue as TransformerPrimitiveValue
-} from './transformers'
+import { VNode, isValidElement } from 'preact'
+import { masterTransformer, PrimitiveValue as TransformerPrimitiveValue } from './transformers'
+
+type FieldValue = TransformerPrimitiveValue
+  |TransformerPrimitiveValue[]
+  |EntryValue
+  |CollectionValue
+  |BaseValue
+
+type EntryValue = {
+  [fieldName: string]: FieldValue
+}
+
+type CollectionValue = {
+  [entryName: string]: EntryValue
+}
+
+type BaseValue = {
+  [collectionName: string]: CollectionValue
+}
+
+const { isArray } = Array
+type FV = FieldValue
+export const valueIsString = (v: FV): v is string => (typeof v === 'string')
+export const valueIsStringArr = (v: FV): v is string[] => (isArray(v) && v.every(valueIsString))
+export const valueIsNumber = (v: FV): v is number => (typeof v === 'number')
+export const valueIsNumberArr = (v: FV): v is number[] => (isArray(v) && v.every(valueIsNumber))
+export const valueIsBoolean = (v: FV): v is boolean => (typeof v === 'boolean')
+export const valueIsBooleanArr = (v: FV): v is boolean[] => (isArray(v) && v.every(valueIsBoolean))
+export const valueIsNull = (v: FV): v is null => (v === null)
+export const valueIsNullArr = (v: FV): v is null[] => (isArray(v) && v.every(valueIsNull))
+export const valueIsHTMLElement = (v: FV): v is HTMLElement => (v instanceof HTMLElement)
+export const valueIsHTMLElementArr = (v: FV): v is HTMLElement[] => (isArray(v) && v.every(valueIsHTMLElement))
+export const valueIsVNode = (v: FV): v is VNode => isValidElement(v)
+export const valueIsVNodeArr = (v: FV): v is VNode[] => (isArray(v) && v.every(valueIsVNode))
+export const valueIsBase = (v: FV): v is Base => (v instanceof Base)
+export const valueIsBaseArr = (v: FV): v is Base[] => (isArray(v) && v.every(valueIsBase))
+export const valueIsCollection = (v: FV): v is Collection => (v instanceof Collection)
+export const valueIsCollectionArr = (v: FV): v is Collection[] => (isArray(v) && v.every(valueIsCollection))
+export const valueIsEntry = (v: FV): v is Entry => (v instanceof Entry)
+export const valueIsEntryArr = (v: FV): v is Entry[] => (isArray(v) && v.every(valueIsEntry))
+export const valueIsField = (v: FV): v is Field => (v instanceof Field)
+export const valueIsFieldArr = (v: FV): v is Field[] => (isArray(v) && v.every(valueIsField))
 
 export class Base {
   collections: Collection[]
@@ -14,8 +53,10 @@ export class Base {
     this.get = this.get.bind(this)
     this.create = this.create.bind(this)
     this.delete = this.delete.bind(this)
+    this.clone = this.clone.bind(this)
     this.resolver = this.resolver.bind(this)
   }
+
 
   get (name: Collection['name']) {
     return this.collections.find(col => col.name === name)
@@ -39,6 +80,22 @@ export class Base {
       ...this.collections.slice(collectionIndex + 1)
     ]
     return true
+  }
+
+  clone () {
+    const newBase = new Base()
+    this.collections.forEach(collection => {
+      collection.entries.forEach(entry => {
+        entry.fields.forEach(field => {
+          newBase
+            .create(collection.name)
+            .create(entry.name)
+            .create(field.name)
+            .updateRaw(field.raw)
+        })
+      })
+    })
+    return newBase
   }
 
   resolver (root: Field|Entry|Collection|Base, path: string): Field|Entry|Collection|Base|undefined {
@@ -73,8 +130,8 @@ export class Base {
     return currentItem
   }
 
-  get value () {
-    const returned: { [key: string]: Collection['value'] } = {}
+  get value (): BaseValue {
+    const returned = {}
     this.collections.forEach(collection => {
       Object.defineProperty(
         returned,
@@ -135,8 +192,8 @@ export class Collection {
     return this.parent.resolver(...args)
   }
 
-  get value () {
-    const returned: { [key: string]: Entry['value'] } = {}
+  get value (): CollectionValue {
+    const returned = {}
     this.entries.forEach(entry => {
       Object.defineProperty(
         returned,
@@ -173,7 +230,7 @@ export class Entry {
     return this.fields.find(field => field.name === name)
   }
 
-  create (name: Field['name'], raw: Field['raw']) {
+  create (name: Field['name'], raw: Field['raw'] = '') {
     const alreadyExists = this.get(name)
     if (alreadyExists !== undefined) return alreadyExists
     const newField = new Field(name, this, raw)
@@ -197,8 +254,8 @@ export class Entry {
     return this.parent.resolver(...args)
   }
 
-  get value () {
-    const returned: { [key: string]: Field['value'] } = {}
+  get value (): EntryValue {
+    const returned = {}
     this.fields.forEach(field => {
       Object.defineProperty(
         returned,
@@ -233,7 +290,11 @@ export class Field {
     this.resolve = this.resolve.bind(this)
   }
 
-  updateRaw (updater: (curr: string) => string) {
+  updateRaw (updater: string|((curr: string) => string)) {
+    if (typeof updater === 'string') {
+      this.raw = updater
+      return
+    }
     const newraw = updater(this.raw)
     this.raw = newraw
   }
@@ -267,7 +328,7 @@ export class Field {
     return transformed
   }
 
-  get value (): any {
+  get value (): FieldValue {
     const { transformed } = this
     if (transformed instanceof Field
       || transformed instanceof Entry
