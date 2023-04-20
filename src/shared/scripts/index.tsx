@@ -12,7 +12,8 @@ import {
   filterPageDatabase
 } from '../../utils/lm-page-database'
 import {
-  getPageSlotsMap
+  getPageSlotsMap,
+  renderApp
 } from '../../utils/lm-page-apps'
 
 // [WIP] silent logs everywhere
@@ -43,6 +44,7 @@ export async function initPage () {
   // Read inline config
   const inlineConfigInstructions = getInlineConfigInstructrions()
   const inlinePageConfig = inlineConfigInstructions.toConfig()
+  console.log(inlinePageConfig)
 
   // Load & filter data sources
   const inlineDataSources = inlinePageConfig.dataSources
@@ -71,9 +73,6 @@ export async function initPage () {
   
   // Render apps
   pageSlotsMap.forEach(({ name, options }, root) => {
-    console.log(root)
-    console.log(name)
-    console.log(options)
-    console.log('-')
+    renderApp({ name, options, root })
   })
 }

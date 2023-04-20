@@ -3,7 +3,8 @@ import { Collection } from '../txt-base'
 export enum Options {
   ID = 'id',
   DATA_SOURCES = 'dataSources',
-  HIDE_HEADER = 'hideHeader'
+  HIDE_HEADER = 'hideHeader',
+  APPX_PUBLICATION_DATE = 'approxPublicationDate'
 }
 
 export const optionsList = Object.values(Options)
@@ -16,12 +17,14 @@ export type Config = {
   [Options.ID]?: string,
   [Options.DATA_SOURCES]?: Array<ConfigDataSource>
   [Options.HIDE_HEADER]?: boolean
+  [Options.APPX_PUBLICATION_DATE]?: string
 }
 
 export enum InlineOnlyInstructionsNames {
   ID = 'id',
   SHEETBASE_URL = 'sheetbaseUrl',
-  TEXTBASE_URL = 'textbaseUrl'
+  TEXTBASE_URL = 'textbaseUrl',
+  APPX_PUBLICATION_DATE = 'approxPublicationDate'
 }
 
 export enum RemoteValidInstructionsNames {
@@ -78,6 +81,9 @@ export class Instructions {
             if (config[Options.DATA_SOURCES] === undefined) config[Options.DATA_SOURCES] = [dataSource]
             else config[Options.DATA_SOURCES].push(dataSource)
           }
+          break;
+        case InlineOnlyInstructionsNames.APPX_PUBLICATION_DATE:
+          if (typeof value === 'string') { config[Options.APPX_PUBLICATION_DATE] = value }
           break;
         case RemoteValidInstructionsNames.HIDE_HEADER:
           if (value === false) config[Options.HIDE_HEADER] = false

@@ -5,10 +5,12 @@ import { Collection } from '../txt-base'
  * Names
  * * * * * * * * * * * * * * * * * * */
 export enum Names {
-  NAME = 'name',
-  OTHER_NAME = 'other-name'
+  FIRST_APP = 'first-app',
+  SECOND_APP = 'second-app'
 }
+
 export const validAppsNames = Object.values(Names)
+
 export function isValidAppName (name: string): name is Names {
   if (validAppsNames.includes(name as Names)) return true
   return false
@@ -18,6 +20,7 @@ export function isValidAppName (name: string): name is Names {
  * Options
  * * * * * * * * * * * * * * * * * * */
 export type Options = Record<string, unknown>
+
 export function isValidOptions (obj: unknown): obj is Options  {
   // [WIP] Dont know if we can do better, this basically
   // just checks if we can call Object.keys on it
@@ -28,6 +31,7 @@ export function isValidOptions (obj: unknown): obj is Options  {
     return false
   }
 }
+
 export function mergeOptions (...optionsList: Options[]) {
   return optionsList.reduce((prevOptions, currOptions) => {
     return {
@@ -94,6 +98,7 @@ export type Slots = Map<HTMLElement, {
   name: Names,
   options: Options
 }>
+
 // [WIP] Pretty sure this could be facrorized and sliced into
 // smaller individual (exported?) functions
 export function getPageSlotsMap (pageSlotsCollection?: Collection) {
@@ -151,6 +156,43 @@ export function getPageSlotsMap (pageSlotsCollection?: Collection) {
   })
 
   return pageSlotsMap
+}
+
+/* * * * * * * * * * * * * * * * * * *
+ * Context
+ * * * * * * * * * * * * * * * * * * */
+export type Context = {
+  // [WIP] silentLogger: any
+}
+
+/* * * * * * * * * * * * * * * * * * *
+ * Render
+ * * * * * * * * * * * * * * * * * * */
+export type AppRenderer = (appOptions: {
+  root: HTMLElement,
+  options: Options
+  // silentLogger?, config?(as pageConfig?)
+}) => void
+
+export async function loadApp (name: Names): Promise<AppRenderer|null> {
+  let renderer: AppRenderer|null = null
+  if (name === Names.FIRST_APP) { renderer = (await import('../../apps/first-app')).default }
+  else if (name === Names.SECOND_APP) { renderer = (await import('../../apps/second-app')).default }
+  return renderer
+}
+
+type RenderOptions = {
+  name: Names,
+  options: Options,
+  root: HTMLElement
+  // [WIP] silentLogger?, config?, etc... ?
+}
+
+export async function renderApp (renderOptions: RenderOptions) {
+  const { name, options, root } = renderOptions
+  const renderer = await loadApp(name)
+  if (renderer === null) return // [WIP] silent log here
+  renderer({ options, root })
 }
 
 /* * * * * * * * * * * * * * * * * * *
