@@ -43,7 +43,7 @@
     "build-server:dev": "npx tsc --project server/tsconfig.json --watch",
     "build-server:prod": "npx tsc --project server/tsconfig.json",
     "start-server:dev": "nodemon server/dist/app.js",
-    "start-server:prod": "node server/dist/app.js",
+    "start-server:prod": "NODE_ENV=production node server/dist/app.js",
     "dev": "npx concurrently -n 'build-src,build-srv,serve    ' 'npm run build-source:dev' 'npm run build-server:dev' 'npm run start-server:dev'",
     "prod": "npm run build-source:prod && npm run build-server:prod && npm run start-server:prod",
     "start": "npm run dev",

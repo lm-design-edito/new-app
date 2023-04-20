@@ -12,7 +12,9 @@ const CWD = process.cwd()
 const abs = (...paths: string[]) => join(CWD, ...paths)
 
 const FAVICON = abs('server/favicon.ico')
-const PUBLIC = process.env.NODE_ENV === 'production' ? abs('dist/prod') : abs('dist/dev')
+const PUBLIC = process.env.NODE_ENV === 'production'
+  ? abs('dist/prod')
+  : abs('dist/dev')
 const PAGES = abs('pages')
 
 const app = express()

@@ -128,3 +128,8 @@ export function getRemoteConfigInstructions (configCollection?: Collection) {
   })
   return returned
 }
+
+export function applyConfig (config: Config) {
+  // [WIP] do this
+  return true
+}

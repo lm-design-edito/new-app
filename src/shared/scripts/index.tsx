@@ -1,17 +1,26 @@
-import { injectDefaultStyles } from '../../utils/lm-page-styles'
+import {
+  injectDefaultStyles
+} from '../../utils/lm-page-styles'
 import {
   getInlineConfigInstructrions,
   getRemoteConfigInstructions,
+  applyConfig,
   Instructions
 } from '../../utils/lm-page-config'
 import {
   makePageDatabase,
   filterPageDatabase
 } from '../../utils/lm-page-database'
+import {
+  getPageSlotsMap
+} from '../../utils/lm-page-apps'
+
+// [WIP] silent logs everywhere
 
 /* * * * * * * * * * * * * * * * * * * * * *
  * URLS
  * * * * * * * * * * * * * * * * * * * * * */
+export const PAGE_URL = new URL(window.location.href)                 // PAGE
 export const ROOT_URL = new URL('../../', import.meta.url)            // ROOT
 export const SHARED_URL = new URL('shared/', ROOT_URL)                // shared/
 export const ASSETS_URL = new URL('assets/', SHARED_URL)              // assets/
@@ -47,8 +56,24 @@ export async function initPage () {
   const remoteConfigInstructions = getRemoteConfigInstructions(pageConfigCollection)
   const pageConfigInstructions = Instructions.merge(
     inlineConfigInstructions,
-    remoteConfigInstructions
-  )
-  console.log('pageConfig', pageConfigInstructions.toConfig())
-  console.log('pageDatabase', pageDatabase)
+    remoteConfigInstructions)
+  const pageConfig = pageConfigInstructions.toConfig()
+
+  // Apply config
+  applyConfig(pageConfig)
+
+  // Get page slots
+  const pageSlotsCollection = pageDatabase.get('PAGE_SLOTS')
+  // [WIP] maybe split the getting of the slots first from
+  // database then from inline data here rather than everything
+  // done inside getPageSlotsMap (see WIP comment above getPageSlotsMap declaration)
+  const pageSlotsMap = getPageSlotsMap(pageSlotsCollection)
+  
+  // Render apps
+  pageSlotsMap.forEach(({ name, options }, root) => {
+    console.log(root)
+    console.log(name)
+    console.log(options)
+    console.log('-')
+  })
 }

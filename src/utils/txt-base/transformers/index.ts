@@ -18,6 +18,10 @@ import join from './many-to-one/join'
 // Many to many transformers
 import map from './many-to-many/map'
 
+// [WIP] transformers ideas :
+// - replace (string)
+// - add, subtract, divide, multiply, pow, solve, min, max, clamp
+// - at, filter (for arrays)
 const transformerNamesObj: { [key: string]: Transformer } = {
   // One to one
   toString,

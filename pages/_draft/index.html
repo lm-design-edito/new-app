@@ -20,9 +20,11 @@
     
     <!-- Inline component slot -->
     <div>
-      <data class="lm-app-type">some-app-type</data>
-      <data class="lm-app-config">
-        <data value="someProp">some value</data>
+      <data class="lm-app-config" value="other-name">
+        <data value="someProp" type="html">
+          <div><h1>Coucou</h1></div>
+          <p>Lol</p>
+        </data>
         <data value="someOtherProp">some other value</data>
         <data value="someFinalProp">
           <data>value 1</data>
@@ -32,7 +34,7 @@
     </div>
 
     <!-- Component slot -->
-    <div class="some-comp-slot">
+    <div class="mon-app-root">
       <div class="lm-app-prerender">
         some prerendered stuff here...
       </div>
@@ -40,8 +42,7 @@
 
     <!-- Hybrid component slot -->
     <div class="some-other-comp-slot">
-      <data class="lm-app-type">some-app-type</data>
-      <data class="lm-app-config">
+      <data class="lm-app-config" value="other-name">
         <data value="someProp">some value</data>
         <data value="someOtherProp">some other value</data>
         <data value="someFinalProp">
