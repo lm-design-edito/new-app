@@ -396,6 +396,7 @@ function parse (str: string) {
   }
 
   function addField (matched: string) {
+    // [WIP] silent log here
     if (currentEntry === null) return console.warn('Cannot create field since there is no current entry')
     const fieldNameWithType = matched
       .trim()
@@ -411,6 +412,7 @@ function parse (str: string) {
   }
 
   function addContent (content: string) {
+    // [WIP] silent log here
     if (currentField === null) return console.warn('Cannot create content since there is no current field')
     currentField.updateRaw(curr => `${curr}${content.trim()}`)
   }

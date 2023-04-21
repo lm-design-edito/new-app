@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "target": "es2020",
+    // "jsx": "preserve",
     "jsx": "react-jsx",
     "jsxImportSource": "preact",
     "module": "esnext",

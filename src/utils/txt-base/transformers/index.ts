@@ -120,12 +120,10 @@ export function makeTransformer<T extends Transformer> (name: CommonTransformerS
       // else console.log('apply', name, 'on', value)
       try {
         const result = apply(value, argsStr, resolve)
-        // [WIP] silent log this?
-        // console.log('output:', result)
+        // [WIP] silent log result?
         return result
       } catch (err) {
-        // [WIP] silent log this?
-        // console.log('error:', err)
+        // [WIP] silent log error?
         const { ONE_TO_ONE, ONE_TO_MANY, MANY_TO_ONE, MANY_TO_MANY } = TransformerType
         if (type === ONE_TO_ONE || type === MANY_TO_MANY) return value
         if (type === ONE_TO_MANY) return [value]

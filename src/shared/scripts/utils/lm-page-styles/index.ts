@@ -1,5 +1,6 @@
-import { STYLES_INDEX_URL } from '../../shared/scripts'
-import injectCssRule from '../dynamic-css'
+// [WIP] maybe dont import this, pass as parameter instead
+import { STYLES_INDEX_URL } from '../..'
+import injectCssRule from '../../../../utils/dynamic-css'
 
 export async function injectDefaultStyles () {
   try {

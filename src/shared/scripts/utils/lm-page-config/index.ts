@@ -1,4 +1,4 @@
-import { Collection } from '../txt-base'
+import { Collection } from '../../../../utils/txt-base'
 
 export enum Options {
   ID = 'id',

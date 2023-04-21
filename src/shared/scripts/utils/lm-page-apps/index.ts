@@ -1,18 +1,19 @@
-import strToNodes from '../str-to-nodes'
-import { Collection } from '../txt-base'
+import { Config } from '../lm-page-config'
+import Logger from '../../../../utils/silent-log'
+import strToNodes from '../../../../utils/str-to-nodes'
+import { Collection } from '../../../../utils/txt-base'
 
 /* * * * * * * * * * * * * * * * * * *
  * Names
  * * * * * * * * * * * * * * * * * * */
 export enum Names {
-  FIRST_APP = 'first-app',
-  SECOND_APP = 'second-app'
+  SCRLLGNGN = 'scrllgngn'
 }
 
-export const validAppsNames = Object.values(Names)
+export const validNames = Object.values(Names)
 
-export function isValidAppName (name: string): name is Names {
-  if (validAppsNames.includes(name as Names)) return true
+export function isValidName (name: string): name is Names {
+  if (validNames.includes(name as Names)) return true
   return false
 }
 
@@ -33,12 +34,10 @@ export function isValidOptions (obj: unknown): obj is Options  {
 }
 
 export function mergeOptions (...optionsList: Options[]) {
-  return optionsList.reduce((prevOptions, currOptions) => {
-    return {
-      ...prevOptions,
-      ...currOptions
-    }
-  }, {} as Options)
+  return optionsList.reduce((prev, curr) => ({
+    ...prev,
+    ...curr
+  }), {} as Options)
 }
 
 export type InlineOption = string
@@ -49,7 +48,7 @@ export type InlineOption = string
   |InlineOption[]
   |{ [key: string]: InlineOption }
 
-export function readPropsNode (propsNode: HTMLElement): InlineOption {
+export function readOptionsNode (propsNode: HTMLElement): InlineOption {
   const nodeDataType = propsNode.getAttribute('type')
   const children = [...propsNode.querySelectorAll(':scope > *')]
     .filter((e): e is HTMLElement => e instanceof HTMLElement)
@@ -60,7 +59,6 @@ export function readPropsNode (propsNode: HTMLElement): InlineOption {
     if (value === null || value.length === 0) unnamedChildren.push(child)
     else namedChildren.push(child)
   })
-
   // No data children OR dataType is html => return the value of innerHTML
   if (children.length === 0 || nodeDataType === 'html') {
     const rawNodeVal = propsNode.innerHTML.trim()
@@ -75,18 +73,16 @@ export function readPropsNode (propsNode: HTMLElement): InlineOption {
     }
     else return rawNodeVal
   }
-  
   // With only unnamed data children
   if (namedChildren.length === 0) return unnamedChildren
-    .map(child => readPropsNode(child))
-  
+    .map(child => readOptionsNode(child))
   // With named data children
   // [WIP] add unnamed to the result?
   const returned: InlineOption = {}
   children.forEach(child => {
     const title = child.getAttribute('value')
     if (typeof title !== 'string' || title.length < 1) return
-    returned[title] = readPropsNode(child)
+    returned[title] = readOptionsNode(child)
   })
   return returned
 }
@@ -110,7 +106,7 @@ export function getPageSlotsMap (pageSlotsCollection?: Collection) {
     const slotOptions = flattenGetters(pageSlotEntry.get('options')?.value)
     if (typeof slotName !== 'string') return
     if (typeof slotSelector !== 'string') return
-    if (!isValidAppName(slotName)) return
+    if (!isValidName(slotName)) return
     const roots: HTMLElement[] = [...document.querySelectorAll(slotSelector)]
       .filter((e): e is HTMLElement => e instanceof HTMLElement)
     roots.forEach(root => {
@@ -136,8 +132,8 @@ export function getPageSlotsMap (pageSlotsCollection?: Collection) {
     if (typeof slotName !== 'string') return
     const root = inlineAppConfig.parentElement
     if (root === null) return
-    if (!isValidAppName(slotName)) return
-    const slotOptions = readPropsNode(inlineAppConfig)
+    if (!isValidName(slotName)) return
+    const slotOptions = readOptionsNode(inlineAppConfig)
     if (typeof slotOptions !== 'object') return
     if (slotOptions === null) return
     if (!isValidOptions(slotOptions)) return
@@ -154,45 +150,28 @@ export function getPageSlotsMap (pageSlotsCollection?: Collection) {
       )
     })
   })
-
   return pageSlotsMap
-}
-
-/* * * * * * * * * * * * * * * * * * *
- * Context
- * * * * * * * * * * * * * * * * * * */
-export type Context = {
-  // [WIP] silentLogger: any
 }
 
 /* * * * * * * * * * * * * * * * * * *
  * Render
  * * * * * * * * * * * * * * * * * * */
-export type AppRenderer = (appOptions: {
-  root: HTMLElement,
-  options: Options
-  // silentLogger?, config?(as pageConfig?)
-}) => void
-
-export async function loadApp (name: Names): Promise<AppRenderer|null> {
-  let renderer: AppRenderer|null = null
-  if (name === Names.FIRST_APP) { renderer = (await import('../../apps/first-app')).default }
-  else if (name === Names.SECOND_APP) { renderer = (await import('../../apps/second-app')).default }
-  return renderer
-}
-
 type RenderOptions = {
   name: Names,
   options: Options,
-  root: HTMLElement
-  // [WIP] silentLogger?, config?, etc... ?
+  root: HTMLElement,
+  pageConfig?: Config
+  silentLogger?: Logger
 }
 
+export type Renderer = (appOptions: Omit<RenderOptions, 'name'>) => void
+
 export async function renderApp (renderOptions: RenderOptions) {
-  const { name, options, root } = renderOptions
-  const renderer = await loadApp(name)
-  if (renderer === null) return // [WIP] silent log here
-  renderer({ options, root })
+  const { name, options, root, pageConfig, silentLogger } = renderOptions
+  let renderer: Renderer|null = null
+  if (name === Names.SCRLLGNGN) { renderer = (await import('../../../../apps/scrllgngn')).default }
+  if (renderer === null) throw new Error(`Could not find a renderer for an app named ${name}`)
+  return renderer({ root, options, pageConfig, silentLogger })
 }
 
 /* * * * * * * * * * * * * * * * * * *

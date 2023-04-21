@@ -1,5 +1,5 @@
-import parseTextbase, { Base, valueIsString, valueIsStringArr } from '../txt-base'
-import { SheetBaseEntry, tsvToSheetBase as parseSheetbase } from '../sheet-base'
+import parseTextbase, { Base, valueIsString, valueIsStringArr } from '../../../../utils/txt-base'
+import { SheetBaseEntry, tsvToSheetBase as parseSheetbase } from '../../../../utils/sheet-base'
 import { Config as PageConfig } from '../lm-page-config'
 
 const { isArray } = Array
@@ -8,18 +8,20 @@ const { isArray } = Array
  * MAKE PAGE DATABASE
  * * * * * * * * * * * * * * * * * * * */
 export async function makePageDatabase (dataSources: PageConfig['dataSources'] = []) {
-  const dataset = dataSources.map(dataSource => {
-    const returned = {
-      type: dataSource.type,
-      url: dataSource.url,
-      data: null as string|null
-    }
-    return returned
-  })
+  const dataset = dataSources.map(dataSource => ({
+    type: dataSource.type,
+    url: dataSource.url,
+    data: null as string|null
+  }))
   await Promise.all(dataset.map(async dataSource => {
-    const response = await window.fetch(dataSource.url)
-    const data = await response.text()
-    dataSource.data = data
+    try {
+      const response = await window.fetch(dataSource.url)
+      const data = await response.text()
+      dataSource.data = data
+    } catch (err) {
+      // [WIP] silent log error here
+      return
+    }
   }))
   const pageDatabase = new Base()
   dataset.forEach(dataSource => {
