@@ -1,4 +1,4 @@
-import { toCharcodes36 } from '../charcode-string'
+import { toCharcodes36 } from '~/utils/charcode-string'
 
 function tsvToEncodedTsv (tsv: string): string {
   let returned = tsv

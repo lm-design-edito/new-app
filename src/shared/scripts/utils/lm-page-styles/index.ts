@@ -1,10 +1,8 @@
-// [WIP] maybe dont import this, pass as parameter instead
-import { STYLES_INDEX_URL } from '../..'
-import injectCssRule from '../../../../utils/dynamic-css'
+import injectCssRule from '~/utils/dynamic-css'
 
-export async function injectDefaultStyles () {
+export async function injectDefaultStyles (url: string|URL) {
   try {
-    const response = await window.fetch(STYLES_INDEX_URL)
+    const response = await window.fetch(url)
     const data = await response.text()
     injectCssRule(data.trim())
     return data

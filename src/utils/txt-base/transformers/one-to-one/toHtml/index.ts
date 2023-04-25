@@ -1,5 +1,5 @@
+import strToNodes from '~/utils/str-to-nodes'
 import { makeTransformer } from '../..'
-import strToNodes from '../../../../str-to-nodes'
 import { TransformerType } from '../../types'
 import toString from '../toString'
 

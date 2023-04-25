@@ -1,0 +1,112 @@
+.wrapper {
+  position: relative;
+  display: grid;
+  padding: 8px 0;
+  grid-template-columns: auto 1fr auto;
+}
+
+.logo,
+.nav,
+.cta-wrapper {
+  opacity: 1;
+  transition: visibility 0ms, opacity 600ms 5ms;
+}
+
+.wrapper.wrapper_hide-logo {
+  .logo {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 600ms, visibility 0ms 600ms;
+  }
+}
+
+.wrapper.wrapper_hide-nav {
+  .nav {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 600ms, visibility 0ms 600ms;
+  }
+}
+
+.wrapper.wrapper_hide-cta {
+  .cta-wrapper {
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 600ms, visibility 0ms 600ms;
+  }
+}
+
+.logo,
+.nav {
+  height: 32px;
+  @media screen and (max-width: 1200px) {
+    height: 28px;
+  }
+}
+
+.cta-wrapper {
+  min-height: 32px;
+  @media screen and (max-width: 1200px) {
+    min-height: 28px;
+  }
+}
+
+.logo {
+  display: block;
+  margin-left: 8px;
+  margin-right: 8px;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  overflow-x: scroll;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+// This below results in the same than no rule at all so...
+// .wrapper.wrapper_left-align-items {
+//   .nav-item:first-child {
+//     margin-left: 0;
+//   }
+// }
+
+.nav-spacer {
+  display: block;
+}
+
+.wrapper.wrapper_center-align-items {
+  .nav-left-spacer {
+    margin-left: auto;
+  }
+
+  .nav-right-spacer {
+    margin-right: auto;
+  }
+}
+
+.wrapper.wrapper_right-align-items {
+  .nav-left-spacer {
+    margin-left: auto;
+  }
+}
+
+.nav-item {
+  flex-shrink: 0;
+  flex-grow: 0;
+  cursor: pointer;
+}
+
+// [WIP] in js, detect if no custom css, then apply this via .wrapper_default-nav-style
+.nav-item.nav-item_active {
+  text-decoration: underline;
+}
+
+.cta-wrapper {
+  display: flex;
+  align-items: center;
+}

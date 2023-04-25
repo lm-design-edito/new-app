@@ -1,0 +1,11 @@
+// [WIP] Not sure this is needed, the colors are given to the logo via props in index.tsx
+
+.fill-1 {
+  fill: var(--fill-1);
+  transition: fill var(--fill-transition-time);
+}
+
+.fill-2 {
+  fill: var(--fill-2);
+  transition: fill var(--fill-transition-time);
+}

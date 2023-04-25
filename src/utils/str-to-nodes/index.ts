@@ -1,4 +1,4 @@
-import sanitize, { Options as SanitizerOptions } from '../clientside-html-sanitizer'
+import sanitize, { Options as SanitizerOptions } from '~/utils/clientside-html-sanitizer'
 
 type Options = { sanitize?: SanitizerOptions }
 

@@ -20,13 +20,20 @@ const bundleOptions = (otherEntries: BuildOptions['entryPoints']): BuildOptions 
   bundle: true,
   splitting: true,
   chunkNames: 'chunks/[name].[hash]',
-  minify: config.isProd,
+  minify: true,
   sourcemap: true,
   treeShaking: true,
   target: ['es2020'],
   plugins: [
     stylePlugin({ extract: false })
-  ]
+  ],
+  assetNames: 'assets/[name].[hash]',
+  loader: {
+    '.svg': 'file',
+    '.jpg': 'file',
+    '.png': 'file',
+    '.gif': 'file'
+  }
 })
 
 /* MAIN * * * * * * * * * * * * */

@@ -1,48 +1,42 @@
 import {
   injectDefaultStyles
-} from './utils/lm-page-styles'
+} from '~/shared-utils/lm-page-styles'
 import {
   getInlineConfigInstructrions,
   getRemoteConfigInstructions,
   applyConfig,
   Instructions
-} from './utils/lm-page-config'
+} from '~/shared-utils/lm-page-config'
 import {
   makePageDatabase,
   filterPageDatabase
-} from './utils/lm-page-database'
+} from '~/shared-utils/lm-page-database'
 import {
   flattenGetters,
   getPageSlotsMap,
   renderApp
-} from './utils/lm-page-apps'
-import Logger from '../../utils/silent-log'
+} from '~/shared-utils/lm-page-apps'
+import { createSilentLogger } from './utils/lm-page-globals'
 
 /* * * * * * * * * * * * * * * * * * * * * *
  * URLS
  * * * * * * * * * * * * * * * * * * * * * */
-// [WIP] why exporting this? Maybe just pass those as parameters
-// where needed?
 // [WIP] maybe store this in a config file, with generic stuff like 
 // PAGE_SLOTS and PAGE_CONFIG for reserved collections, etc...
-export const PAGE_URL = new URL(window.location.href)                 // PAGE
-export const ROOT_URL = new URL('../../', import.meta.url)            // ROOT
-export const SHARED_URL = new URL('shared/', ROOT_URL)                // shared/
-export const ASSETS_URL = new URL('assets/', SHARED_URL)              // assets/
-export const FONTS_URL = new URL('fonts/', SHARED_URL)                // fonts/
-export const SCRIPTS_URL = new URL('scripts/', SHARED_URL)            // scripts/
-export const SCRIPTS_INDEX_URL = new URL(import.meta.url)             // scripts/index.js
-export const STYLES_URL = new URL('styles/', SHARED_URL)              // styles/
-export const STYLES_INDEX_URL = new URL('index.css', STYLES_URL)      // styles/index.css
+// const PAGE_URL = new URL(window.location.href)                 // PAGE
+const ROOT_URL = new URL('../../', import.meta.url)            // ROOT
+const SHARED_URL = new URL('shared/', ROOT_URL)                // shared/
+// const ASSETS_URL = new URL('assets/', SHARED_URL)              // assets/
+// const FONTS_URL = new URL('fonts/', SHARED_URL)                // fonts/
+// const SCRIPTS_URL = new URL('scripts/', SHARED_URL)            // scripts/
+const SCRIPTS_INDEX_URL = new URL(import.meta.url)             // scripts/index.js
+const STYLES_URL = new URL('styles/', SHARED_URL)              // styles/
+const STYLES_INDEX_URL = new URL('index.css', STYLES_URL)      // styles/index.css
 
 /* * * * * * * * * * * * * * * * * * * * * *
  * SILENT LOGGER
  * * * * * * * * * * * * * * * * * * * * * */
-// [WIP] idem, no need to export i think
-export const silentLogger = new Logger()
-// [WIP] Give a type to LM_PAGE ?
-// Should only be used in the console by the end user though
-;(window as any).LM_PAGE = { silentLogger }
+const silentLogger = createSilentLogger()
 
 /* * * * * * * * * * * * * * * * * * * * * *
  * INIT
@@ -54,7 +48,7 @@ export async function initPage () {
   silentLogger.log('page-init', `Start init the page from ${SCRIPTS_INDEX_URL.toString()}`)
 
   // Load styles (dont await)
-  injectDefaultStyles().then(res => {
+  injectDefaultStyles(STYLES_INDEX_URL).then(res => {
     if (typeof res === 'string') return;
     silentLogger.error('page-styles', res)
   })
@@ -90,16 +84,11 @@ export async function initPage () {
 
   // Get page slots
   const pageSlotsCollection = pageDatabase.get('PAGE_SLOTS')
-  // [WIP] maybe split the getting of the slots first from
-  // database then from inline data here rather than everything
-  // done inside getPageSlotsMap (see WIP comment above getPageSlotsMap declaration)
-  const pageSlotsMap = getPageSlotsMap(pageSlotsCollection)
+  const pageSlotsMap = getPageSlotsMap(pageSlotsCollection) // [WIP] maybe split this
   silentLogger.log('page-apps/slots-map', pageSlotsMap)
   
   // Render apps
   pageSlotsMap.forEach(async ({ name, options }, root) => {
-    // [WIP] should handle adding .lm-app_init on root classes,
-    // and erase the prerender.
     silentLogger.log('page-apps/render-init', { root, name, options })
     try {
       await renderApp({ name, options, root, pageConfig, silentLogger })

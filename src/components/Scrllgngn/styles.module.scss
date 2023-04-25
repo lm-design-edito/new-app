@@ -1,0 +1,130 @@
+/*
+ * Defined in index.tsx:
+ * --sticky-blocks-viewport-height
+ * --sticky-blocks-offset-top
+ * --scrolling-block-height
+ * --scrolling-block-width
+ * --bg-color-transition-duration
+ * --bg-color
+ */
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * *
+ *
+ * WRAPPER
+ *
+ * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+.wrapper {
+  position: relative;
+  overflow: hidden;
+  background-color: var(--bg-color);
+  transition: background-color var(--bg-color-transition-duration);
+  pointer-events: none;
+}
+
+.header {
+  width: var(--scrolling-block-width);
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 600ms 5ms, visibility 0ms;
+}
+
+.wrapper.wrapper_hide-header {
+  .header {
+    opacity: 0;
+    visibility: collapse;
+    transition: opacity 600ms, visibility 0ms 600ms;
+  }
+}
+
+/* --z-index is defined in index.tsx */
+.block {
+  z-index: var(--z-index);
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * *
+ *
+ * STICKY ELEMENTS
+ *
+ * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+.block.block_sticky {
+  position: absolute;
+  top: 0;
+  display: inline-flex;
+  height: var(--sticky-blocks-viewport-height);
+  width: 100%;
+}
+
+:where(.block.block_sticky > *) {
+  flex-shrink: 0;
+  flex-grow: 1;
+}
+
+.header.block.block_sticky {
+  height: unset;
+  pointer-events: auto;
+  display: block;
+}
+
+.wrapper.wrapper_stick-blocks .block.block_sticky {
+  position: fixed;
+  top: var(--sticky-blocks-offset-top);
+}
+
+.wrapper.wrapper_offset-blocks .block.block_sticky {
+  position: absolute;
+  top: calc(
+    var(--scrolling-block-height)
+    - var(--sticky-blocks-offset-top)
+    - var(--sticky-blocks-viewport-height)
+  );
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * *
+ *
+ * SCROLLING ELEMENTS
+ *
+ * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+.scroll-panel {
+  position: relative;
+}
+
+.paginator {
+  /* --z-index is defined in index.tsx */
+  position: relative;
+  z-index: var(--z-index);
+}
+
+.page {
+  display: flex;
+  flex-direction: column;
+}
+
+.block.block_scrolling {
+  /* --z-index is defined in index.tsx */
+  position: relative;
+  z-index: var(--z-index);
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * *
+ *
+ * STATUSSES
+ *
+ * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+ :where(.block.block_scrolling > *) {
+  pointer-events: auto;
+}
+
+:where(.block.block_sticky.status-current > *) {
+  pointer-events: auto;
+}
+
+.block.block_sticky.status-previous,
+.block.block_sticky.status-inactive,
+.block.block_sticky.status-previous *,
+.block.block_sticky.status-inactive * {
+  pointer-events: none !important; /* [WIP] !important in case children have some pointer-events: auto for some reason... Maybe something better to do? */
+}

@@ -1,4 +1,4 @@
-import { nullishValues } from '../is-nullish'
+import { nullishValues } from '~/utils/is-nullish'
 
 const falsyValues = [...nullishValues, false, '', 0, -0, BigInt(0), NaN]
 const isFalsy = (val: any): boolean => falsyValues.includes(val)

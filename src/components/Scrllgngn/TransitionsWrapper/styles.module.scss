@@ -1,0 +1,199 @@
+$minWidth: 1025px;
+$maxWidth: 1024px;
+$defaultTransitionDuration: 400ms;
+
+.wrapper {
+  pointer-events: none;
+}
+
+/* * * * * * * * * * *
+ * ALL
+ * * * * * * * * * * */
+
+:where(.t-wrapper > *:not(.t-wrapper)) {
+  pointer-events: auto;
+}
+
+/* * * * * * * * * * *
+ * DEFAULT
+ * * * * * * * * * * */
+  
+/* IN */
+.wrapper.wrapper_active .t-default {
+  @media (min-width: $minWidth) { display: block; }
+}
+
+.wrapper.wrapper_active .t-mob-default {
+  @media (max-width: $maxWidth) { display: block; }
+}
+
+/* OUT */
+.wrapper.wrapper_inactive .t-default {
+  @media (min-width: $minWidth) { display: none; }
+}
+
+.wrapper.wrapper_inactive .t-mob-default {
+  @media (max-width: $maxWidth) { display: none; }
+}
+
+/* * * * * * * * * * *
+ * FADE
+ * * * * * * * * * * */
+
+.t-fade,
+.t-mob-fade {
+  transition: opacity var(--duration, $defaultTransitionDuration);
+}
+
+/* IN */
+.wrapper.wrapper_active .t-fade {
+  @media (min-width: $minWidth) { opacity: 1; }
+}
+
+.wrapper.wrapper_active .t-mob-fade {
+  @media (max-width: $maxWidth) { opacity: 1; }
+}
+
+/* OUT */
+.wrapper.wrapper_inactive .t-fade {
+  @media (min-width: $minWidth) { opacity: 0; }
+}
+
+.wrapper.wrapper_inactive .t-mob-fade {
+  @media (max-width: $maxWidth) { opacity: 0; }
+}
+
+/* * * * * * * * * * *
+ * GROW
+ * * * * * * * * * * */
+
+.t-grow,
+.t-mob-grow {
+  transition: transform var(--duration, $defaultTransitionDuration);
+}
+
+/* IN */
+.wrapper.wrapper_active .t-grow {
+  @media (min-width: $minWidth) { transform: scale(1, 1); }
+}
+
+.wrapper.wrapper_active .t-mob-grow {
+  @media (max-width: $maxWidth) { transform: scale(1, 1); }
+}
+
+/* OUT */
+.wrapper.wrapper_inactive .t-grow {
+  @media (min-width: $minWidth) { transform: scale(0, 0); }
+}
+
+.wrapper.wrapper_inactive .t-mob-grow {
+  @media (max-width: $maxWidth) { transform: scale(0, 0); }
+}
+
+/* * * * * * * * * * *
+ * WHIRL
+ * * * * * * * * * * */
+
+.t-whirl,
+.t-mob-whirl {
+  transition: transform var(--duration, $defaultTransitionDuration);
+}
+
+/* IN */
+.wrapper.wrapper_active .t-whirl {
+  @media (min-width: $minWidth) { transform: rotateZ(0deg); }
+}
+
+.wrapper.wrapper_active .t-mob-whirl {
+  @media (max-width: $maxWidth) { transform: rotateZ(0deg); }
+}
+
+/* OUT */
+.wrapper.wrapper_inactive .t-whirl {
+  @media (min-width: $minWidth) { transform: rotateZ(-810deg); }
+}
+
+.wrapper.wrapper_inactive .t-mob-whirl {
+  @media (max-width: $maxWidth) { transform: rotateZ(-810deg); }
+}
+
+/* * * * * * * * * * *
+ * SLIDE UP
+ * * * * * * * * * * */
+
+.t-slide-up,
+.t-mob-slide-up {
+  transition: transform var(--duration, $defaultTransitionDuration);
+}
+
+/* IN */
+.wrapper.wrapper_active .t-slide-up {
+  @media (min-width: $minWidth) { transform: translateY(0px); }
+}
+
+.wrapper.wrapper_active .t-mob-slide-up {
+  @media (max-width: $maxWidth) { transform: translateY(0px); }
+}
+
+/* OUT */
+.wrapper.wrapper_inactive .t-slide-up {
+  @media (min-width: $minWidth) { transform: translateY(100px); }
+}
+
+.wrapper.wrapper_inactive .t-mob-slide-up {
+  @media (max-width: $maxWidth) { transform: translateY(100px); }
+}
+
+/* * * * * * * * * * *
+ * RIGHT-OPEN
+ * * * * * * * * * * */
+
+.t-right-open,
+.t-mob-right-open {
+  transition: transform var(--duration, $defaultTransitionDuration);
+}
+
+/* IN */
+.wrapper.wrapper_active .t-right-open {
+  @media (min-width: $minWidth) { transform: rotateY(0deg) }
+}
+
+.wrapper.wrapper_active .t-mob-right-open {
+  @media (max-width: $maxWidth) { transform: rotateY(0deg) }
+}
+
+/* OUT */
+.wrapper.wrapper_inactive .t-right-open {
+  @media (min-width: $minWidth) { transform: perspective(1000px) rotateY(90deg); }
+}
+
+.wrapper.wrapper_inactive .t-mob-right-open {
+  @media (max-width: $maxWidth) { transform: perspective(1000px) rotateY(90deg); }
+}
+
+/* * * * * * * * * * *
+ * LEFT-OPEN
+ * * * * * * * * * * */
+
+.t-left-open,
+.t-mob-left-open {
+  transition: transform var(--duration, $defaultTransitionDuration);
+}
+
+/* IN */
+.wrapper.wrapper_active .t-left-open {
+  @media (min-width: $minWidth) { transform: rotateY(0deg) }
+}
+
+.wrapper.wrapper_active .t-mob-left-open {
+  @media (max-width: $maxWidth) { transform: rotateY(0deg) }
+}
+
+/* OUT */
+.wrapper.wrapper_inactive .t-left-open {
+  @media (min-width: $minWidth) { transform: perspective(1000px) rotateY(-90deg); }
+}
+
+.wrapper.wrapper_inactive .t-mob-left-open {
+  @media (max-width: $maxWidth) { transform: perspective(1000px) rotateY(-90deg); }
+}

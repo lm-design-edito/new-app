@@ -1,5 +1,5 @@
 import { makeTransformer } from '../..'
-import isFalsy from '../../../../is-falsy'
+import isFalsy from '~/utils/is-falsy'
 import { TransformerType } from '../../types'
 
 export default makeTransformer(

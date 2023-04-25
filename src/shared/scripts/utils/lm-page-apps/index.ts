@@ -1,7 +1,7 @@
-import { Config } from '../lm-page-config'
-import Logger from '../../../../utils/silent-log'
-import strToNodes from '../../../../utils/str-to-nodes'
-import { Collection } from '../../../../utils/txt-base'
+import { Config } from '~/shared-utils/lm-page-config'
+import Logger from '~/utils/silent-log'
+import strToNodes from '~/utils/str-to-nodes'
+import { Collection } from '~/utils/txt-base'
 
 /* * * * * * * * * * * * * * * * * * *
  * Names
@@ -11,7 +11,6 @@ export enum Names {
 }
 
 export const validNames = Object.values(Names)
-
 export function isValidName (name: string): name is Names {
   if (validNames.includes(name as Names)) return true
   return false
@@ -97,6 +96,8 @@ export type Slots = Map<HTMLElement, {
 
 // [WIP] Pretty sure this could be facrorized and sliced into
 // smaller individual (exported?) functions
+
+// [WIP] include filtered slots somewhere in order for ../../index.tsx to silent log ?
 export function getPageSlotsMap (pageSlotsCollection?: Collection) {
   const pageSlotsMap: Slots = new Map()
   // Get slots from page database
@@ -124,6 +125,7 @@ export function getPageSlotsMap (pageSlotsCollection?: Collection) {
       })
     })
   })
+
   // Get slots from inline page markup
   const pageInlineAppConfigs = [...document.querySelectorAll('.lm-app-config')]
     .filter((e): e is HTMLElement => e instanceof HTMLElement)
@@ -166,12 +168,37 @@ type RenderOptions = {
 
 export type Renderer = (appOptions: Omit<RenderOptions, 'name'>) => void
 
-export async function renderApp (renderOptions: RenderOptions) {
-  const { name, options, root, pageConfig, silentLogger } = renderOptions
+export async function renderApp ({ name, options, root, pageConfig, silentLogger }: RenderOptions) {
+  // Load renderer
   let renderer: Renderer|null = null
   if (name === Names.SCRLLGNGN) { renderer = (await import('../../../../apps/scrllgngn')).default }
   if (renderer === null) throw new Error(`Could not find a renderer for an app named ${name}`)
-  return renderer({ root, options, pageConfig, silentLogger })
+
+  // Add lm-app-root class on the root
+  root.classList.add('lm-app-root')
+
+  // Select target inside root for rendering
+  const prerenderedContent = root.querySelector('.lm-app-prerender')
+  const hasPrerenderedContent = prerenderedContent instanceof HTMLElement
+  let target: HTMLElement
+  if (hasPrerenderedContent) {
+    target = prerenderedContent
+    target.classList.remove('lm-app-prerender')
+  } else {
+    target = document.createElement('div')
+    root.appendChild(target)
+  }
+  target.classList.add('lm-app')
+
+  // Perform the actual rendering
+  const rendered = renderer({
+    root: target,
+    options,
+    pageConfig,
+    silentLogger
+  })
+
+  return rendered
 }
 
 /* * * * * * * * * * * * * * * * * * *

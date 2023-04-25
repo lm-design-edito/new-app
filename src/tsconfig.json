@@ -1,7 +1,6 @@
 {
   "compilerOptions": {
     "target": "es2020",
-    // "jsx": "preserve",
     "jsx": "react-jsx",
     "jsxImportSource": "preact",
     "module": "esnext",
@@ -16,6 +15,13 @@
     "lib": [
       "DOM",
       "DOM.Iterable"
-    ]
+    ],
+    "baseUrl": "./",
+    "paths": {
+      "~/apps/*": ["apps/*"],
+      "~/components/*": ["components/*"],
+      "~/shared-utils/*": ["shared/scripts/utils/*"],
+      "~/utils/*": ["utils/*"],
+    }
   }
 }

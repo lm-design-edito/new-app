@@ -1,5 +1,5 @@
+import clamp from '~/utils/clamp'
 import { argsStrToArgsArr, makeTransformer } from '../..'
-import clamp from '../../../../clamp'
 import { TransformerType } from '../../types'
 
 export default makeTransformer(

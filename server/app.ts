@@ -38,6 +38,18 @@ app.use('/favicon.ico', async (_, res) => {
   res.send(fileContent)
 })
 
+app.use('/', async (req, res, next) => {
+  if (req.path === '/') {
+    return res.type('text/html').send(`<html>
+      <head><meta charsed="utf-8"></head>
+      <body>
+        <a href="/pages/">pages</a><br />
+      </body>
+    </html>`)
+  }
+  next()
+})
+
 const generateHomePage = (names: string[]) => `<html>
   <head><meta charsed="utf-8"></head>
   <body>${names.map(name => (

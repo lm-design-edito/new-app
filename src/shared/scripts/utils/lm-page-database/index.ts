@@ -1,6 +1,6 @@
-import parseTextbase, { Base, valueIsString, valueIsStringArr } from '../../../../utils/txt-base'
-import { SheetBaseEntry, tsvToSheetBase as parseSheetbase } from '../../../../utils/sheet-base'
-import { Config as PageConfig } from '../lm-page-config'
+import { Config as PageConfig } from '~/shared-utils/lm-page-config'
+import parseTextbase, { Base, valueIsString, valueIsStringArr } from '~/utils/txt-base'
+import { SheetBaseEntry, tsvToSheetBase as parseSheetbase } from '~/utils/sheet-base'
 
 const { isArray } = Array
 

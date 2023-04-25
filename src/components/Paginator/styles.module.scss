@@ -1,0 +1,73 @@
+/* [WIP] convert this to css module */
+.wrapper {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Threshold area */
+.threshold-area {
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  opacity: 0;
+  visibility: hidden;
+  user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+}
+
+.wrapper.wrapper_window-rooted .threshold-area {
+  position: fixed;
+}
+
+.wrapper.wrapper_self-rooted .threshold-area {
+  position: absolute;
+}
+
+/* Threshold bar */
+.threshold-bar {
+  position: absolute;
+}
+
+.wrapper.wrapper_horizontal .threshold-bar {
+  width: 0px;
+  top: 0;
+  bottom: 0;
+  left: var(--threshold-offset);
+}
+
+.wrapper.wrapper_vertical .threshold-bar {
+  height: 0px;
+  left: 0;
+  right: 0;
+  top: var(--threshold-offset);
+}
+
+/* Scrollable area */
+.scrollable-area {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-wrap: nowrap;
+}
+
+.wrapper.wrapper_vertical .scrollable-area {
+  flex-direction: column;
+}
+
+.wrapper.wrapper_horizontal .scrollable-area {
+  flex-direction: row;
+  overflow-x: scroll;
+}
+
+.wrapper.wrapper_self-rooted .scrollable-area {
+    max-height: 100%;
+    max-width: 100%;
+}
+
+.wrapper.wrapper_self-rooted.wrapper_vertical .scrollable-area {
+  overflow-y: scroll;
+}

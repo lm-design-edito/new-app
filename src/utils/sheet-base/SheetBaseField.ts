@@ -2,7 +2,7 @@ import { createElement, VNode } from 'preact'
 import { SheetBaseValue } from './SheetBase'
 import { SheetBaseCollectionValue } from './SheetBaseCollection'
 import SheetBaseEntry, { SheetBaseEntryValue } from './SheetBaseEntry'
-import StrToVNodes from '../../components/StrToVNodes'
+import StrToVNodes from '~/components/StrToVNodes'
 
 type FieldType = 'string'|'text'|'number'|'bigint'|'boolean'|'null'|'undefined'|'html'|'ref'
 

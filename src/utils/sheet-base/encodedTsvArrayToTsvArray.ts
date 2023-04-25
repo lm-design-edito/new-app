@@ -1,4 +1,4 @@
-import { toString } from '../charcode-string'
+import { toString } from '~/utils/charcode-string'
 
 function encodedTsvArrayToTsvArray (encodedTsvArray: string[][]): string[][] {
   return encodedTsvArray.map(line => line.map(cell => {
