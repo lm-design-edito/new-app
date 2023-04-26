@@ -3,6 +3,8 @@ import { masterTransformer, PrimitiveValue as TransformerPrimitiveValue } from '
 
 type FieldValue = TransformerPrimitiveValue
   |TransformerPrimitiveValue[]
+  // |Exclude<TransformerPrimitiveValue, Base|Collection|Entry|Field>
+  // |Exclude<TransformerPrimitiveValue, Base|Collection|Entry|Field>[]
   |EntryValue
   |CollectionValue
   |BaseValue
@@ -148,6 +150,7 @@ export class Base {
 }
 
 export class Collection {
+  label = 'COLLECTION'
   static nameRegexp = /[a-zA-Z0-9\-\_]+/
   name: string
   parent: Base
@@ -210,6 +213,7 @@ export class Collection {
 }
 
 export class Entry {
+  label = 'ENTRY'
   static nameRegexp = /[a-zA-Z0-9\-\_]+/
   name: string
   parent: Collection
@@ -272,6 +276,7 @@ export class Entry {
 }
 
 export class Field {
+  label = 'FIELD'
   static nameRegexp = /[a-zA-Z0-9\-\_]+/
   name: string
   parent: Entry

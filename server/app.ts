@@ -12,9 +12,10 @@ const CWD = process.cwd()
 const abs = (...paths: string[]) => join(CWD, ...paths)
 
 const FAVICON = abs('server/favicon.ico')
-const PUBLIC = process.env.NODE_ENV === 'production'
+const ASSETS = process.env.NODE_ENV === 'production'
   ? abs('dist/prod')
   : abs('dist/dev')
+const PUBLIC = abs('public')
 const PAGES = abs('pages')
 
 const app = express()
@@ -30,6 +31,7 @@ app.use(logger('dev'))
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 app.use(cookieParser())
+app.use(express.static(ASSETS))
 app.use(express.static(PUBLIC))
 
 app.use('/favicon.ico', async (_, res) => {
@@ -52,9 +54,9 @@ app.use('/', async (req, res, next) => {
 
 const generateHomePage = (names: string[]) => `<html>
   <head><meta charsed="utf-8"></head>
-  <body>${names.map(name => (
-    `<a href="/pages/${name}">${name}</a><br />`
-  ))}</body>
+  <body>${[...names].sort().map(name => (
+    `<a href="/pages/${name}">${name}</a>`
+  )).join('<br />')}</body>
 </html>`
 
 app.use('/pages', async (req, res, next) => {

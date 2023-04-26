@@ -1,22 +1,10 @@
-import {
-  injectDefaultStyles
-} from '~/shared-utils/lm-page-styles'
-import {
-  getInlineConfigInstructrions,
-  getRemoteConfigInstructions,
-  applyConfig,
-  Instructions
-} from '~/shared-utils/lm-page-config'
-import {
-  makePageDatabase,
-  filterPageDatabase
-} from '~/shared-utils/lm-page-database'
-import {
-  flattenGetters,
-  getPageSlotsMap,
-  renderApp
-} from '~/shared-utils/lm-page-apps'
-import { createSilentLogger } from './utils/lm-page-globals'
+import { injectDefaultStyles } from '~/shared-utils/lm-page-styles'
+import { getInlineConfigInstructrions, getRemoteConfigInstructions, applyConfig, Instructions } from '~/shared-utils/lm-page-config'
+import { makePageDatabase, filterPageDatabase } from '~/shared-utils/lm-page-database'
+import { getPageSlotsMap, renderApp } from '~/shared-utils/lm-page-apps'
+import { expose, GlobalKey } from '~/shared-utils/lm-page-globals'
+import flattenGetters from '~/utils/flatten-getters'
+import Logger from '~/utils/silent-log'
 
 /* * * * * * * * * * * * * * * * * * * * * *
  * URLS
@@ -36,7 +24,8 @@ const STYLES_INDEX_URL = new URL('index.css', STYLES_URL)      // styles/index.c
 /* * * * * * * * * * * * * * * * * * * * * *
  * SILENT LOGGER
  * * * * * * * * * * * * * * * * * * * * * */
-const silentLogger = createSilentLogger()
+const silentLogger = new Logger()
+expose(GlobalKey.SILENT_LOGGER, silentLogger)
 
 /* * * * * * * * * * * * * * * * * * * * * *
  * INIT
@@ -65,6 +54,7 @@ export async function initPage () {
   const pageDatabase = inlinePageConfig.id !== undefined
     ? filterPageDatabase(unfilteredPageDatabase.clone(), inlinePageConfig.id)
     : unfilteredPageDatabase
+  expose(GlobalKey.DATABASE, pageDatabase)
   silentLogger.log('page-database/unfiltered', flattenGetters(unfilteredPageDatabase.value))
   silentLogger.log('page-database/filtered', flattenGetters(pageDatabase.value))
 

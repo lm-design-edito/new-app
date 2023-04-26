@@ -92,10 +92,10 @@ export type Props = {
   headerCustomClass?: string
   headerCustomCss?: string
   headerNavItemsAlign?: string // [WIP] more specific ? map to ArticleHeader Props?
-  onHalfVisible?: () => void
-  onHalfHidden?: () => void
-  onEndVisible?: () => void
-  onEndHidden?: () => void
+  onHalfVisible?: () => void // [WIP] keep that? Sure?
+  onHalfHidden?: () => void // [WIP] keep that? Sure?
+  onEndVisible?: () => void // [WIP] keep that? Sure?
+  onEndHidden?: () => void // [WIP] keep that? Sure?
 }
 
 /* Context stuff */

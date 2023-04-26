@@ -1,12 +1,14 @@
 import { promises as fs } from 'node:fs'
 import { join, relative, isAbsolute } from 'node:path'
-import { build, BuildOptions } from 'esbuild'
-import stylePlugin from 'esbuild-style-plugin'
-import sass from 'sass'
+import { exec } from 'node:child_process'
 import { watch } from 'chokidar'
-import { debounce } from 'throttle-debounce'
 import chalk from 'chalk'
 import { glob } from 'glob'
+import { debounce } from 'throttle-debounce'
+import { build, BuildOptions } from 'esbuild'
+import ts from 'typescript'
+import sass from 'sass'
+import stylePlugin from 'esbuild-style-plugin'
 import * as config from './config.js'
 
 /* BUNDLE OPTIONS * * * * * * * * * * * * */
@@ -43,18 +45,19 @@ async function main () {
   await makeDist()
   // Prod
   if (config.isProd) {
-    const buildTimes = await copyAndBundle({
+    const buildTimes = await copyTypeCheckAndBundle({
       fonts: true,
       assets: true,
-      scripts: true,
-      styles: true
+      styles: true,
+      typeCheck: true,
+      scripts: true
     })
     const messages = [
-      `fonts: ${buildTimes.fonts}ms`,
-      `assets: ${buildTimes.assets}ms`,
-      `styles: ${buildTimes.styles}ms`,
-      `scripts: ${buildTimes.scripts}ms`,
-      chalk.bold(`total: ${buildTimes.total}ms`)
+      `fonts:     ${buildTimes.fonts}ms`,
+      `assets:    ${buildTimes.assets}ms`,
+      `styles:    ${buildTimes.styles}ms`,
+      `scripts:   ${buildTimes.scripts}ms`,
+      chalk.bold(`total:     ${buildTimes.total}ms`)
     ]
     console.log(`\n${messages.join('\n')}\n`)
     return
@@ -64,21 +67,23 @@ async function main () {
   const pathsToBuild = {
     fonts: true,
     assets: true,
-    scripts: true,
-    styles: true
+    styles: true,
+    typeCheck: true,
+    scripts: true
   }
-  const debouncedWatchCallback = debounce(50, async () => {
-    const buildTimes = await copyAndBundle(pathsToBuild)
+  const debouncedBuilder = debounce(50, async () => {
+    const buildTimes = await copyTypeCheckAndBundle(pathsToBuild)
     pathsToBuild.fonts = false
     pathsToBuild.assets = false
-    pathsToBuild.scripts = false
     pathsToBuild.styles = false
+    pathsToBuild.typeCheck = false
+    pathsToBuild.scripts = false
     const messages = [
-      `fonts: ${buildTimes.fonts}ms`,
-      `assets: ${buildTimes.assets}ms`,
-      `styles: ${buildTimes.styles}ms`,
-      `scripts: ${buildTimes.scripts}ms`,
-      chalk.bold(`total: ${buildTimes.total}ms`)
+      `fonts:     ${buildTimes.fonts}ms`,
+      `assets:    ${buildTimes.assets}ms`,
+      `styles:    ${buildTimes.styles}ms`,
+      `scripts:   ${buildTimes.scripts}ms`,
+      chalk.bold(`total:     ${buildTimes.total}ms`)
     ]
     console.log(`\n${messages.join('\n')}\n`)
   })
@@ -92,7 +97,10 @@ async function main () {
     const isInScripts = !isInFonts && !isInAssets && !isInStyles
     if (isInFonts) { pathsToBuild.fonts = true }
     if (isInAssets) { pathsToBuild.assets = true }
-    if (isInScripts) { pathsToBuild.scripts = true }
+    if (isInScripts) {
+      pathsToBuild.typeCheck = true
+      pathsToBuild.scripts = true
+    }
     if (isInStyles) { pathsToBuild.styles = true }
     const event6char = new Array(6).fill(' ')
     event6char.splice(0, event.length, ...event.split(''))
@@ -101,7 +109,7 @@ async function main () {
       chalk.grey(path)
     ].join(' ')
     console.log(message)
-    debouncedWatchCallback()
+    debouncedBuilder()
   })
 }
 
@@ -200,6 +208,17 @@ async function getLibs () {
   return dependencies
 }
 
+async function processTypeCheck () {
+  return new Promise((resolve, reject) => {
+    exec(`tsc -p ${config.SRC_TSCONFIG} --noEmit`, (err, stdout, stderr) => {
+      if (stdout !== '') console.log(chalk.grey(stdout.trim().split('\n').map(l => `[typescript] ${l}`).join('\n')))
+      if (stderr !== '') console.log(chalk.red(stderr.trim().split('\n').map(l => `[typescript] ${l}`).join('\n')))
+      if (err !== null) console.log(chalk.red.bold(`[typescript]`, err.message.trim()))
+      resolve(true)
+    })
+  })
+}
+
 async function processScripts () {
   const appsEntryPoints: { [key: string]: string } = {}
   const appsList = await listApps()
@@ -213,17 +232,22 @@ async function processScripts () {
   libsList.forEach(libName => {
     libsEntryPoints[`lib/${libName}`] = libName
   })
-  const built = await build(bundleOptions({
-    ...appsEntryPoints,
-    ...libsEntryPoints
-  }))
-  return built
+  try {
+    const built = await build(bundleOptions({
+      ...appsEntryPoints,
+      ...libsEntryPoints
+    }))
+    return built
+  } catch (err) {
+    console.log(chalk.red.bold(err))
+  }
 }
 
-async function copyAndBundle (pathsToBuild: {
+async function copyTypeCheckAndBundle (pathsToBuild: {
   fonts: boolean,
   assets: boolean,
   scripts: boolean,
+  typeCheck: boolean,
   styles: boolean
 }) {
   const now = Date.now()
@@ -234,6 +258,9 @@ async function copyAndBundle (pathsToBuild: {
     styles: now,
     total: now
   }
+  // Typechecking is not part of the promise
+  if (pathsToBuild.typeCheck === true) { processTypeCheck() }
+  // Fonts, assets, styles and scripts are in the promise
   const fontsPromise = pathsToBuild.fonts === true ? processFonts() : new Promise(r => r(true))
   fontsPromise.then(() => { times.fonts = Date.now() - times.fonts })
   const assetsPromise = pathsToBuild.assets === true ? processAssets() : new Promise(r => r(true))
