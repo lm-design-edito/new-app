@@ -1344,6 +1344,8 @@ export default class Scrollgneugneu extends Component<Props, State> {
       styles['wrapper_hide-header'],
       wrapperBemClass.mod('hide-header').value
     )
+    console.log('RENDER')
+    console.log(wrapperClasses)
 
     // Scroll panel CSS classes
     const scrollPanelBemClass = wrapperBemClass.element('scroll-panel')

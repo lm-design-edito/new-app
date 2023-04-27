@@ -2,7 +2,17 @@ import { Component, JSX, VNode } from 'preact'
 import bem from '~/utils/bem'
 import Logo from '~/components/Logo'
 import styles from './styles.module.scss'
-import './styles.scss'
+import injectCssRule from '~/utils/dynamic-css'
+// import './styles.scss' // [WIP] removed this in order to compile successfully
+injectCssRule(`
+.lm-article-header .fill-1 {
+  fill: var(--fill-1);
+  transition: fill var(--fill-transition-time);
+}
+.lm-article-header .fill-2 {
+  fill: var(--fill-2);
+  transition: fill var(--fill-transition-time);
+}`)
 
 type NavItem = {
   value?: string

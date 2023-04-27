@@ -6,9 +6,8 @@ import chalk from 'chalk'
 import { glob } from 'glob'
 import { debounce } from 'throttle-debounce'
 import { build, BuildOptions } from 'esbuild'
-import ts from 'typescript'
 import sass from 'sass'
-import stylePlugin from 'esbuild-style-plugin'
+import { ScssModulesPlugin } from 'esbuild-scss-modules-plugin'
 import * as config from './config.js'
 
 /* BUNDLE OPTIONS * * * * * * * * * * * * */
@@ -27,7 +26,11 @@ const bundleOptions = (otherEntries: BuildOptions['entryPoints']): BuildOptions 
   treeShaking: true,
   target: ['es2020'],
   plugins: [
-    stylePlugin({ extract: false })
+    ScssModulesPlugin({
+      inject: true,
+      minify: false,
+      localsConvention: (className: any) => className
+    })
   ],
   assetNames: 'assets/[name].[hash]',
   loader: {

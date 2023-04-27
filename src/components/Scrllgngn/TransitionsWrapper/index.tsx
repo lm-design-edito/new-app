@@ -1,6 +1,7 @@
 import { Component, ComponentChildren } from 'preact'
 import { TransitionDuration, TransitionDescriptor } from '../'
 import styles from './styles.module.scss'
+console.log(styles)
 
 type UnifiedTransition = {
   className: string
