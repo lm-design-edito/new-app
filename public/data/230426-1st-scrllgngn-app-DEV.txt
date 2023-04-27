@@ -1,6 +1,3 @@
-## test
-_prop: 3
-
 // =========================================================
 # PAGE_CONFIG
   
@@ -31,14 +28,27 @@ _prop: 3
   
   ## page-1
     _id: page-1
-    _showHeader: true >>> toBoolean
-    _showNav: true >>> toBoolean
+    _showHeader: false >>> toBoolean
+    _showNav: false >>> toBoolean
     _headerLogoFill1: rgb(0, 0, 0, 1)
     _headerLogoFill2: rgb(0, 0, 0, .3)
     _chapterName: Premier chapitre
     _isChapterHead: true >>> toBoolean
     _bgColor: coral
     _blocks: scrllgngn-blocks/page-1-scrolling, scrllgngn-blocks/page-1-fixed
+      >>> split ,
+      >>> map trim
+      >>> map toRef
+  ## page-2
+    _id: page-2
+    _showHeader: false >>> toBoolean
+    _showNav: false >>> toBoolean
+    _headerLogoFill1: rgb(0, 0, 0, 1)
+    _headerLogoFill2: rgb(0, 0, 0, .3)
+    _chapterName: Premier chapitre
+    _isChapterHead: true >>> toBoolean
+    _bgColor: coral
+    _blocks: scrllgngn-blocks/page-2-scrolling, scrllgngn-blocks/page-2-fixed
       >>> split ,
       >>> map trim
       >>> map toRef
@@ -50,7 +60,7 @@ _prop: 3
     _id: page-1-scrolling
     _depth: scroll
     _type: html
-    _content: <div style="height: 100vh; width: 100%; background: white;">I am the scrolling page 1</div>
+    _content: <div style="height: 200vh; width: 100%; background: white;">I am the scrolling page 1</div>
     _layout: left-half
   
   ## page-1-fixed
@@ -58,4 +68,18 @@ _prop: 3
     _depth: front
     _type: html
     _content: <div style="width: 100%; background: transparent;">I am the fixed block of page 1</div>
+    _layout: right-half
+  
+  ## page-2-scrolling
+    _id: page-2-scrolling
+    _depth: scroll
+    _type: html
+    _content: <div style="height: 200vh; width: 100%; background: white;">I am the scrolling page 2</div>
+    _layout: left-half
+  
+  ## page-2-fixed
+    _id: page-2-fixed
+    _depth: front
+    _type: html
+    _content: <div style="width: 100%; background: transparent;">I am the fixed block of page 2</div>
     _layout: right-half

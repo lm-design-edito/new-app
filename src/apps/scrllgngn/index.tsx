@@ -56,7 +56,6 @@ function optionsToProps (options: Options): Props {
   if (typeof bgColorTransitionDuration === 'number') { props.bgColorTransitionDuration = bgColorTransitionDuration }
   if (typeof bgColorTransitionDuration === 'string') { props.bgColorTransitionDuration = bgColorTransitionDuration }
   // pages
-  console.log((pages as any[])[0])
   if (Array.isArray(pages)) { props.pages = arrayToPages(pages) }
   // headerCustomClass
   if (typeof headerCustomClass === 'string') { props.headerCustomClass = headerCustomClass }

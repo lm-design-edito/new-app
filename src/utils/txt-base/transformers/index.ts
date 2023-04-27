@@ -17,6 +17,7 @@ import split from './one-to-many/split'
 import join from './many-to-one/join'
 // Many to many transformers
 import map from './many-to-many/map'
+import randomUUID from '~/utils/random-UUID'
 
 // [WIP] transformers ideas :
 // - replace (string)
@@ -55,11 +56,11 @@ export type PrimitiveValue = string
   |Entry
   |Field
 
-type CommonTransformerStuff = {
+type CommonTransformerProperties = {
   name: string
 }
 
-export type OneToOneTransformer = CommonTransformerStuff & {
+export type OneToOneTransformer = CommonTransformerProperties & {
   type: TransformerType.ONE_TO_ONE,
   apply: (
     value: PrimitiveValue,
@@ -68,7 +69,7 @@ export type OneToOneTransformer = CommonTransformerStuff & {
   ) => PrimitiveValue
 }
 
-export type OneToManyTransformer = CommonTransformerStuff & {
+export type OneToManyTransformer = CommonTransformerProperties & {
   type: TransformerType.ONE_TO_MANY,
   apply: (
     value: PrimitiveValue,
@@ -77,7 +78,7 @@ export type OneToManyTransformer = CommonTransformerStuff & {
   ) => Array<PrimitiveValue>
 }
 
-export type ManyToOneTransformer = CommonTransformerStuff & {
+export type ManyToOneTransformer = CommonTransformerProperties & {
   type: TransformerType.MANY_TO_ONE,
   apply: (
     value: Array<PrimitiveValue>,
@@ -86,7 +87,7 @@ export type ManyToOneTransformer = CommonTransformerStuff & {
   ) => PrimitiveValue
 }
 
-export type ManyToManyTransformer = CommonTransformerStuff & {
+export type ManyToManyTransformer = CommonTransformerProperties & {
   type: TransformerType.MANY_TO_MANY,
   apply: (
     value: Array<PrimitiveValue>,
@@ -101,11 +102,11 @@ export type Transformer =
   |ManyToOneTransformer
   |ManyToManyTransformer
 
-export function makeTransformer<T extends OneToOneTransformer> (name: CommonTransformerStuff['name'], type: TransformerType.ONE_TO_ONE, apply: T['apply']): T
-export function makeTransformer<T extends OneToManyTransformer> (name: CommonTransformerStuff['name'], type: TransformerType.ONE_TO_MANY, apply: T['apply']): T
-export function makeTransformer<T extends ManyToOneTransformer> (name: CommonTransformerStuff['name'], type: TransformerType.MANY_TO_ONE, apply: T['apply']): T
-export function makeTransformer<T extends ManyToManyTransformer> (name: CommonTransformerStuff['name'], type: TransformerType.MANY_TO_MANY, apply: T['apply']): T
-export function makeTransformer<T extends Transformer> (name: CommonTransformerStuff['name'], type: TransformerType, apply: T['apply']) {
+export function makeTransformer<T extends OneToOneTransformer> (name: CommonTransformerProperties['name'], type: TransformerType.ONE_TO_ONE, apply: T['apply']): T
+export function makeTransformer<T extends OneToManyTransformer> (name: CommonTransformerProperties['name'], type: TransformerType.ONE_TO_MANY, apply: T['apply']): T
+export function makeTransformer<T extends ManyToOneTransformer> (name: CommonTransformerProperties['name'], type: TransformerType.MANY_TO_ONE, apply: T['apply']): T
+export function makeTransformer<T extends ManyToManyTransformer> (name: CommonTransformerProperties['name'], type: TransformerType.MANY_TO_MANY, apply: T['apply']): T
+export function makeTransformer<T extends Transformer> (name: CommonTransformerProperties['name'], type: TransformerType, apply: T['apply']) {
   return {
     name,
     type,
@@ -135,8 +136,8 @@ export function makeTransformer<T extends Transformer> (name: CommonTransformerS
 }
 
 export function argsStrToArgsArr (argsStr: string): string[] {
-  let replaceToken = `${crypto.randomUUID().replace(/\-/, '')}`
-  while (argsStr.includes(replaceToken)) { replaceToken = `${crypto.randomUUID().replace(/\-/, '')}` }
+  let replaceToken = `${randomUUID().replace(/\-/, '')}`
+  while (argsStr.includes(replaceToken)) { replaceToken = `${randomUUID().replace(/\-/, '')}` }
   const replacedArgsStr = argsStr.replace(/\\s/, replaceToken)
   const replacedArgsArr = replacedArgsStr.split(/\s+/)
   const argsArr = replacedArgsArr.map(argStr => {
@@ -159,14 +160,16 @@ export function masterTransformer (
     MANY_TO_ONE,
     MANY_TO_MANY
   } = TransformerType
-  const { type, apply } = transformer
+  const { type } = transformer
   if (Array.isArray(value)) {
     if (type !== MANY_TO_ONE
       && type !== MANY_TO_MANY) return value
+    const { apply } = transformer
     return apply(value, transformerArgsStr, resolve)
   } else {
     if (type !== ONE_TO_ONE
       && type !== ONE_TO_MANY) return value
+    const { apply } = transformer
     return apply(value, transformerArgsStr, resolve)
   }
 }

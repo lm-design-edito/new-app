@@ -1,5 +1,5 @@
 import { ConfigDataSource, Config as PageConfig } from '~/shared-utils/lm-page-config'
-import parseTextbase, { Base, ParserErrorLog, valueIsString, valueIsStringArr } from '~/utils/txt-base'
+import parseTextbase, { Base, ParserErrorLog, valueIsString } from '~/utils/txt-base'
 import { SheetBase, SheetBaseEntry, tsvToSheetBase as parseSheetbase } from '~/utils/sheet-base'
 
 const { isArray } = Array
@@ -70,7 +70,9 @@ export function filterPageDatabase (
       if (filter === undefined) return
       entry.delete('FILTER')
       const filterValue = filter.value
-      if (!valueIsString(filterValue) && !valueIsStringArr(filterValue)) return
+      const isString = valueIsString(filterValue)
+      const isStringArr = isArray(filterValue) && filterValue.every(valueIsString)
+      if (!isString && !isStringArr) return
       const filters = isArray(filterValue) ? filterValue : [filterValue]
       if (ids.some(id => filters.includes(id))) return
       collection.delete(entry.name)

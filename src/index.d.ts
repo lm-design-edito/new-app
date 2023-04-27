@@ -6,3 +6,7 @@ declare module "*.gif" {
   const url: string
   export default url
 }
+declare module "*.module.scss" {
+  const data: { [key: string]: string }
+  export default data
+}

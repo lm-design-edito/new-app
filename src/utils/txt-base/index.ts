@@ -1,13 +1,11 @@
 import { VNode, isValidElement } from 'preact'
 import { masterTransformer, PrimitiveValue as TransformerPrimitiveValue } from './transformers'
 
-type FieldValue = TransformerPrimitiveValue
-  |TransformerPrimitiveValue[]
-  // |Exclude<TransformerPrimitiveValue, Base|Collection|Entry|Field>
-  // |Exclude<TransformerPrimitiveValue, Base|Collection|Entry|Field>[]
+type FieldPrimitiveValue = Exclude<TransformerPrimitiveValue, Base|Collection|Entry|Field>
   |EntryValue
   |CollectionValue
   |BaseValue
+type FieldValue = FieldPrimitiveValue|FieldValue[]
 
 type EntryValue = {
   [fieldName: string]: FieldValue
@@ -21,28 +19,46 @@ type BaseValue = {
   [collectionName: string]: CollectionValue
 }
 
-const { isArray } = Array
-type FV = FieldValue
-export const valueIsString = (v: FV): v is string => (typeof v === 'string')
-export const valueIsStringArr = (v: FV): v is string[] => (isArray(v) && v.every(valueIsString))
-export const valueIsNumber = (v: FV): v is number => (typeof v === 'number')
-export const valueIsNumberArr = (v: FV): v is number[] => (isArray(v) && v.every(valueIsNumber))
-export const valueIsBoolean = (v: FV): v is boolean => (typeof v === 'boolean')
-export const valueIsBooleanArr = (v: FV): v is boolean[] => (isArray(v) && v.every(valueIsBoolean))
-export const valueIsNull = (v: FV): v is null => (v === null)
-export const valueIsNullArr = (v: FV): v is null[] => (isArray(v) && v.every(valueIsNull))
-export const valueIsHTMLElement = (v: FV): v is HTMLElement => (v instanceof HTMLElement)
-export const valueIsHTMLElementArr = (v: FV): v is HTMLElement[] => (isArray(v) && v.every(valueIsHTMLElement))
-export const valueIsVNode = (v: FV): v is VNode => isValidElement(v)
-export const valueIsVNodeArr = (v: FV): v is VNode[] => (isArray(v) && v.every(valueIsVNode))
-export const valueIsBase = (v: FV): v is Base => (v instanceof Base)
-export const valueIsBaseArr = (v: FV): v is Base[] => (isArray(v) && v.every(valueIsBase))
-export const valueIsCollection = (v: FV): v is Collection => (v instanceof Collection)
-export const valueIsCollectionArr = (v: FV): v is Collection[] => (isArray(v) && v.every(valueIsCollection))
-export const valueIsEntry = (v: FV): v is Entry => (v instanceof Entry)
-export const valueIsEntryArr = (v: FV): v is Entry[] => (isArray(v) && v.every(valueIsEntry))
-export const valueIsField = (v: FV): v is Field => (v instanceof Field)
-export const valueIsFieldArr = (v: FV): v is Field[] => (isArray(v) && v.every(valueIsField))
+export const valueIsString = (v: unknown): v is string => (typeof v === 'string')
+export const valueIsNumber = (v: unknown): v is number => (typeof v === 'number')
+export const valueIsBoolean = (v: unknown): v is boolean => (typeof v === 'boolean')
+export const valueIsNull = (v: unknown): v is null => (v === null)
+export const valueIsHTMLElement = (v: unknown): v is HTMLElement => (v instanceof HTMLElement)
+export const valueIsVNode = (v: unknown): v is VNode => isValidElement(v)
+export const valueIsBaseValue = (v: unknown): v is BaseValue => {
+  if (typeof v !== 'object') return false
+  if (v === null) return false
+  const isColl = valueIsCollectionValue
+  return Object.values(v).every(value => isColl(value))
+}
+export const valueIsCollectionValue = (v: unknown): v is CollectionValue => {
+  if (typeof v !== 'object') return false
+  if (v === null) return false
+  const isEntry = valueIsEntryValue
+  return Object.values(v).every(value => isEntry(value))
+}
+export const valueIsEntryValue = (v: unknown): v is EntryValue => {
+  if (typeof v !== 'object') return false
+  if (v === null) return false
+  const isValid = valueIsValid
+  return Object.values(v).every(value => isValid(value))
+}
+export const valueIsValidArray = (v: unknown): v is Array<FieldPrimitiveValue> => {
+  if (!Array.isArray(v)) return false
+  return v.every(item => !valueIsValidArray(item) && valueIsValid(item))
+}
+export const valueIsValid = (v: unknown): v is FieldValue => {
+  return valueIsString(v)
+    || valueIsNumber(v)
+    || valueIsBoolean(v)
+    || valueIsNull(v)
+    || valueIsHTMLElement(v)
+    || valueIsVNode(v)
+    || valueIsBaseValue(v)
+    || valueIsCollectionValue(v)
+    || valueIsEntryValue(v)
+    || valueIsValidArray(v)
+}
 
 export class Base {
   collections: Collection[]
@@ -58,7 +74,6 @@ export class Base {
     this.clone = this.clone.bind(this)
     this.resolver = this.resolver.bind(this)
   }
-
 
   get (name: Collection['name']) {
     return this.collections.find(col => col.name === name)
@@ -120,11 +135,9 @@ export class Base {
     })
     const currentItemParents = currentItem?.parents as Array<Base|Collection|Entry|Field>
     if (currentItemParents?.includes(root)) {
-      // [WIP] silent log here
       console.warn('Own descendants references are forbidden, at', root.path)
       return undefined
     } else if (currentItem === root) {
-      // [WIP] silent log here
       console.warn('Self references are forbidden, at', root.path)
       return undefined
     }
@@ -341,6 +354,13 @@ export class Field {
       || transformed instanceof Base) {
       return transformed.value
     }
+    if (Array.isArray(transformed)) return transformed.map(item => {
+      if (item instanceof Field) return item.value
+      if (item instanceof Entry) return item.value
+      if (item instanceof Collection) return item.value
+      if (item instanceof Base) return item.value
+      return item
+    })
     return transformed
   }
 
@@ -456,9 +476,9 @@ export default function parse (str: string): { result: Base, errors?: ParserErro
   }
 
   function addContent (content: string): ParsingActionResult {
-    if (currentField === null) return { error: `Cannot create content from '${content}' since there is no current field` }
+    if (currentField === null) return { error: `Cannot add content from '${content}' since there is no current field` }
     currentField.updateRaw(curr => `${curr}${content.trim()}`)
     if (currentField !== null) return { success: content }
-    return { error: `Cannot not create content from '${content}'` }
+    return { error: `Cannot not add content from '${content}'` }
   }
 }

@@ -45,18 +45,18 @@ export async function initPage () {
   // Read inline config
   const inlineConfigInstructions = getInlineConfigInstructrions()
   const inlinePageConfig = inlineConfigInstructions.toConfig()
-  silentLogger.table('page-config/inline-instructions', inlineConfigInstructions.getAll())
-  silentLogger.log('page-config/inline-config', inlinePageConfig)
+  silentLogger.log('page-config/inline-instructions', inlineConfigInstructions.getAll().map(ins => `${ins.name}: ${ins.value}`).join('\n'))
+  silentLogger.log('page-config/inline-config', JSON.stringify(inlinePageConfig, null, 2))
 
   // Load & filter data sources
   const inlineDataSources = inlinePageConfig.dataSources
   const rawPageDatabase = await makePageDatabase(inlineDataSources)
-  silentLogger.log('page-database/raw/result', flattenGetters(rawPageDatabase.result.value))
-  silentLogger.warn('page-database/raw/errors', rawPageDatabase.errors.map(error => {
+  silentLogger.warn('page-database/parsing-errors', rawPageDatabase.errors.map(error => {
     const { line, message, dataSource } = error
     const { url } = dataSource
     return `line ${line} @ ${url}\n${message}`
   }).join('\n—\n'))
+  silentLogger.log('page-database/raw', flattenGetters(rawPageDatabase.result.value))
   const pageDatabase = inlinePageConfig.id !== undefined
     ? filterPageDatabase(rawPageDatabase.result.clone(), inlinePageConfig.id)
     : rawPageDatabase.result
@@ -70,8 +70,8 @@ export async function initPage () {
     inlineConfigInstructions,
     remoteConfigInstructions)
   const pageConfig = pageConfigInstructions.toConfig()
-  silentLogger.table('page-config/remote-instructions', remoteConfigInstructions.getAll())
-  silentLogger.log('page-config/merged-config', pageConfig)
+  silentLogger.log('page-config/remote-instructions', remoteConfigInstructions.getAll().map(ins => `${ins.name}: ${ins.value}`).join('\n'))
+  silentLogger.log('page-config/merged-config', JSON.stringify(pageConfig, null, 2))
 
   // Apply config
   applyConfig(pageConfig)
