@@ -116,7 +116,7 @@ export function getInlineConfigInstructrions () {
     const optionName = configTag.getAttribute('value')
     if (optionName === null) return
     if (!isValidInlineInstructionName(optionName)) return
-    const optionValue = configTag.innerHTML
+    const optionValue = configTag.innerHTML.trim()
     pageConfigInstructions.set(optionName, optionValue)
   })
   return pageConfigInstructions

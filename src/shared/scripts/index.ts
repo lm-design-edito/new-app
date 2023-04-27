@@ -50,12 +50,17 @@ export async function initPage () {
 
   // Load & filter data sources
   const inlineDataSources = inlinePageConfig.dataSources
-  const unfilteredPageDatabase = await makePageDatabase(inlineDataSources)
+  const rawPageDatabase = await makePageDatabase(inlineDataSources)
+  silentLogger.log('page-database/raw/result', flattenGetters(rawPageDatabase.result.value))
+  silentLogger.warn('page-database/raw/errors', rawPageDatabase.errors.map(error => {
+    const { line, message, dataSource } = error
+    const { url } = dataSource
+    return `line ${line} @ ${url}\n${message}`
+  }).join('\n—\n'))
   const pageDatabase = inlinePageConfig.id !== undefined
-    ? filterPageDatabase(unfilteredPageDatabase.clone(), inlinePageConfig.id)
-    : unfilteredPageDatabase
+    ? filterPageDatabase(rawPageDatabase.result.clone(), inlinePageConfig.id)
+    : rawPageDatabase.result
   expose(GlobalKey.DATABASE, pageDatabase)
-  silentLogger.log('page-database/unfiltered', flattenGetters(unfilteredPageDatabase.value))
   silentLogger.log('page-database/filtered', flattenGetters(pageDatabase.value))
 
   // Merge remote configs

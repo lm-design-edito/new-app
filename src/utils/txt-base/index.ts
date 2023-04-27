@@ -349,60 +349,97 @@ export class Field {
   }
 }
 
-function parse (str: string) {
+type ParsingActionResult = {
+  success: Collection|Entry|Field|string
+  error?: undefined
+}|{
+  success?: undefined
+  error: string
+}
+
+export type ParserErrorLog = { line: number, message: string }
+
+export default function parse (str: string): { result: Base, errors?: ParserErrorLog[] } {
   const base = new Base()
   let currentCollection: Collection|null = null
   let currentEntry: Entry|null = null
   let currentField: Field|null = null
-
   const lines = str.split('\n')
-
   const newCollectionRegexp = new RegExp('^\\s*#\\s*' + Collection.nameRegexp.source)
   const newEntryRegexp = new RegExp('^\\s*##\\s*' + Entry.nameRegexp.source)
   const newFieldRegexp = new RegExp('^\\s*_\\s*' + Field.nameRegexp.source + '\\s*:')
   const newCommentRegexp = /^\s*\/\//
+  const errorLogs: ParserErrorLog[] = []
 
-  lines.forEach(line => {
+  lines.forEach((line, linePos) => {
     line = line.replace(/^\s*/, '')
     const isComment = newCommentRegexp.test(line)
     if (isComment) return
     if (newCollectionRegexp.test(line)) {
       const newCollectionLineMatch = line.match(newCollectionRegexp)?.[0]
-      if (newCollectionLineMatch !== undefined) addCollection(newCollectionLineMatch)
+      if (newCollectionLineMatch !== undefined) {
+        const addCollectionResult = addCollection(newCollectionLineMatch)
+        if (addCollectionResult.error !== undefined) errorLogs.push({
+          line: linePos,
+          message: addCollectionResult.error
+        })
+      }
     } else if (newEntryRegexp.test(line)) {
       const newEntryLineMatch = line.match(newEntryRegexp)?.[0]
-      if (newEntryLineMatch !== undefined) addEntry(newEntryLineMatch)
+      if (newEntryLineMatch !== undefined) {
+        const addEntryResult = addEntry(newEntryLineMatch)
+        if (addEntryResult.error !== undefined) errorLogs.push({
+          line: linePos,
+          message: addEntryResult.error
+        })
+      }
     } else if (newFieldRegexp.test(line)) {
       const newFieldLineMatch = line.match(newFieldRegexp)?.[0]
       if (newFieldLineMatch !== undefined) {
-        addField(newFieldLineMatch)
+        const addFieldResult = addField(newFieldLineMatch)
+        if (addFieldResult.error !== undefined) errorLogs.push({
+          line: linePos,
+          message: addFieldResult.error
+        })
         const content = line.replace(newFieldLineMatch, '')
-        addContent(content)
+        const addContentResult = addContent(content)
+        if (addContentResult.error !== undefined) errorLogs.push({
+          line: linePos,
+          message: addContentResult.error
+        })
       }
     } else {
-      addContent(line)
+      const addContentResult = addContent(line)
+      if (addContentResult.error !== undefined) errorLogs.push({
+        line: linePos,
+        message: addContentResult.error
+      })
     }
   })
 
-  return base
+  if (errorLogs.length === 0) return { result: base }
+  return { result: base, errors: errorLogs }
 
   /* Hoisted helper functions */
 
-  function addCollection (matched: string) {
+  function addCollection (matched: string): ParsingActionResult {
     const collectionName = matched.trim().replace(/^#\s*/, '')
     currentCollection = base.create(collectionName.trim())
+    if (currentCollection !== null) return { success: currentCollection }
+    return { error: `Cannot not create a collection from '${matched}'` }
   }
 
-  function addEntry (matched: string) {
+  function addEntry (matched: string): ParsingActionResult {
     // [WIP] silent log here
-    if (currentCollection === null) return console.warn('Cannot create entry since there is no current collection')
     const entryName = matched.trim().replace(/^##\s*/, '')
+    if (currentCollection === null) return { error: `Cannot create entry from '${matched}' since there is no current collection` }
     currentEntry = currentCollection.create(entryName.trim())
+    if (currentEntry !== null) return { success: currentEntry }
+    return { error: `Cannot not create an entry from '${matched}'` }
   }
 
-  function addField (matched: string) {
-    // [WIP] silent log here
-    if (currentEntry === null) return console.warn('Cannot create field since there is no current entry')
+  function addField (matched: string): ParsingActionResult {
+    if (currentEntry === null) return { error: `Cannot create field from '${matched}' since there is no current entry` }
     const fieldNameWithType = matched
       .trim()
       .replace(/^_/, '')
@@ -414,13 +451,14 @@ function parse (str: string) {
       ? fieldNameWithType
       : fieldNameWithType.replace(/:[a-z]+$/, '')
     currentField = currentEntry.create(fieldName.trim(), '')
+    if (currentField !== null) return { success: currentField }
+    return { error: `Cannot not create a field from '${matched}'` }
   }
 
-  function addContent (content: string) {
-    // [WIP] silent log here
-    if (currentField === null) return console.warn('Cannot create content since there is no current field')
+  function addContent (content: string): ParsingActionResult {
+    if (currentField === null) return { error: `Cannot create content from '${content}' since there is no current field` }
     currentField.updateRaw(curr => `${curr}${content.trim()}`)
+    if (currentField !== null) return { success: content }
+    return { error: `Cannot not create content from '${content}'` }
   }
 }
-
-export default parse

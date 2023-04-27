@@ -109,7 +109,7 @@ export default class Logger {
       threadName = threadName !== '' ? threadName : 'GENERAL'
       console.log(`%c${threadName}`, 'font-weight: 800;');
       [...logs].sort((a, b) => (a.time.getTime() - b.time.getTime())).forEach(log => {
-        const displayTime = log.time.toLocaleDateString(navigator.language, {
+        const displayTime = log.time.toLocaleDateString('en-US', {
           year: 'numeric',
           month: 'short',
           day: 'numeric',

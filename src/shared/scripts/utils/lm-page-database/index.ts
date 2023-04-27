@@ -1,6 +1,6 @@
-import { Config as PageConfig } from '~/shared-utils/lm-page-config'
-import parseTextbase, { Base, valueIsString, valueIsStringArr } from '~/utils/txt-base'
-import { SheetBaseEntry, tsvToSheetBase as parseSheetbase } from '~/utils/sheet-base'
+import { ConfigDataSource, Config as PageConfig } from '~/shared-utils/lm-page-config'
+import parseTextbase, { Base, ParserErrorLog, valueIsString, valueIsStringArr } from '~/utils/txt-base'
+import { SheetBase, SheetBaseEntry, tsvToSheetBase as parseSheetbase } from '~/utils/sheet-base'
 
 const { isArray } = Array
 
@@ -24,11 +24,23 @@ export async function makePageDatabase (dataSources: PageConfig['dataSources'] =
     }
   }))
   const pageDatabase = new Base()
+  const parsingErrors: Array<ParserErrorLog & { dataSource: ConfigDataSource }> = []
   dataset.forEach(dataSource => {
     if (dataSource.data === null) return
-    const currentBase = dataSource.type === 'sheet'
+    const parsingResult = dataSource.type === 'sheet'
       ? parseSheetbase(dataSource.data)
       : parseTextbase(dataSource.data)
+    const currentBase = parsingResult instanceof SheetBase
+      ? parsingResult
+      : parsingResult.result
+    if (!(parsingResult instanceof SheetBase)) {
+      const errors = parsingResult.errors
+      if (errors !== undefined) parsingErrors.push(...errors.map(error => ({
+        line: error.line,
+        message: error.message,
+        dataSource
+      })))
+    }
     currentBase.collections.forEach(collection => {
       const pageCollection = pageDatabase.create(collection.name)
       collection.entries.forEach(entry => {
@@ -42,7 +54,7 @@ export async function makePageDatabase (dataSources: PageConfig['dataSources'] =
       })
     })
   })
-  return pageDatabase
+  return { result: pageDatabase, errors: parsingErrors }
 }
 
 /* * * * * * * * * * * * * * * * * * * *
