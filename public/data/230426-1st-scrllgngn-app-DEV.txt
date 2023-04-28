@@ -28,8 +28,8 @@
   
   ## page-1
     _id: page-1
-    _showHeader: false >>> toBoolean
-    _showNav: false >>> toBoolean
+    _showHeader: true >>> toBoolean
+    _showNav: true >>> toBoolean
     _headerLogoFill1: rgb(0, 0, 0, 1)
     _headerLogoFill2: rgb(0, 0, 0, .3)
     _chapterName: Premier chapitre
@@ -39,13 +39,14 @@
       >>> split ,
       >>> map trim
       >>> map toRef
+  
   ## page-2
     _id: page-2
-    _showHeader: false >>> toBoolean
-    _showNav: false >>> toBoolean
+    _showHeader: true >>> toBoolean
+    _showNav: true >>> toBoolean
     _headerLogoFill1: rgb(0, 0, 0, 1)
     _headerLogoFill2: rgb(0, 0, 0, .3)
-    _chapterName: Premier chapitre
+    _chapterName: Deuze chapitre
     _isChapterHead: true >>> toBoolean
     _bgColor: coral
     _blocks: scrllgngn-blocks/page-2-scrolling, scrllgngn-blocks/page-2-fixed

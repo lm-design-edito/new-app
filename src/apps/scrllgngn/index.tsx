@@ -92,7 +92,7 @@ function arrayToPages (array: unknown[]): PropsPageData[] {
       } = pageData
       // id
       if (typeof id === 'string') { extractedPage.id = id }
-      // showHeader
+      // showHeader [WIP] better inference than typeof === 'boolean'
       if (typeof showHeader === 'boolean') { extractedPage.showHeader = showHeader }
       // showNav
       if (typeof showNav === 'boolean') { extractedPage.showNav = showNav }
@@ -139,30 +139,48 @@ function arrayToBlocks (array: unknown[]): PropsBlockData[] {
         transitions,
         mobileTransitions
       } = blockData
+      // depth?: 'scroll'
       if (depth === 'scroll' || depth === undefined) {
+        const lol = depth
         const extractedScrollBlock: PropsScrollBlockData = {}
         extractedScrollBlock.depth = depth
+        // id
         if (typeof id === 'string') { extractedScrollBlock.id = id }
+        // zIndex
         if (typeof zIndex === 'string') { extractedScrollBlock.zIndex = parseInt(zIndex) }
         if (typeof zIndex === 'number') { extractedScrollBlock.zIndex = zIndex }
+        // type
         if (type === 'html' || type === 'module') { extractedScrollBlock.type = type }
+        // content
         if (typeof content === 'string') { extractedScrollBlock.content = content }
+        // trackScroll
         if (typeof trackScroll === 'boolean') { extractedScrollBlock.trackScroll = trackScroll }
+        // layout
         if (typeof layout === 'string') { extractedScrollBlock.layout = layout as LayoutName }
+        // mobileLayout
         if (typeof mobileLayout === 'string') { extractedScrollBlock.mobileLayout = mobileLayout as LayoutName }
         extractedBlocks.push(extractedScrollBlock)
       
+      // depth
       } else if (depth === 'front' || depth === 'back') {
         const extractedStickyBlock: PropsStickyBlockData = { depth: 'back' }
         extractedStickyBlock.depth = depth
+        // id
         if (typeof id === 'string') { extractedStickyBlock.id = id }
+        // zIndex
         if (typeof zIndex === 'string') { extractedStickyBlock.zIndex = parseInt(zIndex) }
         if (typeof zIndex === 'number') { extractedStickyBlock.zIndex = zIndex }
+        // type
         if (type === 'html' || type === 'module') { extractedStickyBlock.type = type }
+        // content
         if (typeof content === 'string') { extractedStickyBlock.content = content }
+        // trackScroll
         if (typeof trackScroll === 'boolean') { extractedStickyBlock.trackScroll = trackScroll }
+        // layout
         if (typeof layout === 'string') { extractedStickyBlock.layout = layout as LayoutName }
+        // mobileLayout
         if (typeof mobileLayout === 'string') { extractedStickyBlock.mobileLayout = mobileLayout as LayoutName }
+        // transitions
         if (Array.isArray(transitions)) {
           const extractedTransitions: TransitionDescriptor[] = []
           transitions.forEach(transitionDescriptor => {
@@ -178,6 +196,7 @@ function arrayToBlocks (array: unknown[]): PropsBlockData[] {
           })
           extractedStickyBlock.transitions = extractedTransitions
         }
+        // Mobile transitions
         if (Array.isArray(mobileTransitions)) {
           const extractedMobileTransitions: TransitionDescriptor[] = []
           mobileTransitions.forEach(transitionDescriptor => {

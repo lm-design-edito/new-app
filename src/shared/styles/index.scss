@@ -1,8 +1,8 @@
-body {
-  background-color: red;
-}
-
 .lm-page-config,
 .lm-app-config {
   display: none;
+}
+
+:where(.lm-app *) {
+  box-sizing: border-box;
 }

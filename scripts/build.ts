@@ -7,7 +7,8 @@ import { glob } from 'glob'
 import { debounce } from 'throttle-debounce'
 import { build, BuildOptions } from 'esbuild'
 import sass from 'sass'
-import { ScssModulesPlugin } from 'esbuild-scss-modules-plugin'
+import { sassPlugin, postcssModules } from 'esbuild-sass-plugin'
+// import { ScssModulesPlugin } from 'esbuild-scss-modules-plugin'
 import * as config from './config.js'
 
 /* BUNDLE OPTIONS * * * * * * * * * * * * */
@@ -24,12 +25,17 @@ const bundleOptions = (otherEntries: BuildOptions['entryPoints']): BuildOptions 
   minify: true,
   sourcemap: true,
   treeShaking: true,
+  logLevel: 'info',
   target: ['es2020'],
   plugins: [
-    ScssModulesPlugin({
-      inject: true,
-      minify: false,
-      localsConvention: (className: any) => className
+    sassPlugin({
+      type: 'style',
+      filter: /style(s)?\.module\.scss/,
+      transform: postcssModules({})
+    }),
+    sassPlugin({
+      type: 'style',
+      filter: /style(s)?\.scss/
     })
   ],
   assetNames: 'assets/[name].[hash]',
@@ -37,7 +43,12 @@ const bundleOptions = (otherEntries: BuildOptions['entryPoints']): BuildOptions 
     '.svg': 'file',
     '.jpg': 'file',
     '.png': 'file',
-    '.gif': 'file'
+    '.gif': 'file',
+    '.module.scss': 'json',
+    '.scss': 'file'
+  },
+  define: {
+    'process.env.NODE_ENV': `"${process.env.NODE_ENV ?? 'developpment'}"`
   }
 })
 

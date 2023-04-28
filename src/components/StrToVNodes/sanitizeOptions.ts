@@ -1,6 +1,7 @@
 import { Options as SanitizeOptions } from '~/utils/clientside-html-sanitizer'
+import replaceAll from '~/utils/replace-all'
 
-// [WIP] not so sure about hostnameIsProd
+// [WIP] not so sure about hostnameIsProd stuff
 const { hostname, search } = window.location
 const hostnameIsProd = hostname === 'lemonde.fr' || hostname === 'www.lemonde.fr'
 const explicitSanitizeSearchQuery = search.match(/lm_verbose_sanitize=true/) !== null
@@ -16,14 +17,13 @@ const defaultSanitizeOptions: SanitizeOptions = {
       const matchProtocol = match.match(new RegExp(`${uriAllowedCharacters}*:\/\/`, 'igm'))
       if (matchProtocol === null) {
         if (verboseSanitize) console.warn('Stripped non-https URL pattern:', match)
-        // [WIP] replaceAll is not part of ES2020, should find a workaround
-        returned = returned.replaceAll(match, '')
+        returned = replaceAll(returned, match, '')
         return
       }
       const matchProtocolIsHttps = matchProtocol.every(matchedProtocol => matchedProtocol.match(/^https:\/\/$/))
       if (!matchProtocolIsHttps) {
         if (verboseSanitize) console.warn('Stripped non-https URL pattern:', match)
-        returned = returned.replaceAll(match, '')
+        returned = replaceAll(returned, match, '')
         return
       }
       const isLemondeUrl = match.match(/^https\:\/\/lemonde\.fr/) !== null
@@ -34,7 +34,7 @@ const defaultSanitizeOptions: SanitizeOptions = {
       const urlIsAllowed = isLemondeUrl || isWwwLemondeUrl || isAssetsUrl || isImgLemdeUrl || isVimeo
       if (!urlIsAllowed) {
         if (verboseSanitize) console.warn('Stripped forbidden URL host:', match)
-        returned = returned.replaceAll(match, '')
+        returned = replaceAll(returned, match, '')
       }
     })
     return returned

@@ -1,10 +1,10 @@
-import { injectDefaultStyles } from '~/shared-utils/lm-page-styles'
 import { getInlineConfigInstructrions, getRemoteConfigInstructions, applyConfig, Instructions } from '~/shared-utils/lm-page-config'
 import { makePageDatabase, filterPageDatabase } from '~/shared-utils/lm-page-database'
 import { getPageSlotsMap, renderApp } from '~/shared-utils/lm-page-apps'
 import { expose, GlobalKey } from '~/shared-utils/lm-page-globals'
 import flattenGetters from '~/utils/flatten-getters'
 import Logger from '~/utils/silent-log'
+import { injectStylesheet } from '~/utils/dynamic-css'
 
 /* * * * * * * * * * * * * * * * * * * * * *
  * URLS
@@ -20,6 +20,7 @@ const SHARED_URL = new URL('shared/', ROOT_URL)                // shared/
 const SCRIPTS_INDEX_URL = new URL(import.meta.url)             // scripts/index.js
 const STYLES_URL = new URL('styles/', SHARED_URL)              // styles/
 const STYLES_INDEX_URL = new URL('index.css', STYLES_URL)      // styles/index.css
+const STYLES_DEV_URL = new URL('developpment.css', STYLES_URL) // styles/developpment.css
 
 /* * * * * * * * * * * * * * * * * * * * * *
  * SILENT LOGGER
@@ -37,10 +38,19 @@ export async function initPage () {
   silentLogger.log('page-init', `Start init the page from ${SCRIPTS_INDEX_URL.toString()}`)
 
   // Load styles (dont await)
-  injectDefaultStyles(STYLES_INDEX_URL).then(res => {
-    if (typeof res === 'string') return;
-    silentLogger.error('page-styles', res)
+  // [WIP] could be dynamically imported instead?
+  injectStylesheet(STYLES_INDEX_URL, STYLES_INDEX_URL.toString())
+    .then(res => {
+      if (typeof res === 'string') return;
+      silentLogger.error('page-styles', res)
   })
+  if (process.env.NODE_ENV === 'developpment') {
+    injectStylesheet(STYLES_DEV_URL, STYLES_DEV_URL.toString())
+      .then(res => {
+        if (typeof res === 'string') return;
+        silentLogger.error('page-styles', res)
+    })
+  }
 
   // Read inline config
   const inlineConfigInstructions = getInlineConfigInstructrions()

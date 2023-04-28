@@ -7,7 +7,7 @@ import { throttle } from '~/utils/throttle-debounce'
 import clamp from '~/utils/clamp'
 import bem from '~/utils/bem'
 import isFalsy from '~/utils/is-falsy'
-import injectCssRule from '~/utils/dynamic-css' // [WIP] use injectCssRule everywhere
+import { injectCssRule } from '~/utils/dynamic-css' // [WIP] use injectCssRule everywhere
 import TransitionsWrapper from './TransitionsWrapper'
 import BlockRenderer from './BlockRenderer'
 import styles from './styles.module.scss'
