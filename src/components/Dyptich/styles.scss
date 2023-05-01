@@ -1,0 +1,46 @@
+.lm-dyptich__separated-slot {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  position: relative;
+}
+
+.lm-dyptich__left-slot,
+.lm-dyptich__right-slot {
+  width: 50%;
+  position: relative;
+
+  > * {
+    max-width: 100%;
+  }
+}
+
+.lm-dyptich__description-slot {
+  margin-top: 8px;
+}
+
+.lm-dyptich_mobile-behavior-stack {
+  @media screen and (max-width: 800px) {
+    .lm-dyptich__separated-slot {
+      flex-direction: column;
+    }
+    .lm-dyptich__left-slot,
+    .lm-dyptich__right-slot {
+      width: 100%;
+    }
+  }
+}
+
+.lm-dyptich_mobile-behavior-merge {
+  .lm-dyptich__separated-slot { display: flex; }
+  .lm-dyptich__merged-slot { display: none; }
+
+  @media screen and (max-width: 800px) {
+    .lm-dyptich__separated-slot { display: none; }
+    .lm-dyptich__merged-slot { display: block; }
+  }
+}
+
+.lm-dyptich__image {
+  width: 100%;
+}

@@ -1,0 +1,83 @@
+.wrapper {
+  position: relative;
+  margin-top: 60px;
+}
+
+@media screen and (max-width: 800px) {
+  .wrapper {
+    margin-top: 40px;
+  }
+}
+
+.scrollable {
+  overflow-x: scroll;
+  scroll-behavior: smooth;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.cards {
+  width: fit-content;
+  margin: 0 auto;
+  display: grid;
+  grid-gap: var(--card-gap);
+  grid-template-columns: repeat(var(--cards-nb), var(--card-width));
+}
+
+.arrow {
+  cursor: pointer;
+  background-color: var(--footer-c-lightest);
+  height: 42px;
+  width: 42px;
+  border-radius: 42px;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  transition: background-color 400ms, opacity 200ms 100ms;
+  opacity: 0;
+  pointer-events: none;
+  display: none;
+
+  // [WIP] plutôt utiliser des modifieurs dans ce cas, genre .arrow.arrow_left, .arrow.arrow_visible, etc
+  &-left {
+    left: 12px;
+  }
+
+  &-right {
+    right: 12px;
+  }
+
+  &-visible {
+    pointer-events: initial;
+    opacity: 1;
+  }
+
+  @media (hover: hover) {
+    &:hover {
+      background-color: var(--footer-c-light);
+    }
+  }
+}
+
+.wrapper_overflowing {
+  .cards {
+    padding: 0 40px;
+    grid-gap: var(--card-gap);
+  }
+
+  .arrow {
+    display: flex;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .wrapper_overflowing {
+    .cards {
+      padding: 0 20px;
+    }
+  }
+}

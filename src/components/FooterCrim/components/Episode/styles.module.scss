@@ -1,0 +1,90 @@
+.episode {
+  &_card {
+    display: grid;
+    position: relative;
+
+    >* {
+      grid-area: 1 / -1;
+    }
+
+    a {
+      border-bottom: 0 !important;
+      color: #fff !important;
+    }
+  }
+
+  &_cover {
+    position: relative;
+
+    img {
+      max-width: 100%;
+    }
+  }
+
+  &_text-top {
+    margin-bottom: 4px;
+  }
+
+  &_text-card {
+    transition: transform 200ms;
+    position: absolute;
+    bottom: 0;
+  }
+
+  &_text-bottom {
+    margin-top: 4px;
+  }
+}
+
+.episode-published {
+
+  .episode_cover::after {
+    content: '';
+    display: block;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    opacity: 0.9;
+    box-shadow: 0 -100px 100px 0 var(--footer-c-background) inset;
+    transition: box-shadow 200ms;
+  }
+
+  @media (hover: hover) {
+    .episode_card:hover {
+
+      .episode_cover::after {
+        box-shadow: 0 -120px 100px 0 var(--footer-c-background) inset;
+      }
+
+      .episode_text-card {
+        transform: translateY(-8px);
+      }
+    }
+  }
+}
+
+.episode:not(.episode-published) {
+  .episode {
+    &_text-card {
+      opacity: 0.4;
+    }
+
+    &_card {
+      pointer-events: none;
+    }
+
+    &_cover::after {
+      content: '';
+      display: block;
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      background: var(--footer-c-background);
+      opacity: 0.9;
+    }
+  }
+}

@@ -1,0 +1,35 @@
+.lm-image-fader__preload {
+  display: none;
+}
+
+.lm-image-fader__image {
+  position: absolute;
+  opacity: 0;
+
+  &.lm-image-fader__image_hide {
+    z-index: 1;
+    opacity: 0;
+    transition: unset;
+  }
+
+  &.lm-image-fader__image_previous {
+    z-index: 2;
+    opacity: 0;
+    transition: opacity var(--animation-duration) var(--animation-duration);
+  }
+
+  &.lm-image-fader__image_pre-current {
+    opacity: 0;
+  }
+
+  &.lm-image-fader__image_current {
+    z-index: 3;
+    opacity: 1;
+    transition: var(--animation-duration);
+
+    &.lm-image-fader__image_single {
+      opacity: 1;
+      transition: unset;
+    }
+  }
+}

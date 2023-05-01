@@ -1,0 +1,46 @@
+.wrapper {
+  display: grid;
+  grid-auto-columns: min-content;
+  grid-auto-rows: min-content;
+}
+
+.before {
+  grid-column: 1/2;
+}
+
+.above,
+.below,
+.image-wrapper {
+  grid-column: 2/3;
+}
+
+.after {
+  grid-column: 3/4;
+}
+
+.before,
+.after,
+.image-wrapper {
+  display: grid;
+
+  >* {
+    grid-area: 1/-1;
+  }
+
+  img {
+    max-width: 100%;
+  }
+}
+
+.image-wrapper {
+  width: max-content;
+  max-width: var(--footer-img-max-width);
+}
+
+.center {
+  align-self: center;
+}
+
+.bottom {
+  align-self: flex-end;
+}

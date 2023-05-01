@@ -228,6 +228,7 @@ async function processTypeCheck () {
       if (stdout !== '') console.log(chalk.grey(stdout.trim().split('\n').map(l => `[typescript] ${l}`).join('\n')))
       if (stderr !== '') console.log(chalk.red(stderr.trim().split('\n').map(l => `[typescript] ${l}`).join('\n')))
       if (err !== null) console.log(chalk.red.bold(`[typescript]`, err.message.trim()))
+      if (err === null && stderr === '') console.log(chalk.green.bold(`[typescript] compiled with no errors`))
       resolve(true)
     })
   })

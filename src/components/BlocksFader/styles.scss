@@ -1,0 +1,39 @@
+.lm-blocks-fader__blocks {
+  position: relative;
+}
+
+.lm-blocks-fader__block {
+  position: absolute;
+  opacity: 0;
+  width: 100%;
+
+  &.lm-blocks-fader__block_hide {
+    z-index: 1;
+    opacity: 0;
+    transition: unset;
+  }
+
+  &.lm-blocks-fader__block_previous {
+    z-index: 2;
+    opacity: 0;
+    transition:
+      opacity
+      var(--animation-duration)
+      calc(var(--animation-duration) + var(--fade-in-delay));
+  }
+
+  &.lm-blocks-fader__block_pre-current {
+    opacity: 0;
+  }
+
+  &.lm-blocks-fader__block_current {
+    z-index: 3;
+    opacity: 1;
+    transition: opacity var(--animation-duration);
+
+    &.lm-blocks-fader__block_single {
+      opacity: 1;
+      transition: unset;
+    }
+  }
+}

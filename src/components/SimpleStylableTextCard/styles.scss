@@ -1,0 +1,125 @@
+// .lm-simple-stylable-text-card {
+//   background-color: white;
+//   padding: 20px;
+//   max-width: 400px;
+//   text-align: var(--text-align);
+
+//   font-family: var(--ff-the-antiqua-b);
+//   font-weight: 500;
+//   font-size: 14px;
+//   line-height: 1.5;
+//   color: #383F4E;
+
+//   @media screen and (max-width: 800px) {
+//     font-size: 13px;
+//   }
+
+//   > span > * {
+//     margin-bottom: 16px;
+//     display: block;
+
+//     &:last-child {
+//       margin-bottom: unset;
+//     }
+//   }
+
+//   label {
+//     font-family: var(--ff-marr-sans-condensed);
+//     text-transform: uppercase;
+//     font-weight: 500;
+//     font-size: 15px;
+//     line-height: 1;
+//     letter-spacing: calc(1em / 18);
+//     color: #717B8E;
+
+//     @media screen and (max-width: 1200px) {
+//       font-size: 13.5px;
+//     }
+
+//     @media screen and (max-width: 800px) {
+//       font-size: 12px;
+//     }
+
+//     &.big {
+//       font-size: 18px;
+
+//       @media screen and (max-width: 1200px) {
+//         font-size: 16px;
+//       }
+
+//       @media screen and (max-width: 800px) {
+//         font-size: 14px;
+//       }
+//     }
+//   }
+
+//   h1 {
+//     font-family: var(--ff-marr-sans-condensed);
+//     font-weight: 800;
+//     font-size: 54px;
+//     line-height: 1.1;
+//     color: #2A303C;
+
+//     @media screen and (max-width: 1200px) {
+//       font-size: 44px;
+//     }
+
+//     @media screen and (max-width: 800px) {
+//       font-size: 34px;
+//     }
+//   }
+
+//   p {
+//     font-family: var(--ff-the-antiqua-b);
+//     font-size: 14px;
+//     font-weight: 500;
+//     line-height: 1.5;
+//     color: #383F4E;
+
+//     a {
+//       border-bottom: 1px solid #a4a9b4 !important;
+
+//       &:hover {
+//         border-bottom-color: #0070b2 !important;
+//       }
+//     }
+
+//     @media screen and (max-width: 1200px) {
+//       font-size: 13.5px;
+//     }
+
+//     @media screen and (max-width: 800px) {
+//       font-size: 13px;
+//     }
+
+//     &.big {
+//       font-size: 18px;
+
+//       @media screen and (max-width: 1200px) {
+//         font-size: 16px;
+//       }
+
+//       @media screen and (max-width: 800px) {
+//         font-size: 14px;
+//       }
+//     }
+//   }
+
+//   blockquote {
+//     font-family: var(--ff-marr-sans-condensed);
+//     font-weight: 600;
+//     font-size: 22px;
+//     line-height: 1.1;
+//     color: #2A303C;
+//     margin-left: 0;
+//     margin-right: 0;
+
+//     @media screen and (max-width: 1200px) {
+//       font-size: 21px;
+//     }
+
+//     @media screen and (max-width: 800px) {
+//       font-size: 20px;
+//     }
+//   }
+// }

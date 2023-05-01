@@ -1,0 +1,31 @@
+.lm-layout-scrollator {
+  position: relative;
+  transition: background-color var(--bg-fade-transition-duration);
+}
+
+.lm-layout-scrollator__fixed-blocks-slot {
+  position: sticky;
+  top: 0;
+  left: 0;
+  width: 100%;
+}
+
+.lm-blocks-fader__blocks {
+  z-index: 2;
+}
+
+.lm-layout-scrollator__dirty-intermediate-layer-slot {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 3;
+}
+
+.lm-layout-scrollator__content-slot {
+  position: relative;
+}
+
+.lm-layout-scrollator-page .lm-simple-stylable-text-card {
+  z-index: 4;
+}

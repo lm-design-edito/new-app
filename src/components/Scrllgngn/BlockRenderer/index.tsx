@@ -1,5 +1,5 @@
 import { Component } from 'preact'
-import { BlockContext } from '../'
+import { BlockContext } from '..'
 import HtmlBlockRenderer from './HtmlBlockRenderer'
 import ModuleBlockRenderer from './ModuleBlockRenderer'
 // [WIP] Scrllgngn should not implement StopMotion like this
@@ -12,18 +12,14 @@ type Props = {
   cssLoader?: (url: string) => Promise<void>
 }
 
-const allowedTypes: Props['type'][] = ['html', 'module', undefined]
-
 export default class BlockRenderer extends Component<Props> {
   render() {
     const { props } = this
     const { type, content, context, cssLoader } = props
-    if (!allowedTypes.includes(type)) console.warn(`BlockRenderer: Unknown block type: ${type}`)
     switch (type) {
       case 'html':
       case undefined: return <HtmlBlockRenderer content={content} />
       case 'module':
-        // [WIP] remove this
         const stopMotionDetectionRegexp = /^\[\[STOP-MOTION\]\]/
         if (content?.match(stopMotionDetectionRegexp)) {
           const stopMotionPropsStr = content
@@ -33,6 +29,7 @@ export default class BlockRenderer extends Component<Props> {
             length: 1,
             startIndex: 0,
             padding: 0,
+            mobilePadding: undefined,
             urlTemplate: 'https://lemonde.fr/img-{%}.jpg'
           }
           try {
@@ -42,14 +39,25 @@ export default class BlockRenderer extends Component<Props> {
             if (Array.isArray(parsed)) break;
             if (typeof parsed.length === 'number') stopMotionProps.length = parsed.length
             if (typeof parsed.padding === 'number') stopMotionProps.padding = parsed.padding
+            if (typeof parsed.mobilePadding === 'number') stopMotionProps.mobilePadding = parsed.mobilePadding
             if (typeof parsed.startIndex === 'number') stopMotionProps.startIndex = parsed.startIndex
             if (typeof parsed.urlTemplate === 'string') stopMotionProps.urlTemplate = parsed.urlTemplate
-          } catch (err) { }
+          } catch (err) {
+            console.warn(err)
+          }
 
           const progression = context?.progression
 
-          const width = context?.width ? (context?.width - stopMotionProps.padding * 2) : context?.width
-          const height = context?.height ? (context?.height - stopMotionProps.padding * 2) : context?.height
+          // [WIP] passer padding et mobilePadding en variables css 
+          // et assigner une classe au wrapper en fonction de
+          // window.innerWidth > 1025 ?
+          const padding = window.innerWidth < 1025
+            && stopMotionProps.mobilePadding != undefined 
+            ? stopMotionProps.mobilePadding 
+            : stopMotionProps.padding
+
+          const width = context?.width ? (context?.width - padding * 2) : context?.width
+          const height = context?.height ? (context?.height - padding * 2) : context?.height
 
           const images = new Array(stopMotionProps.length).fill(null).map((e, pos) => {
             const { startIndex, urlTemplate } = stopMotionProps

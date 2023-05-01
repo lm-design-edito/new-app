@@ -1,0 +1,16 @@
+.lm-fancy-hoverable-text {
+  position: relative;
+}
+
+.lm-fancy-hoverable-text__shadow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.lm-fancy-hoverable-text__fill {
+  position: relative;
+  color: transparent;
+}
