@@ -21,7 +21,7 @@
     "paths": {
       "~/apps/*": ["apps/*"],
       "~/components/*": ["components/*"],
-      "~/shared-utils/*": ["shared/scripts/utils/*"],
+      "~/shared/*": ["shared/utils/*"],
       "~/utils/*": ["utils/*"],
     }
   }

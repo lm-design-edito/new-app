@@ -1,4 +1,4 @@
-import { Config } from '~/shared-utils/lm-page-config'
+import { Config } from '~/shared/lm-page-config'
 import Logger from '~/utils/silent-log'
 import strToNodes from '~/utils/str-to-nodes'
 import { Collection } from '~/utils/txt-base'
@@ -170,7 +170,7 @@ export type Renderer = (appOptions: Omit<RenderOptions, 'name'>) => void
 export async function renderApp ({ name, options, root, pageConfig, silentLogger }: RenderOptions) {
   // Load renderer
   let renderer: Renderer|null = null
-  if (name === Names.SCRLLGNGN) { renderer = (await import('../../../../apps/scrllgngn')).default }
+  if (name === Names.SCRLLGNGN) { renderer = (await import('../../../apps/scrllgngn')).default }
   if (renderer === null) throw new Error(`Could not find a renderer for an app named ${name}`)
   // Add lm-app-root class on the root
   root.classList.add('lm-app-root')

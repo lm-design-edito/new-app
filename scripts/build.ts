@@ -8,14 +8,13 @@ import { debounce } from 'throttle-debounce'
 import { build, BuildOptions } from 'esbuild'
 import sass from 'sass'
 import { sassPlugin, postcssModules } from 'esbuild-sass-plugin'
-// import { ScssModulesPlugin } from 'esbuild-scss-modules-plugin'
 import * as config from './config.js'
 
 /* BUNDLE OPTIONS * * * * * * * * * * * * */
 const bundleOptions = (otherEntries: BuildOptions['entryPoints']): BuildOptions => ({
   outdir: config.DST,
   entryPoints: {
-    'shared/scripts/index': config.SRC_SCRIPT,
+    'shared/index': config.SRC_SCRIPT,
     ...otherEntries,
   },
   format: 'esm',

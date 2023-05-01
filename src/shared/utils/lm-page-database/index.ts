@@ -1,4 +1,4 @@
-import { ConfigDataSource, Config as PageConfig } from '~/shared-utils/lm-page-config'
+import { ConfigDataSource, Config as PageConfig } from '~/shared/lm-page-config'
 import parseTextbase, { Base, ParserErrorLog, valueIsString } from '~/utils/txt-base'
 import { SheetBase, SheetBaseEntry, tsvToSheetBase as parseSheetbase } from '~/utils/sheet-base'
 

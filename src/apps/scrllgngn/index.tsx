@@ -1,5 +1,5 @@
 import { render } from 'preact'
-import { Options, Renderer } from 'shared/scripts/utils/lm-page-apps'
+import { Options, Renderer } from 'shared/utils/lm-page-apps'
 import Scrllgngn, {
   LayoutName,
   Props,
