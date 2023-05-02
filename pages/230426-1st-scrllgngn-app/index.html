@@ -15,11 +15,28 @@
     </data>
     <data
       class="lm-page-config"
+      value="id">
+      le-nom-de-mon-article
+    </data>
+    <data
+      class="lm-page-config"
       value="textbaseUrl">
       http://localhost:3000/data/230426-1st-scrllgngn-app-DEV.txt
     </data>
     
     <!-- Slots -->
-    <div class="scrllgngn"></div>
+    <div class="scrllgngn">
+      <data class="lm-app-config" value="scrllgngn">
+        <data value="someProp" type="html">
+          <div><h1>Coucou</h1></div>
+          <p>Lol</p>
+        </data>
+        <data value="someOtherProp">some other value</data>
+        <data value="someFinalProp">
+          <data>value 1</data>
+          <data>value 2</data>
+        </data>
+      </data>
+    </div>
   </body>
 </html>
