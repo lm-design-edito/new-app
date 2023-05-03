@@ -1,0 +1,60 @@
+// =========================================================
+# PAGE_CONFIG
+  
+  ## config
+    _hideHeader: true
+
+// =========================================================
+# PAGE_SLOTS
+  
+  ## carousel
+    _selector: .carousel
+    _name: carousel
+    _options: carousel-options/carousel >>> toRef
+
+// =========================================================
+# carousel-options
+  
+  ## carousel
+    _settings: carousel-settings/settings >>> toRef
+    _images: carousel-images/image-1, carousel-images/image-2, carousel-images/image-3, carousel-images/image-4, carousel-images/image-5
+      >>> split ,
+      >>> map trim
+      >>> map toRef
+
+// =========================================================
+# carousel-settings
+
+  ## settings
+    _leftArrow: true >>> toBoolean
+    _rightArrow: true >>> toBoolean
+    _dots: true >>> toBoolean
+    _loop: false >>> toBoolean
+    _imageFit: contain
+    _title: Ici le titre
+    _credits: Samuel Gratacap pour « Le Monde »
+    _fullscreen: true >>> toBoolean
+
+// =========================================================
+# carousel-images
+
+  ## image-1
+    _url: https://assets-decodeurs.lemonde.fr/redacweb/roadtrip_ukraine/1_2880.jpg
+    _description: Description
+
+  ## image-2
+    _url: https://assets-decodeurs.lemonde.fr/redacweb/roadtrip_ukraine/2_2880.jpg
+    _description: Description
+
+  ## image-3
+    _url: https://assets-decodeurs.lemonde.fr/redacweb/roadtrip_ukraine/3_2880.jpg
+    _description: Description
+
+  ## image-4
+    _url: https://assets-decodeurs.lemonde.fr/redacweb/roadtrip_ukraine/4_2880.jpg
+    _description: Description
+
+  ## image-5
+    _url: https://assets-decodeurs.lemonde.fr/redacweb/roadtrip_ukraine/5_2880.jpg
+    _description: Description
+  
