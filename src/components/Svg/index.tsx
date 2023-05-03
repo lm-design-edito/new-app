@@ -42,9 +42,9 @@ class Svg extends Component<Props, State> {
     this.fetchSvg(this.props.src)
   }
 
- componentDidUpdate(previousProps: Readonly<Props>): void {
-   if (this.props.src !== previousProps.src) this.fetchSvg(this.props.src)
- }
+  componentDidUpdate(previousProps: Readonly<Props>): void {
+    if (this.props.src !== previousProps.src) this.fetchSvg(this.props.src)
+  }
 
   /* * * * * * * * * * * * * * *
    * FETCH SVG
@@ -76,10 +76,26 @@ class Svg extends Component<Props, State> {
     }
   }
 
+  stringToCSS(string: string): JSX.CSSProperties {
+    const properties = string.trim().split(';')
+
+    const cleanProperties: JSX.CSSProperties = {}
+
+    properties
+      .filter((property: string) => property !== '')
+      .map((property: string) => {
+        const key = property.split(':')[0].trim()
+        const value = property.split(':')[1].trim()
+        cleanProperties[key] = value
+      })
+
+    return cleanProperties
+  }
+
   /* * * * * * * * * * * * * * *
    * RENDER
    * * * * * * * * * * * * * * */
-  render (): JSX.Element {
+  render(): JSX.Element {
     const { props, state } = this
 
     /* Logic */
@@ -91,7 +107,11 @@ class Svg extends Component<Props, State> {
     const classes = bem(attributes.class ?? '')
       .block(props.className)
       .block(this.bem.value)
-    const inlineStyle = { ...props.style }
+    
+    const inlineStyle = { 
+      ...(attributes.style ? this.stringToCSS(attributes.style as string) : {}),
+      ...props.style
+    }
 
     /* Display */
     // [WIP] fix dangerouslySetInner with some StrToVNode or something ?
