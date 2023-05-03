@@ -11,16 +11,12 @@ import { injectStylesheet } from '~/utils/dynamic-css'
  * * * * * * * * * * * * * * * * * * * * * */
 // [WIP] maybe store this in a config file, with generic stuff like 
 // PAGE_SLOTS and PAGE_CONFIG for reserved collections, etc...
-// const PAGE_URL = new URL(window.location.href)                 // PAGE
-const ROOT_URL = new URL('../../', import.meta.url)            // ROOT
+const ROOT_URL = new URL('../', import.meta.url)            // ROOT
 const SHARED_URL = new URL('shared/', ROOT_URL)                // shared/
-// const ASSETS_URL = new URL('assets/', SHARED_URL)              // assets/
-// const FONTS_URL = new URL('fonts/', SHARED_URL)                // fonts/
-// const SCRIPTS_URL = new URL('scripts/', SHARED_URL)            // scripts/
-const SCRIPTS_INDEX_URL = new URL(import.meta.url)             // scripts/index.js
-const STYLES_URL = new URL('styles/', SHARED_URL)              // styles/
-const STYLES_INDEX_URL = new URL('index.css', STYLES_URL)      // styles/index.css
-const STYLES_DEV_URL = new URL('developpment.css', STYLES_URL) // styles/developpment.css
+const SCRIPTS_INDEX_URL = new URL(import.meta.url)             // shared/index.js
+const STYLES_URL = new URL('styles/', SHARED_URL)              // shared/styles/
+const STYLES_INDEX_URL = new URL('index.css', STYLES_URL)      // shared/styles/index.css
+const STYLES_DEV_URL = new URL('developpment.css', STYLES_URL) // shared/styles/developpment.css
 
 /* * * * * * * * * * * * * * * * * * * * * *
  * SILENT LOGGER
@@ -36,19 +32,17 @@ const shouldntInit = searchParams.has('noInit')
 if (!shouldntInit) initPage()
 export async function initPage () {
   silentLogger.log('page-init', `Start init the page from ${SCRIPTS_INDEX_URL.toString()}`)
-
   // Load styles (dont await)
-  // [WIP] could be dynamically imported instead?
   injectStylesheet(STYLES_INDEX_URL, STYLES_INDEX_URL.toString())
     .then(res => {
-      if (typeof res === 'string') return;
-      silentLogger.error('page-styles', res)
+      if (typeof res === 'string') silentLogger.log('page-styles', `Injected ${STYLES_INDEX_URL.toString()}`)
+      else silentLogger.error('page-styles', res)
   })
   if (process.env.NODE_ENV === 'developpment') {
     injectStylesheet(STYLES_DEV_URL, STYLES_DEV_URL.toString())
       .then(res => {
-        if (typeof res === 'string') return;
-        silentLogger.error('page-styles', res)
+        if (typeof res === 'string') silentLogger.log('page-styles', `Injected ${STYLES_DEV_URL.toString()}`)
+        else silentLogger.error('page-styles', res)
     })
   }
 
@@ -56,7 +50,7 @@ export async function initPage () {
   const inlineConfigInstructions = getInlineConfigInstructrions()
   const inlinePageConfig = inlineConfigInstructions.toConfig()
   silentLogger.log('page-config/inline-instructions', inlineConfigInstructions.getAll().map(ins => `${ins.name}: ${ins.value}`).join('\n'))
-  silentLogger.log('page-config/inline-config', JSON.stringify(inlinePageConfig, null, 2))
+  silentLogger.log('page-config/inline-config', inlinePageConfig)
 
   // Load & filter data sources
   const inlineDataSources = inlinePageConfig.dataSources
@@ -81,25 +75,46 @@ export async function initPage () {
     remoteConfigInstructions)
   const pageConfig = pageConfigInstructions.toConfig()
   silentLogger.log('page-config/remote-instructions', remoteConfigInstructions.getAll().map(ins => `${ins.name}: ${ins.value}`).join('\n'))
-  silentLogger.log('page-config/merged-config', JSON.stringify(pageConfig, null, 2))
+  silentLogger.log('page-config/merged-config', pageConfig)
 
   // Apply config
-  applyConfig(pageConfig)
-  silentLogger.warn('page-config/apply', 'THIS IS NOT IMPLEMENTED YET')
-
+  applyConfig(pageConfig, {
+    onHeaderHide: headerElements => {
+      if (headerElements === null) silentLogger.warn('page-config/hideHeader', 'No header elements to hide')
+      else silentLogger.log('page-config/hideHeader', 'Hidden elements:', headerElements)
+    },
+    onScrollStarted: logResult => {
+      const { amplitude, atInternet } = logResult
+      if (amplitude instanceof Error) silentLogger.warn('page-config/tracking/scroll-started/amplitude', amplitude.message)
+      else silentLogger.log('page-config/tracking/scroll-started/amplitude', 'sent')
+      if (atInternet instanceof Error) silentLogger.warn('page-config/tracking/scroll-started/at-internet', atInternet.message)
+      else silentLogger.log('page-config/tracking/scroll-started/at-internet', 'sent')
+    },
+    onHalfReached: logResult => {
+      const { amplitude, atInternet } = logResult
+      if (amplitude instanceof Error) silentLogger.warn('page-config/tracking/half-reached/amplitude', amplitude.message)
+      else silentLogger.log('page-config/tracking/half-reached/amplitude', 'sent')
+      if (atInternet instanceof Error) silentLogger.warn('page-config/tracking/half-reached/at-internet', atInternet.message)
+      else silentLogger.log('page-config/tracking/half-reached/at-internet', 'sent')
+    },
+    onEndReached: logResult => {
+      const { amplitude, atInternet } = logResult
+      if (amplitude instanceof Error) silentLogger.warn('page-config/tracking/end-reached/amplitude', amplitude.message)
+      else silentLogger.log('page-config/tracking/end-reached/amplitude', 'sent')
+      if (atInternet instanceof Error) silentLogger.warn('page-config/tracking/end-reached/at-internet', atInternet.message)
+      else silentLogger.log('page-config/tracking/end-reached/at-internet', 'sent')
+    }
+  })
+  
   // Get page slots
   const pageSlotsCollection = pageDatabase.get('PAGE_SLOTS')
   const pageSlotsMap = getPageSlotsMap(pageSlotsCollection) // [WIP] maybe split this
   silentLogger.log('page-apps/slots-map', pageSlotsMap)
   
   // Render apps
+  silentLogger.log('page-apps/rendering', 'Starting apps rendering.')
   pageSlotsMap.forEach(async ({ name, options }, root) => {
-    silentLogger.log('page-apps/render-init', { root, name, options })
-    try {
-      await renderApp({ name, options, root, pageConfig, silentLogger })
-      silentLogger.log('page-apps/render-success', { root, name, options })
-    } catch (err) {
-      silentLogger.error('page-apps/rendered-failure', { root, name, options, err })
-    }
+    try { await renderApp({ name, options, root, pageConfig, silentLogger }) }
+    catch (err) { silentLogger.error('page-apps/rendering-failure', { root, name, options, err }) }
   })
 }

@@ -32,7 +32,7 @@
     _showNav: true >>> toBoolean
     _headerLogoFill1: rgb(0, 0, 0, 1)
     _headerLogoFill2: rgb(0, 0, 0, .3)
-    _chapterName: Premier chapitre
+    _chapterName: 1
     _isChapterHead: true >>> toBoolean
     _bgColor: coral
     _blocks: scrllgngn-blocks/page-1-scrolling, scrllgngn-blocks/page-1-fixed
@@ -46,7 +46,7 @@
     _showNav: true >>> toBoolean
     _headerLogoFill1: rgb(0, 0, 0, 1)
     _headerLogoFill2: rgb(0, 0, 0, .3)
-    _chapterName: Deuze chapitre
+    _chapterName: 2
     _isChapterHead: true >>> toBoolean
     _bgColor: coral
     _blocks: scrllgngn-blocks/page-2-scrolling, scrllgngn-blocks/page-2-fixed

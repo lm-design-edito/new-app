@@ -4,11 +4,12 @@ import clamp from '~/utils/clamp'
 import interpolate from '~/utils/interpolate'
 import styles from './styles.module.scss'
 
+// [WIP][ELSA] shouldn't be possible to pass null here, no difference with undefined
 interface Props {
-  progression?: number | null
+  progression?: number|null
   images?: string[]
-  height?: number | null
-  width?: number | null
+  height?: number|null
+  width?: number|null
 }
 
 interface State {
@@ -23,7 +24,7 @@ interface imageInfos {
 class StopMotion extends Component<Props, {}> {
   imageRatio: number = 1
   imageElements: HTMLImageElement[] = []
-  $canvasWrapper: HTMLDivElement | null = null
+  $canvasWrapper: HTMLDivElement|null = null
 
   state: State = {
     loading: true

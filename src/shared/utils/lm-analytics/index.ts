@@ -35,7 +35,6 @@ type AtInternetSdk = {
  * * * * * * * * * * * * * * * * * * * * * * */
 function getAmplitudeSdk () {
   const amplitudeSdk = (window as any).amplitude as AmplitudeSdk|undefined
-  if (amplitudeSdk === undefined) console.warn('could not find Amplitude SDK in page')
   return amplitudeSdk ?? null
 }
 
@@ -44,7 +43,6 @@ function getAtInternetTrackerInstance () {
   const tracker = atInternet?.Tracker
   const instances = tracker?.instances
   const instance = instances?.[0]
-  if (instance === undefined) console.warn('could not find ATInternet tracker instance in page')
   return instance ?? null
 }
 
@@ -64,7 +62,7 @@ export enum EventNames {
 /* AMPLITUDE */
 function logToAmplitude (eventName: EventNames) {
   const amplitudeSdk = getAmplitudeSdk()
-  if (amplitudeSdk === null) return
+  if (amplitudeSdk === null) return new Error('Could not find Amplitude SDK in page')
   const logEvent = amplitudeSdk.logEvent.bind(amplitudeSdk)
   switch (eventName) {
     case EventNames.SCROLL_STARTED: return logEvent('scroll: element autre', { scroll_position: 'any' })
@@ -95,7 +93,7 @@ function makeAtInternetPayload (
 
 function logToAtInternet (eventName: EventNames) {
   const atInternetInstance = getAtInternetTrackerInstance()
-  if (atInternetInstance === null) return
+  if (atInternetInstance === null) return new Error('Could not find ATInternet tracker instance in page')
   const logClick = (partialPayload: Parameters<typeof makeAtInternetPayload>[0]) => {
     const payload = makeAtInternetPayload(partialPayload)
     atInternetInstance.click?.send?.(payload)
@@ -114,7 +112,15 @@ function logToAtInternet (eventName: EventNames) {
  * EXPORT
  * 
  * * * * * * * * * * * * * * * * * * * * * * */
-export function logEvent (eventName: EventNames) {
-  logToAmplitude(eventName)
-  logToAtInternet(eventName)
+export type LogResult = {
+  amplitude?: Error
+  atInternet?: Error
+}
+export function logEvent (eventName: EventNames): LogResult {
+  const amplitudeErr = logToAmplitude(eventName) as Error|undefined
+  const atInternetErr = logToAtInternet(eventName) as Error|undefined
+  return {
+    amplitude: amplitudeErr,
+    atInternet: atInternetErr
+  }
 }

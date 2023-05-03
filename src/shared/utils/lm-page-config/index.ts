@@ -1,10 +1,14 @@
+import { logEvent, EventNames, LogResult } from '~/shared/lm-analytics'
+import getHeaderElements from '~/shared/lm-get-header-element'
+import { toBoolean, toNumber, toString } from '~/utils/cast'
 import { Collection } from '~/utils/txt-base'
 
 export enum Options {
   ID = 'id',
+  APPX_PUBLICATION_DATE = 'approxPublicationDate',
   DATA_SOURCES = 'dataSources',
   HIDE_HEADER = 'hideHeader',
-  APPX_PUBLICATION_DATE = 'approxPublicationDate'
+  TRACKING = 'tracking'
 }
 
 export const optionsList = Object.values(Options)
@@ -12,23 +16,37 @@ export const isValidOptionName = (name: string): name is Options => {
   return optionsList.includes(name as Options)
 }
 
-export type ConfigDataSource = { type: 'sheet'|'doc', url: string }
+export type ConfigDataSource = {
+  type: 'sheet'|'doc'
+  url?: string
+  content?: string
+}
 export type Config = {
   [Options.ID]?: string,
+  [Options.APPX_PUBLICATION_DATE]?: string
   [Options.DATA_SOURCES]?: Array<ConfigDataSource>
   [Options.HIDE_HEADER]?: boolean
-  [Options.APPX_PUBLICATION_DATE]?: string
+  [Options.TRACKING]?: {
+    start?: boolean
+    half?: boolean
+    end?: boolean
+  }
 }
 
 export enum InlineOnlyInstructionsNames {
   ID = 'id',
+  APPX_PUBLICATION_DATE = 'approxPublicationDate',
   SHEETBASE_URL = 'sheetbaseUrl',
   TEXTBASE_URL = 'textbaseUrl',
-  APPX_PUBLICATION_DATE = 'approxPublicationDate'
+  SHEETBASE_INLINE = 'sheetbaseInline',
+  TEXTBASE_INLINE = 'textbaseInline'
 }
 
 export enum RemoteValidInstructionsNames {
-  HIDE_HEADER = 'hideHeader'
+  HIDE_HEADER = 'hideHeader',
+  TRACK_FIRST_SCROLL = 'trackFirstScroll',
+  TRACK_HALF_REACHED = 'trackHalfReached',
+  TRACK_END_REACHED = 'trackEndReached'
 }
 
 export type InstructionName = InlineOnlyInstructionsNames|RemoteValidInstructionsNames
@@ -64,31 +82,66 @@ export class Instructions {
   toConfig (): Config {
     const config: Config = {}
     this.instructionsList.forEach(({ name, value }) => {
-      switch (name) {
-        case InlineOnlyInstructionsNames.ID:
-          if (typeof value === 'string') { config[Options.ID] = value }
-          break;
-        case InlineOnlyInstructionsNames.SHEETBASE_URL:
-          if (typeof value === 'string') {
-            const dataSource: ConfigDataSource = { type: 'sheet', url: value }
-            if (config[Options.DATA_SOURCES] === undefined) config[Options.DATA_SOURCES] = [dataSource]
-            else config[Options.DATA_SOURCES].push(dataSource)
-          }
-          break;
-        case InlineOnlyInstructionsNames.TEXTBASE_URL:
-          if (typeof value === 'string') {
-            const dataSource: ConfigDataSource = { type: 'doc', url: value }
-            if (config[Options.DATA_SOURCES] === undefined) config[Options.DATA_SOURCES] = [dataSource]
-            else config[Options.DATA_SOURCES].push(dataSource)
-          }
-          break;
-        case InlineOnlyInstructionsNames.APPX_PUBLICATION_DATE:
-          if (typeof value === 'string') { config[Options.APPX_PUBLICATION_DATE] = value }
-          break;
-        case RemoteValidInstructionsNames.HIDE_HEADER:
-          if (value === false) config[Options.HIDE_HEADER] = false
-          else config[Options.HIDE_HEADER] = true
-          default: break;
+      const strValue = toString(value)
+      const nbrValue = toNumber(value)
+      const boolValue = toBoolean(value)
+      // ID
+      if (name === InlineOnlyInstructionsNames.ID) {
+        config[Options.ID] = strValue
+      }
+      // APPX_PUBLICATION_DATE
+      else if (name === InlineOnlyInstructionsNames.APPX_PUBLICATION_DATE) {
+        config[Options.APPX_PUBLICATION_DATE] = strValue
+      }
+      // SHEETBASE_URL
+      else if (name === InlineOnlyInstructionsNames.SHEETBASE_URL) {
+        const dataSource: ConfigDataSource = { type: 'sheet', url: strValue }
+        const dataSources = config[Options.DATA_SOURCES]
+        if (dataSources === undefined) config[Options.DATA_SOURCES] = [dataSource]
+        else dataSources.push(dataSource)
+      }
+      // TEXTBASE_URL
+      else if (name === InlineOnlyInstructionsNames.TEXTBASE_URL) {
+        const dataSource: ConfigDataSource = { type: 'doc', url: strValue }
+        const dataSources = config[Options.DATA_SOURCES]
+        if (dataSources === undefined) config[Options.DATA_SOURCES] = [dataSource]
+        else dataSources.push(dataSource)
+      }
+      // SHEETBASE_INLINE
+      else if (name === InlineOnlyInstructionsNames.SHEETBASE_INLINE) {
+        const dataSource: ConfigDataSource = { type: 'sheet', content: strValue }
+        const dataSources = config[Options.DATA_SOURCES]
+        if (dataSources === undefined) config[Options.DATA_SOURCES] = [dataSource]
+        else dataSources.push(dataSource)
+      }
+      // TEXTBASE_INLINE
+      else if (name === InlineOnlyInstructionsNames.TEXTBASE_INLINE) {
+        const dataSource: ConfigDataSource = { type: 'doc', content: strValue }
+        const dataSources = config[Options.DATA_SOURCES]
+        if (dataSources === undefined) config[Options.DATA_SOURCES] = [dataSource]
+        else dataSources.push(dataSource)
+      }
+      // HIDE_HEADER
+      else if (name === RemoteValidInstructionsNames.HIDE_HEADER) {
+        config[Options.HIDE_HEADER] = boolValue
+      }
+      // TRACK_FIRST_SCROLL
+      else if (name === RemoteValidInstructionsNames.TRACK_FIRST_SCROLL) {
+        if (config[Options.TRACKING] === undefined) config[Options.TRACKING] = {}
+        const tracking = config[Options.TRACKING] as NonNullable<Config[Options.TRACKING]>
+        tracking.start = boolValue
+      }
+      // TRACK_HALF_REACHED
+      else if (name === RemoteValidInstructionsNames.TRACK_HALF_REACHED) {
+        if (config[Options.TRACKING] === undefined) config[Options.TRACKING] = {}
+        const tracking = config[Options.TRACKING] as NonNullable<Config[Options.TRACKING]>
+        tracking.half = boolValue
+      }
+      // TRACK_END_REACHED
+      else if (name === RemoteValidInstructionsNames.TRACK_END_REACHED) {
+        if (config[Options.TRACKING] === undefined) config[Options.TRACKING] = {}
+        const tracking = config[Options.TRACKING] as NonNullable<Config[Options.TRACKING]>
+        tracking.end = boolValue
       }
     })
     return config
@@ -135,7 +188,69 @@ export function getRemoteConfigInstructions (configCollection?: Collection) {
   return returned
 }
 
-export function applyConfig (config: Config) {
-  // [WIP] do this
-  return true
+type ApplyConfigHooks = {
+  onHeaderHide?: (headerElements: Element[]|null) => void
+  onScrollStarted?: (logResult: LogResult) => void
+  onHalfReached?: (logResult: LogResult) => void
+  onEndReached?: (logResult: LogResult) => void
+}
+
+export function applyConfig (config: Config, hooks?: ApplyConfigHooks) {
+  const {
+    [Options.HIDE_HEADER]: hideHeader,
+    [Options.TRACKING]: tracking
+  } = config
+  
+  // HIDE_HEADER
+  if (hideHeader) {
+    const { onHeaderHide } = hooks ?? {}
+    const headers = getHeaderElements()
+    if (headers !== null) headers.forEach(headerElt => headerElt.remove())
+    if (onHeaderHide !== undefined) onHeaderHide(headers)
+  }
+  
+  // TRACKING
+  if (tracking !== undefined) {
+    const { start, half, end } = tracking
+    if (start === false
+      && half === false
+      && end === false) return;
+    let hasStarted = false
+    let hasReachedHalf = false
+    let hasReachedEnd = false
+    const {
+      onScrollStarted,
+      onHalfReached,
+      onEndReached
+    } = hooks ?? {}
+    const scrollListener = () => {
+      if (hasStarted === start
+        && hasReachedHalf === half
+        && hasReachedEnd === end) return;
+      if (start === true && hasStarted === false) {
+        const logResult = logEvent(EventNames.SCROLL_STARTED)
+        if (onScrollStarted !== undefined) onScrollStarted(logResult)
+        hasStarted = true
+      }
+      const documentHeight = document.body.scrollHeight
+      const viewportHeight = window.innerHeight
+      const scrolled = window.scrollY
+      const scrollPercent = scrolled / (documentHeight - viewportHeight)
+      if (half === true
+        && hasReachedHalf === false
+        && scrollPercent > .5) {
+        const logResult = logEvent(EventNames.SCRLLGNGN_HALF_REACHED)
+        if (onHalfReached !== undefined) onHalfReached(logResult)
+        hasReachedHalf = true
+      }
+      if (end === true
+        && hasReachedEnd === false
+        && scrollPercent > .97) {
+        const logResult = logEvent(EventNames.SCRLLGNGN_END_REACHED)
+        if (onEndReached !== undefined) onEndReached(logResult)
+        hasReachedEnd = true
+      }
+    }
+    window.addEventListener('scroll', scrollListener)
+  }
 }

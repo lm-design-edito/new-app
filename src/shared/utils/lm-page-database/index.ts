@@ -11,16 +11,21 @@ export async function makePageDatabase (dataSources: PageConfig['dataSources'] =
   const dataset = dataSources.map(dataSource => ({
     type: dataSource.type,
     url: dataSource.url,
+    content: dataSource.content,
     data: null as string|null
   }))
   await Promise.all(dataset.map(async dataSource => {
-    try {
-      const response = await window.fetch(dataSource.url)
-      const data = await response.text()
-      dataSource.data = data
-    } catch (err) {
-      // [WIP] silent log error here
-      return
+    if (dataSource.content !== undefined) { dataSource.data = dataSource.content ?? null }
+    else if (dataSource.url === undefined) { dataSource.data = null }
+    else {
+      try {
+        const response = await window.fetch(dataSource.url)
+        const data = await response.text()
+        dataSource.data = data
+      } catch (err) {
+        // [WIP] silent log error here
+        return
+      }
     }
   }))
   const pageDatabase = new Base()
