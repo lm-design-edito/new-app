@@ -1,0 +1,88 @@
+.wrapper {
+  display: contents;
+
+  >* {
+    opacity: 0.2;
+    transition: opacity 1000ms;
+  }
+
+  &.wrapper--visible>*,
+  &.wrapper--selected>* {
+    opacity: 1;
+  }
+
+  img,
+  video {
+    height: 100%;
+    width: 100%;
+  }
+
+  &.wrapper--contain img,
+  &.wrapper--contain video {
+    object-fit: contain;
+  }
+
+  &.wrapper--cover img,
+  &.wrapper--cover video {
+    object-fit: cover;
+  }
+}
+
+.image {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background-color: var(--carousel-image-bg);
+  scroll-snap-align: center;
+  font-size: 0;
+  overflow: hidden;
+
+  /* wip - fix provisoire pour faire marcher le scroll-snap-align des carousels pur texte sur safari */
+  &::before {
+    content: "";
+    display: block;
+    position: absolute;
+    width: 100%;
+    height: 1px;
+    background-color: var(--carousel-bg-color);
+    opacity: 0;
+    z-index: -1;
+  }
+}
+
+.caption {
+  font-size: 14px;
+  line-height: 18px;
+
+  a {
+    color: unset;
+    text-decoration: underline;
+    text-decoration-thickness: 0.06em;
+    text-decoration-color: unset !important;
+    text-underline-offset: 0.2em;
+    transition: opacity 200ms;
+
+    @media (hover: hover) {
+      &:hover {
+        opacity: 0.6;
+      }
+    }
+
+    @media screen and (max-width: 800px) {
+      text-underline-offset: unset;
+    }
+  }
+}
+
+.credits {
+  padding-top: 0.33rem;
+  font-size: 12px;
+  text-transform: uppercase;
+  color: var(--carousel-credits-color);
+}
+
+.description {
+  font-weight: 500;
+  font-size: 14px;
+  color: var(--carousel-description-color);
+}

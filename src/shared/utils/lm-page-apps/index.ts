@@ -8,7 +8,8 @@ import flattenGetters from '~/utils/flatten-getters'
  * Names
  * * * * * * * * * * * * * * * * * * */
 export enum Names {
-  SCRLLGNGN = 'scrllgngn'
+  SCRLLGNGN = 'scrllgngn',
+  CAROUSEL = 'carousel',
 }
 
 export const validNames = Object.values(Names)
@@ -171,6 +172,7 @@ export async function renderApp ({ name, options, root, pageConfig, silentLogger
   // Load renderer
   let renderer: Renderer|null = null
   if (name === Names.SCRLLGNGN) { renderer = (await import('../../../apps/scrllgngn')).default }
+  if (name === Names.CAROUSEL) { renderer = (await import('../../../apps/carousel')).default }
   if (renderer === null) throw new Error(`Could not find a renderer for an app named ${name}`)
   // Add lm-app-root class on the root
   root.classList.add('lm-app-root')
