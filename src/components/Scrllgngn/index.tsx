@@ -1103,7 +1103,7 @@ export default class Scrollgneugneu extends Component<Props, State> {
       Header
     } = this
     const { stickyBlocksLazyLoadDistance } = props
-    const lazyLoadDistance = stickyBlocksLazyLoadDistance ?? 2
+    const lazyLoadDistance = Math.max(stickyBlocksLazyLoadDistance ?? 2, 1)
     const { blocks, currPagePos } = state
     const headerZIndex = [...blocks.values()].reduce((acc, curr) => {
       if (curr._zIndex > acc) return curr._zIndex
@@ -1344,8 +1344,6 @@ export default class Scrollgneugneu extends Component<Props, State> {
       styles['wrapper_hide-header'],
       wrapperBemClass.mod('hide-header').value
     )
-    console.log('RENDER')
-    console.log(wrapperClasses)
 
     // Scroll panel CSS classes
     const scrollPanelBemClass = wrapperBemClass.element('scroll-panel')
