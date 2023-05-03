@@ -79,7 +79,7 @@ export async function initPage () {
 
   // Apply config
   applyConfig(pageConfig, {
-    onHeaderHide: headerElements => {
+    onHeaderHidden: headerElements => {
       if (headerElements === null) silentLogger.warn('page-config/hideHeader', 'No header elements to hide')
       else silentLogger.log('page-config/hideHeader', 'Hidden elements:', headerElements)
     },
@@ -103,6 +103,9 @@ export async function initPage () {
       else silentLogger.log('page-config/tracking/end-reached/amplitude', 'sent')
       if (atInternet instanceof Error) silentLogger.warn('page-config/tracking/end-reached/at-internet', atInternet.message)
       else silentLogger.log('page-config/tracking/end-reached/at-internet', 'sent')
+    },
+    onCssInjected: (key, css) => {
+      silentLogger.log('page-config/css-injected', 'key:', key, '\ncss:', css)
     }
   })
   

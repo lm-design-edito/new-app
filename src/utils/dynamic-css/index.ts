@@ -1,3 +1,5 @@
+import randomUUID from '~/utils/random-UUID'
+
 const rulesMap: Map<string, string> = new Map()
 const targetStyleElement = document.createElement('style')
 const targetStyleElementIdentifier = 'lm-page-injected-styles'
@@ -14,7 +16,7 @@ export function injectCssRule (rule: string, _forceOrName?: boolean|string, _for
   const alreadyInMap: [string, string]|undefined = rulesArr.find(([_key, val]) => val === rule)
   const shouldInject = force === true || alreadyInMap === undefined
   if (!shouldInject) return alreadyInMap[0]
-  const ruleKey = name ?? crypto.randomUUID()
+  const ruleKey = name ?? randomUUID()
   rulesMap.set(ruleKey, rule)
   updateStyleElement()
   return ruleKey
@@ -32,8 +34,9 @@ export async function injectStylesheet (
   _forceOrName?: boolean|string,
   _force?: boolean): Promise<string|Error> {
   try {
-    const response = await window.fetch(url)
-    if (!response.ok) throw new Error(`Error fetching ${url}: ${response.statusText}`)
+    const urlStr = url instanceof URL ? url.toString() : url
+    const response = await window.fetch(urlStr)
+    if (!response.ok) throw new Error(`Error fetching ${urlStr}: ${response.statusText}`)
     const data = await response.text()
     const name = typeof _forceOrName === 'string' ? _forceOrName : undefined
     const force = _forceOrName === true || _force === true

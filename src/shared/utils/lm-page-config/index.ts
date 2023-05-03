@@ -1,6 +1,7 @@
 import { logEvent, EventNames, LogResult } from '~/shared/lm-analytics'
 import getHeaderElements from '~/shared/lm-get-header-element'
 import { toBoolean, toNumber, toString } from '~/utils/cast'
+import { injectCssRule } from '~/utils/dynamic-css'
 import { Collection } from '~/utils/txt-base'
 
 export enum Options {
@@ -8,7 +9,8 @@ export enum Options {
   APPX_PUBLICATION_DATE = 'approxPublicationDate',
   DATA_SOURCES = 'dataSources',
   HIDE_HEADER = 'hideHeader',
-  TRACKING = 'tracking'
+  TRACKING = 'tracking',
+  CSS = 'css'
 }
 
 export const optionsList = Object.values(Options)
@@ -31,6 +33,7 @@ export type Config = {
     half?: boolean
     end?: boolean
   }
+  [Options.CSS]?: string
 }
 
 export enum InlineOnlyInstructionsNames {
@@ -46,7 +49,8 @@ export enum RemoteValidInstructionsNames {
   HIDE_HEADER = 'hideHeader',
   TRACK_FIRST_SCROLL = 'trackFirstScroll',
   TRACK_HALF_REACHED = 'trackHalfReached',
-  TRACK_END_REACHED = 'trackEndReached'
+  TRACK_END_REACHED = 'trackEndReached',
+  CSS = 'css'
 }
 
 export type InstructionName = InlineOnlyInstructionsNames|RemoteValidInstructionsNames
@@ -143,6 +147,11 @@ export class Instructions {
         const tracking = config[Options.TRACKING] as NonNullable<Config[Options.TRACKING]>
         tracking.end = boolValue
       }
+      // CSS
+      else if (name === RemoteValidInstructionsNames.CSS) {
+        const currentCss = config[Options.CSS] ?? ''
+        config[Options.CSS] = currentCss + toString(value)
+      }
     })
     return config
   }
@@ -189,24 +198,26 @@ export function getRemoteConfigInstructions (configCollection?: Collection) {
 }
 
 type ApplyConfigHooks = {
-  onHeaderHide?: (headerElements: Element[]|null) => void
+  onHeaderHidden?: (headerElements: Element[]|null) => void
   onScrollStarted?: (logResult: LogResult) => void
   onHalfReached?: (logResult: LogResult) => void
   onEndReached?: (logResult: LogResult) => void
+  onCssInjected?: (key: string, css: string) => void
 }
 
 export function applyConfig (config: Config, hooks?: ApplyConfigHooks) {
   const {
     [Options.HIDE_HEADER]: hideHeader,
-    [Options.TRACKING]: tracking
+    [Options.TRACKING]: tracking,
+    [Options.CSS]: css
   } = config
   
   // HIDE_HEADER
   if (hideHeader) {
-    const { onHeaderHide } = hooks ?? {}
+    const { onHeaderHidden } = hooks ?? {}
     const headers = getHeaderElements()
     if (headers !== null) headers.forEach(headerElt => headerElt.remove())
-    if (onHeaderHide !== undefined) onHeaderHide(headers)
+    if (onHeaderHidden !== undefined) onHeaderHidden(headers)
   }
   
   // TRACKING
@@ -252,5 +263,12 @@ export function applyConfig (config: Config, hooks?: ApplyConfigHooks) {
       }
     }
     window.addEventListener('scroll', scrollListener)
+  }
+
+  // CSS
+  if (css !== undefined) {
+    const { onCssInjected } = hooks ?? {}
+    const key = injectCssRule(css, 'css-from-config')
+    if (onCssInjected !== undefined) onCssInjected(key, css)
   }
 }
