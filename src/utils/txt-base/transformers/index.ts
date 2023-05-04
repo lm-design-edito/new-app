@@ -11,8 +11,10 @@ import toRef from './one-to-one/toRef'
 import toLowerCase from './one-to-one/toLowerCase'
 import toUpperCase from './one-to-one/toUpperCase'
 import trim from './one-to-one/trim'
+import replace from './one-to-one/replace'
 // One to many transformers
 import split from './one-to-many/split'
+import toArray from './one-to-many/toArray'
 // Many to one transformers
 import join from './many-to-one/join'
 // Many to many transformers
@@ -34,8 +36,10 @@ const transformerNamesObj: { [key: string]: Transformer } = {
   toLowerCase,
   toUpperCase,
   trim,
+  replace,
   // One to many
   split,
+  toArray,
   // Many to one
   join,
   // Many to many

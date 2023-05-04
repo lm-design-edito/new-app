@@ -12,9 +12,9 @@ export default makeTransformer(
     const transformer = getTransformer(transformerName)
     if (transformer === undefined) return value
     if (transformer.type !== TransformerType.ONE_TO_ONE) return value
-    return value.map(val => transformer.apply(
+    return value.map((val, pos) => transformer.apply(
       val,
-      otherArgs.join(' '),
+      otherArgs.join(' ').replace('%pos%', `${pos}`),
       resolver
     ))
   }
