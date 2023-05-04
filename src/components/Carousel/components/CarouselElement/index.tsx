@@ -9,8 +9,8 @@ import styles from './styles.module.scss'
 interface Media {
   url?: string
   mobileUrl?: string
-  type?: 'image' | 'video'
-  imageFit?: 'cover' | 'contain'
+  type?: string
+  imageFit?: string
   description?: string
   credits?: string
 }

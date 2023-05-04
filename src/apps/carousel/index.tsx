@@ -3,6 +3,8 @@ import { Options, Renderer } from 'shared/utils/lm-page-apps'
 
 import Carousel, { CarouselSettings, Media, Props } from '~/components/Carousel'
 
+import { toBoolean, toNumber, toString } from '~/utils/cast'
+
 /* * * * * * * * * * * * * * * * * * *
  * RENDERER
  * * * * * * * * * * * * * * * * * * */
@@ -73,38 +75,32 @@ function objectToSettings(object: any): CarouselSettings {
     description,
   } = object
 
-  /* [WIP][ELSA]
-   * - dans l'app scrllgngn j'ai changé la façon de récupérer les props :
-   *  - avant : if (typeof machin === 'string') { stringProp = machin }
-   *  - maintenant : if (machin !== undefined) { stringProp = toString(machin) } // import toString from '~/utils/cast'
-   *  - ça devrait rendre les fonctions optionsToProps plus lisibles et consistantes à l'avenir
-   */
-  if (typeof leftArrow === 'boolean') { settings.leftArrow = leftArrow }
-  if (typeof rightArrow === 'boolean') { settings.rightArrow = rightArrow }
-  if (arrowsPosition === 'center' || arrowsPosition === 'bottom') { settings.arrowsPosition = arrowsPosition }
-  if (typeof dots === 'boolean') { settings.dots = dots }
-  if (typeof loop === 'boolean') { settings.loop = loop }
-  if (typeof duration === 'number') { settings.duration = duration }
-  if (typeof fullscreen === 'boolean') { settings.fullscreen = fullscreen }
-  if (typeof imageHeight === 'number') { settings.imageHeight = imageHeight }
-  if (imageFit === 'cover' || imageFit === 'contain') { settings.imageFit = imageFit }
-  if (typeof gapValue === 'number') { settings.gapValue = gapValue }
+  if (leftArrow !== undefined) { settings.leftArrow = toBoolean(leftArrow) }
+  if (rightArrow !== undefined) { settings.rightArrow = toBoolean(rightArrow) }
+  if (arrowsPosition !== undefined) { settings.arrowsPosition = toString(arrowsPosition) }
+  if (dots !== undefined) { settings.dots = toBoolean(dots) }
+  if (loop !== undefined) { settings.loop = toBoolean(loop) }
+  if (duration !== undefined) { settings.duration = toNumber(duration) }
+  if (fullscreen !== undefined) { settings.fullscreen = toBoolean(fullscreen) }
+  if (imageHeight !== undefined) { settings.imageHeight = toNumber(imageHeight) }
+  if (imageFit !== undefined) { settings.imageFit = toString(imageFit) }
+  if (gapValue !== undefined) { settings.gapValue = toNumber(gapValue) }
 
-  if (typeof backgroundColor === 'string') { settings.backgroundColor = backgroundColor }
-  if (typeof imageBackgroundColor === 'string') { settings.imageBackgroundColor = imageBackgroundColor }
-  if (typeof titleColor === 'string') { settings.titleColor = titleColor }
-  if (typeof descriptionColor === 'string') { settings.descriptionColor = descriptionColor }
-  if (typeof creditsColor === 'string') { settings.creditsColor = creditsColor }
-  if (typeof dotColor === 'string') { settings.dotColor = dotColor }
-  if (typeof fullscreenButtonColor === 'string') { settings.fullscreenButtonColor = fullscreenButtonColor }
-  if (typeof arrowColor === 'string') { settings.arrowColor = arrowColor }
-  if (typeof arrowColorDisabled === 'string') { settings.arrowColorDisabled = arrowColorDisabled }
-  if (typeof arrowBackgroundColor === 'string') { settings.arrowBackgroundColor = arrowBackgroundColor }
-  if (typeof arrowBackgroundColorHover === 'string') { settings.arrowBackgroundColorHover = arrowBackgroundColorHover }
+  if (backgroundColor !== undefined) { settings.backgroundColor = toString(backgroundColor) }
+  if (imageBackgroundColor !== undefined) { settings.imageBackgroundColor = toString(imageBackgroundColor) }
+  if (titleColor !== undefined) { settings.titleColor = toString(titleColor) }
+  if (descriptionColor !== undefined) { settings.descriptionColor = toString(descriptionColor) }
+  if (creditsColor !== undefined) { settings.creditsColor = toString(creditsColor) }
+  if (dotColor !== undefined) { settings.dotColor = toString(dotColor) }
+  if (fullscreenButtonColor !== undefined) { settings.fullscreenButtonColor = toString(fullscreenButtonColor) }
+  if (arrowColor !== undefined) { settings.arrowColor = toString(arrowColor) }
+  if (arrowColorDisabled !== undefined) { settings.arrowColorDisabled = toString(arrowColorDisabled) }
+  if (arrowBackgroundColor !== undefined) { settings.arrowBackgroundColor = toString(arrowBackgroundColor) }
+  if (arrowBackgroundColorHover !== undefined) { settings.arrowBackgroundColorHover = toString(arrowBackgroundColorHover) }
 
-  if (typeof title === 'string') { settings.title = title }
-  if (typeof credits === 'string') { settings.credits = credits }
-  if (typeof description === 'string') { settings.description = description }
+  if (title !== undefined) { settings.title = toString(title) }
+  if (credits !== undefined) { settings.credits = toString(credits) }
+  if (description !== undefined) { settings.description = toString(description) }
 
   return settings
 }
@@ -127,12 +123,12 @@ function arrayToImages(array: unknown[]): Media[] {
         credits,
       } = imageData
 
-      if (typeof url === 'string') { image.url = url }
-      if (typeof mobileUrl === 'string') { image.mobileUrl = mobileUrl }
-      if (type === 'image' || type === 'video') { image.type = type }
-      if (imageFit === 'cover' || imageFit === 'contain') { image.imageFit = imageFit }
-      if (typeof description === 'string') { image.description = description }
-      if (typeof credits === 'string') { image.credits = credits }
+      if (url !== undefined) { image.url = toString(url) }
+      if (mobileUrl !== undefined) { image.mobileUrl = toString(mobileUrl) }
+      if (type !== undefined) { image.type = toString(type) }
+      if (imageFit !== undefined) { image.imageFit = toString(imageFit) }
+      if (description !== undefined) { image.description = toString(description) }
+      if (credits !== undefined) { image.credits = toString(credits) }
 
       images.push(image)
     }
