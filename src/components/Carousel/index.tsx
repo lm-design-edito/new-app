@@ -53,6 +53,9 @@ interface CarouselSettings {
 }
 
 interface Props {
+  // [WIP][ELSA] je pense qu'il n'y a pas besoin de regrouper tous les settings derrière un objet "settings"
+  // (et que c'est plutôt pas très pratique), il vaudrait mieux avoir toutes les props au premier niveau
+  // et pas derrière props.settings
   settings?: CarouselSettings
   images?: Media[]
 }
@@ -90,7 +93,10 @@ class Carousel extends Component<Props, State> {
     * * * * * * * * * * * * * * * * * * */
   constructor(props: Props) {
     super(props)
-
+    // [WIP] j'ai l'impression que dans ce constructeur tu fais beaucoup de copies
+    // d'informations que tu as déja
+    // - this.settings qui copie props.settings <= ton composant devient figé après le premier
+    // rendu, il ne va pas s'update au changement
     this.settings = this.props.settings ?? {}
     if (typeof this.settings === 'string') this.settings = {}
 
@@ -215,7 +221,23 @@ class Carousel extends Component<Props, State> {
     }, duration)
   }
 
+  // [WIP][ELSA] je pense que setIndex, increment et decrement pourraient
+  // tenir en une seule fonction, à la limite increment et decrement pourraient
+  // être des racourcis si vraiment y'en a besoin genre :
+  // incrementIndex () { this.setIndex(this.state.index + 1) }
+  // decrementIndex () { this.setIndex(this.state.index - 1) }
+  
+  // [WIP][ELSA] C'est setIndex qui doit s'assurer que l'index
+  // sur lequel on atterrit est bien compris entre 0 et props.images.length
+  // et pour ce faire, tu peux utiliser ~/utils/absolute-modulo, genre
+  // const newIndex = absoluteModulo(number, props.images.length)
+  // ça pourrait marcher avec un opérateur modulo simple genre :
+  // const newIndex = number % props.images.length
+  // Pour info sur l'opérateur modulo :
+  // 0 % 2 === 0, 1 % 2 === 1, 2 % 2 === 0, etc...
+  // MAIS : -1 % 2 === -1, alors que absoluteModulo(-1, 2) === 1
   setIndex(number: number) {
+    // [WIP][ELSA] toujours if (boolean) pour plus de clarté
     if (this.loopTimer) {
       clearInterval(this.loopTimer)
       this.setLoopTimer(this.loopDuration)
@@ -237,6 +259,7 @@ class Carousel extends Component<Props, State> {
   }
 
   incrementIndex() {
+    // [WIP][ELSA] pas besoin de check sur null, c'est impossible selon typescript !
     if (this.props.images === null || this.props.images === undefined) return
 
     const nextIndex = this.state.index === this.props.images.length - 1 ? 0 : this.state.index + 1
@@ -364,6 +387,9 @@ class Carousel extends Component<Props, State> {
 
     this.indexThreshold = this.scrollBreakpoints[1] / 2
 
+    // [WIP][ELSA] Attention, tu as un setState qui après avoir
+    // changé le state appelle une fonction qui... setState aussi !
+    // Ça c'est une situation qui te dit à 100% qu'il faut trouver un autre moyen
     this.setState(curr => ({
       ...curr,
       componentWidth,
@@ -373,6 +399,7 @@ class Carousel extends Component<Props, State> {
     )
   }
 
+  // [WIP][ELSA] !! 3 setState consécutifs !
   toggleFullscreen() {
     this.setState(
       curr => ({
@@ -388,17 +415,26 @@ class Carousel extends Component<Props, State> {
     * * * * * * * * * * * * * * */
   render(): JSX.Element {
     const { props, bemClss } = this
-
+    // [WIP][ELSA] Normalement il doit y avoir un moyen de faire sans ça
+    // qui est probablement un peu buggy : si le contenu du titre doit 
+    // changer sur ce rendu, les dimensions de titleRef elles seront
+    // celles de l'ancien titre et donc seront incorrectes
     const titleDimensions = this.titleRef?.current?.getBoundingClientRect()
     const controlsDimensions = this.controlsRef?.current?.getBoundingClientRect()
-
+    // [WIP][ELSA] pour la forme ternaire cond ? value1 : value2, il vaut mieux
+    // avoir un vrai booléen pour la condition, ici tu as DOMRect|undefined
+    // il vaudrait mieux titleDimensions !== undefined ? ... : ...
     const titleHeight = titleDimensions ? titleDimensions.height : 0
     const controlsHeight = controlsDimensions ? controlsDimensions.height : 0
-
     const imagesMaxHeight = this.state.fullscreen
       ? window.innerHeight - titleHeight - controlsHeight + 'px'
       : 'unset'
 
+    // [WIP][ELSA] pas sûr que ça ait trop de sens de sortir l'assignation
+    // des classes du container dans une méthode, vu qu'elle n'est appelée
+    // qu'ici, ça rend la lecture moins simple. Ou alors à la limite
+    // la méthode te sort toutes les classes et pas juste celles du container
+    // mais c'est toujours un peu too much, autant avoir toute la logique ici
     const containerClasses = this.getContainerClassList(this.settings)
     const titleClasses = [bemClss.elt('title').value, styles['title']]
     const fullscreenBtnClasses = [bemClss.elt('fullscreen-btn').value, styles['fullscreen-btn']]
@@ -407,6 +443,12 @@ class Carousel extends Component<Props, State> {
     const controlsClasses = [bemClss.elt('controls').value, styles['controls']]
     if (this.state.controlsReady) controlsClasses.push(styles['controls--visible'])
 
+    // [WIP][ELSA] il vaudrait mieux que les variables ne soient pas définies si la prop est undefined
+    // genre if (this.settings.backgroundColor !== undefined) { containerStyle['--carousel-bg-color'] = this.settings.backgroundColor }
+    // par ailleurs, est-ce que tous ces settings sont assignables via un css externe ? Si oui, on va quand
+    // même garder cette logique de style via props pour l'instant mais à l'avenir je pense qu'il vaudra mieux ne 
+    // pas passer par les props pour styliser nos composants
+    // (avant d'avoir une vraie logique globale pour assigner des thèmes globaux à chacun des composants)
     const containerStyle = `
       --carousel-gap-value: ${this.gapValue}px;
       --carousel-padding-value: ${this.paddingValue}px;
@@ -423,32 +465,51 @@ class Carousel extends Component<Props, State> {
       ${this.settings.arrowBackgroundColorHover ? `--carousel-arrow-bg-hover: ${this.settings.arrowBackgroundColorHover}` : ''};
       ${this.settings.imageHeight && !this.state.fullscreen ? `--carousel-image-height: ${this.settings.imageHeight}px` : ''};
     `
-
+    // [WIP][ELSA] il vaut mieux passer des variables dans le style inline et appliquer le vrai style
+    // depuis styles.module.scss genre 
+    // const imagesContainerStyle = `--width: ${this.state.carouselWidth}px;`
+    // .imagesContainer { width: --width; }
     const imagesContainerStyle = `
       width: ${this.state.carouselWidth}px;
       height: ${imagesMaxHeight};
-      grid-template-columns: repeat(${props.images?.length ?? 0}, 1fr);
-    `
+      grid-template-columns: repeat(${props.images?.length ?? 0}, 1fr);`
 
     return (
+      // [WIP][ELSA] containerClasses, containerStyle, et... componentRef ? containerRef plutôt non ?
+      // [WIP][ELSA] il vaut mieux utiliser className plutôt que class comme attribut pour passer les classes.
+      // class va fonctionner avec preact mais pas avec react. C'est pas très important dans notre cas mais on 
+      // sait jamais, si on veut migrer sur react un jour, il vaut mieux rester sur leur standard
       <div ref={this.componentRef} class={containerClasses.join(' ')} style={containerStyle}>
 
         <div ref={this.titleRef} class={titleClasses.join(' ')}>
+          {/* [WIP][ELSA] plus concis et booléen en guise de condition ici: {title !== undefined && <h5>{title}</h5>}
+            * => à savoir : const truc = true && 2; ==> truc === 2 (et pas true) */}
           {this.settings.title ? <h5>{this.settings.title}</h5> : ''}
         </div>
-
+        
+        {/* [WIP][ELSA] pareil ici {fullscreen && <div>...</div>} */}
+        {/* [WIP][ELSA] plutôt que de faire un check sur settings.fullscreen et state.fullscreen ici
+          * il vaudrait mieux s'assurer dans toggleFullscreen qu'on ne peut pas passer state.fullscreen
+          * si settings.fullscreen !== true
+         */}
         {this.settings.fullscreen
           ? <div onClick={this.toggleFullscreen} class={fullscreenBtnClasses.join(' ')}>
             {this.state.fullscreen
+              /* [WIP][ELSA] SvgIcon devrait s'appeler Icon */
               ? <SvgIcon name='fullscreen-close' />
               : <SvgIcon name='fullscreen-open' />}
           </div>
           : ''}
 
         <div ref={this.scrollableRef} onScroll={this.handleScroll} class={scrollableClasses.join(' ')}>
-
+          
           <div class={imagesClasses.join(' ')} style={imagesContainerStyle}>
-
+            {/* [WIP][ELSA] tu as pas mal de props qui pourraient être un tout petit peu plus
+            explicites dans leur nom, genre visible => isVisible, selected => isSelected
+            fullscreen => isFullscreen, etc... */}
+            {/* [WIP][ELSA] il vaudrait mieux que la ref que tu veux mettre soit assignée dans ce fichier
+            (via une div que tu mettrais autour par ex), et que CarouselElement n'ait
+            rien à voir avec ça, mais surtout... tu passes la même ref à chaque objet CarouselElement là non ? */}
             {props.images?.map((media, i) => {
               return <CarouselElement
                 media={media}
@@ -465,11 +526,24 @@ class Carousel extends Component<Props, State> {
 
         {this.displayControls
           ? <div ref={this.controlsRef} class={controlsClasses.join(' ')}>
-
+            {/* [WIP][ELSA] {displayDots && this.renderProgressDots(props.images?.length ?? 0)} */}
+            {/* [WIP][ELSA] pareil ici, la lecture du composant est un peu interrompue, on doit
+            aller chercher ailleurs la définition de renderProgressDots alors qu'elle n'est utilisée
+            qu'ici */}
             {this.displayDots
               ? this.renderProgressDots(props.images?.length ?? 0)
               : ''}
-
+            {/* [WIP][ELSA] ah, donc plutôt : {displayDots && <>
+              {this.renderProgressDots(props.images?.length ?? 0)}
+              {this.renderArrows({
+                leftArrow: this.settings.leftArrow ?? false,
+                rightArrow: this.settings.rightArrow ?? false,
+                index: this.state.index,
+                limit: (props.images?.length ?? 0) - 1,
+                top: this.state.arrowsPos
+              })}
+            </>} */}
+            {/* [WIP][ELSA] évidemment, renderArrows, pareil que renderProgressDots */}
             {this.displayArrows
               ? this.renderArrows({
                 leftArrow: this.settings.leftArrow ?? false,
