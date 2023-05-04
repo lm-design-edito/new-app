@@ -1,6 +1,6 @@
 import { Component, JSX, createRef, RefObject } from 'preact'
 
-import SvgIcon from '../SvgIcon'
+import Icon, { Icons } from '~/components/Icon'
 import CarouselElement, { Media } from './components/CarouselElement'
 
 import bem from '~/utils/bem'
@@ -28,13 +28,13 @@ interface ArrowsProps {
 interface CarouselSettings {
   leftArrow?: boolean
   rightArrow?: boolean
-  arrowsPosition?: 'center' | 'bottom'
+  arrowsPosition?: string
   dots?: boolean
   loop?: boolean
   duration?: number
   fullscreen?: boolean
   imageHeight?: number
-  imageFit?: 'cover' | 'contain'
+  imageFit?: string
   gapValue?: number
   backgroundColor?: string
   imageBackgroundColor?: string
@@ -226,7 +226,7 @@ class Carousel extends Component<Props, State> {
   // être des racourcis si vraiment y'en a besoin genre :
   // incrementIndex () { this.setIndex(this.state.index + 1) }
   // decrementIndex () { this.setIndex(this.state.index - 1) }
-  
+
   // [WIP][ELSA] C'est setIndex qui doit s'assurer que l'index
   // sur lequel on atterrit est bien compris entre 0 et props.images.length
   // et pour ce faire, tu peux utiliser ~/utils/absolute-modulo, genre
@@ -306,13 +306,13 @@ class Carousel extends Component<Props, State> {
 
         {leftArrow
           ? <div class={leftArrowClasses.join(' ')} onClick={this.decrementIndex}>
-            <SvgIcon name='arrow-left' />
+            <Icon file={Icons.ARROW_LEFT} />
           </div>
           : ''}
 
         {rightArrow
           ? <div class={rightArrowClasses.join(' ')} onClick={this.incrementIndex}>
-            <SvgIcon name='arrow-right' />
+            <Icon file={Icons.ARROW_RIGHT} />
           </div>
           : ''}
 
@@ -486,7 +486,7 @@ class Carousel extends Component<Props, State> {
             * => à savoir : const truc = true && 2; ==> truc === 2 (et pas true) */}
           {this.settings.title ? <h5>{this.settings.title}</h5> : ''}
         </div>
-        
+
         {/* [WIP][ELSA] pareil ici {fullscreen && <div>...</div>} */}
         {/* [WIP][ELSA] plutôt que de faire un check sur settings.fullscreen et state.fullscreen ici
           * il vaudrait mieux s'assurer dans toggleFullscreen qu'on ne peut pas passer state.fullscreen
@@ -496,13 +496,13 @@ class Carousel extends Component<Props, State> {
           ? <div onClick={this.toggleFullscreen} class={fullscreenBtnClasses.join(' ')}>
             {this.state.fullscreen
               /* [WIP][ELSA] SvgIcon devrait s'appeler Icon */
-              ? <SvgIcon name='fullscreen-close' />
-              : <SvgIcon name='fullscreen-open' />}
+              ? <Icon file={Icons.FULLSCREEN_CLOSE} />
+              : <Icon file={Icons.FULLSCREEN_OPEN} />}
           </div>
           : ''}
 
         <div ref={this.scrollableRef} onScroll={this.handleScroll} class={scrollableClasses.join(' ')}>
-          
+
           <div class={imagesClasses.join(' ')} style={imagesContainerStyle}>
             {/* [WIP][ELSA] tu as pas mal de props qui pourraient être un tout petit peu plus
             explicites dans leur nom, genre visible => isVisible, selected => isSelected
