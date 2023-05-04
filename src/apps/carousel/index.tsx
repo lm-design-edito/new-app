@@ -15,7 +15,12 @@ export default function CarouselApp({
   const props = optionsToProps(options)
   const app = <Carousel {...props} />
   render(app, root)
-  silentLogger?.log('carousel-app/rendered', props, root)
+  silentLogger?.log(
+    'carousel-app/rendered',
+    'root:', root,
+    '\noptions:', options,
+    '\nprops:', props
+  )
 }
 
 /* * * * * * * * * * * * * * * * * * *
@@ -68,6 +73,12 @@ function objectToSettings(object: any): CarouselSettings {
     description,
   } = object
 
+  /* [WIP][ELSA]
+   * - dans l'app scrllgngn j'ai changé la façon de récupérer les props :
+   *  - avant : if (typeof machin === 'string') { stringProp = machin }
+   *  - maintenant : if (machin !== undefined) { stringProp = toString(machin) } // import toString from '~/utils/cast'
+   *  - ça devrait rendre les fonctions optionsToProps plus lisibles et consistantes à l'avenir
+   */
   if (typeof leftArrow === 'boolean') { settings.leftArrow = leftArrow }
   if (typeof rightArrow === 'boolean') { settings.rightArrow = rightArrow }
   if (arrowsPosition === 'center' || arrowsPosition === 'bottom') { settings.arrowsPosition = arrowsPosition }
