@@ -1,0 +1,113 @@
+.container {
+  --light-grey: #E8EAEE;
+  --grey: #A4A9B4;
+  --dark-grey: #2A303B;
+  --slideshow-toggle-color: #717B8E;
+  --slideshow-credits-color: #a2a9ae;
+  --slideshow-description-color: #dedede;
+  --slideshow-dot-size: 8px;
+  --slideshow-dot-color: #d9dbdf;
+  --slideshow-dot-color-selected: var(--grey);
+  --slideshow-arrow-color: var(--dark-grey);
+  --slideshow-arrow-color-disabled: #BDC1C8;
+  --slideshow-arrow-bg: var(--light-grey);
+  --slideshow-arrow-bg-hover: var(--grey);
+  --slideshow-max-height: initial;
+  font-family: var(--ff-marr-sans);
+
+  p {
+    margin: 0;
+  }
+
+  &.container--cover img,
+  &.container--cover video {
+    object-fit: cover;
+  }
+
+  &.container--contain img,
+  &.container--contain video {
+    object-fit: contain;
+  }
+}
+
+.images {
+  display: grid;
+  background-color: #000;
+  height: var(--slideshow-max-height);
+
+  >* {
+    grid-area: 1 / -1;
+  }
+}
+
+.controls {
+  display: grid;
+  align-items: center;
+  padding: 0.6em;
+
+  >div {
+    grid-area: 1 / -1;
+  }
+}
+
+.dots {
+  display: flex;
+  justify-content: center;
+}
+
+.dot {
+  display: block;
+  margin: calc(var(--slideshow-dot-size)/2);
+  height: var(--slideshow-dot-size);
+  width: var(--slideshow-dot-size);
+  border-radius: var(--slideshow-dot-size);
+  background-color: var(--slideshow-dot-color);
+  cursor: pointer;
+  z-index: 2;
+
+  &.dot--selected {
+    background-color: var(--slideshow-dot-color-selected);
+  }
+}
+
+.arrows {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.arrow {
+  cursor: pointer;
+  height: 32px;
+  width: 32px;
+  border-radius: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--slideshow-arrow-bg);
+  transition: background-color 100ms;
+
+  +.arrow {
+    margin-left: 0.5em;
+  }
+
+  svg path {
+    fill: var(--slideshow-arrow-color);
+  }
+
+  &.arrow--disabled {
+    background-color: transparent;
+    border: 1px solid var(--slideshow-arrow-bg);
+    pointer-events: none;
+    cursor: inherit;
+
+    svg path {
+      fill: var(--slideshow-arrow-color-disabled);
+    }
+  }
+
+  @media (hover: hover) {
+    &:hover {
+      background-color: var(--slideshow-arrow-bg-hover);
+    }
+  }
+}
