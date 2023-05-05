@@ -8,21 +8,13 @@ import styles from './styles.module.scss'
 
 interface State {
   index: number,
-  visibleIndex: number,
-  arrowsPos: number,
-  componentWidth: number,
-  carouselWidth: number,
-  translateValue: number,
-  controlsReady: boolean,
-  fullscreen: boolean
-}
-
-interface ArrowsProps {
-  leftArrow: boolean
-  rightArrow: boolean
-  index: number
-  limit: number
-  top: number
+  visibleIndex?: number,
+  arrowsPos?: number,
+  componentWidth?: number,
+  carouselWidth?: number,
+  translateValue?: number,
+  controlsReady?: boolean,
+  fullscreen?: boolean
 }
 
 interface CarouselSettings {
@@ -87,6 +79,10 @@ class Carousel extends Component<Props, State> {
   loadingInterval!: number
 
   bemClss = bem('lm-carousel')
+
+  state: State = {
+    index: 0
+  }
 
   /* * * * * * * * * * * * * * * * * * *
     * CONSTRUCTOR
@@ -247,7 +243,7 @@ class Carousel extends Component<Props, State> {
 
     const translateValue = number === 0
       ? 0
-      : number * (this.state.componentWidth - this.gapValue * 4) - this.gapValue * 1.5
+      : number * ((this.state.componentWidth ?? 0) - this.gapValue * 4) - this.gapValue * 1.5
 
     if (this.scrollableRef.current) this.scrollableRef.current.scrollLeft = translateValue
 
