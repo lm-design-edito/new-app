@@ -1,4 +1,4 @@
-import { Component, JSX, VNode } from 'preact'
+import { Attributes, Component, JSX, VNode } from 'preact'
 import bem from '~/utils/bem'
 
 import './styles.scss'
