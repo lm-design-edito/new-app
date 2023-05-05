@@ -71,7 +71,7 @@ class Carousel extends Component<Props, State> {
   loopDuration: number
 
   scrollableRef: RefObject<HTMLDivElement>
-  componentRef: RefObject<HTMLDivElement>
+  containerRef: RefObject<HTMLDivElement>
   imageWrapperRef: RefObject<HTMLDivElement>
   controlsRef: RefObject<HTMLDivElement>
   titleRef: RefObject<HTMLDivElement>
@@ -112,7 +112,7 @@ class Carousel extends Component<Props, State> {
       : this.defaultLoopDuration
 
     this.scrollableRef = createRef()
-    this.componentRef = createRef()
+    this.containerRef = createRef()
     this.imageWrapperRef = createRef()
     this.controlsRef = createRef()
     this.titleRef = createRef()
@@ -259,87 +259,17 @@ class Carousel extends Component<Props, State> {
   }
 
   incrementIndex() {
-    // [WIP][ELSA] pas besoin de check sur null, c'est impossible selon typescript !
-    if (this.props.images === null || this.props.images === undefined) return
+    if (this.props.images === undefined) return
 
     const nextIndex = this.state.index === this.props.images.length - 1 ? 0 : this.state.index + 1
     this.setIndex(nextIndex)
   }
 
   decrementIndex() {
-    if (this.props.images === null || this.props.images === undefined) return
+    if (this.props.images === undefined) return
 
     const prevIndex = this.state.index === 0 ? this.props.images?.length - 1 : this.state.index - 1
     this.setIndex(prevIndex)
-  }
-
-  getContainerClassList(settings: CarouselSettings) {
-    const { bemClss } = this
-
-    let classList = [bemClss.value, styles['container']]
-
-    if (settings.imageFit === 'cover') classList.push(styles['container--cover'])
-    else classList.push(styles['container--contain'])
-
-    if (settings.arrowsPosition === 'bottom') classList.push(styles['container--arrows-bottom'])
-    else classList.push(styles['container--arrows-center'])
-
-    if (this.state.fullscreen) classList.push(styles['container--fullscreen'])
-
-    return classList
-  }
-
-  renderArrows({ leftArrow, rightArrow, index, limit, top }: ArrowsProps) {
-    const { bemClss } = this
-
-    const leftArrowClasses = [bemClss.elt('arrow').value, styles['arrow']]
-    const rightArrowClasses = [bemClss.elt('arrow').value, styles['arrow']]
-
-    if (index === 0) leftArrowClasses.push(styles['arrow--disabled'])
-    if (index === limit) rightArrowClasses.push(styles['arrow--disabled'])
-
-    const arrowsClasses = [bemClss.elt('arrows').value, styles['arrows']]
-    const arrowsStyle = top ? `top: ${top}px` : ''
-
-    return (
-      <div class={arrowsClasses.join(' ')} style={arrowsStyle}>
-
-        {leftArrow
-          ? <div class={leftArrowClasses.join(' ')} onClick={this.decrementIndex}>
-            <Icon file={Icons.ARROW_LEFT} />
-          </div>
-          : ''}
-
-        {rightArrow
-          ? <div class={rightArrowClasses.join(' ')} onClick={this.incrementIndex}>
-            <Icon file={Icons.ARROW_RIGHT} />
-          </div>
-          : ''}
-
-      </div>
-    )
-  }
-
-  renderProgressDots(total: number) {
-    const { bemClss } = this
-
-    const dotsClasses = [bemClss.elt('dots').value, styles['dots']]
-
-    return (
-      <div class={dotsClasses.join(' ')}>
-        {[...Array(total)].map((_el, i) => {
-          const dotClasses = [bemClss.elt('dot').value, styles['dot']]
-          if (this.state.index === i) dotClasses.push(styles['dot--selected'])
-
-          return (
-            <span
-              onClick={() => this.setIndex(i)}
-              class={dotClasses.join(' ')}>
-            </span>
-          )
-        })}
-      </div>
-    )
   }
 
   positionArrows() {
@@ -367,11 +297,10 @@ class Carousel extends Component<Props, State> {
     }))
   }
 
-
   calculateDimensions() {
     const imagesNumber = this.props.images?.length ?? 0
 
-    const componentWidth = this.componentRef.current?.getBoundingClientRect().width ?? 0
+    const componentWidth = this.containerRef.current?.getBoundingClientRect().width ?? 0
     const elementWidth = componentWidth - this.gapValue * 4
     const carouselWidth = imagesNumber * elementWidth - this.gapValue + this.paddingValue * 2
 
@@ -414,34 +343,38 @@ class Carousel extends Component<Props, State> {
     * RENDER
     * * * * * * * * * * * * * * */
   render(): JSX.Element {
-    const { props, bemClss } = this
+    const { props, state, bemClss } = this
     // [WIP][ELSA] Normalement il doit y avoir un moyen de faire sans ça
     // qui est probablement un peu buggy : si le contenu du titre doit 
     // changer sur ce rendu, les dimensions de titleRef elles seront
     // celles de l'ancien titre et donc seront incorrectes
     const titleDimensions = this.titleRef?.current?.getBoundingClientRect()
     const controlsDimensions = this.controlsRef?.current?.getBoundingClientRect()
-    // [WIP][ELSA] pour la forme ternaire cond ? value1 : value2, il vaut mieux
-    // avoir un vrai booléen pour la condition, ici tu as DOMRect|undefined
-    // il vaudrait mieux titleDimensions !== undefined ? ... : ...
-    const titleHeight = titleDimensions ? titleDimensions.height : 0
+    const titleHeight = titleDimensions !== undefined ? titleDimensions.height : 0
     const controlsHeight = controlsDimensions ? controlsDimensions.height : 0
     const imagesMaxHeight = this.state.fullscreen
       ? window.innerHeight - titleHeight - controlsHeight + 'px'
       : 'unset'
 
-    // [WIP][ELSA] pas sûr que ça ait trop de sens de sortir l'assignation
-    // des classes du container dans une méthode, vu qu'elle n'est appelée
-    // qu'ici, ça rend la lecture moins simple. Ou alors à la limite
-    // la méthode te sort toutes les classes et pas juste celles du container
-    // mais c'est toujours un peu too much, autant avoir toute la logique ici
-    const containerClasses = this.getContainerClassList(this.settings)
+    const containerClasses = [bemClss.value, styles['container']]
+    if (props.settings?.imageFit === 'cover') containerClasses.push(styles['container--cover'])
+    else containerClasses.push(styles['container--contain'])
+    if (props.settings?.arrowsPosition === 'bottom') containerClasses.push(styles['container--arrows-bottom'])
+    else containerClasses.push(styles['container--arrows-center'])
+    if (this.state.fullscreen) containerClasses.push(styles['container--fullscreen'])
     const titleClasses = [bemClss.elt('title').value, styles['title']]
     const fullscreenBtnClasses = [bemClss.elt('fullscreen-btn').value, styles['fullscreen-btn']]
     const scrollableClasses = [bemClss.elt('scrollable').value, styles['scrollable']]
     const imagesClasses = [bemClss.elt('images').value, styles['images']]
     const controlsClasses = [bemClss.elt('controls').value, styles['controls']]
     if (this.state.controlsReady) controlsClasses.push(styles['controls--visible'])
+    const dotsClasses = [bemClss.elt('dots').value, styles['dots']]
+    const leftArrowClasses = [bemClss.elt('arrow').value, styles['arrow']]
+    const rightArrowClasses = [bemClss.elt('arrow').value, styles['arrow']]
+    if (state.index === 0) leftArrowClasses.push(styles['arrow--disabled'])
+    if (state.index === (props.images?.length ?? 0) - 1) rightArrowClasses.push(styles['arrow--disabled'])
+    const arrowsClasses = [bemClss.elt('arrows').value, styles['arrows']]
+    const arrowsStyle = top ? `top: ${top}px` : ''
 
     // [WIP][ELSA] il vaudrait mieux que les variables ne soient pas définies si la prop est undefined
     // genre if (this.settings.backgroundColor !== undefined) { containerStyle['--carousel-bg-color'] = this.settings.backgroundColor }
@@ -475,35 +408,26 @@ class Carousel extends Component<Props, State> {
       grid-template-columns: repeat(${props.images?.length ?? 0}, 1fr);`
 
     return (
-      // [WIP][ELSA] containerClasses, containerStyle, et... componentRef ? containerRef plutôt non ?
-      // [WIP][ELSA] il vaut mieux utiliser className plutôt que class comme attribut pour passer les classes.
-      // class va fonctionner avec preact mais pas avec react. C'est pas très important dans notre cas mais on 
-      // sait jamais, si on veut migrer sur react un jour, il vaut mieux rester sur leur standard
-      <div ref={this.componentRef} class={containerClasses.join(' ')} style={containerStyle}>
+      <div ref={this.containerRef} className={containerClasses.join(' ')} style={containerStyle}>
 
-        <div ref={this.titleRef} class={titleClasses.join(' ')}>
-          {/* [WIP][ELSA] plus concis et booléen en guise de condition ici: {title !== undefined && <h5>{title}</h5>}
-            * => à savoir : const truc = true && 2; ==> truc === 2 (et pas true) */}
-          {this.settings.title ? <h5>{this.settings.title}</h5> : ''}
+        <div ref={this.titleRef} className={titleClasses.join(' ')}>
+          {this.settings.title !== undefined && <h5>{this.settings.title}</h5>}
         </div>
 
-        {/* [WIP][ELSA] pareil ici {fullscreen && <div>...</div>} */}
         {/* [WIP][ELSA] plutôt que de faire un check sur settings.fullscreen et state.fullscreen ici
           * il vaudrait mieux s'assurer dans toggleFullscreen qu'on ne peut pas passer state.fullscreen
           * si settings.fullscreen !== true
          */}
         {this.settings.fullscreen
-          ? <div onClick={this.toggleFullscreen} class={fullscreenBtnClasses.join(' ')}>
+          && <div onClick={this.toggleFullscreen} className={fullscreenBtnClasses.join(' ')}>
             {this.state.fullscreen
-              /* [WIP][ELSA] SvgIcon devrait s'appeler Icon */
               ? <Icon file={Icons.FULLSCREEN_CLOSE} />
               : <Icon file={Icons.FULLSCREEN_OPEN} />}
-          </div>
-          : ''}
+          </div>}
 
-        <div ref={this.scrollableRef} onScroll={this.handleScroll} class={scrollableClasses.join(' ')}>
+        <div ref={this.scrollableRef} onScroll={this.handleScroll} className={scrollableClasses.join(' ')}>
 
-          <div class={imagesClasses.join(' ')} style={imagesContainerStyle}>
+          <div className={imagesClasses.join(' ')} style={imagesContainerStyle}>
             {/* [WIP][ELSA] tu as pas mal de props qui pourraient être un tout petit peu plus
             explicites dans leur nom, genre visible => isVisible, selected => isSelected
             fullscreen => isFullscreen, etc... */}
@@ -525,14 +449,23 @@ class Carousel extends Component<Props, State> {
         </div>
 
         {this.displayControls
-          ? <div ref={this.controlsRef} class={controlsClasses.join(' ')}>
-            {/* [WIP][ELSA] {displayDots && this.renderProgressDots(props.images?.length ?? 0)} */}
-            {/* [WIP][ELSA] pareil ici, la lecture du composant est un peu interrompue, on doit
-            aller chercher ailleurs la définition de renderProgressDots alors qu'elle n'est utilisée
-            qu'ici */}
+          && <div ref={this.controlsRef} className={controlsClasses.join(' ')}>
+
             {this.displayDots
-              ? this.renderProgressDots(props.images?.length ?? 0)
-              : ''}
+              && <div className={dotsClasses.join(' ')}>
+                {[...Array(props.images?.length)].map((_el, i) => {
+                  const dotClasses = [bemClss.elt('dot').value, styles['dot']]
+                  if (this.state.index === i) dotClasses.push(styles['dot--selected'])
+
+                  return (
+                    <span
+                      onClick={() => this.setIndex(i)}
+                      className={dotClasses.join(' ')}>
+                    </span>
+                  )
+                })}
+              </div>}
+
             {/* [WIP][ELSA] ah, donc plutôt : {displayDots && <>
               {this.renderProgressDots(props.images?.length ?? 0)}
               {this.renderArrows({
@@ -543,19 +476,23 @@ class Carousel extends Component<Props, State> {
                 top: this.state.arrowsPos
               })}
             </>} */}
-            {/* [WIP][ELSA] évidemment, renderArrows, pareil que renderProgressDots */}
-            {this.displayArrows
-              ? this.renderArrows({
-                leftArrow: this.settings.leftArrow ?? false,
-                rightArrow: this.settings.rightArrow ?? false,
-                index: this.state.index,
-                limit: (props.images?.length ?? 0) - 1,
-                top: this.state.arrowsPos
-              })
-              : ''}
 
-          </div>
-          : ''}
+            {this.displayArrows
+              && <div className={arrowsClasses.join(' ')} style={arrowsStyle}>
+
+                {this.settings.leftArrow
+                  && <div className={leftArrowClasses.join(' ')} onClick={this.decrementIndex}>
+                    <Icon file={Icons.ARROW_LEFT} />
+                  </div>}
+
+                {this.settings.rightArrow
+                  && <div className={rightArrowClasses.join(' ')} onClick={this.incrementIndex}>
+                    <Icon file={Icons.ARROW_RIGHT} />
+                  </div>}
+
+              </div>}
+
+          </div>}
 
       </div>
     )

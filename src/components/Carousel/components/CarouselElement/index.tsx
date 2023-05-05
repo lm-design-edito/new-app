@@ -16,14 +16,14 @@ interface Media {
 }
 
 interface Props {
-  selected: boolean
-  visible: boolean
-  media: Media
-  settings: CarouselSettings
-  imageWrapperRef: RefObject<HTMLDivElement>
+  selected?: boolean
+  visible?: boolean
+  media?: Media
+  settings?: CarouselSettings
+  imageWrapperRef?: RefObject<HTMLDivElement>
 }
 
-export class CarouselElement extends Component<Props, {}> {
+class CarouselElement extends Component<Props, {}> {
   video: RefObject<HTMLVideoElement> | null = null
   lastSelected: boolean
 
@@ -32,7 +32,7 @@ export class CarouselElement extends Component<Props, {}> {
   constructor(props: Props) {
     super(props)
 
-    if (props.media.type === 'video') {
+    if (props.media?.type === 'video') {
       this.video = createRef()
     }
 
@@ -51,14 +51,13 @@ export class CarouselElement extends Component<Props, {}> {
     }
   }
 
-
   /* * * * * * * * * * * * * * *
     * RENDER
     * * * * * * * * * * * * * * */
   render(): JSX.Element {
     const { props, bemClss } = this
 
-    if (props.media.type === 'video' && this.video?.current) {
+    if (props.media?.type === 'video' && this.video?.current) {
       // on lance automatiquement la vidéo si on arrive dessus
       if (props.selected && !this.lastSelected) {
         this.video?.current.play()
@@ -69,22 +68,22 @@ export class CarouselElement extends Component<Props, {}> {
       }
     }
 
-    this.lastSelected = props.selected
+    if (props.selected !== undefined) this.lastSelected = props.selected
 
     let displayCaption = true
 
     let credits = ''
-    if (props.settings.credits) credits = props.settings.credits
-    if (props.media.credits) credits = props.media.credits
+    if (props.settings?.credits) credits = props.settings?.credits
+    if (props.media?.credits) credits = props.media?.credits
 
     let description = ''
-    if (props.settings.description) description = props.settings.description
-    if (props.media.description) description = props.media.description
+    if (props.settings?.description) description = props.settings?.description
+    if (props.media?.description) description = props.media?.description
 
     if (credits === '' && description === '') { displayCaption = false }
 
-    let mediaURL = props.media.url
-    if (props.media.mobileUrl && window.innerWidth < 768) {
+    let mediaURL = props.media?.url
+    if (props.media?.mobileUrl && window.innerWidth < 768) {
       mediaURL = props.media.mobileUrl
     }
 
@@ -92,7 +91,7 @@ export class CarouselElement extends Component<Props, {}> {
     if (props.selected) wrapperClasses.push(styles['wrapper--selected'])
     if (props.visible) wrapperClasses.push(styles['wrapper--visible'])
     // wip - à préciser
-    if (props.media.imageFit) wrapperClasses.push(styles[`wrapper--${props.media.imageFit}`])
+    if (props.media?.imageFit) wrapperClasses.push(styles[`wrapper--${props.media.imageFit}`])
 
     const imageClasses = [bemClss.elt('image').value, styles['image']]
     const captionClasses = [bemClss.elt('caption').value, styles['caption']]
@@ -100,25 +99,25 @@ export class CarouselElement extends Component<Props, {}> {
     const creditsClasses = [bemClss.elt('credits').value, styles['credits']]
 
     return (
-      <div class={wrapperClasses.join(' ')}>
-        <div ref={props.imageWrapperRef} class={imageClasses.join(' ')}>
-          {props.media.type === 'video'
+      <div className={wrapperClasses.join(' ')}>
+        <div ref={props.imageWrapperRef} className={imageClasses.join(' ')}>
+          {props.media?.type === 'video'
             ? <video onClick={this.toggleVideo} ref={this.video} muted loop playsInline autoPlay={props.selected} src={mediaURL} />
-            : (props.media.url ? <Img src={mediaURL} loading='eager' /> : '')}
+            : (props.media?.url && <Img src={mediaURL} loading='eager' />)}
         </div>
 
         {displayCaption
-          ? <div class={captionClasses.join(' ')}>
+          ? <div className={captionClasses.join(' ')}>
+            
             {description
-              ? <div class={descriptionClasses.join(' ')}>
+              && <div className={descriptionClasses.join(' ')}>
                 <p>{description}</p>
-              </div>
-              : ''}
+              </div>}
+
             {credits
-              ? <div class={creditsClasses.join(' ')}>
+              && <div className={creditsClasses.join(' ')}>
                 <p>{credits}</p>
-              </div>
-              : ''}
+              </div>}
           </div>
           : <div></div>}
       </div>
