@@ -5,7 +5,7 @@
   opacity: 0;
   overflow: hidden;
   transition: opacity 500ms;
-  height: var(--carousel-max-height);
+  height: var(--slideshow-max-height);
 
   >* {
     grid-area: 1 / -1;
@@ -20,7 +20,7 @@
   video {
     height: 100%;
     width: 100%;
-    max-height: var(--carousel-max-height);
+    max-height: var(--slideshow-max-height);
   }
 
   &.container--cover img,
@@ -73,12 +73,12 @@
 .credits {
   font-size: 12px;
   text-transform: uppercase;
-  color: var(--carousel-credits-color);
+  color: var(--slideshow-credits-color);
 }
 
 .description {
   font-size: 14px;
-  color: var(--carousel-description-color);
+  color: var(--slideshow-description-color);
   transition: opacity 800ms;
 
   &.description--hidden {
@@ -87,7 +87,7 @@
 }
 
 .toggle-description-btn {
-  color: var(--carousel-credits-color);
+  color: var(--slideshow-credits-color);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -98,6 +98,6 @@
   }
 
   svg path {
-    color: var(--carousel-credits-color);
+    color: var(--slideshow-credits-color);
   }
 }
