@@ -11,7 +11,7 @@ import { sassPlugin, postcssModules } from 'esbuild-sass-plugin'
 import * as config from './config.js'
 
 /* BUNDLE OPTIONS * * * * * * * * * * * * */
-const bundleOptions = (otherEntries: BuildOptions['entryPoints']): BuildOptions => ({
+const bundleOptions = (otherEntries: BuildOptions['entryPoints'] = {}): BuildOptions => ({
   outdir: config.DST,
   entryPoints: {
     'shared/index': config.SRC_SCRIPT,
@@ -214,7 +214,7 @@ async function listApps () {
   return list
 }
 
-async function getLibs () {
+async function listLibs () {
   const { readFile } = fs
   const packageJson = await readFile(config.PACKAGEJSON, { encoding: 'utf-8' })
   const { dependencies } = JSON.parse(packageJson)
@@ -234,23 +234,25 @@ async function processTypeCheck () {
 }
 
 async function processScripts () {
-  const appsEntryPoints: { [key: string]: string } = {}
-  const appsList = await listApps()
-  appsList.forEach(path => {
-    const appName = path.split('/').at(-2)
-    appsEntryPoints[`apps/${appName}/index`] = path
-  })
+  // [WIP] removed the separate chunks for apps
+  // const appsEntryPoints: { [key: string]: string } = {}
+  // const appsList = await listApps()
+  // appsList.forEach(path => {
+  //   const appName = path.split('/').at(-2)
+  //   appsEntryPoints[`apps/${appName}/index`] = path
+  // })
   const libsEntryPoints: { [key: string]: string } = {}
-  const libsObj = await getLibs()
+  const libsObj = await listLibs()
   const libsList = Object.keys(libsObj)
   libsList.forEach(libName => {
     libsEntryPoints[`lib/${libName}`] = libName
   })
   try {
-    const built = await build(bundleOptions({
-      ...appsEntryPoints,
-      ...libsEntryPoints
-    }))
+    // const built = await build(bundleOptions({
+    //   ...appsEntryPoints,
+    //   ...libsEntryPoints
+    // }))
+    const built = await build(bundleOptions({ ...libsEntryPoints }))
     return built
   } catch (err) {
     console.log(chalk.red.bold(err))
