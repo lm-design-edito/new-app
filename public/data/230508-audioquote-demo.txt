@@ -1,0 +1,31 @@
+// =========================================================
+# PAGE_CONFIG
+  
+  ## config
+    _hideHeader: true
+
+// =========================================================
+# PAGE_SLOTS
+  
+  ## audioquote
+    _selector: .audioquote
+    _name: audioquote
+    _options: audioquote-options/audioquote >>> toRef
+
+// =========================================================
+# audioquote-options
+  
+  ## audioquote
+    _audioSrc: https://assets-decodeurs.lemonde.fr/redacweb/2305-audio-quote-assets/johanna.mp3
+    _subsSrc: https://assets-decodeurs.lemonde.fr/redacweb/2305-audio-quote-assets/johanna.srt
+    _subsGroups: 14, 27, 34, 44, 56, 62 >>> split ,
+    _autoPlayWhenVisible: true
+    _autoPauseWhenHidden: true
+    _autoLoudWhenVisible: false
+    _autoMuteWhenHidden: true
+    _title: Ici le titre
+    _playButton: play
+    _pauseButton: pause
+    _loudButton: loud
+    _muteButton: mute
+    _hidePauseButton: true
