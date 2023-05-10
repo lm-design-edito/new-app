@@ -26,3 +26,5 @@ export const DST_ASSETS   = join(DST_SHARED, 'assets')
 export const DST_STYLES   = join(DST_SHARED, 'styles')
 // Published
 export const PUBLISHED    = join(CWD,        'published')
+// Temp
+export const TEMP         = join(CWD,        '.temp')
