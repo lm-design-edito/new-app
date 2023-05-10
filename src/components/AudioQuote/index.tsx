@@ -402,10 +402,10 @@ class AudioQuote extends Component<Props, State> {
   }
 
   /* [WIP] est-ce qu'on convertit les HTMLElements en VNodes ici ou dans app ? */
-  toVNode(element: undefined | string | HTMLElement | VNode) {
+  toVNode(element: undefined | string | HTMLElement | VNode): undefined | string | VNode {
     if (element === undefined) return undefined
     if (typeof element === 'string' || isValidElement(element)) return element
-    return nodesToVNodes(element)
+    return nodesToVNodes(element)[0]
   }
 
   /* * * * * * * * * * * * * * * * * * *
