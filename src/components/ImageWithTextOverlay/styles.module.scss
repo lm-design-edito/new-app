@@ -1,0 +1,24 @@
+.wrapper {
+  display: grid;
+
+  >* {
+    grid-area: 1/-1;
+  }
+
+  img {
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+.text-center {
+  align-self: center;
+}
+
+.text-bottom {
+  align-self: flex-end;
+}
+
+.shade {
+  background: var(--shade-gradient, 'transparent'); 
+}
