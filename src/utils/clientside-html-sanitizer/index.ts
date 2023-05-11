@@ -22,12 +22,9 @@ export default function sanitize (
   const wrapperDiv = document.createElement('div')
   const { inputFreeTransform } = options
   wrapperDiv.innerHTML = inputFreeTransform !== undefined ? inputFreeTransform(inputStr) : inputStr
-  const sanitizedChildren = [...wrapperDiv.children]
-    .map(elt => sanitizeElement(elt, options))
-    .filter((elt): elt is Element => elt !== null)
-  wrapperDiv.replaceChildren(...sanitizedChildren)
-  const returned = wrapperDiv.innerHTML
-  return returned
+  const sanitizedWrapper = sanitizeElement(wrapperDiv, options)
+  const returned = sanitizedWrapper?.innerHTML
+  return returned ?? ''
 }
 
 export function sanitizeElement (
