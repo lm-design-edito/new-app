@@ -1,8 +1,10 @@
 import { Component, JSX, createRef, RefObject, VNode, isValidElement } from 'preact'
 
 import IntersectionObserverComponent from '~/components/IntersectionObserver'
+import StrToVNode from '~/components/StrToVNodes'
 
 import nodesToVNodes from '~/utils/nodes-to-vnodes'
+
 import bem from '~/utils/bem'
 import styles from './styles.module.scss'
 
@@ -401,10 +403,11 @@ class AudioQuote extends Component<Props, State> {
     }
   }
 
-  /* [WIP] est-ce qu'on convertit les HTMLElements en VNodes ici ou dans app ? */
-  toVNode(element: undefined | string | HTMLElement | VNode): undefined | string | VNode {
+  /* [WIP] Migrer cette logique au niveau de l'app */
+  toVNode(element?: string | HTMLElement | VNode): undefined | string | VNode {
     if (element === undefined) return undefined
-    if (typeof element === 'string' || isValidElement(element)) return element
+    if (isValidElement(element)) return element
+    if (typeof element === 'string') return <StrToVNode content={element} />
     return nodesToVNodes(element)[0]
   }
 
