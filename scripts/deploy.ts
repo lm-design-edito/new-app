@@ -147,9 +147,7 @@ async function main () {
   * Select target destination
   * * * * * * * * ** * * * * * * * * * * * */
   enum Targets {
-    V001 = 'gs://decodeurs/design-edito/v0.0.1',
-    V0 = 'gs://decodeurs/design-edito/v0',
-    V1 = 'gs://decodeurs/design-edito/v1'
+    V0 = 'gs://decodeurs/design-edito/v0'
   }
   console.log(styles.title('Select a target destination'))
   const { targetDestinationName } = await prompts({
