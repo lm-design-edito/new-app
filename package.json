@@ -51,7 +51,8 @@
     "dev": "npx concurrently -n 'build-src,build-srv,serve    ' 'npm run build-source:dev' 'npm run build-server:dev' 'npm run start-server:dev'",
     "prod": "npm run build-source:prod && npm run build-server:prod && npm run start-server:prod",
     "start": "npm run dev",
-    "publish": "npx tsc --project scripts/tsconfig.json && node scripts/dist/publish.js"
+    "predeploy": "npm run build-source:prod",
+    "deploy": "npx tsc --project scripts/tsconfig.json && node scripts/dist/deploy.js"
   },
   "author": "",
   "license": "ISC",

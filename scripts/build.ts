@@ -241,18 +241,20 @@ async function processScripts () {
   //   const appName = path.split('/').at(-2)
   //   appsEntryPoints[`apps/${appName}/index`] = path
   // })
-  const libsEntryPoints: { [key: string]: string } = {}
-  const libsObj = await listLibs()
-  const libsList = Object.keys(libsObj)
-  libsList.forEach(libName => {
-    libsEntryPoints[`lib/${libName}`] = libName
-  })
+  // const libsEntryPoints: { [key: string]: string } = {}
+  // const libsObj = await listLibs()
+  // const libsList = Object.keys(libsObj)
+  // libsList.forEach(libName => {
+  //   libsEntryPoints[`lib/${libName}.[hash]`] = libName
+  // })
   try {
     // const built = await build(bundleOptions({
     //   ...appsEntryPoints,
     //   ...libsEntryPoints
     // }))
-    const built = await build(bundleOptions({ ...libsEntryPoints }))
+    const built = await build(bundleOptions({
+      // ...libsEntryPoints
+    }))
     return built
   } catch (err) {
     console.log(chalk.red.bold(err))
