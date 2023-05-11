@@ -12,6 +12,7 @@ export enum Names {
   CAROUSEL = 'carousel',
   SLIDESHOW = 'slideshow',
   AUDIOQUOTE = 'audioquote',
+  ANYCOMP = 'anycomp',
 }
 
 export const validNames = Object.values(Names)
@@ -177,6 +178,7 @@ export async function renderApp ({ name, options, root, pageConfig, silentLogger
   if (name === Names.CAROUSEL) { renderer = (await import('../../../apps/carousel')).default }
   if (name === Names.SLIDESHOW) { renderer = (await import('../../../apps/slideshow')).default }
   if (name === Names.AUDIOQUOTE) { renderer = (await import('../../../apps/audioquote')).default }
+  if (name === Names.ANYCOMP) { renderer = (await import('../../../apps/anycomp')).default }
   if (renderer === null) throw new Error(`Could not find a renderer for an app named ${name}`)
   // Add lm-app-root class on the root
   root.classList.add('lm-app-root')

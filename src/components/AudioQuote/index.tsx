@@ -1,8 +1,10 @@
 import { Component, JSX, createRef, RefObject, VNode, isValidElement } from 'preact'
 
 import IntersectionObserverComponent from '~/components/IntersectionObserver'
+import StrToVNode from '~/components/StrToVNodes'
 
 import nodesToVNodes from '~/utils/nodes-to-vnodes'
+
 import bem from '~/utils/bem'
 import styles from './styles.module.scss'
 
@@ -401,10 +403,11 @@ class AudioQuote extends Component<Props, State> {
     }
   }
 
-  /* [WIP] est-ce qu'on convertit les HTMLElements en VNodes ici ou dans app ? */
-  toVNode(element: undefined | string | HTMLElement | VNode): undefined | string | VNode {
+  /* [WIP] Migrer cette logique au niveau de l'app */
+  toVNode(element?: string | HTMLElement | VNode): undefined | string | VNode {
     if (element === undefined) return undefined
-    if (typeof element === 'string' || isValidElement(element)) return element
+    if (isValidElement(element)) return element
+    if (typeof element === 'string') return <StrToVNode content={element} />
     return nodesToVNodes(element)[0]
   }
 
@@ -442,20 +445,20 @@ class AudioQuote extends Component<Props, State> {
             && <div className={titleClasses.join(' ')}>{this.toVNode(props.title)}</div>}
 
           <div onClick={this.handlePlayClick} className={playButtonClasses.join(' ')}>
-            {this.toVNode(props.playButton) ?? 'PLAY'}
+            {this.toVNode(props.playButton) ?? 'Lancer la lecture'}
           </div>
 
           {props.hidePauseButton !== true
             && <div onClick={this.handlePauseClick} className={pauseButtonClasses.join(' ')}>
-              {this.toVNode(props.pauseButton) ?? 'PAUSE'}
+              {this.toVNode(props.pauseButton) ?? 'Mettre en pause'}
             </div>}
 
           <div onClick={this.handleLoudClick} className={loudButtonClasses.join(' ')}>
-            {this.toVNode(props.loudButton) ?? 'LOUD'}
+            {this.toVNode(props.loudButton) ?? 'Activer le son'}
           </div>
 
           <div onClick={this.handleMuteClick} className={muteButtonClasses.join(' ')}>
-            {this.toVNode(props.muteButton) ?? 'MUTE'}
+            {this.toVNode(props.muteButton) ?? 'Couper le son'}
           </div>
 
           <video src={props.audioSrc} ref={this.videoElt} className={videoEltClasses.join(' ')} controls muted></video>

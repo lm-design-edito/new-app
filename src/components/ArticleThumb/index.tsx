@@ -1,5 +1,5 @@
 import { Component, VNode } from 'preact'
-import Img from '~/components/Img'
+import ImageWithTextOverlay from '~/components/ImageWithTextOverlay'
 import bem from '~/utils/bem'
 import styles from './styles.module.scss'
 
@@ -137,26 +137,17 @@ class ArticleThumbV2 extends Component<Props, {}> {
         {/* Image */}
         {fullProps.imageUrl && <div
           className={imgClasses.join(' ')}>
-          <Img src={fullProps.imageUrl} alt={fullProps.imageAlt} />
-        </div>}
-
-        {/* Shade */}
-        {displayShade && <div
-          className={shadeClasses.join(' ')}
-          style={shadeStyle} />}
-
-        {/* Inside */}
-        {fullProps.textInsideTop && <div
-          className={topClasses.join(' ')}>
-          {fullProps.textInsideTop}
-        </div>}
-        {fullProps.textInsideCenter && <div
-          className={centerClasses.join(' ')}>
-          {fullProps.textInsideCenter}
-        </div>}
-        {fullProps.textInsideBottom && <div
-          className={bottomClasses.join(' ')}>
-          {fullProps.textInsideBottom}
+          <ImageWithTextOverlay
+            imageUrl={fullProps.imageUrl}
+            imageAlt={fullProps.imageAlt}
+            textTop={fullProps.textInsideTop}
+            textCenter={fullProps.textInsideCenter}
+            textBottom={fullProps.textInsideBottom}
+            shadeFromPos={fullProps.shadeFromPos}
+            shadeFromColor={fullProps.shadeFromColor}
+            shadeToPos={fullProps.shadeToPos}
+            shadeToColor={fullProps.shadeToColor}
+          />
         </div>}
       </div>
 
