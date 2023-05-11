@@ -445,20 +445,20 @@ class AudioQuote extends Component<Props, State> {
             && <div className={titleClasses.join(' ')}>{this.toVNode(props.title)}</div>}
 
           <div onClick={this.handlePlayClick} className={playButtonClasses.join(' ')}>
-            {this.toVNode(props.playButton) ?? 'PLAY'}
+            {this.toVNode(props.playButton) ?? 'Lancer la lecture'}
           </div>
 
           {props.hidePauseButton !== true
             && <div onClick={this.handlePauseClick} className={pauseButtonClasses.join(' ')}>
-              {this.toVNode(props.pauseButton) ?? 'PAUSE'}
+              {this.toVNode(props.pauseButton) ?? 'Mettre en pause'}
             </div>}
 
           <div onClick={this.handleLoudClick} className={loudButtonClasses.join(' ')}>
-            {this.toVNode(props.loudButton) ?? 'LOUD'}
+            {this.toVNode(props.loudButton) ?? 'Activer le son'}
           </div>
 
           <div onClick={this.handleMuteClick} className={muteButtonClasses.join(' ')}>
-            {this.toVNode(props.muteButton) ?? 'MUTE'}
+            {this.toVNode(props.muteButton) ?? 'Couper le son'}
           </div>
 
           <video src={props.audioSrc} ref={this.videoElt} className={videoEltClasses.join(' ')} controls muted></video>
