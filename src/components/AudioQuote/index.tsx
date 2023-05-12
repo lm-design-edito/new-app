@@ -461,7 +461,7 @@ class AudioQuote extends Component<Props, State> {
             {this.toVNode(props.muteButton) ?? 'Couper le son'}
           </div>
 
-          <video src={props.audioSrc} ref={this.videoElt} className={videoEltClasses.join(' ')} controls muted></video>
+          <video src={props.audioSrc} ref={this.videoElt} className={videoEltClasses.join(' ')} controls muted playsInline></video>
 
           <div className={subsContainerClasses.join(' ')}>{this.getDisplayedSubsContent()}</div>
         </div>
