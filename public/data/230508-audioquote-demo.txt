@@ -16,16 +16,14 @@
 # audioquote-options
   
   ## audioquote
-    _audioSrc: https://assets-decodeurs.lemonde.fr/redacweb/2305-audio-quote-assets/johanna.mp3
-    _subsSrc: https://assets-decodeurs.lemonde.fr/redacweb/2305-audio-quote-assets/johanna.srt
-    _subsGroups: 14, 27, 34, 44, 56, 62 >>> split ,
+    _audioSrc: https://assets-decodeurs.lemonde.fr/redacweb/2305-audio-quote-assets/johanna-short.mp3
+    _subsSrc: https://assets-decodeurs.lemonde.fr/redacweb/2305-audio-quote-assets/johanna-v2.srt
+    _subsGroups: 27, 44, 62, 83 
     _autoPlayWhenVisible: true
     _autoPauseWhenHidden: true
     _autoLoudWhenVisible: false
-    _autoMuteWhenHidden: true
-    _title: Ici le titre
-    _playButton: play
-    _pauseButton: pause
-    _loudButton: loud
-    _muteButton: mute
-    _hidePauseButton: true
+    _autoMuteWhenHidden: false
+    _title: Ça veut dire quoi, être amoureuse du début jusqu'à la fin ?
+    _loudButton: <span>Écouter la voix de Johanna</span>
+    _muteButton: <span>Couper le son</span>
+    _hidePauseButton: false
