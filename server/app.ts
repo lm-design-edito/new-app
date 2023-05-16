@@ -1,5 +1,5 @@
 import fs, { lstatSync } from 'node:fs'
-import { join } from 'node:path'
+import { join, extname } from 'node:path'
 import express from 'express'
 import cookieParser from 'cookie-parser'
 import logger from 'morgan'
@@ -63,33 +63,22 @@ const listAssets = async () => {
   const assetsFiles = (await glob(`${ASSETS}/**/*`))
     .filter(absPath => {
       const stats = fs.lstatSync(absPath)
+      const ext = extname(absPath)
       const isDir = stats.isDirectory()
-      return !isDir
+      return !isDir && ext !== '.map'
     })
     .map(absPath => absPath.replace(ASSETS, ''))
     .sort()
   return assetsFiles
 }
 
-const generateHomePage = async () => `<html>
+const generateHomePage = async () => `<html class="lm-page">
   <head>
     <meta charsed="utf-8">
     <style>
-      html {
-        font-size: 16px;
-        padding: 50px;
-        padding-bottom: 200px;
-        font-family: monospace;
-      }
-
-      body {
-        margin: 0;
-      }
-
-      h2 {
-        margin: 0;
-        line-height: 1;
-      }
+      html { font-size: 16px; padding: 50px; padding-bottom: 200px; font-family: monospace; }
+      body { margin: 0; }
+      h2 { margin: 0; line-height: 1; }
     </style>
   </head>
   <body>
@@ -126,7 +115,6 @@ const generateHomePage = async () => `<html>
   </body>
 </html>`
 
-
 app.use('/', async (req, res, next) => {
   if (req.path !== '/') return next()
   const homePageContent = await generateHomePage()
@@ -144,14 +132,14 @@ app.use('/pages', async (req, res, next) => {
   }
 })
 
-function normalizePort(val: string) {
+function normalizePort (val: string) {
   const port = parseInt(val, 10)
   if (isNaN(port)) return val
   if (port >= 0) return port
   return false
 }
 
-function onError(error: any) {
+function onError (error: any) {
   if (error.syscall !== 'listen') throw error
   const bind = typeof port === 'string' ? 'Pipe ' + port : 'Port ' + port
   switch (error.code) {
@@ -169,7 +157,7 @@ function onError(error: any) {
 }
 
 const debug = Debug('server:server')
-function onListening() {
+function onListening () {
   const addr = server.address()
   const bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr?.port
   debug('Listening on ' + bind)
