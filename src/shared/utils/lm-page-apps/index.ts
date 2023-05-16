@@ -12,7 +12,7 @@ export enum Names {
   CAROUSEL = 'carousel',
   SLIDESHOW = 'slideshow',
   AUDIOQUOTE = 'audioquote',
-  ANYCOMP = 'anycomp',
+  ANYCOMP_FOR_DEV_ONLY = 'anycomp-for-dev',
 }
 
 export const validNames = Object.values(Names)
@@ -28,7 +28,10 @@ export type Options = Record<string, unknown>
 
 export function isValidOptions (obj: unknown): obj is Options  {
   try {
-    Object.keys(obj as any) // [IDEA] do better than this?
+    // [IDEA] do better than this?
+    // Like const spreaded = { ...obj as Object } ?
+    // Or actually check if every prop is a valid InlineOption ?
+    Object.keys(obj as any)
     return true
   } catch (err) {
     return false
@@ -171,15 +174,23 @@ type RenderOptions = {
 
 export type Renderer = (appOptions: Omit<RenderOptions, 'name'>) => void
 
-export async function renderApp ({ name, options, root, pageConfig, silentLogger }: RenderOptions) {
-  // Load renderer
+async function loadRenderer (name: Names) {
+  const isProd = process.env.NODE_ENV !== 'production'
   let renderer: Renderer|null = null
   if (name === Names.SCRLLGNGN) { renderer = (await import('../../../apps/scrllgngn')).default }
   if (name === Names.CAROUSEL) { renderer = (await import('../../../apps/carousel')).default }
   if (name === Names.SLIDESHOW) { renderer = (await import('../../../apps/slideshow')).default }
   if (name === Names.AUDIOQUOTE) { renderer = (await import('../../../apps/audioquote')).default }
-  if (name === Names.ANYCOMP) { renderer = (await import('../../../apps/anycomp')).default }
+  if (name === Names.ANYCOMP_FOR_DEV_ONLY && isProd) {
+    renderer = (await import('../../../apps/anycomp-for-dev')).default
+  }
   if (renderer === null) throw new Error(`Could not find a renderer for an app named ${name}`)
+  return renderer
+}
+
+export async function renderApp ({ name, options, root, pageConfig, silentLogger }: RenderOptions) {
+  // Load renderer
+  const renderer = await loadRenderer(name)
   // Add lm-app-root class on the root
   root.classList.add('lm-app-root')
   // Select target inside root for rendering

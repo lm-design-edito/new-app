@@ -9,67 +9,67 @@
   
   ## image
     _selector: .article-image
-    _name: anycomp
+    _name: anycomp-for-dev
     _options: ui-options/image >>> toRef
   
   ## quote
     _selector: .article-quote
-    _name: anycomp
+    _name: anycomp-for-dev
     _options: ui-options/quote >>> toRef
 
   ## read-also
     _selector: .article-read-also
-    _name: anycomp
+    _name: anycomp-for-dev
     _options: ui-options/read-also >>> toRef
   
   ## read-in-english
     _selector: .article-read-in-english
-    _name: anycomp
+    _name: anycomp-for-dev
     _options: ui-options/read-in-english >>> toRef
   
   ## editorial-nature
     _selector: .article-editorial-nature
-    _name: anycomp
+    _name: anycomp-for-dev
     _options: ui-options/editorial-nature >>> toRef
   
   ## heading
     _selector: .article-heading
-    _name: anycomp
+    _name: anycomp-for-dev
     _options: ui-options/heading >>> toRef
   
   ## kicker
     _selector: .article-kicker
-    _name: anycomp
+    _name: anycomp-for-dev
     _options: ui-options/kicker >>> toRef
   
   ## title
     _selector: .article-title
-    _name: anycomp
+    _name: anycomp-for-dev
     _options: ui-options/title >>> toRef
   
   ## intertitle
     _selector: .article-intertitle
-    _name: anycomp
+    _name: anycomp-for-dev
     _options: ui-options/intertitle >>> toRef
   
   ## signature
     _selector: .article-signature
-    _name: anycomp
+    _name: anycomp-for-dev
     _options: ui-options/signature >>> toRef
   
   ## paragraph
     _selector: .article-paragraph
-    _name: anycomp
+    _name: anycomp-for-dev
     _options: ui-options/paragraph >>> toRef
   
   ## publication
     _selector: .article-publication
-    _name: anycomp
+    _name: anycomp-for-dev
     _options: ui-options/publication >>> toRef
   
   ## sub-marker
     _selector: .article-sub-marker
-    _name: anycomp
+    _name: anycomp-for-dev
     _options: ui-options/sub-marker >>> toRef
 
 // =========================================================

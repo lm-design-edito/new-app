@@ -9,7 +9,7 @@
   
   ## anycomp
     _selector: .anycomp
-    _name: anycomp
+    _name: anycomp-for-dev
     _options: anycomp-options/anycomp >>> toRef
 
 // =========================================================
