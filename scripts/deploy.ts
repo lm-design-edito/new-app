@@ -338,6 +338,8 @@ async function main () {
     { encoding: 'utf-8' }
   )
   const DST_PROD_SHARED_INDEX = join(config.DST_PROD, 'shared', 'index.js')
+  const dstProdSharedContent = await fs.readFile(DST_PROD_SHARED_INDEX, { encoding: 'utf-8' })
+  await fs.writeFile(DST_PROD_SHARED_INDEX, `/* v.${targetVersionArr.join('.')} */ ${dstProdSharedContent}`)
   const DST_PROD_SHARED_INDEX_VERSIONNED = join(config.DST_PROD, 'shared', `index.v${targetVersionArr.join('.')}.js`)
   await fs.copyFile(DST_PROD_SHARED_INDEX, DST_PROD_SHARED_INDEX_VERSIONNED)
   console.log('')
