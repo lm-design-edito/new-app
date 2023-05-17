@@ -1,9 +1,161 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <link rel="stylesheet" href="https://assets-decodeurs.lemonde.fr/redacweb/statics-v2/styles/fonts.css">
-    <link rel="stylesheet" href="https://assets-decodeurs.lemonde.fr/redacweb/statics-v2/styles/variables.css">
-    <link rel="stylesheet" href="https://assets-decodeurs.lemonde.fr/redacweb/2305-audio-quote-assets/230511-styles-audioquote.css">
+    <style>
+      .lm-audio-quote {
+        --lm-audio-c-light: #F6F2FF;
+        --lm-audio-c-dark: #352072;
+
+        background-color: var(--lm-audio-c-light);
+        color: var(--lm-audio-c-dark);
+
+        position: relative;
+        padding: 24px 16px;
+        font-family: var(--ff-marr-sans);
+
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+
+      .lm-audio-quote__title {
+        font-weight: 600;
+        font-size: 17px;
+        line-height: 1.4em;
+        letter-spacing: 0.02em;
+        padding-right: 48px;
+      }
+
+      /* subs */
+
+      .lm-audio-quote__subs-container {
+        font-family: var(--ff-the-antiqua-b);
+        font-weight: 300;
+        font-size: 30px;
+        line-height: 1.05em;
+        letter-spacing: -0.04em;
+      }
+
+      .lm-audio-quote__sub {
+        opacity: 0;
+        transition: opacity 300ms;
+      }
+
+      .lm-audio-quote__sub.lm-audio-quote__sub_pronounced {
+        opacity: 1;
+      }
+
+      .lm-audio-quote.lm-audio-quote_is-ended .lm-audio-quote__sub {
+        opacity: 0.2;
+      }
+
+      /* boutons */
+
+      .lm-audio-quote__play-button,
+      .lm-audio-quote__pause-button,
+      .lm-audio-quote__loud-button,
+      .lm-audio-quote__mute-button {
+        cursor: pointer;
+        transition: opacity 300ms;
+      }
+
+      .lm-audio-quote__play-button,
+      .lm-audio-quote__pause-button {
+        background-repeat: no-repeat;
+        height: 24px;
+        width: 24px;
+        font-size: 0;
+        position: absolute;
+        top: 16px;
+        right: 16px;
+      }
+
+      .lm-audio-quote__play-button {
+        background-image: url('https://assets-decodeurs.lemonde.fr/redacweb/2305-audio-quote-assets/playicon.svg');
+      }
+
+      .lm-audio-quote__pause-button {
+        background-image: url('https://assets-decodeurs.lemonde.fr/redacweb/2305-audio-quote-assets/pauseicon.svg');
+      }
+
+      .lm-audio-quote__loud-button,
+      .lm-audio-quote__mute-button {
+        border: 1px solid var(--lm-audio-c-dark);
+        padding: 8px 16px;
+        border-radius: 100px;
+        font-weight: 500;
+        font-size: 14px;
+        line-height: 1em;
+        display: inline-block;
+        user-select: none;
+      }
+
+      .lm-audio-quote__loud-button span,
+      .lm-audio-quote__mute-button span {
+        display: flex;
+        align-items: center;
+      }
+
+      .lm-audio-quote__loud-button span::before,
+      .lm-audio-quote__mute-button span::before {
+        background-repeat: no-repeat;
+        display: inline-block;
+        content: '';
+        width: 14px;
+      }
+
+      .lm-audio-quote__loud-button span::before {
+        width: 14px;
+        height: 11px;
+        background-image: url('https://assets-decodeurs.lemonde.fr/redacweb/2305-audio-quote-assets/loudicon.svg');
+        /* exception pour match le bouton couper le son */
+        margin: 2px 0;
+        margin-right: 6px;
+      }
+
+      .lm-audio-quote__mute-button span::before {
+        width: 16px;
+        height: 16px;
+        background-image: url('https://assets-decodeurs.lemonde.fr/redacweb/2305-audio-quote-assets/muteicon.svg');
+        /* exception pour match le bouton activer le son */
+        margin-left: -1px;
+        margin-top: -1px;
+        margin-right: 5px;
+      }
+
+      /* boutons inactifs */
+
+      .lm-audio-quote.lm-audio-quote_is-playing .lm-audio-quote__play-button,
+      .lm-audio-quote:not(.lm-audio-quote_is-playing) .lm-audio-quote__pause-button,
+      .lm-audio-quote.lm-audio-quote_is-loud .lm-audio-quote__loud-button,
+      .lm-audio-quote:not(.lm-audio-quote_is-loud) .lm-audio-quote__mute-button {
+        /* wip - pour Ã©viter flash chargement ?? 
+        mais flash avec position absolute */
+
+        /* opacity: 0;
+        z-index: -1;
+        user-select: none;
+        position: absolute; */
+
+        display: none;
+      }
+
+      @media (hover: hover) {
+
+        .lm-audio-quote__play-button:hover,
+        .lm-audio-quote__pause-button:hover,
+        .lm-audio-quote__loud-button:hover,
+        .lm-audio-quote__mute-button:hover {
+          opacity: 0.6;
+        }
+      }
+
+      /* fix AEC */
+      .snippet-container:has(.lm-audio-quote) {
+        padding: 0 !important;
+      }
+    </style>
   </head>
   <body>
     <!-- App -->

@@ -32,18 +32,11 @@ const shouldntInit = searchParams.has('noInit')
 if (!shouldntInit) initPage()
 export async function initPage () {
   silentLogger.log('page-init', `Start init the page from ${SCRIPTS_INDEX_URL.toString()}`)
+  
   // Load styles (dont await)
-  injectStylesheet(STYLES_INDEX_URL, STYLES_INDEX_URL.toString())
-    .then(res => {
-      if (typeof res === 'string') silentLogger.log('page-styles', `Injected ${STYLES_INDEX_URL.toString()}`)
-      else silentLogger.error('page-styles', res)
-  })
+  document.head.innerHTML += `<link rel="stylesheet" href="${STYLES_INDEX_URL.toString()}">`
   if (process.env.NODE_ENV === 'developpment') {
-    injectStylesheet(STYLES_DEV_URL, STYLES_DEV_URL.toString())
-      .then(res => {
-        if (typeof res === 'string') silentLogger.log('page-styles', `Injected ${STYLES_DEV_URL.toString()}`)
-        else silentLogger.error('page-styles', res)
-    })
+    document.head.innerHTML += `<link rel="stylesheet" href="${STYLES_DEV_URL.toString()}">`
   }
 
   // Read inline config
