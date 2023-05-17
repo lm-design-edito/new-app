@@ -370,7 +370,7 @@ async function main () {
   * * * * * * * * ** * * * * * * * * * * * */
   console.log(styles.title(`Dry running rsync to ${targetDestinationName}`))
   await new Promise(resolve => exec(
-    `gsutil -m rsync -nripj html,js,map,css,svg,png,jpg,gif,woff,woff2,eot,ttf ${config.DST_PROD}/ ${targetDestinationName}/`,
+    `gsutil -m rsync -nrpj html,js,map,css,svg,png,jpg,gif,woff,woff2,eot,ttf ${config.DST_PROD}/ ${targetDestinationName}/`,
     (err, stdout, stderr) => {
       if (err !== null) console.error(styles.error(err.message))
       if (stderr !== '' && err === null) console.log(styles.regular(stderr))
@@ -395,7 +395,7 @@ async function main () {
   * * * * * * * * ** * * * * * * * * * * * */
   console.log(styles.title(`Rsyncing to ${targetDestinationName}`))
   await new Promise(resolve => exec(
-    `gsutil -m rsync -ripj html,js,map,css,svg,png,jpg,gif,woff,woff2,eot,ttf ${config.DST_PROD}/ ${targetDestinationName}/`,
+    `gsutil -m rsync -rpj html,js,map,css,svg,png,jpg,gif,woff,woff2,eot,ttf ${config.DST_PROD}/ ${targetDestinationName}/`,
     (err, stdout, stderr) => {
       if (err !== null) console.error(styles.error(err.message))
       if (stderr !== '' && err === null) console.log(styles.regular(stderr))
