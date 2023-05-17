@@ -76,14 +76,14 @@ const generateHomePage = async () => `<html class="lm-page">
   <head>
     <meta charsed="utf-8">
     <style>
-      html { font-size: 16px; padding: 50px; padding-bottom: 200px; font-family: monospace; }
+      html { font-size: 16px; padding: 32px; padding-bottom: 160px; font-family: "Menlo", monospace; }
       body { margin: 0; }
       h2 { margin: 0; line-height: 1; }
     </style>
   </head>
   <body>
     <svg
-      style="position: fixed; top: 50px;"
+      style="position: fixed; top: 32px;"
       width="64"
       height="64"
       viewBox="0 0 200 200"

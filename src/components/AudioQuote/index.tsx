@@ -1,10 +1,7 @@
 import { Component, JSX, createRef, RefObject, VNode, isValidElement } from 'preact'
-
 import IntersectionObserverComponent from '~/components/IntersectionObserver'
 import StrToVNode from '~/components/StrToVNodes'
-
 import nodesToVNodes from '~/utils/nodes-to-vnodes'
-
 import bem from '~/utils/bem'
 import styles from './styles.module.scss'
 
@@ -28,11 +25,11 @@ interface Props {
   autoPauseWhenHidden?: boolean
   autoLoudWhenVisible?: boolean
   autoMuteWhenHidden?: boolean
-  title?: string | HTMLElement | VNode
-  playButton?: string | HTMLElement | VNode
-  pauseButton?: string | HTMLElement | VNode
-  loudButton?: string | HTMLElement | VNode
-  muteButton?: string | HTMLElement | VNode
+  title?: string|HTMLElement|VNode
+  playButton?: string|HTMLElement|VNode
+  pauseButton?: string|HTMLElement|VNode
+  loudButton?: string|HTMLElement|VNode
+  muteButton?: string|HTMLElement|VNode
   hidePauseButton?: boolean
 }
 
@@ -42,44 +39,36 @@ interface State {
   isPlaying?: boolean
   isLoud?: boolean
   isEnded?: boolean
+  hasEndedOnce?: boolean
   hasManuallyPaused?: boolean
   hasManuallyMuted?: boolean
 }
 
 class AudioQuote extends Component<Props, State> {
   bemClss = bem('lm-audio-quote')
-
   videoElt: RefObject<HTMLVideoElement> | null = null
   videoStateInterval?: number
-
-  state: State = {
-    timecodeInMs: 0
-  }
+  state: State = { timecodeInMs: 0 }
 
   /* * * * * * * * * * * * * * * * * * *
      * CONSTRUCTOR
      * * * * * * * * * * * * * * * * * * */
   constructor(props: Props) {
     super(props)
-
     this.videoElt = createRef()
-
     this.loadSubs = this.loadSubs.bind(this)
     this.handleTimeUpdate = this.handleTimeUpdate.bind(this)
     this.handleVideoEnded = this.handleVideoEnded.bind(this)
     this.getDisplayedSubsContent = this.getDisplayedSubsContent.bind(this)
     this.timecodeToMs = this.timecodeToMs.bind(this)
     this.parseSubs = this.parseSubs.bind(this)
-
     this.tryStartPlayback = this.tryStartPlayback.bind(this)
     this.tryStopPlayback = this.tryStopPlayback.bind(this)
     this.trySetLoud = this.trySetLoud.bind(this)
     this.trySetMute = this.trySetMute.bind(this)
-
     this.isLoud = this.isLoud.bind(this)
     this.isPlaying = this.isPlaying.bind(this)
     this.syncVideoState = this.syncVideoState.bind(this)
-
     this.handlePlayClick = this.handlePlayClick.bind(this)
     this.handlePauseClick = this.handlePauseClick.bind(this)
     this.handleLoudClick = this.handleLoudClick.bind(this)
@@ -92,10 +81,8 @@ class AudioQuote extends Component<Props, State> {
      * * * * * * * * * * * * * * * * * * */
   componentDidMount() {
     this.loadSubs()
-
     this.syncVideoState()
     this.videoStateInterval = window.setInterval(this.syncVideoState, 500)
-
     if (this.videoElt !== null && this.videoElt.current !== null) {
       this.videoElt.current.addEventListener('timeupdate', this.handleTimeUpdate)
       this.videoElt.current.addEventListener('ended', this.handleVideoEnded)
@@ -110,7 +97,6 @@ class AudioQuote extends Component<Props, State> {
     if (prevProps.subsSrc !== this.props.subsSrc) {
       this.loadSubs()
     }
-
     if (this.videoElt !== null && this.videoElt.current !== null) {
       this.videoElt.current.addEventListener('timeupdate', this.handleTimeUpdate)
       this.videoElt.current.addEventListener('ended', this.handleVideoEnded)
@@ -119,22 +105,20 @@ class AudioQuote extends Component<Props, State> {
 
   async loadSubs() {
     if (this.props.subsSrc === undefined) return
-
     try {
       const fetchResult = await fetch(this.props.subsSrc)
       const subsData = await fetchResult.text()
-
       if (typeof subsData === 'string') {
         this.setState({ subsContent: this.parseSubs(subsData) })
       }
     } catch (error) {
+      // [WIP] silent log ?
       console.error(error)
     }
   }
 
   handleTimeUpdate() {
     if (this.videoElt === null || this.videoElt.current === null) return
-
     const currentTimeInMs = this.videoElt.current.currentTime * 1000
     this.setState({ timecodeInMs: currentTimeInMs })
   }
@@ -146,26 +130,20 @@ class AudioQuote extends Component<Props, State> {
   timecodeToMs(timecode: string): number {
     const [hours, minutes, secondsAndMs] = timecode.split(':')
     const [seconds, milliseconds] = secondsAndMs.split(',')
-
     let result = parseInt(hours) * 60 * 60 * 1000
     result += parseInt(minutes) * 60 * 1000
     result += parseInt(seconds) * 1000
     result += parseInt(milliseconds)
-
     return result
   }
 
   parseSubs(rawSubs: string): SubData[] {
     const numberRegex = /^\d+$/
     const timecodeRegex = /^[0-9]+:[0-9]+:[0-9]+,[0-9]+\s*-->\s*[0-9]+:[0-9]+:[0-9]+,[0-9]+$/
-
     const parsedSubs: SubData[] = []
-
     rawSubs.split('\n').forEach(line => {
       if (line.trim() === '') return
-
       const lastAddedElement = parsedSubs[parsedSubs.length - 1] as SubData | undefined
-
       const looksLikeId = line.match(numberRegex)
       const looksLikeTimecode = line.match(timecodeRegex)
 
@@ -182,7 +160,6 @@ class AudioQuote extends Component<Props, State> {
           const [rawStart, rawEnd] = line.split('-->')
           const startTime = rawStart.trim()
           const endTime = rawEnd.trim()
-
           lastAddedElement.start = this.timecodeToMs(startTime)
           lastAddedElement.end = this.timecodeToMs(endTime)
           return
@@ -194,7 +171,9 @@ class AudioQuote extends Component<Props, State> {
         && lastAddedElement.id !== undefined
         && lastAddedElement.start != undefined
         && lastAddedElement.end != undefined) {
-        if (lastAddedElement.content !== undefined) { lastAddedElement.content += line; return }
+        if (lastAddedElement.content !== undefined) {
+          lastAddedElement.content += line; return
+        }
         lastAddedElement.content = line
       }
     })
@@ -205,26 +184,27 @@ class AudioQuote extends Component<Props, State> {
   getDisplayedSubsContent() {
     const { state, props, bemClss } = this
     const { subsContent } = state
-
     if (subsContent === undefined) return
-
     const alreadyPronouncedSubs = subsContent.filter(({ start }) => start < state.timecodeInMs)
     const lastPronouncedSub = alreadyPronouncedSubs.at(-1) ?? null
-
     const highestSubId = Math.max(...subsContent.map(sub => sub.id))
-
     const subsGroupsWithBoundaries: SubGroupBoundaries[] = props.subsGroups?.reduce(
       (acc, curr, currIndex) => {
         const lastInAcc = acc.at(-1)
         const startId = lastInAcc === undefined ? 1 : lastInAcc.endId + 1
         const endId = curr
-
         if (currIndex === (props.subsGroups?.length ?? 0) - 1
           && endId !== highestSubId) {
-          return [...acc, { startId, endId }, { startId: endId + 1, endId: highestSubId }]
+          return [
+            ...acc,
+            { startId, endId },
+            { startId: endId + 1, endId: highestSubId }
+          ]
         }
-
-        return [...acc, { startId, endId }]
+        return [
+          ...acc,
+          { startId, endId }
+        ]
       },
       [] as SubGroupBoundaries[]
     ) ?? []
@@ -233,16 +213,10 @@ class AudioQuote extends Component<Props, State> {
     const activeGroup = alreadyPronouncedGroups.length === 0
       ? (state.isEnded ? subsGroupsWithBoundaries.at(-1) : subsGroupsWithBoundaries[0])
       : alreadyPronouncedGroups.at(-1)
-
     const subsArray: VNode[] = []
-
     subsGroupsWithBoundaries.map(group => {
-
       const subsNodes: VNode[] = []
-
       const groupSubs = subsContent.filter(sub => sub.id >= group.startId && sub.id <= group.endId)
-
-      /* [REVIEW] */
 
       groupSubs.map((sub, index, array) => {
         let subContent = sub.content.trim()
@@ -258,14 +232,20 @@ class AudioQuote extends Component<Props, State> {
           subBemModifiers.push('pronounced')
         }
 
-        if (state.timecodeInMs >= sub.start && state.timecodeInMs <= sub.end) {
+        if (state.timecodeInMs >= sub.start
+          && state.timecodeInMs <= sub.end) {
           subClassList.push(styles['sub--active'])
           subBemModifiers.push('active')
         }
 
-        subClassList.push(bemClss.elt('sub').mod(subBemModifiers).value)
-
-        subsNodes.push(<span className={subClassList.join(' ')}>{subContent}</span>)
+        subClassList.push(bemClss
+          .elt('sub')
+          .mod(subBemModifiers)
+          .value)
+        subsNodes.push(<span
+          className={subClassList.join(' ')}>
+          {subContent}
+        </span>)
       })
 
       const groupClassList = [styles['subs-group']]
@@ -276,24 +256,29 @@ class AudioQuote extends Component<Props, State> {
         groupBemModifiers.push('active')
       }
 
-      groupBemModifiers.push(bemClss.elt('group').mod(groupBemModifiers).value)
-
-      subsArray.push(<div className={groupClassList.join(' ')}>{subsNodes}</div>)
+      groupBemModifiers.push(bemClss
+        .elt('group')
+        .mod(groupBemModifiers)
+        .value)
+      subsArray.push(<div
+        className={groupClassList.join(' ')}>
+        {subsNodes}
+      </div>)
     })
 
     return subsArray
   }
 
   isLoud() {
-    if (this.videoElt === null || this.videoElt.current === null) return false
-
+    if (this.videoElt === null
+      || this.videoElt.current === null) return false
     if (this.videoElt.current.muted) return false
     else return true
   }
 
   isPlaying() {
-    if (this.videoElt === null || this.videoElt.current === null) return false
-
+    if (this.videoElt === null
+      || this.videoElt.current === null) return false
     if (this.videoElt.current.paused) return false
     if (this.videoElt.current.ended) return false
     if (this.videoElt.current.currentTime === 0) return false
@@ -302,30 +287,37 @@ class AudioQuote extends Component<Props, State> {
   }
 
   isEnded() {
-    if (this.videoElt === null || this.videoElt.current === null) return false
-
+    if (this.videoElt === null
+      || this.videoElt.current === null) return false
     if (this.videoElt.current.ended) return true
     else return false
   }
 
   syncVideoState() {
-    if (this.videoElt === null || this.videoElt.current === null) return
-
+    if (this.videoElt === null
+      || this.videoElt.current === null) return;
     const isLoud = this.isLoud()
     const isPlaying = this.isPlaying()
     const isEnded = this.isEnded()
-
     this.setState(curr => {
-      if (curr.isLoud !== isLoud || curr.isPlaying !== isPlaying || curr.isEnded !== isEnded) {
-        return { ...curr, isPlaying, isLoud, isEnded }
+      if (curr.isLoud !== isLoud
+        || curr.isPlaying !== isPlaying
+        || curr.isEnded !== isEnded) {
+        return {
+          ...curr,
+          isPlaying,
+          isLoud,
+          isEnded,
+          hasEndedOnce: curr.hasEndedOnce === true ? true : isEnded
+        }
       }
       return null
     })
   }
 
   async tryStartPlayback() {
-    if (this.videoElt === null || this.videoElt.current === null) return
-
+    if (this.videoElt === null
+      || this.videoElt.current === null) return
     try {
       await this.videoElt.current.play()
       this.syncVideoState()
@@ -375,11 +367,12 @@ class AudioQuote extends Component<Props, State> {
   handleIntersection(event: IntersectionObserverEntry) {
     const { props, state } = this
 
+    // In screen
     if (event.isIntersecting === true) {
-
       if (props.autoPlayWhenVisible === true
         && state.hasManuallyPaused !== true
-        && state.isPlaying !== true) {
+        && state.isPlaying !== true
+        && state.hasEndedOnce !== true) {
         this.tryStartPlayback()
       }
 
@@ -389,17 +382,18 @@ class AudioQuote extends Component<Props, State> {
         this.trySetLoud()
       }
 
-    } else {
+      return
+    }
 
-      if (props.autoPauseWhenHidden === true
-        && state.isPlaying === true) {
-        this.tryStopPlayback()
-      }
+    // Off screen
+    if (props.autoPauseWhenHidden === true
+      && state.isPlaying === true) {
+      this.tryStopPlayback()
+    }
 
-      if (props.autoMuteWhenHidden === true
-        && state.isLoud === true) {
-        this.trySetMute()
-      }
+    if (props.autoMuteWhenHidden === true
+      && state.isLoud === true) {
+      this.trySetMute()
     }
   }
 
@@ -438,34 +432,45 @@ class AudioQuote extends Component<Props, State> {
       <IntersectionObserverComponent
         callback={this.handleIntersection}
         threshold={0.3}>
-
         <div className={wrapperClasses.join(' ')}>
-
           {props.title !== undefined
-            && <div className={titleClasses.join(' ')}>{this.toVNode(props.title)}</div>}
-
-          <div onClick={this.handlePlayClick} className={playButtonClasses.join(' ')}>
+            && <div
+            className={titleClasses.join(' ')}>
+            {this.toVNode(props.title)}
+          </div>}
+          <div
+            onClick={this.handlePlayClick}
+            className={playButtonClasses.join(' ')}>
             {this.toVNode(props.playButton) ?? 'Lancer la lecture'}
           </div>
-
           {props.hidePauseButton !== true
-            && <div onClick={this.handlePauseClick} className={pauseButtonClasses.join(' ')}>
-              {this.toVNode(props.pauseButton) ?? 'Mettre en pause'}
-            </div>}
-
-          <div onClick={this.handleLoudClick} className={loudButtonClasses.join(' ')}>
+            && <div
+            onClick={this.handlePauseClick}
+            className={pauseButtonClasses.join(' ')}>
+            {this.toVNode(props.pauseButton) ?? 'Mettre en pause'}
+          </div>}
+          <div
+            onClick={this.handleLoudClick}
+            className={loudButtonClasses.join(' ')}>
             {this.toVNode(props.loudButton) ?? 'Activer le son'}
           </div>
-
-          <div onClick={this.handleMuteClick} className={muteButtonClasses.join(' ')}>
+          <div
+            onClick={this.handleMuteClick}
+            className={muteButtonClasses.join(' ')}>
             {this.toVNode(props.muteButton) ?? 'Couper le son'}
           </div>
-
-          <video src={props.audioSrc} ref={this.videoElt} className={videoEltClasses.join(' ')} controls muted playsInline></video>
-
-          <div className={subsContainerClasses.join(' ')}>{this.getDisplayedSubsContent()}</div>
+          <video
+            src={props.audioSrc}
+            ref={this.videoElt}
+            className={videoEltClasses.join(' ')}
+            controls
+            muted
+            playsInline />
+          <div
+            className={subsContainerClasses.join(' ')}>
+            {this.getDisplayedSubsContent()}
+          </div>
         </div>
-
       </IntersectionObserverComponent>
     )
   }
