@@ -370,7 +370,7 @@ async function main () {
   * * * * * * * * ** * * * * * * * * * * * */
   console.log(styles.title(`Dry running rsync to ${targetDestinationName}`))
   await new Promise(resolve => exec(
-    `gsutil -m rsync -nrpj html,js,map,css,svg,png,jpg,gif,woff,woff2,eot,ttf ${config.DST_PROD}/ ${targetDestinationName}/`,
+    `gsutil -m rsync -ncrpj html,js,map,css,svg,png,jpg,gif,woff,woff2,eot,ttf ${config.DST_PROD}/ ${targetDestinationName}/`,
     (err, stdout, stderr) => {
       if (err !== null) console.error(styles.error(err.message))
       if (stderr !== '' && err === null) console.log(styles.regular(stderr))
@@ -395,7 +395,7 @@ async function main () {
   * * * * * * * * ** * * * * * * * * * * * */
   console.log(styles.title(`Rsyncing to ${targetDestinationName}`))
   await new Promise(resolve => exec(
-    `gsutil -m rsync -rpj html,js,map,css,svg,png,jpg,gif,woff,woff2,eot,ttf ${config.DST_PROD}/ ${targetDestinationName}/`,
+    `gsutil -m rsync -crpj html,js,map,css,svg,png,jpg,gif,woff,woff2,eot,ttf ${config.DST_PROD}/ ${targetDestinationName}/`,
     (err, stdout, stderr) => {
       if (err !== null) console.error(styles.error(err.message))
       if (stderr !== '' && err === null) console.log(styles.regular(stderr))
@@ -448,54 +448,7 @@ async function main () {
   ))
   console.log('')
 
-
-//   /* * * * * * * * * * * * * * * * * * * * *
-//   * Check diff
-//   * * * * * * * * ** * * * * * * * * * * * */
-//   const diff = await new Promise((resolve, reject) => exec(
-//     `diff -bur ${config.DST_PROD} ${config.PUBLISHED}`,
-//     (err, stdout, stderr) => {
-//       if (stderr !== '') {
-//         const errorMessage = 'Something went wrong while diffing dist/prod/ and published/'
-//           + `\nerr: ${err}`
-//           + `\nstderr: ${stderr}`
-//           + `\nstdout: ${stdout}`
-//         console.log(styles.error(errorMessage))
-//         console.log(styles.important('Publication aborted.'))
-//         return process.exit(0)
-//       }
-//       resolve(stdout)
-//     }
-//   ))
-//   console.log(styles.title('Diff'))
-//   console.log(styles.regular(diff as string))
-//   const { diffOk } = await prompts({
-//     name: 'diffOk',
-//     type: 'confirm',
-//     message: 'Diff between dist/prod/ and published/ seems ok?'
-//   })
-//   if (diffOk !== true) {
-//     console.log(styles.important('Publication aborted.'))
-//     return process.exit(0)
-//   }
-//   console.log('')
-
-//   /* * * * * * * * * * * * * * * * * * * * *
-//   * Rsyncing
-//   * * * * * * * * ** * * * * * * * * * * * */
-//  // [WIP] Upload to ggcloud
-//   const { rsyncOk } = await prompts({
-//     name: 'rsyncOk',
-//     type: 'confirm',
-//     message: `\n${styles.danger('Ready to rsync dist/prod/ to published/ ?')}`
-//   })
-//   if (rsyncOk !== true) {
-//     console.log(styles.important('Publication aborted.'))
-//     return process.exit(0)
-//   }
-//   console.log('')
-//   console.log(styles.title('Rsyncing...'))
-//   console.log(styles.important('That\'s all good my friend.'))
+  console.log(styles.important('That\'s all good my friend. 🍸\n\n'))
 }
 
 function makeTextBlock (text: string, vPadding: number = 1, hPadding: number = vPadding) {
