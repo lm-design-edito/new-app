@@ -1,8 +1,6 @@
 import { isValidElement, render } from 'preact'
 import { Options, Renderer } from '~/shared/lm-page-apps'
-
 import AudioQuote, { Props } from '~/components/AudioQuote'
-
 import { toBoolean, toNumber, toString } from '~/utils/cast'
 
 /* * * * * * * * * * * * * * * * * * *
@@ -30,7 +28,6 @@ export default function AudioQuoteApp({
  * * * * * * * * * * * * * * * * * * */
 function optionsToProps(options: Options): Props {
   const props: Props = {}
-
   const {
     audioSrc,
     subsSrc,
