@@ -1,0 +1,34 @@
+<html>
+  <head>
+    <meta charset="utf-8">
+  </head>
+  <body>
+    <!-- App -->
+    <style>.lm-page-config, .lm-app-config { display: none; }</style>
+    <script src="/shared/index.js" type="module"></script>
+
+    <!-- Config -->
+    <data class="lm-page-config" value="approxPublicationDate">2023-06-10</data>
+    <data class="lm-page-config" value="id">le-nom-de-mon-article</data>
+    <data class="lm-page-config" value="textbaseUrl">http://localhost:3000/data/230426-1st-scrllgngn-app-DEV.txt</data>
+    <data class="lm-page-config" value="trackFirstScroll">true</data>
+    <data class="lm-page-config" value="trackHalfReached">true</data>
+    <data class="lm-page-config" value="trackEndReached">true</data>
+    <data class="lm-page-config" value="css">body { opacity: 1; }</data>
+    
+    <!-- Slots -->
+    <div class="scrllgngn">
+      <data class="lm-app-config" value="scrllgngn">
+        <data value="someProp" type="html">
+          <div><h1>Coucou</h1></div>
+          <p>Lol</p>
+        </data>
+        <data value="someOtherProp">some other value</data>
+        <data value="someFinalProp">
+          <data>value 1</data>
+          <data>value 2</data>
+        </data>
+      </data>
+    </div>
+  </body>
+</html>
