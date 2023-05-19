@@ -1,0 +1,32 @@
+// =========================================================
+# PAGE_CONFIG
+  
+  ## config
+    _hideHeader: false
+
+// =========================================================
+# PAGE_SLOTS
+  
+  ## footer
+    _selector: .footer
+    _name: footer
+    _options: components-props/my-footer >>> toRef
+
+// =========================================================
+# components-props
+  ## my-footer
+    _customClass: my-footer
+    _customCss: .my-footer { opacity: .3 }
+    _bgColor: blue
+    _bgImageUrl: 
+    _shadeFromPos: 
+    _shadeFromColor: 
+    _shadeToPos: 
+    _shadeToColor: 
+    _textAbove: Text above
+    _textBelow: Text below
+    _articleThumbsData: 
+    _thumbnailMaxWidth: 
+
+
+

@@ -5,23 +5,6 @@ import { Collection } from '~/utils/txt-base'
 import flattenGetters from '~/utils/flatten-getters'
 
 /* * * * * * * * * * * * * * * * * * *
- * Names
- * * * * * * * * * * * * * * * * * * */
-export enum Names {
-  SCRLLGNGN = 'scrllgngn',
-  CAROUSEL = 'carousel',
-  SLIDESHOW = 'slideshow',
-  AUDIOQUOTE = 'audioquote',
-  ANYCOMP_FOR_DEV_ONLY = 'anycomp-for-dev',
-}
-
-export const validNames = Object.values(Names)
-export function isValidName (name: string): name is Names {
-  if (validNames.includes(name as Names)) return true
-  return false
-}
-
-/* * * * * * * * * * * * * * * * * * *
  * Options
  * * * * * * * * * * * * * * * * * * */
 export type Options = Record<string, unknown>
@@ -90,6 +73,24 @@ export function readOptionsNode (propsNode: HTMLElement): InlineOption {
     returned[title] = readOptionsNode(child)
   })
   return returned
+}
+
+/* * * * * * * * * * * * * * * * * * *
+ * Names
+ * * * * * * * * * * * * * * * * * * */
+export enum Names {
+  SCRLLGNGN = 'scrllgngn',
+  CAROUSEL = 'carousel',
+  SLIDESHOW = 'slideshow',
+  AUDIOQUOTE = 'audioquote',
+  FOOTER = 'footer',
+  ANYCOMP_FOR_DEV_ONLY = 'anycomp-for-dev',
+}
+
+export const validNames = Object.values(Names)
+export function isValidName (name: string): name is Names {
+  if (validNames.includes(name as Names)) return true
+  return false
 }
 
 /* * * * * * * * * * * * * * * * * * *
@@ -181,6 +182,7 @@ async function loadRenderer (name: Names) {
   if (name === Names.CAROUSEL) { renderer = (await import('../../../apps/carousel')).default }
   if (name === Names.SLIDESHOW) { renderer = (await import('../../../apps/slideshow')).default }
   if (name === Names.AUDIOQUOTE) { renderer = (await import('../../../apps/audioquote')).default }
+  if (name === Names.FOOTER) { renderer = (await import('../../../apps/footer')).default }
   if (name === Names.ANYCOMP_FOR_DEV_ONLY && isProd) {
     renderer = (await import('../../../apps/anycomp-for-dev')).default
   }
