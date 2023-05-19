@@ -1,5 +1,5 @@
 import { Component, VNode } from 'preact'
-import ArticleThumb, { Props as ArticleThumbProps } from '~/components/ArticleThumb'
+import Thumbnail, { Props as ThumbnailProps } from '~/components/Thumbnail'
 import IntersectionObserverComponent, { Props as IOCompProps } from '~/components/IntersectionObserver'
 import Img from '~/components/Img'
 import bem from '~/utils/bem'
@@ -7,17 +7,12 @@ import styles from './styles.module.scss'
 
 interface Props {
   customClass?: string
-  customCss?: string
   bgColor?: string
   bgImageUrl?: string
-  shadeFromPos?: string
-  shadeFromColor?: string
-  shadeToPos?: string
-  shadeToColor?: string
+  shadeLinearGradient?: string
   textAbove?: string|VNode
   textBelow?: string|VNode
-  articleThumbsData?: ArticleThumbProps[]
-  thumbnailMaxWidth?: string
+  thumbnailsData?: ThumbnailProps[]
   onVisible?: (ioEntry: IntersectionObserverEntry) => void
   onHidden?: (ioEntry: IntersectionObserverEntry) => void
   visibilityThreshold?: number
@@ -42,78 +37,54 @@ class Footer extends Component<Props, {}> {
   render() {
     const { props, bemClss, handleIntersection } = this
 
+    const {
+      customClass,
+      bgColor = 'transparent',
+      bgImageUrl,
+      shadeLinearGradient,
+      textAbove,
+      textBelow,
+      thumbnailsData = [],
+      visibilityThreshold
+    } = props
+
     // Assign classes and styles
-    const wrapperClasses = [props.customClass, bemClss.value, styles['wrapper']]
+    const wrapperClasses = [customClass, bemClss.value, styles['wrapper']]
     const backgroundImageClasses = [bemClss.elt('background-image').value, styles['background-image']]
     const shadeClasses = [bemClss.elt('shade').value, styles['shade']]
     const thumbnailsClasses = [bemClss.elt('thumbnails').value, styles['thumbnails']]
     const aboveClasses = [bemClss.elt('above').value, styles['above']]
     const belowClasses = [bemClss.elt('below').value, styles['below']]
+    const displayShade = shadeLinearGradient !== undefined
 
-    const wrapperStyle = `
-      --footer-bg-color: ${props.bgColor ?? 'transparent'};
-    `
-
-    const displayShade = (props.shadeFromColor
-      ?? props.shadeFromPos
-      ?? props.shadeToColor
-      ?? props.shadeToPos) !== undefined
-    // [WIP] variable here
-    const shadeStyle = `
-      background: linear-gradient(
-        ${props.shadeFromColor ?? 'transparent'} 
-        ${props.shadeFromPos ?? '50%'}, 
-        ${props.shadeToColor ?? 'transparent'} 
-        ${props.shadeToPos ?? '100%'});`
-
-    const thumbsData = props.articleThumbsData ?? []
+    const wrapperStyle = { ['--bg-color']: bgColor }
+    const shadeStyle = `background: linear-gradient(${shadeLinearGradient});`
 
     return <IntersectionObserverComponent
-      threshold={props.visibilityThreshold ?? 0}
+      threshold={visibilityThreshold}
       callback={handleIntersection}>
       <div
         className={wrapperClasses.join(' ')}
         style={wrapperStyle}>
-
-        {/* Styles */}
-        {props.customCss !== undefined && <style>
-          {props.customCss}
-        </style>}
-
         {/* Bg image */}
-        {props.bgImageUrl !== undefined && <div
-          className={backgroundImageClasses.join(' ')}>
-          <Img src={props.bgImageUrl} />
+        {bgImageUrl !== undefined && <div className={backgroundImageClasses.join(' ')}>
+          <Img src={bgImageUrl} />
         </div>}
-
         {/* Shade */}
         {displayShade && <div
           className={shadeClasses.join(' ')}
           style={shadeStyle} />}
-
         {/* Above */}
-        {props.textAbove !== undefined && <div
-          className={aboveClasses.join(' ')}>
-          {props.textAbove}
-        </div>}
-
+        {textAbove !== undefined && <div className={aboveClasses.join(' ')}>{textAbove}</div>}
         {/* Thumbs */}
-        {thumbsData.length !== 0
+        {thumbnailsData.length !== 0
           && <div className={thumbnailsClasses.join(' ')}>
-            {thumbsData?.map((articleThumbProps, i) => (
-              <ArticleThumb
-                key={i}
-                imageMaxWidth={props.thumbnailMaxWidth}
-                {...articleThumbProps}
-              />
-            ))}
+            {thumbnailsData?.map((thumbProps, i) => <Thumbnail
+              key={i}
+              {...thumbProps} />)}
           </div>}
-
         {/* Below */}
-        {props.textBelow !== undefined && <div
-          className={belowClasses.join(' ')}>
-          {props.textBelow}
-        </div>}
+        {textBelow !== undefined && <div className={belowClasses.join(' ')}>{textBelow}</div>}
       </div>
     </IntersectionObserverComponent>
   }

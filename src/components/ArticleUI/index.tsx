@@ -1,9 +1,7 @@
 import { Component, VNode, JSX, isValidElement } from 'preact'
-
-import ArticleThumb, { Props as ArticleThumbProps } from '~/components/ArticleThumb'
+import Thumbnail, { Props as ThumbnailProps } from '~/components/Thumbnail'
 import StrToVNode from '~/components/StrToVNodes'
 import Tag from '~/components/Tag'
-
 import nodesToVNodes from '~/utils/nodes-to-vnodes'
 
 enum SimpleArticleUI {
@@ -79,12 +77,12 @@ class ArticleUIComponent extends Component<Props, {}> {
 
     if (props.elementName === 'image') {
       let renderedLegend: undefined | string | VNode = this.toVNode(props.legend)
-      const legendProps = {} as Partial<ArticleThumbProps>
+      const legendProps = {} as Partial<ThumbnailProps>
       if (props.legend && props.legendOverlay === true) legendProps.textInsideBottom = renderedLegend
       else legendProps.textBelow = renderedLegend
 
       return (
-        <ArticleThumb
+        <Thumbnail
           customClass={clss}
           imageUrl={props.imageUrl}
           imageAlt={props.imageAlt}

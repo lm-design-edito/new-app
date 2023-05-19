@@ -83,6 +83,7 @@ export enum Names {
   CAROUSEL = 'carousel',
   SLIDESHOW = 'slideshow',
   AUDIOQUOTE = 'audioquote',
+  THUMBNAIL = 'article-thumb',
   FOOTER = 'footer',
   ANYCOMP_FOR_DEV_ONLY = 'anycomp-for-dev',
 }
@@ -182,6 +183,7 @@ async function loadRenderer (name: Names) {
   if (name === Names.CAROUSEL) { renderer = (await import('../../../apps/carousel')).default }
   if (name === Names.SLIDESHOW) { renderer = (await import('../../../apps/slideshow')).default }
   if (name === Names.AUDIOQUOTE) { renderer = (await import('../../../apps/audioquote')).default }
+  if (name === Names.THUMBNAIL) { renderer = (await import('../../../apps/thumbnail')).default }
   if (name === Names.FOOTER) { renderer = (await import('../../../apps/footer')).default }
   if (name === Names.ANYCOMP_FOR_DEV_ONLY && isProd) {
     renderer = (await import('../../../apps/anycomp-for-dev')).default

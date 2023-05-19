@@ -12,19 +12,29 @@ import toLowerCase from './one-to-one/toLowerCase'
 import toUpperCase from './one-to-one/toUpperCase'
 import trim from './one-to-one/trim'
 import replace from './one-to-one/replace'
+import add from './one-to-one/add'
+import subtract from './one-to-one/subtract'
+import divide from './one-to-one/divide'
+import multiply from './one-to-one/multiply'
+import pow from './one-to-one/pow'
+import max from './one-to-one/max'
+import min from './one-to-one/min'
+import clamp from './one-to-one/clamp'
+import append from './one-to-one/append'
+import prepend from './one-to-one/prepend'
 // One to many transformers
 import split from './one-to-many/split'
 import toArray from './one-to-many/toArray'
 // Many to one transformers
 import join from './many-to-one/join'
+import at from './many-to-one/at'
 // Many to many transformers
 import map from './many-to-many/map'
 import randomUUID from '~/utils/random-UUID'
 
 // [WIP] transformers ideas :
-// - replace (string)
-// - add, subtract, divide, multiply, pow, solve, min, max, clamp
-// - at, filter (for arrays)
+// - solve
+// - filter (for arrays)
 const transformerNamesObj: { [key: string]: Transformer } = {
   // One to one
   toString,
@@ -37,11 +47,22 @@ const transformerNamesObj: { [key: string]: Transformer } = {
   toUpperCase,
   trim,
   replace,
+  add,
+  subtract,
+  multiply,
+  divide,
+  pow,
+  max,
+  min,
+  clamp,
+  append,
+  prepend,
   // One to many
   split,
   toArray,
   // Many to one
   join,
+  at,
   // Many to many
   map
 }

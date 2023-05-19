@@ -28,8 +28,7 @@ class Img extends Component<Props, {}> {
   }
 
   componentDidUpdate (prevProps: Props): void {
-    if (
-      this.props.alt === undefined
+    if (this.props.alt === undefined
       && prevProps.alt !== undefined) this.noAltWarn()
   }
 
@@ -54,27 +53,21 @@ class Img extends Component<Props, {}> {
     const classes = bem(props.className ?? '').block(this.clss)
     // [WIP] why this since ...props are added to img below ?
     const inlineStyle: JSX.CSSProperties = { ...props.style }
-
     const imageIsSvg = props.src?.endsWith('.svg')
-
-    return <>
-      {imageIsSvg
-        ? <Svg
-          src={props.src}
-          desc={props.alt ?? ''}
-          {...props}
-          style={inlineStyle}
-          className={classes.value}
-        />
-        : <img
-          loading='lazy'
-          src={props.src}
-          alt={props.alt ?? ''}
-          {...props}
-          style={inlineStyle}
-          className={classes.value}
-        />}
-    </>
+    return imageIsSvg
+      ? <Svg
+        src={props.src}
+        desc={props.alt ?? ''}
+        {...props}
+        style={inlineStyle}
+        className={classes.value} />
+      : <img
+        loading='lazy'
+        src={props.src}
+        alt={props.alt ?? ''}
+        {...props}
+        style={inlineStyle}
+        className={classes.value} />
   }
 }
 

@@ -27,7 +27,7 @@ export default function FooterApp({
  * OPTIONS TO PROPS
  * * * * * * * * * * * * * * * * * * */
 function optionsToProps(options: Options): Props {
-  console.log('options to props Footer', options)
+  console.log('options to props Footer', options.articleThumbsData)
   return {}
   // const props: Props = {}
   // const {
