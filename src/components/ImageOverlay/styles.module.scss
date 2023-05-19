@@ -1,14 +1,32 @@
 .wrapper {
   display: grid;
+  position: relative;
 
   > * {
     grid-area: 1/-1;
   }
+}
 
-  img {
-    width: 100%;
-    max-width: 100%;
-  }
+.image {
+  z-index: 1;
+}
+
+.image img {
+  width: 100%;
+  max-width: 100%;
+}
+
+.shade {
+  z-index: 2;
+  pointer-events: none;
+  background-image: var(--shade-gradient);
+  mix-blend-mode: var(--shade-blend-mode);
+}
+
+.text-top,
+.text-center,
+.text-bottom {
+  z-index: 3;
 }
 
 .text-top {
@@ -21,10 +39,4 @@
 
 .text-bottom {
   align-self: flex-end;
-}
-
-.shade {
-  user-select: none;
-  background-image: var(--shade-gradient);
-  mix-blend-mode: var(--shade-blend-mode);
 }

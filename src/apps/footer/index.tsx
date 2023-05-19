@@ -1,5 +1,7 @@
 import { isValidElement, render } from 'preact'
 import { Options, Renderer } from '~/shared/lm-page-apps'
+import { optionsToProps as optionsToThumbnailProps } from '~/apps/thumbnail'
+import { Props as ThumbnailProps } from '~/components/Thumbnail'
 import Footer, { Props } from '~/components/Footer'
 import { toBoolean, toNumber, toString } from '~/utils/cast'
 
@@ -26,67 +28,52 @@ export default function FooterApp({
 /* * * * * * * * * * * * * * * * * * *
  * OPTIONS TO PROPS
  * * * * * * * * * * * * * * * * * * */
-function optionsToProps(options: Options): Props {
-  console.log('options to props Footer', options.articleThumbsData)
-  return {}
-  // const props: Props = {}
-  // const {
-  //   audioSrc,
-  //   subsSrc,
-  //   subsGroups,
-  //   autoPlayWhenVisible,
-  //   autoPauseWhenHidden,
-  //   autoLoudWhenVisible,
-  //   autoMuteWhenHidden,
-  //   title,
-  //   playButton,
-  //   pauseButton,
-  //   loudButton,
-  //   muteButton,
-  //   hidePauseButton,
-  // } = options
+export function optionsToProps(options: Options): Props {
+  const {
+    customClass, //?: string
+    bgColor, //?: string
+    bgImageUrl, //?: string
+    shadeLinearGradient, //?: string
+    shadeBlendMode, //?: string
+    textAbove, //?: string|VNode
+    textBelow, //?: string|VNode
+    thumbnailsData, //?: ThumbnailProps[]
+    visibilityThreshold, //?: number
+    // onVisible, // cannot use functions from options yet //?: (ioEntry: IntersectionObserverEntry) => void
+    // onHidden // cannot use functions from options yet //?: (ioEntry: IntersectionObserverEntry) => void
+  } = options
 
-  // if (audioSrc !== undefined) { props.audioSrc = toString(audioSrc) }
-  // if (subsSrc !== undefined) { props.subsSrc = toString(subsSrc) }
+  const props: Props = {}
+  if (customClass !== undefined) props.customClass = toString(customClass)
+  if (bgColor !== undefined) props.bgColor = toString(bgColor)
+  if (bgImageUrl !== undefined) props.bgImageUrl = toString(bgImageUrl)
+  if (shadeLinearGradient !== undefined) props.shadeLinearGradient = toString(shadeLinearGradient)
+  if (shadeBlendMode !== undefined) props.shadeBlendMode = toString(shadeBlendMode)
+  if (textAbove !== undefined) {
+    if (isValidElement(textAbove)) props.textAbove = textAbove
+    else props.textAbove = toString(textAbove)
+  }
+  if (textBelow !== undefined) {
+    if (isValidElement(textBelow)) props.textBelow = textBelow
+    else props.textBelow = toString(textBelow)
+  }
+  console.log(thumbnailsData)
+  if (Array.isArray(thumbnailsData)) {
+    const propsThumbnailsData: ThumbnailProps[] = [];
+    (thumbnailsData as unknown[]).forEach(thumbnailData => {
+      try {
+        Object.keys(thumbnailData as Options) // this to check if object
+        const thumbnailDataAsProps = optionsToThumbnailProps(thumbnailData as Options)
+        propsThumbnailsData.push(thumbnailDataAsProps)
+      } catch (err) {}
+    })
+    if (propsThumbnailsData.length > 0) {
+      props.thumbnailsData = propsThumbnailsData
+    }
+  }
+  if (visibilityThreshold !== undefined) {
+    props.visibilityThreshold = toNumber(visibilityThreshold)
+  }
 
-  // if (typeof subsGroups === 'string') {
-  //   const subsGroupsArray: number[] = []
-  //   subsGroups.split(',').forEach(value => {
-  //     const index = parseInt(value.trim())
-  //     if (Number.isNaN(index)) return
-  //     subsGroupsArray.push(index)
-  //   })
-  //   props.subsGroups = subsGroupsArray
-  // }
-
-  // if (Array.isArray(subsGroups)) props.subsGroups = subsGroups.map(value => toNumber(value))
-
-  // if (autoPlayWhenVisible !== undefined) { props.autoPlayWhenVisible = toBoolean(autoPlayWhenVisible) }
-  // if (autoPauseWhenHidden !== undefined) { props.autoPauseWhenHidden = toBoolean(autoPauseWhenHidden) }
-  // if (autoLoudWhenVisible !== undefined) { props.autoLoudWhenVisible = toBoolean(autoLoudWhenVisible) }
-  // if (autoMuteWhenHidden !== undefined) { props.autoMuteWhenHidden = toBoolean(autoMuteWhenHidden) }
-
-  // if (isValidElement(title)) props.title = title
-  // else if (title instanceof HTMLElement) props.title = title
-  // else if (title !== undefined) props.title = toString(title)
-
-  // if (isValidElement(playButton)) props.playButton = playButton
-  // else if (playButton instanceof HTMLElement) props.playButton = playButton
-  // else if (playButton !== undefined) props.playButton = toString(playButton)
-
-  // if (isValidElement(pauseButton)) props.pauseButton = pauseButton
-  // else if (pauseButton instanceof HTMLElement) props.pauseButton = pauseButton
-  // else if (pauseButton !== undefined) props.pauseButton = toString(pauseButton)
-
-  // if (isValidElement(loudButton)) props.loudButton = loudButton
-  // else if (loudButton instanceof HTMLElement) props.loudButton = loudButton
-  // else if (loudButton !== undefined) props.loudButton = toString(loudButton)
-
-  // if (isValidElement(muteButton)) props.muteButton = muteButton
-  // else if (muteButton instanceof HTMLElement) props.muteButton = muteButton
-  // else if (muteButton !== undefined) props.muteButton = toString(muteButton)
-
-  // if (hidePauseButton !== undefined) { props.hidePauseButton = toBoolean(hidePauseButton) }
-
-  // return props
+  return props
 }

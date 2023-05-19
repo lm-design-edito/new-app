@@ -26,7 +26,7 @@ export default function ThumbnailApp({
 /* * * * * * * * * * * * * * * * * * *
  * OPTIONS TO PROPS
  * * * * * * * * * * * * * * * * * * */
-function optionsToProps(options: Options): Props {
+export function optionsToProps(options: Options): Props {
   const {
     customClass, //?: string
     imageUrl, //?: string

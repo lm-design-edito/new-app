@@ -5,20 +5,21 @@ import Img from '~/components/Img'
 import bem from '~/utils/bem'
 import styles from './styles.module.scss'
 
-interface Props {
+export type Props = {
   customClass?: string
   bgColor?: string
   bgImageUrl?: string
   shadeLinearGradient?: string
+  shadeBlendMode?: string
   textAbove?: string|VNode
   textBelow?: string|VNode
   thumbnailsData?: ThumbnailProps[]
+  visibilityThreshold?: number
   onVisible?: (ioEntry: IntersectionObserverEntry) => void
   onHidden?: (ioEntry: IntersectionObserverEntry) => void
-  visibilityThreshold?: number
 }
 
-class Footer extends Component<Props, {}> {
+export default class Footer extends Component<Props, {}> {
   constructor(props: Props) {
     super(props)
     this.handleIntersection = this.handleIntersection.bind(this)
@@ -35,13 +36,17 @@ class Footer extends Component<Props, {}> {
   }
 
   render() {
-    const { props, bemClss, handleIntersection } = this
-
+    const {
+      props,
+      bemClss,
+      handleIntersection
+    } = this
     const {
       customClass,
       bgColor = 'transparent',
       bgImageUrl,
       shadeLinearGradient,
+      shadeBlendMode,
       textAbove,
       textBelow,
       thumbnailsData = [],
@@ -57,8 +62,11 @@ class Footer extends Component<Props, {}> {
     const belowClasses = [bemClss.elt('below').value, styles['below']]
     const displayShade = shadeLinearGradient !== undefined
 
-    const wrapperStyle = { ['--bg-color']: bgColor }
-    const shadeStyle = `background: linear-gradient(${shadeLinearGradient});`
+    const wrapperStyle = {
+      ['--bg-color']: bgColor,
+      ['--shade-linear-gradient']: `linear-gradient(${shadeLinearGradient})`,
+      ['--shade-blend-mode']: shadeBlendMode
+    }
 
     return <IntersectionObserverComponent
       threshold={visibilityThreshold}
@@ -71,9 +79,7 @@ class Footer extends Component<Props, {}> {
           <Img src={bgImageUrl} />
         </div>}
         {/* Shade */}
-        {displayShade && <div
-          className={shadeClasses.join(' ')}
-          style={shadeStyle} />}
+        {displayShade && <div className={shadeClasses.join(' ')} />}
         {/* Above */}
         {textAbove !== undefined && <div className={aboveClasses.join(' ')}>{textAbove}</div>}
         {/* Thumbs */}
@@ -89,6 +95,3 @@ class Footer extends Component<Props, {}> {
     </IntersectionObserverComponent>
   }
 }
-
-export type { Props }
-export default Footer

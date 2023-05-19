@@ -1,8 +1,6 @@
 import { render } from 'preact'
 import { Options, Renderer } from 'shared/utils/lm-page-apps'
-
 import Carousel, { CarouselSettings, Media, Props } from '~/components/Carousel'
-
 import { toBoolean, toNumber, toString } from '~/utils/cast'
 
 /* * * * * * * * * * * * * * * * * * *
@@ -28,26 +26,17 @@ export default function CarouselApp({
 /* * * * * * * * * * * * * * * * * * *
  * OPTIONS TO PROPS
  * * * * * * * * * * * * * * * * * * */
-function optionsToProps(options: Options): Props {
+export function optionsToProps (options: Options): Props {
   const props: Props = {}
-
-  const {
-    settings,
-    images
-  } = options
-
+  const { settings, images } = options
   if (typeof settings === 'object'
     && settings !== null) { props.settings = objectToSettings(settings) }
   if (Array.isArray(images)) { props.images = arrayToImages(images) }
-
-  console.log(props)
-
   return props
 }
 
-function objectToSettings(object: any): CarouselSettings {
+function objectToSettings (object: any): CarouselSettings {
   const settings: CarouselSettings = {}
-
   const {
     leftArrow,
     rightArrow,
@@ -105,15 +94,12 @@ function objectToSettings(object: any): CarouselSettings {
   return settings
 }
 
-function arrayToImages(array: unknown[]): Media[] {
+function arrayToImages (array: unknown[]): Media[] {
   const images: Media[] = []
-
   array.forEach((imageData: any) => {
     if (typeof imageData === 'object'
       && imageData !== null) {
-
       const image: Media = {}
-
       const {
         url,
         mobileUrl,
@@ -122,17 +108,14 @@ function arrayToImages(array: unknown[]): Media[] {
         description,
         credits,
       } = imageData
-
       if (url !== undefined) { image.url = toString(url) }
       if (mobileUrl !== undefined) { image.mobileUrl = toString(mobileUrl) }
       if (type !== undefined) { image.type = toString(type) }
       if (imageFit !== undefined) { image.imageFit = toString(imageFit) }
       if (description !== undefined) { image.description = toString(description) }
       if (credits !== undefined) { image.credits = toString(credits) }
-
       images.push(image)
     }
   })
-
   return images
 }

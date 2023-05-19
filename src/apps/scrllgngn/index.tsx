@@ -35,7 +35,7 @@ export default function ScrllgngnApp ({
 /* * * * * * * * * * * * * * * * * * *
  * OPTIONS TO PROPS
  * * * * * * * * * * * * * * * * * * */
-function optionsToProps (options: Options): Props {
+export function optionsToProps (options: Options): Props {
   const props: Props = {}
   const {
     stickyBlocksLazyLoadDistance,

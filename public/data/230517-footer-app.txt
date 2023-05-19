@@ -10,7 +10,7 @@
   ## article-thumb
     _selector: .article-thumb
     _name: article-thumb
-    _options: options/my-article-thumb-data-1 >>> toRef
+    _options: options/my-article-thumb-data-0 >>> toRef
   
   ## footer
     _selector: .footer
@@ -22,21 +22,19 @@
   ## my-footer
     _customClass: my-footer
     _bgColor: blue
-    _bgImageUrl:
-    _shadeFromPos: 
-    _shadeFromColor: 
-    _shadeToPos: 
-    _shadeToColor: 
+    _bgImageUrl: http://localhost:3000/images/bowie.jpg
+    _shadeLinearGradient: to bottom, transparent 0 20%, rgb(230, 150, 150, .95) 90%
+    _shadeBlendMode: hard-light
     _textAbove: Text above
     _textBelow: Text below
-    _articleThumbsData: 1
+    _thumbnailsData: 1
       >>> toArray 5
       >>> map add %pos%
       >>> map prepend options/my-article-thumb-data-
       >>> map toRef
     _thumbnailMaxWidth: 
 
-  ## my-article-thumb-data-1
+  ## my-article-thumb-data-0
     _customClass: my-article-thumb
     _imageUrl: http://localhost:3000/images/bowie.jpg
     _imageAlt: David Bowie & Iman
@@ -51,6 +49,15 @@
     _textInsideTop: David Bowie & Iman
     _textInsideCenter: David Bowie & Iman
     _textInsideBottom: David Bowie & Iman
+    _shadeLinearGradient: to bottom, transparent 0 20%, rgb(230, 150, 150, .95) 90%
+    _shadeBlendMode: hard-light
+    _href: https://google.com
+
+  ## my-article-thumb-data-1
+    _customClass: my-article-thumb
+    _imageUrl: http://localhost:3000/images/bowie.jpg
+    _imageAlt: David Bowie & Iman
+    _textBelow: David Bowie & Iman
     _shadeLinearGradient: to bottom, transparent 0 20%, rgb(230, 150, 150, .95) 90%
     _shadeBlendMode: hard-light
     _href: https://google.com
@@ -59,17 +66,7 @@
     _customClass: my-article-thumb
     _imageUrl: http://localhost:3000/images/bowie.jpg
     _imageAlt: David Bowie & Iman
-    _textAbove: David Bowie & Iman
     _textBelow: David Bowie & Iman
-    _textBeforeTop: David Bowie & Iman
-    _textBeforeCenter: David Bowie & Iman
-    _textBeforeBottom: David Bowie & Iman
-    _textAfterTop: David Bowie & Iman
-    _textAfterCenter: David Bowie & Iman
-    _textAfterBottom: David Bowie & Iman
-    _textInsideTop: David Bowie & Iman
-    _textInsideCenter: David Bowie & Iman
-    _textInsideBottom: David Bowie & Iman
     _shadeLinearGradient: to bottom, transparent 0 20%, rgb(230, 150, 150, .95) 90%
     _shadeBlendMode: hard-light
     _href: https://google.com
@@ -78,17 +75,7 @@
     _customClass: my-article-thumb
     _imageUrl: http://localhost:3000/images/bowie.jpg
     _imageAlt: David Bowie & Iman
-    _textAbove: David Bowie & Iman
     _textBelow: David Bowie & Iman
-    _textBeforeTop: David Bowie & Iman
-    _textBeforeCenter: David Bowie & Iman
-    _textBeforeBottom: David Bowie & Iman
-    _textAfterTop: David Bowie & Iman
-    _textAfterCenter: David Bowie & Iman
-    _textAfterBottom: David Bowie & Iman
-    _textInsideTop: David Bowie & Iman
-    _textInsideCenter: David Bowie & Iman
-    _textInsideBottom: David Bowie & Iman
     _shadeLinearGradient: to bottom, transparent 0 20%, rgb(230, 150, 150, .95) 90%
     _shadeBlendMode: hard-light
     _href: https://google.com
@@ -97,17 +84,7 @@
     _customClass: my-article-thumb
     _imageUrl: http://localhost:3000/images/bowie.jpg
     _imageAlt: David Bowie & Iman
-    _textAbove: David Bowie & Iman
     _textBelow: David Bowie & Iman
-    _textBeforeTop: David Bowie & Iman
-    _textBeforeCenter: David Bowie & Iman
-    _textBeforeBottom: David Bowie & Iman
-    _textAfterTop: David Bowie & Iman
-    _textAfterCenter: David Bowie & Iman
-    _textAfterBottom: David Bowie & Iman
-    _textInsideTop: David Bowie & Iman
-    _textInsideCenter: David Bowie & Iman
-    _textInsideBottom: David Bowie & Iman
     _shadeLinearGradient: to bottom, transparent 0 20%, rgb(230, 150, 150, .95) 90%
     _shadeBlendMode: hard-light
     _href: https://google.com
@@ -116,17 +93,7 @@
     _customClass: my-article-thumb
     _imageUrl: http://localhost:3000/images/bowie.jpg
     _imageAlt: David Bowie & Iman
-    _textAbove: David Bowie & Iman
     _textBelow: David Bowie & Iman
-    _textBeforeTop: David Bowie & Iman
-    _textBeforeCenter: David Bowie & Iman
-    _textBeforeBottom: David Bowie & Iman
-    _textAfterTop: David Bowie & Iman
-    _textAfterCenter: David Bowie & Iman
-    _textAfterBottom: David Bowie & Iman
-    _textInsideTop: David Bowie & Iman
-    _textInsideCenter: David Bowie & Iman
-    _textInsideBottom: David Bowie & Iman
     _shadeLinearGradient: to bottom, transparent 0 20%, rgb(230, 150, 150, .95) 90%
     _shadeBlendMode: hard-light
     _href: https://google.com
