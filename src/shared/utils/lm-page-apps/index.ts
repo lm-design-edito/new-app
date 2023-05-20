@@ -36,9 +36,22 @@ export type InlineOption = string
   |InlineOption[]
   |{ [key: string]: InlineOption }
 
-export function readOptionsNode (propsNode: HTMLElement): InlineOption {
-  const nodeDataType = propsNode.getAttribute('type')
-  const children = [...propsNode.querySelectorAll(':scope > *')]
+export function readOptionsNode (optionsNode: HTMLElement): Record<string, InlineOption> {
+  const options: ReturnType<typeof readOptionsNode> = {}
+  const children = [...optionsNode.querySelectorAll(':scope > *')]
+    .filter((e): e is HTMLElement => e instanceof HTMLElement)
+  children.forEach(optionNode => {
+    const valueAttribute = optionNode.getAttribute('value')
+    const isNamed = valueAttribute !== null
+    if (!isNamed) return
+    options[valueAttribute] = readOptionNode(optionNode)
+  })
+  return options
+}
+
+export function readOptionNode (optionNode: HTMLElement): InlineOption {
+  const nodeDataType = optionNode.getAttribute('type')
+  const children = [...optionNode.querySelectorAll(':scope > *')]
     .filter((e): e is HTMLElement => e instanceof HTMLElement)
   const unnamedChildren: HTMLElement[] = []
   const namedChildren: HTMLElement[] = []
@@ -49,7 +62,7 @@ export function readOptionsNode (propsNode: HTMLElement): InlineOption {
   })
   // No data children OR dataType is html => return the value of innerHTML
   if (children.length === 0 || nodeDataType === 'html') {
-    const rawNodeVal = propsNode.innerHTML.trim()
+    const rawNodeVal = optionNode.innerHTML.trim()
     if (nodeDataType === 'number') return parseFloat(rawNodeVal)
     if (nodeDataType === 'boolean') return !rawNodeVal.trim().match(/^false$/i)
     if (nodeDataType === 'null') return null
@@ -63,14 +76,14 @@ export function readOptionsNode (propsNode: HTMLElement): InlineOption {
   }
   // With only unnamed data children
   if (namedChildren.length === 0) return unnamedChildren
-    .map(child => readOptionsNode(child))
+    .map(child => readOptionNode(child))
   // With named data children
   // [IDEA] add unnamed to the result?
   const returned: InlineOption = {}
   children.forEach(child => {
     const title = child.getAttribute('value')
     if (typeof title !== 'string' || title.length < 1) return
-    returned[title] = readOptionsNode(child)
+    returned[title] = readOptionNode(child)
   })
   return returned
 }

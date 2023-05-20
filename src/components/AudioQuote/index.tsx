@@ -430,51 +430,49 @@ class AudioQuote extends Component<Props, State> {
     const loudButtonClasses = [bemClss.elt('loud-button').value, styles['loud-button']]
     const muteButtonClasses = [bemClss.elt('mute-button').value, styles['mute-button']]
 
-    return (
-      <IntersectionObserverComponent
-        callback={this.handleIntersection}
-        threshold={0.3}>
-        <div className={wrapperClasses.join(' ')}>
-          {props.title !== undefined
-            && <div
-            className={titleClasses.join(' ')}>
-            {this.toVNode(props.title)}
-          </div>}
-          <div
-            onClick={this.handlePlayClick}
-            className={playButtonClasses.join(' ')}>
-            {this.toVNode(props.playButton) ?? 'Lancer la lecture'}
-          </div>
-          {props.hidePauseButton !== true
-            && <div
-            onClick={this.handlePauseClick}
-            className={pauseButtonClasses.join(' ')}>
-            {this.toVNode(props.pauseButton) ?? 'Mettre en pause'}
-          </div>}
-          <div
-            onClick={this.handleLoudClick}
-            className={loudButtonClasses.join(' ')}>
-            {this.toVNode(props.loudButton) ?? 'Activer le son'}
-          </div>
-          <div
-            onClick={this.handleMuteClick}
-            className={muteButtonClasses.join(' ')}>
-            {this.toVNode(props.muteButton) ?? 'Couper le son'}
-          </div>
-          <video
-            src={props.audioSrc}
-            ref={this.videoElt}
-            className={videoEltClasses.join(' ')}
-            controls
-            muted
-            playsInline />
-          <div
-            className={subsContainerClasses.join(' ')}>
-            {this.getDisplayedSubsContent()}
-          </div>
+    return <IntersectionObserverComponent
+      callback={this.handleIntersection}
+      threshold={0.3}>
+      <div className={wrapperClasses.join(' ')}>
+        {props.title !== undefined
+          && <div
+          className={titleClasses.join(' ')}>
+          {this.toVNode(props.title)}
+        </div>}
+        <button
+          onClick={this.handlePlayClick}
+          className={playButtonClasses.join(' ')}>
+          {this.toVNode(props.playButton) ?? 'Lancer la lecture'}
+        </button>
+        {props.hidePauseButton !== true
+          && <button
+          onClick={this.handlePauseClick}
+          className={pauseButtonClasses.join(' ')}>
+          {this.toVNode(props.pauseButton) ?? 'Mettre en pause'}
+        </button>}
+        <button
+          onClick={this.handleLoudClick}
+          className={loudButtonClasses.join(' ')}>
+          {this.toVNode(props.loudButton) ?? 'Activer le son'}
+        </button>
+        <button
+          onClick={this.handleMuteClick}
+          className={muteButtonClasses.join(' ')}>
+          {this.toVNode(props.muteButton) ?? 'Couper le son'}
+        </button>
+        <video
+          src={props.audioSrc}
+          ref={this.videoElt}
+          className={videoEltClasses.join(' ')}
+          controls
+          muted
+          playsInline />
+        <div
+          className={subsContainerClasses.join(' ')}>
+          {this.getDisplayedSubsContent()}
         </div>
-      </IntersectionObserverComponent>
-    )
+      </div>
+    </IntersectionObserverComponent>
   }
 }
 

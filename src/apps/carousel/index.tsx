@@ -29,6 +29,7 @@ export default function CarouselApp({
 export function optionsToProps (options: Options): Props {
   const props: Props = {}
   const { settings, images } = options
+  // [WIP] Lift settings inside options
   if (typeof settings === 'object'
     && settings !== null) { props.settings = objectToSettings(settings) }
   if (Array.isArray(images)) { props.images = arrayToImages(images) }

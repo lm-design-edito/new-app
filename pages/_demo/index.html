@@ -1,0 +1,231 @@
+<html>
+  <head>
+    <meta charset="utf-8">
+    <style>
+      .demo-page { padding: 64px; }
+      @media screen and (max-width: 800px) { .demo-page { padding: 32px; } }
+      @media screen and (max-width: 480px) { .demo-page { padding: 16px; } }
+
+      .demo-app-name {
+        font-family: var(--ff-sang-bleu-og-sans);
+        font-size: 28px;
+        margin: 0;
+        background-color: black;
+        color: white;
+        width: fit-content;
+        padding: 16px;
+      }
+
+      .demo-app-description {
+        font-family: var(--ff-euclid-flex);
+        padding: 16px;
+        background-color: rgb(0, 0, 0, .88);
+        color: white;
+        display: inline-block;
+        margin-bottom: 32px;
+        margin-top: 4px;
+        max-width: 480px;
+      }
+
+      .demo-app {
+        padding: 32px;
+        border: 1px solid #EEE;
+        border-radius: 4px;
+        box-shadow: 0 0 16px 0 rgb(0, 0, 0, .04);
+        margin-bottom: 32px;
+      }
+
+      .demo-app-options {
+        background-color: #F5F5F5;
+        border-radius: 4px;
+        padding: 16px;
+        overflow-x: scroll;
+        margin-bottom: 64px;
+      }
+
+      .demo-app-option {
+        font-family: Menlo, monospace;
+        font-size: 12px;
+        margin-bottom: 4px;
+        width: max-content;
+      }
+
+      .demo-app-option em {
+        font-style: normal;
+        font-weight: 600;
+      }
+
+      .demo-app-option span {
+        font-style: italic;
+        opacity: .5;
+      }
+
+      .demo-app-option span::before {
+        content: ' • ';
+      }
+
+      /* * * * * * * * * * * Demo theme  * * * * * * * * * * */
+
+      .demo-app-description,
+      .demo-app,
+      .demo-app * {
+        box-sizing: border-box;
+      }
+
+      /* Audioquote */
+      .demo-app.audioquote {
+        max-width: 480px;
+      }
+
+      .lm-audio-quote {
+        position: relative;
+      }
+
+      .lm-audio-quote__title {
+        font-family: var(--ff-marr-sans);
+        font-weight: 700;
+      }
+
+      .lm-audio-quote__play-button,
+      .lm-audio-quote__pause-button,
+      .lm-audio-quote__loud-button,
+      .lm-audio-quote__mute-button {
+        cursor: pointer;
+        font-family: var(--ff-marr-sans);
+        font-size: 14px;
+        padding: 4px 12px;
+        border: 1px solid #D8D8D8;
+        border-radius: 1000px;
+        background-color: transparent;
+        transition: opacity 200ms;
+        margin-top: 16px;
+      }
+
+      .lm-audio-quote_is-playing .lm-audio-quote__play-button { opacity: .4; }
+      .lm-audio-quote__pause-button { opacity: .4; }
+      .lm-audio-quote_is-playing .lm-audio-quote__pause-button { opacity: 1; }
+      .lm-audio-quote_is-loud .lm-audio-quote__loud-button { opacity: .4; }
+      .lm-audio-quote__mute-button { opacity: .4; }
+      .lm-audio-quote_is-loud .lm-audio-quote__mute-button { opacity: 1; }
+
+      .lm-audio-quote__subs-container {
+        margin-top: 16px;
+        font-family: var(--ff-the-antiqua-b);
+        font-size: 24px;
+        transition: opacity 200ms;
+      }
+
+      .lm-audio-quote_is-ended .lm-audio-quote__subs-container {
+        opacity: .6;
+      }
+
+      .lm-audio-quote__sub {
+        opacity: .2;
+        transition: opacity 200ms;
+      }
+
+      .lm-audio-quote__sub_pronounced {
+        opacity: .6;
+      }
+
+      .lm-audio-quote__sub_active {
+        opacity: 1;
+      }
+
+      /* Carousel */
+      .demo-app.carousel {
+        max-width: 1200px;
+      }
+    </style>
+  </head>
+  <body class="lm-page demo-page">
+    <!-- Application -->
+    <style>.lm-page-config, .lm-app-config { display: none; }</style>
+    <script src="/shared/index.js" type="module"></script>
+
+    <!-- Config -->
+    <data class="lm-page-config" value="approxPublicationDate">2023-06-10</data>
+    <data class="lm-page-config" value="id">_demo</data>
+    
+    <!-- Slot: audioquote -->
+    <h3 class="demo-app-name">Audioquote</h3>
+    <div class="demo-app-description">
+      Nam et nisl risus. Nullam consectetur imperdiet erat eu blandit. Maecenas ac ornare ipsum, a consequat tortor.
+    </div>
+    <div class="demo-app audioquote">
+      <data class="lm-app-config" value="audioquote">
+        <data value="audioSrc" type="string">http://localhost:3000/audio/do-maj.mp3</data>
+        <data value="subsSrc" type="string">http://localhost:3000/audio/do-maj.srt</data>
+        <data value="subsGroups" type="string">3,6,8</data>
+        <data value="title" type="string">La gamme de Do majeur :</data> <!-- [WIP] type="html" does not work -->
+        <data value="playButton" type="string"><strong>Jouer</strong></data> <!-- [WIP] type="html" does not work -->
+        <data value="pauseButton" type="string"><strong>Arrêter</strong></data> <!-- [WIP] type="html" does not work -->
+        <data value="loudButton" type="string"><strong>Activer le son</strong></data> <!-- [WIP] type="html" does not work -->
+        <data value="muteButton" type="string"><strong>Couper le son</strong></data> <!-- [WIP] type="html" does not work -->
+        <data value="hidePauseButton" type="boolean">false</data>
+        <data value="autoPlayWhenVisible" type="boolean">true</data>
+        <data value="autoPauseWhenHidden" type="boolean">true</data>
+        <data value="autoLoudWhenVisible" type="boolean">false</data>
+        <data value="autoMuteWhenHidden" type="boolean">false</data>
+      </data>
+    </div>
+    <div class="demo-app-options">
+      <div class="demo-app-option"><em>audioSrc?:</em> string <span>L'URL du fichier audio à jouer</span></div>
+      <div class="demo-app-option"><em>subsSrc?:</em> string <span>L'URL du fichier sous-titres (.srt)</span></div>
+      <div class="demo-app-option"><em>subsGroups?:</em> string|Array&lt;string|number&gt; <span>Permet de grouper des lignes de sous-titres ensemble. Il suffit de préciser l'ID de la dernière ligne de sous-titres pour chaque groupe. Exemple : si l'on veut grouper les sous-titres 1 à 7, 8 à 12, 13 à 19 et enfin 20 jusqu'à la fin, on donnera à cette propriété l'une de ces valeurs : 7, 12, 19 (le dernier groupe est déduit).</span></div>
+      <div class="demo-app-option"><em>title?:</em> string|html <span>Un titre à afficher dans l'app</span></div>
+      <div class="demo-app-option"><em>playButton?:</em> string|html <span>Le contenu à afficher dans le bouton play</span></div>
+      <div class="demo-app-option"><em>pauseButton?:</em> string|html <span>Le contenu à afficher dans le bouton pause</span></div>
+      <div class="demo-app-option"><em>loudButton?:</em> string|html <span>Le contenu à afficher dans le bouton loud</span></div>
+      <div class="demo-app-option"><em>muteButton?:</em> string|html <span>Le contenu à afficher dans le bouton mute</span></div>
+      <div class="demo-app-option"><em>hidePauseButton?:</em> boolean <span>Permet de masquer le bouton pause</span></div>
+      <div class="demo-app-option"><em>autoPlayWhenVisible?:</em> boolean <span>Déclenche la lecture des sous-titres quand l'app entre dans l'écran (si la lecture n'a pas été terminée déjà une fois et si l'utilisateur n'a pas manuellement mis la lecture en pause.)</span></div>
+      <div class="demo-app-option"><em>autoPauseWhenHidden?:</em> boolean <span>Force la mise en pause de la lecture si l'app sort de l'écran.</span></div>
+      <div class="demo-app-option"><em>autoLoudWhenVisible?:</em> boolean <span>Déconseillé, et ne fonctionne que si l'utilisateur a déjà cliqué quelque part dans la page. Active le son de l'audio lorsque l'app rentre dans l'écran.</span></div>
+      <div class="demo-app-option"><em>autoMuteWhenHidden?:</em> boolean <span>Désactive le son de l'audio si l'app sort de l'écran.</span></div>
+    </div>
+
+    <!-- Slot: carousel -->
+    <h3 class="demo-app-name">Carousel</h3>
+    <div class="demo-app-description">Lorem ipsum dolor</div>
+    <div class="demo-app carousel">
+      <data class="lm-app-config" value="carousel">
+        <data value="audioSrc" type="string">http://localhost:3000/audio/do-maj.mp3</data>
+      </data>
+    </div>
+    <div class="demo-app-options">
+      <div class="demo-app-option"><em>audioSrc?:</em> string <span>L'URL du fichier audio à jouer</span></div>
+    </div>
+
+    <!-- <div class="carousel">
+      <data class="lm-app-config" value="carousel">
+        <data value="" type=""></data>
+      </data>
+    </div>
+    
+    <div class="footer">
+      <data class="lm-app-config" value="footer">
+        <data value="" type=""></data>
+      </data>
+    </div>
+    
+    <div class="scrllgngn">
+      <data class="lm-app-config" value="scrllgngn">
+        <data value="" type=""></data>
+      </data>
+    </div>
+    
+    <div class="slideshow">
+      <data class="lm-app-config" value="slideshow">
+        <data value="" type=""></data>
+      </data>
+    </div>
+    
+    <div class="thumbnail">
+      <data class="lm-app-config" value="thumbnail">
+        <data value="" type=""></data>
+      </data>
+    </div> -->
+    
+  </body>
+</html>

@@ -48,16 +48,11 @@ export function optionsToProps(options: Options): Props {
   if (subsSrc !== undefined) { props.subsSrc = toString(subsSrc) }
 
   if (typeof subsGroups === 'string') {
-    const subsGroupsArray: number[] = []
-    subsGroups.split(',').forEach(value => {
-      const index = parseInt(value.trim())
-      if (Number.isNaN(index)) return
-      subsGroupsArray.push(index)
-    })
-    props.subsGroups = subsGroupsArray
+    props.subsGroups = subsGroups
+      .split(',')
+      .map(str => toNumber(str.trim()))
   }
-
-  if (Array.isArray(subsGroups)) props.subsGroups = subsGroups.map(value => toNumber(value))
+  if (Array.isArray(subsGroups)) { props.subsGroups = subsGroups.map(value => toNumber(value)) }
 
   if (autoPlayWhenVisible !== undefined) { props.autoPlayWhenVisible = toBoolean(autoPlayWhenVisible) }
   if (autoPauseWhenHidden !== undefined) { props.autoPauseWhenHidden = toBoolean(autoPauseWhenHidden) }
