@@ -30,7 +30,7 @@ import join from './many-to-one/join'
 import at from './many-to-one/at'
 // Many to many transformers
 import map from './many-to-many/map'
-import randomUUID from '~/utils/random-UUID'
+import randomUUID from '~/utils/random-uuid'
 
 // [WIP] transformers ideas :
 // - solve

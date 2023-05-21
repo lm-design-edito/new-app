@@ -1,4 +1,4 @@
-import randomUUID from '~/utils/random-UUID'
+import randomUUID from '~/utils/random-uuid'
 
 const rulesMap: Map<string, string> = new Map()
 const targetStyleElement = document.createElement('style')
