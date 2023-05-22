@@ -57,7 +57,6 @@ export function optionsToProps(options: Options): Props {
     if (isValidElement(textBelow)) props.textBelow = textBelow
     else props.textBelow = toString(textBelow)
   }
-  console.log(thumbnailsData)
   if (Array.isArray(thumbnailsData)) {
     const propsThumbnailsData: ThumbnailProps[] = [];
     (thumbnailsData as unknown[]).forEach(thumbnailData => {

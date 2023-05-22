@@ -25,7 +25,7 @@ export default class Footer extends Component<Props, {}> {
     this.handleIntersection = this.handleIntersection.bind(this)
   }
 
-  bemClss = bem('lm-article-footer')
+  bemClss = bem('lm-footer')
 
   handleIntersection(...args: Parameters<NonNullable<IOCompProps['callback']>>) {
     const { onVisible, onHidden } = this.props
