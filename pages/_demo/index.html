@@ -84,7 +84,6 @@
       .lm-audio-quote__title {
         font-family: var(--ff-marr-sans);
         font-weight: 700;
-        font-size: var(--my-scale-level-6); /* [WIP] remove this */
       }
 
       .lm-audio-quote__play-button,
@@ -149,12 +148,11 @@
     <data class="lm-page-config" value="id">_demo</data>
     <data class="lm-page-config" value="addScale">
       name: my-scale,
-      root: .lm-app,
       bounds: 320 1440,
-      breakpoints: 16,
       low: 14 16,
       high: 32 58,
-      levels: 32
+      levels: 32,
+      breakpoints: 32
     </data>
 
     <!-- Slot: audioquote -->

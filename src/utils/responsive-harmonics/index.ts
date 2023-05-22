@@ -5,8 +5,14 @@ export function getHarmonic (
   max: number,
   level: number,
   steps: number) {
-  if (min === 0) return console.warn('Cannot generate harmonics if min value is zero')
-  if (steps < 1) return console.warn('Cannot generate harmonics if steps is lower than one')
+  if (min === 0) {
+    console.warn('Cannot generate harmonics if min value is zero')
+    return NaN
+  }
+  if (steps < 1) {
+    console.warn('Cannot generate harmonics if steps is lower than one')
+    return NaN
+  }
   const maxOverMin = max / min
   const oneOverSteps = 1 / parseInt(`${steps}`)
   const factor = Math.pow(maxOverMin, oneOverSteps)

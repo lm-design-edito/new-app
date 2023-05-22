@@ -416,15 +416,10 @@ export function applyConfig (config: Config, hooks?: ApplyConfigHooks) {
       }
 
       return {
-        name,
-        root,
-        lowBound,
-        highBound,
-        breakpoints,
-        lowLevelMin,
-        lowLevelMax,
-        highLevelMin,
-        highLevelMax,
+        name, root,
+        lowBound, highBound, breakpoints,
+        lowLevelMin, lowLevelMax,
+        highLevelMin, highLevelMax,
         levels
       }
     })
@@ -433,18 +428,12 @@ export function applyConfig (config: Config, hooks?: ApplyConfigHooks) {
     const scalesDetails = scaleDescriptors.map(scaleDescriptor => {
       if (scaleDescriptor === undefined) return
       const {
-        name,
-        root,
-        lowBound,
-        highBound,
-        breakpoints,
-        lowLevelMin,
-        lowLevelMax,
-        highLevelMin,
-        highLevelMax,
+        name, root,
+        lowBound, highBound, breakpoints,
+        lowLevelMin, lowLevelMax,
+        highLevelMin, highLevelMax,
         levels
       } = scaleDescriptor
-      // const scaleIdentifier = `--${name}`
       const breakpointSize = (highBound - lowBound) / (breakpoints - 1)
       return {
         name,
