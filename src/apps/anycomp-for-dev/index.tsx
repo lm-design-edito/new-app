@@ -2,18 +2,18 @@ import { render } from 'preact'
 import { Renderer } from 'shared/utils/lm-page-apps'
 import flattenGetters from '~/utils/flatten-getters'
 import Thumbnail from '~/components/Thumbnail'
-import ArticleUI from '~/components/ArticleUI'
+import Article from '~/components/Article'
 import ImageOverlay from '~/components/ImageOverlay'
 
 export enum ComponentsLib {
   ARTICLE_THUMB = 'Thumbnail',
-  ARTICLE_UI = 'ArticleUI',
+  ARTICLE_UI = 'Article',
   IMAGE_OVERLAY = 'ImageOverlay',
 }
 
 export const componentsMap = new Map<ComponentsLib, any>()
 componentsMap.set(ComponentsLib.ARTICLE_THUMB, Thumbnail)
-componentsMap.set(ComponentsLib.ARTICLE_UI, ArticleUI)
+componentsMap.set(ComponentsLib.ARTICLE_UI, Article)
 componentsMap.set(ComponentsLib.IMAGE_OVERLAY, ImageOverlay)
 
 /* * * * * * * * * * * * * * * * * * *

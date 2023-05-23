@@ -60,7 +60,6 @@ export default class Footer extends Component<Props, {}> {
     const thumbnailsClasses = [bemClss.elt('thumbnails').value, styles['thumbnails']]
     const aboveClasses = [bemClss.elt('above').value, styles['above']]
     const belowClasses = [bemClss.elt('below').value, styles['below']]
-    const displayShade = shadeLinearGradient !== undefined
 
     const wrapperStyle = {
       ['--bg-color']: bgColor,
@@ -79,7 +78,7 @@ export default class Footer extends Component<Props, {}> {
           <Img src={bgImageUrl} />
         </div>}
         {/* Shade */}
-        {displayShade && <div className={shadeClasses.join(' ')} />}
+        {<div className={shadeClasses.join(' ')} />}
         {/* Above */}
         {textAbove !== undefined && <div className={aboveClasses.join(' ')}>{textAbove}</div>}
         {/* Thumbs */}

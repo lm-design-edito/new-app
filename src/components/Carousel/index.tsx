@@ -473,20 +473,20 @@ class Carousel extends Component<Props, State> {
               })}
             </>} */}
 
-            {this.displayArrows
-              && <div className={arrowsClasses.join(' ')} style={arrowsStyle}>
-
-                {this.settings.leftArrow
-                  && <div className={leftArrowClasses.join(' ')} onClick={this.decrementIndex}>
-                    <Icon file={Icons.ARROW_LEFT} />
-                  </div>}
-
-                {this.settings.rightArrow
-                  && <div className={rightArrowClasses.join(' ')} onClick={this.incrementIndex}>
-                    <Icon file={Icons.ARROW_RIGHT} />
-                  </div>}
-
+            {this.displayArrows && <div
+              className={arrowsClasses.join(' ')}
+              style={arrowsStyle}>
+              {this.settings.leftArrow && <div
+                className={leftArrowClasses.join(' ')}
+                onClick={this.decrementIndex}>
+                <Icon file={Icons.ARROW_LEFT} />
               </div>}
+              {this.settings.rightArrow && <div
+                className={rightArrowClasses.join(' ')}
+                onClick={this.incrementIndex}>
+                <Icon file={Icons.ARROW_RIGHT} />
+              </div>}
+            </div>}
 
           </div>}
 

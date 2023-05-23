@@ -1,29 +1,22 @@
 import { Component, JSX } from 'preact'
 
-type AnyObj = { [key: string]: any }
-type IntrscElts = JSX.IntrinsicElements
-
-export type AllowedAttributes<T extends keyof IntrscElts> = IntrscElts[T] extends AnyObj
-  ? IntrscElts[T]
-  : never
-
-export type Props<T extends keyof IntrscElts> = {
-  name?: T
-  attributes?: AllowedAttributes<T>
+export type Props = {
+  name: keyof JSX.IntrinsicElements,
+  [attribute: string]: any
 }
 
-const defaultTagName = 'div'
-
-export default class Tag<T extends keyof IntrscElts = typeof defaultTagName> extends Component<Props<T>> {
+export default class Tag extends Component<Props> {
   render () {
     const {
-      name = defaultTagName,
-      attributes = {} as AllowedAttributes<T>,
-      children
+      name,
+      ..._attributes
     } = this.props
-    const CustomTag = name.toLowerCase().trim()
-    return <CustomTag {...attributes}>
-      {children}
-    </CustomTag>
+    try {
+      const CustomTag = name
+      const attributes = _attributes as JSX.IntrinsicAttributes
+      return <CustomTag {...attributes} />
+    } catch (err) {
+      return <></>
+    }
   }
 }

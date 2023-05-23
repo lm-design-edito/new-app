@@ -13,13 +13,13 @@
 }
 
 .shade {
+  pointer-events: none;
   background-image: var(--shade-linear-gradient);
   mix-blend-mode: var(--shade-blend-mode);
 }
 
 .background-image {
-  img,
-  svg {
+  img, svg {
     width: 100%;
     height: 100%;
   }

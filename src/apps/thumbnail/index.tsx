@@ -51,7 +51,6 @@ export function optionsToProps(options: Options): Props {
   } = options
 
   const props: Props = {}
-
   const expectedString = (val: unknown) => val !== undefined ? toString(val) : undefined
   const expectedStringOrVNode = (val: unknown) => {
     if (val === undefined) return undefined
@@ -59,23 +58,23 @@ export function optionsToProps(options: Options): Props {
     return toString(val)
   }
 
-  props.customClass = expectedString(customClass)
-  props.imageUrl = expectedString(imageUrl)
-  props.imageAlt = expectedString(imageAlt)
-  props.textAbove = expectedStringOrVNode(textAbove)
-  props.textBelow = expectedStringOrVNode(textBelow)
-  props.textBeforeTop = expectedStringOrVNode(textBeforeTop)
-  props.textBeforeCenter = expectedStringOrVNode(textBeforeCenter)
-  props.textBeforeBottom = expectedStringOrVNode(textBeforeBottom)
-  props.textAfterTop = expectedStringOrVNode(textAfterTop)
-  props.textAfterCenter = expectedStringOrVNode(textAfterCenter)
-  props.textAfterBottom = expectedStringOrVNode(textAfterBottom)
-  props.textInsideTop = expectedStringOrVNode(textInsideTop)
-  props.textInsideCenter = expectedStringOrVNode(textInsideCenter)
-  props.textInsideBottom = expectedStringOrVNode(textInsideBottom)
-  props.shadeLinearGradient = expectedString(shadeLinearGradient)
-  props.shadeBlendMode = expectedString(shadeBlendMode)
-  props.status = expectedString(status)
+  if (customClass !== undefined) props.customClass = expectedString(customClass)
+  if (imageUrl !== undefined) props.imageUrl = expectedString(imageUrl)
+  if (imageAlt !== undefined) props.imageAlt = expectedString(imageAlt)
+  if (textAbove !== undefined) props.textAbove = expectedStringOrVNode(textAbove)
+  if (textBelow !== undefined) props.textBelow = expectedStringOrVNode(textBelow)
+  if (textBeforeTop !== undefined) props.textBeforeTop = expectedStringOrVNode(textBeforeTop)
+  if (textBeforeCenter !== undefined) props.textBeforeCenter = expectedStringOrVNode(textBeforeCenter)
+  if (textBeforeBottom !== undefined) props.textBeforeBottom = expectedStringOrVNode(textBeforeBottom)
+  if (textAfterTop !== undefined) props.textAfterTop = expectedStringOrVNode(textAfterTop)
+  if (textAfterCenter !== undefined) props.textAfterCenter = expectedStringOrVNode(textAfterCenter)
+  if (textAfterBottom !== undefined) props.textAfterBottom = expectedStringOrVNode(textAfterBottom)
+  if (textInsideTop !== undefined) props.textInsideTop = expectedStringOrVNode(textInsideTop)
+  if (textInsideCenter !== undefined) props.textInsideCenter = expectedStringOrVNode(textInsideCenter)
+  if (textInsideBottom !== undefined) props.textInsideBottom = expectedStringOrVNode(textInsideBottom)
+  if (shadeLinearGradient !== undefined) props.shadeLinearGradient = expectedString(shadeLinearGradient)
+  if (shadeBlendMode !== undefined) props.shadeBlendMode = expectedString(shadeBlendMode)
+  if (status !== undefined) props.status = expectedString(status)
   if (statusOverrides !== undefined) {
     const statusOverridesProp: Props['statusOverrides'] = {}
     try {
@@ -90,7 +89,7 @@ export function optionsToProps(options: Options): Props {
     } catch (err) {}
     props.statusOverrides = statusOverridesProp
   }
-  props.href = expectedString(href)
+  if (status !== undefined) props.href = expectedString(href)
   
   return props
 }

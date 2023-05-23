@@ -36,22 +36,19 @@ export default class ImageOverlay extends Component<Props, {}> {
       shadeLinearGradient,
       shadeBlendMode
     } = props
-    const displayShade = shadeLinearGradient !== undefined
     const wrapperStyle = {
-      ['--shade-gradient']: `linear-gradient(${shadeLinearGradient})`,
+      ['--shade-gradient']: shadeLinearGradient !== undefined
+        ? `linear-gradient(${shadeLinearGradient})`
+        : undefined,
       ['--shade-blend-mode']: shadeBlendMode
     }
     return <div
       className={wrapperClasses.join(' ')}
       style={wrapperStyle}>
       {/* image */}
-      {imageUrl && <div className={imageClasses.join(' ')}>
-        <Img
-          src={imageUrl}
-          alt={imageAlt} />
-      </div>}
+      {imageUrl && <div className={imageClasses.join(' ')}><Img src={imageUrl} alt={imageAlt} /></div>}
       {/* shade */}
-      {displayShade && <div className={shadeClasses.join(' ')} />}
+      {<div className={shadeClasses.join(' ')} />}
       {/* text */}
       {textTop && <div className={textTopClasses.join(' ')}>{textTop}</div>}
       {textCenter && <div className={textCenterClasses.join(' ')}>{textCenter}</div>}

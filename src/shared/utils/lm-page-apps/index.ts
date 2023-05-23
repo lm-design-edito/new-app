@@ -92,13 +92,15 @@ export function readOptionNode (optionNode: HTMLElement): InlineOption {
  * Names
  * * * * * * * * * * * * * * * * * * */
 export enum Names {
-  SCRLLGNGN = 'scrllgngn',
-  CAROUSEL = 'carousel',
-  SLIDESHOW = 'slideshow',
-  AUDIOQUOTE = 'audioquote',
-  THUMBNAIL = 'article-thumb',
-  FOOTER = 'footer',
   ANYCOMP_FOR_DEV_ONLY = 'anycomp-for-dev',
+
+  ARTICLE = 'article',
+  AUDIOQUOTE = 'audioquote',
+  CAROUSEL = 'carousel',
+  FOOTER = 'footer',
+  SCRLLGNGN = 'scrllgngn',
+  SLIDESHOW = 'slideshow',
+  THUMBNAIL = 'thumbnail'
 }
 
 export const validNames = Object.values(Names)
@@ -192,15 +194,17 @@ export type Renderer = (appOptions: Omit<RenderOptions, 'name'>) => void
 async function loadRenderer (name: Names) {
   const isProd = process.env.NODE_ENV !== 'production'
   let renderer: Renderer|null = null
-  if (name === Names.SCRLLGNGN) { renderer = (await import('../../../apps/scrllgngn')).default }
-  if (name === Names.CAROUSEL) { renderer = (await import('../../../apps/carousel')).default }
-  if (name === Names.SLIDESHOW) { renderer = (await import('../../../apps/slideshow')).default }
+  // Dev only
+  if (name === Names.ANYCOMP_FOR_DEV_ONLY && isProd) { renderer = (await import('../../../apps/anycomp-for-dev')).default }
+  // Production
+  if (name === Names.ARTICLE) { renderer = (await import('../../../apps/article')).default }
   if (name === Names.AUDIOQUOTE) { renderer = (await import('../../../apps/audioquote')).default }
-  if (name === Names.THUMBNAIL) { renderer = (await import('../../../apps/thumbnail')).default }
+  if (name === Names.CAROUSEL) { renderer = (await import('../../../apps/carousel')).default }
   if (name === Names.FOOTER) { renderer = (await import('../../../apps/footer')).default }
-  if (name === Names.ANYCOMP_FOR_DEV_ONLY && isProd) {
-    renderer = (await import('../../../apps/anycomp-for-dev')).default
-  }
+  if (name === Names.SCRLLGNGN) { renderer = (await import('../../../apps/scrllgngn')).default }
+  if (name === Names.SLIDESHOW) { renderer = (await import('../../../apps/slideshow')).default }
+  if (name === Names.THUMBNAIL) { renderer = (await import('../../../apps/thumbnail')).default }
+  // Unknown app type
   if (renderer === null) throw new Error(`Could not find a renderer for an app named ${name}`)
   return renderer
 }

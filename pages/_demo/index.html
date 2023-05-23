@@ -1,0 +1,171 @@
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="http://localhost:3000/styles/demo.css">
+  </head>
+  <body class="lm-page demo-page">
+    <!-- Application -->
+    <style>.lm-page-config, .lm-app-config { display: none; }</style>
+    <script src="/shared/index.js" type="module"></script>
+
+    <!-- Config -->
+    <data class="lm-page-config" value="approxPublicationDate">2023-06-10</data>
+    <data class="lm-page-config" value="id">_demo-footer</data>
+    <data class="lm-page-config" value="textbaseUrl">http://localhost:3000/data/demo.txt</data>
+
+    <!-- Slot: article -->
+    <h3 class="demo-app-name" id="article">Article</h3>
+    <div class="demo-app-description">
+      Un bloc permettant d'utiliser les éléments génériques que l'on trouve dans le corps d'articles du Monde
+    </div>
+    <div class="demo-app article">
+      <data class="lm-app-config" value="article">
+        <data>
+          <data value="type" type="string">paragraph</data>
+        </data>
+        <data>
+          <data value="type" type="string">intertitle</data>
+        </data>
+      </data>
+    </div>
+    <div class="demo-app-options">
+      
+    </div>  
+
+    <!-- Slot: audioquote -->
+    <h3 class="demo-app-name" id="audioquote">Audioquote</h3>
+    <div class="demo-app-description">
+      Un témoignage audio sous-titré, qui peut se déclencher automatiquement à l'entrée dans l'écran.
+    </div>
+    <div class="demo-app audioquote">
+      <data class="lm-app-config" value="audioquote">
+        <data value="audioSrc" type="string">http://localhost:3000/audio/do-maj.mp3</data>
+        <data value="subsSrc" type="string">http://localhost:3000/audio/do-maj.srt</data>
+        <data value="subsGroups" type="string">3,6,8</data>
+        <data value="title" type="string">La gamme de Do majeur :</data> <!-- [WIP] type="html" does not work -->
+        <data value="playButton" type="string"><strong>Jouer</strong></data> <!-- [WIP] type="html" does not work -->
+        <data value="pauseButton" type="string"><strong>Arrêter</strong></data> <!-- [WIP] type="html" does not work -->
+        <data value="loudButton" type="string"><strong>Activer le son</strong></data> <!-- [WIP] type="html" does not work -->
+        <data value="muteButton" type="string"><strong>Couper le son</strong></data> <!-- [WIP] type="html" does not work -->
+        <data value="hidePauseButton" type="boolean">false</data>
+        <data value="autoPlayWhenVisible" type="boolean">true</data>
+        <data value="autoPauseWhenHidden" type="boolean">true</data>
+        <data value="autoLoudWhenVisible" type="boolean">false</data>
+        <data value="autoMuteWhenHidden" type="boolean">false</data>
+      </data>
+    </div>
+    <div class="demo-app-options">
+      <div class="demo-app-option"><em>audioSrc?:</em> string <span>L'URL du fichier audio à jouer</span></div>
+      <div class="demo-app-option"><em>subsSrc?:</em> string <span>L'URL du fichier sous-titres (.srt)</span></div>
+      <div class="demo-app-option"><em>subsGroups?:</em> string|Array&lt;string|number&gt; <span>Permet de grouper des lignes de sous-titres ensemble. Il suffit de préciser l'ID de la dernière ligne de sous-titres pour chaque groupe. Exemple : si l'on veut grouper les sous-titres 1 à 7, 8 à 12, 13 à 19 et enfin 20 jusqu'à la fin, on donnera à cette propriété l'une de ces valeurs : 7, 12, 19 (le dernier groupe est déduit).</span></div>
+      <div class="demo-app-option"><em>title?:</em> string|html <span>Un titre à afficher dans l'app</span></div>
+      <div class="demo-app-option"><em>playButton?:</em> string|html <span>Le contenu à afficher dans le bouton play</span></div>
+      <div class="demo-app-option"><em>pauseButton?:</em> string|html <span>Le contenu à afficher dans le bouton pause</span></div>
+      <div class="demo-app-option"><em>loudButton?:</em> string|html <span>Le contenu à afficher dans le bouton loud</span></div>
+      <div class="demo-app-option"><em>muteButton?:</em> string|html <span>Le contenu à afficher dans le bouton mute</span></div>
+      <div class="demo-app-option"><em>hidePauseButton?:</em> boolean <span>Permet de masquer le bouton pause</span></div>
+      <div class="demo-app-option"><em>autoPlayWhenVisible?:</em> boolean <span>Déclenche la lecture des sous-titres quand l'app entre dans l'écran (si la lecture n'a pas été terminée déjà une fois et si l'utilisateur n'a pas manuellement mis la lecture en pause.)</span></div>
+      <div class="demo-app-option"><em>autoPauseWhenHidden?:</em> boolean <span>Force la mise en pause de la lecture si l'app sort de l'écran.</span></div>
+      <div class="demo-app-option"><em>autoLoudWhenVisible?:</em> boolean <span>Déconseillé, et ne fonctionne que si l'utilisateur a déjà cliqué quelque part dans la page. Active le son de l'audio lorsque l'app rentre dans l'écran.</span></div>
+      <div class="demo-app-option"><em>autoMuteWhenHidden?:</em> boolean <span>Désactive le son de l'audio si l'app sort de l'écran.</span></div>
+    </div>    
+
+    <!-- Slot: footer -->
+    <h3 class="demo-app-name" id="footer">Footer</h3>
+    <div class="demo-app-description">
+      Un bloc de recirculation permettant de rassembler plusieurs papiers connexes en fin de lecture.
+    </div>
+    <div class="demo-app footer">
+      <data class="lm-app-config" value="footer">
+        <data value="bgColor" type="string">rgb(25, 25, 25)</data>
+        <data value="bgImageUrl" type="string">http://localhost:3000/images/bdif-1.jpeg</data>
+        <data value="shadeLinearGradient" type="string">to top, rgb(0, 0, 0, 1) 20%, rgb(0, 0, 0, .7) 60%</data>
+        <data value="shadeBlendMode" type="string">darken</data>
+        <data value="textAbove" type="string">Dans la même série</data>
+        <data value="textBelow" type="string">Vestibulum sit amet rutrum velit, pretium sodales augue. Cras quis placerat sapien. Morbi faucibus, velit eget sagittis imperdiet, justo felis ultricies est, sed euismod orci orci in sem. </data>
+        <data value="thumbnailsData" type="string">
+          <data>
+            <data value="imageUrl" type="string">http://localhost:3000/images/bdif-2.gif</data>
+            <data value="imageAlt" type="string">Image from ButDoesItFloat</data>
+            <data value="textBelow" type="string">Un autre article sur le même sujet</data>
+            <data value="href" type="string">#</data>
+          </data>
+          <data>
+            <data value="imageUrl" type="string">http://localhost:3000/images/bdif-3.jpeg</data>
+            <data value="imageAlt" type="string">Image from ButDoesItFloat</data>
+            <data value="textBelow" type="string">Un autre article sur le même sujet</data>
+            <data value="href" type="string">#</data>
+          </data>
+          <data>
+            <data value="imageUrl" type="string">http://localhost:3000/images/bdif-4.jpeg</data>
+            <data value="imageAlt" type="string">Image from ButDoesItFloat</data>
+            <data value="textBelow" type="string">Un autre article sur le même sujet</data>
+            <data value="href" type="string">#</data>
+          </data>
+          <data>
+            <data value="imageUrl" type="string">http://localhost:3000/images/bdif-6.jpeg</data>
+            <data value="imageAlt" type="string">Image from ButDoesItFloat</data>
+            <data value="textBelow" type="string">Un autre article sur le même sujet</data>
+            <data value="href" type="string">#</data>
+          </data>
+        </data>
+      </data>
+    </div>
+    <div class="demo-app-options">
+      <div class="demo-app-option"><em>customClass?: string</em><span>Une classe CSS à ajouter sur l'élément conteneur de l'app</span></div>
+      <div class="demo-app-option"><em>bgColor?:</em> string <span>Couleur (toute valeur CSS valide) de fond du footer</span></div>
+      <div class="demo-app-option"><em>bgImageUrl?:</em> string <span>URL de l'image de fond du footer</span></div>
+      <div class="demo-app-option"><em>shadeLinearGradient?:</em> string <span>Description du dégradé de fond du footer (valeur CSS valide à passer à linear-gradient())</span></div>
+      <div class="demo-app-option"><em>shadeBlendMode?:</em> string <span>Mode de fusion de l'image de fond (valeur CSS valide à passer à mix-blend-mode</span></div>
+      <div class="demo-app-option"><em>textAbove?:</em> string|VNode <span>Texte à afficher au dessus de la rangée de thumbnails</span></div>
+      <div class="demo-app-option"><em>textBelow?:</em> string|VNode <span>Texte à afficher en dessous de la rangée de thumbnails</span></div>
+      <div class="demo-app-option"><em>thumbnailsData?:</em> ThumbnailProps[] <span>Voir les options de l'application <a href="#thumbnail">thumbnail</a></span></div>
+    </div> 
+    
+    <!-- Slot: thumbnail -->
+    <h3 class="demo-app-name" id="thumbnail">Thumbnail</h3>
+    <div class="demo-app-description">
+      Une carte visuelle pour illustrer un lien, avec du texte positionné autour de l'image ou sur elle.
+    </div>
+    <div class="demo-app thumbnail">
+      <data class="lm-app-config" value="thumbnail">
+        <data value="imageUrl" type="string">http://localhost:3000/images/bdif-4.jpeg</data>
+        <data value="imageAlt" type="string">Image from ButDoesItFloat</data>
+        <data value="textInsideTop" type="string">Un texte en haut</data>
+        <data value="textInsideCenter" type="string">Un texte au milieu</data>
+        <data value="textInsideBottom" type="string">Un texte en bas</data>
+        <data value="href" type="string">#</data>
+        <data value="shadeLinearGradient" type="string">to top, rgb(0, 0, 0, .7), rgb(0, 0, 0, .4) 40%, rgb(0, 0, 0, 0) 70%</data>
+        <data value="shadeBlendMode" type="string">darken</data>
+        <data value="status" type="string">published</data>
+        <data value="statusOverrides" type="string">
+          <data value="published">
+            <data value="textInsideBottom" type="string">Un dernier texte en bas</data>
+          </data>
+        </data>
+      </data>
+    </div>
+    <div class="demo-app-options">
+      <div class="demo-app-option"><em>customClass?: string</em><span>Une classe CSS à ajouter sur l'élément conteneur de l'app</span></div>
+      <div class="demo-app-option"><em>imageUrl?: string </em><span>Lorem ipsum</span></div>
+      <div class="demo-app-option"><em>imageAlt?: string </em><span>Lorem ipsum</span></div>
+      <div class="demo-app-option"><em>textAbove?: string|VNode </em><span>Lorem ipsum</span></div>
+      <div class="demo-app-option"><em>textBelow?: string|VNode </em><span>Lorem ipsum</span></div>
+      <div class="demo-app-option"><em>textBeforeTop?: string|VNode </em><span>Lorem ipsum</span></div>
+      <div class="demo-app-option"><em>textBeforeCenter?: string|VNode </em><span>Lorem ipsum</span></div>
+      <div class="demo-app-option"><em>textBeforeBottom?: string|VNode </em><span>Lorem ipsum</span></div>
+      <div class="demo-app-option"><em>textAfterTop?: string|VNode </em><span>Lorem ipsum</span></div>
+      <div class="demo-app-option"><em>textAfterCenter?: string|VNode </em><span>Lorem ipsum</span></div>
+      <div class="demo-app-option"><em>textAfterBottom?: string|VNode </em><span>Lorem ipsum</span></div>
+      <div class="demo-app-option"><em>textInsideTop?: string|VNode </em><span>Lorem ipsum</span></div>
+      <div class="demo-app-option"><em>textInsideCenter?: string|VNode </em><span>Lorem ipsum</span></div>
+      <div class="demo-app-option"><em>textInsideBottom?: string|VNode </em><span>Lorem ipsum</span></div>
+      <div class="demo-app-option"><em>shadeLinearGradient?: string </em><span>Lorem ipsum</span></div>
+      <div class="demo-app-option"><em>shadeBlendMode?: string </em><span>Lorem ipsum</span></div>
+      <div class="demo-app-option"><em>status?: string </em><span>Lorem ipsum</span></div>
+      <div class="demo-app-option"><em>statusOverrides?: { [statusName: string]: Omit&ltProps, 'status'|'statusOverrides'&gt } </em><span>Lorem ipsum</span></div>
+      <div class="demo-app-option"><em>href?: string </em><span>Lorem ipsum</span></div>
+    </div> 
+  </body>
+</html>
