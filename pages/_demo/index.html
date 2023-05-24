@@ -11,9 +11,10 @@
 
     <!-- Config -->
     <data class="lm-page-config" value="approxPublicationDate">2023-06-10</data>
-    <data class="lm-page-config" value="id">_demo-footer</data>
+    <data class="lm-page-config" value="id">demo-lm-apps</data>
     <data class="lm-page-config" value="textbaseUrl">http://localhost:3000/data/demo.txt</data>
 
+    <!-- Slot: article -->
     <!-- Slot: article -->
     <h3 class="demo-app-name" id="article">Article</h3>
     <div class="demo-app-description">
@@ -21,17 +22,90 @@
     </div>
     <div class="demo-app article">
       <data class="lm-app-config" value="article">
-        <data>
-          <data value="type" type="string">paragraph</data>
-        </data>
-        <data>
-          <data value="type" type="string">intertitle</data>
+        <data value="elements">
+          <data>
+            <data value="type">editorial-nature</data>
+            <data value="content">Nature éditoriale</data>
+          </data>
+          <data>
+            <data value="type">html</data>
+            <data value="content" type="html"><span style="opacity: .4">&nbsp;&nbsp;•&nbsp;&nbsp;</span></data>
+          </data>
+          <data>
+            <data value="type">heading</data>
+            <data value="content">Rubrique</data>
+          </data>
+          <data>
+            <data value="type">title</data>
+            <data value="content">Un titre pour cet article</data>
+          </data>
+          <data>
+            <data value="type">kicker</data>
+            <data value="content">Aenean vulputate condimentum gravida. Etiam egestas, lectus sit amet pharetra eleifend, erat nisi molestie eros.</data>
+          </data>
+          <data>
+            <data value="type">html</data>
+            <data value="content" type="html"><br /><br /></data>
+          </data>
+          <data>
+            <data value="type">signature</data>
+            <data value="content" type="html">Par Benoît Vitkine <em>(Moscou, correspondant)</em> et <a href="https://lemonde.fr">Maxime Fabas</a></data>
+          </data>
+          <data>
+            <data value="type">html</data>
+            <data value="content" type="html"><br /><br /></data>
+          </data>
+          <data>
+            <data value="type">publication</data>
+            <data value="content">Publié aujourd’hui à 12h45, modifié à 15h32</data>
+          </data>
+          <data>
+            <data value="type">html</data>
+            <data value="content" type="html"><br /><br /></data>
+          </data>
+          <data>
+            <data value="type">sub-marker</data>
+          </data>
+          <data>
+            <data value="type">read-in-english</data>
+            <data value="url">http://google.com</data>
+          </data>
+          <data>
+            <data value="type">paragraph</data>
+            <data value="content" type="html">Lorem <strong>ipsum</strong> dolor <a href="https://lemonde.fr">sit amet</a>, <em>consectetur adipiscing elit. Nulla id feugiat nisl,</em> id pulvinar felis. Nulla gravida accumsan nunc, vel volutpat urna rhoncus eget. Nam blandit metus leo, et varius nisi fringilla ut. Nulla et dui ipsum. Nunc lacus orci, tincidunt vel fringilla nec, consectetur ac velit. Aenean vulputate condimentum gravida. Etiam egestas, lectus sit amet pharetra eleifend, erat nisi molestie eros, dictum varius leo turpis ac risus. Pellentesque egestas lorem eget diam ultricies, in placerat odio consequat. Morbi nibh elit, vestibulum eu ornare eu, laoreet quis sapien. Maecenas non volutpat quam. Donec commodo efficitur sagittis.</data>
+          </data>
+          <data>
+            <data value="type">image</data>
+            <data value="url">http://localhost:3000/images/bowie.jpg</data>
+            <data value="alt">Alt</data>
+            <data value="credits">un crédit</data>
+            <data value="description">Une description</data>
+            <data value="captionPosition">overlay</data>
+          </data>
+          <data>
+            <data value="type">intertitle</data>
+            <data value="content">Un intertitre</data>
+          </data>
+          <data>
+            <data value="type">paragraph</data>
+            <data value="content" type="html">Lorem <strong>ipsum</strong> dolor <a href="https://lemonde.fr">sit amet</a>, <em>consectetur adipiscing elit. Nulla id feugiat nisl,</em> id pulvinar felis. Nulla gravida accumsan nunc, vel volutpat urna rhoncus eget. Nam blandit metus leo, et varius nisi fringilla ut. Nulla et dui ipsum. Nunc lacus orci, tincidunt vel fringilla nec, consectetur ac velit. Aenean vulputate condimentum gravida. Etiam egestas, lectus sit amet pharetra eleifend, erat nisi molestie eros, dictum varius leo turpis ac risus. Pellentesque egestas lorem eget diam ultricies, in placerat odio consequat. Morbi nibh elit, vestibulum eu ornare eu, laoreet quis sapien. Maecenas non volutpat quam. Donec commodo efficitur sagittis.</data>
+          </data>
+          <data>
+            <data value="type">read-also</data>
+            <data value="content">Un autre article sur un sujet connexe</data>
+            <data value="subscribed">true</data>
+            <data value="url">http://google.com</data>
+          </data>
+          <data>
+            <data value="type">paragraph</data>
+            <data value="content" type="html">Lorem <strong>ipsum</strong> dolor <a href="https://lemonde.fr">sit amet</a>, <em>consectetur adipiscing elit. Nulla id feugiat nisl,</em> id pulvinar felis. Nulla gravida accumsan nunc, vel volutpat urna rhoncus eget. Nam blandit metus leo, et varius nisi fringilla ut. Nulla et dui ipsum. Nunc lacus orci, tincidunt vel fringilla nec, consectetur ac velit. Aenean vulputate condimentum gravida. Etiam egestas, lectus sit amet pharetra eleifend, erat nisi molestie eros, dictum varius leo turpis ac risus. Pellentesque egestas lorem eget diam ultricies, in placerat odio consequat. Morbi nibh elit, vestibulum eu ornare eu, laoreet quis sapien. Maecenas non volutpat quam. Donec commodo efficitur sagittis.</data>
+          </data>
         </data>
       </data>
     </div>
     <div class="demo-app-options">
       
-    </div>  
+    </div>
 
     <!-- Slot: audioquote -->
     <h3 class="demo-app-name" id="audioquote">Audioquote</h3>
@@ -84,7 +158,7 @@
         <data value="shadeBlendMode" type="string">darken</data>
         <data value="textAbove" type="string">Dans la même série</data>
         <data value="textBelow" type="string">Vestibulum sit amet rutrum velit, pretium sodales augue. Cras quis placerat sapien. Morbi faucibus, velit eget sagittis imperdiet, justo felis ultricies est, sed euismod orci orci in sem. </data>
-        <data value="thumbnailsData" type="string">
+        <data value="thumbnailsData">
           <data>
             <data value="imageUrl" type="string">http://localhost:3000/images/bdif-2.gif</data>
             <data value="imageAlt" type="string">Image from ButDoesItFloat</data>
@@ -164,7 +238,7 @@
       <div class="demo-app-option"><em>shadeLinearGradient?: string </em><span>Lorem ipsum</span></div>
       <div class="demo-app-option"><em>shadeBlendMode?: string </em><span>Lorem ipsum</span></div>
       <div class="demo-app-option"><em>status?: string </em><span>Lorem ipsum</span></div>
-      <div class="demo-app-option"><em>statusOverrides?: { [statusName: string]: Omit&ltProps, 'status'|'statusOverrides'&gt } </em><span>Lorem ipsum</span></div>
+      <div class="demo-app-option"><em>statusOverrides?: { [statusName: string]: Omit&ltProps, 'status'|'statusOverrides'&gt } </em><span>Décrit des options de remplacement en fonction de l'option status. Par exemple { published: { textAbove: "Publié" } } donnera à l'option textAbove la valeur "Publié", si l'option status a pour valeur "published"</span></div>
       <div class="demo-app-option"><em>href?: string </em><span>Lorem ipsum</span></div>
     </div> 
   </body>

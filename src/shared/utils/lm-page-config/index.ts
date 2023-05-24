@@ -223,11 +223,15 @@ type ApplyConfigHooks = {
 
 export function applyConfig (config: Config, hooks?: ApplyConfigHooks) {
   const {
+    [Options.ID]: id,
     [Options.HIDE_HEADER]: hideHeader,
     [Options.TRACKING]: tracking,
     [Options.CSS]: css,
     [Options.SCALES]: scales
   } = config
+
+  // ID
+  if (id !== undefined) document.body.classList.add(id)
   
   // HIDE_HEADER
   if (hideHeader) {

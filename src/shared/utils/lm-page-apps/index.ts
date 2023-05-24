@@ -3,6 +3,7 @@ import Logger from '~/utils/silent-log'
 import strToNodes from '~/utils/str-to-nodes'
 import { Collection } from '~/utils/txt-base'
 import flattenGetters from '~/utils/flatten-getters'
+import { toBoolean, toNumber } from '~/utils/cast'
 
 /* * * * * * * * * * * * * * * * * * *
  * Options
@@ -51,6 +52,22 @@ export function readOptionsNode (optionsNode: HTMLElement): Record<string, Inlin
 
 export function readOptionNode (optionNode: HTMLElement): InlineOption {
   const nodeDataType = optionNode.getAttribute('type')
+  const rawNodeVal = optionNode.innerHTML.trim()
+  if (nodeDataType === 'string') return rawNodeVal
+  else if (nodeDataType === 'number') return toNumber(rawNodeVal)
+  else if (nodeDataType === 'boolean') return toBoolean(rawNodeVal)
+  else if (nodeDataType === 'null') return null
+  else if (nodeDataType === 'html') {
+    const asNodes = strToNodes(rawNodeVal)
+    const asHtml = asNodes.every(e => e instanceof HTMLElement)
+      ? asNodes as HTMLElement[]
+      : (() => { 
+        const span = document.createElement('span')
+        span.append(...asNodes)
+        return [span] as HTMLElement[]
+      })()
+    return asHtml
+  }
   const children = [...optionNode.querySelectorAll(':scope > *')]
     .filter((e): e is HTMLElement => e instanceof HTMLElement)
   const unnamedChildren: HTMLElement[] = []
@@ -60,20 +77,10 @@ export function readOptionNode (optionNode: HTMLElement): InlineOption {
     if (value === null || value.length === 0) unnamedChildren.push(child)
     else namedChildren.push(child)
   })
-  // No data children OR dataType is html => return the value of innerHTML
-  if (children.length === 0 || nodeDataType === 'html') {
-    const rawNodeVal = optionNode.innerHTML.trim()
-    if (nodeDataType === 'number') return parseFloat(rawNodeVal)
-    if (nodeDataType === 'boolean') return !rawNodeVal.trim().match(/^false$/i)
-    if (nodeDataType === 'null') return null
-    if (nodeDataType === 'html') {
-      const asNodes = strToNodes(rawNodeVal)
-      const asHtml = asNodes
-        .filter((e): e is HTMLElement => e instanceof HTMLElement)
-      return asHtml
-    }
-    else return rawNodeVal
-  }
+
+  // No type, no HTMLElement children => return rawNodeVal
+  if (children.length === 0) return rawNodeVal
+
   // With only unnamed data children
   if (namedChildren.length === 0) return unnamedChildren
     .map(child => readOptionNode(child))

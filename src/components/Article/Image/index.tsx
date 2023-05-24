@@ -1,5 +1,6 @@
 import { Component, VNode } from 'preact'
 import Thumbnail from '~/components/Thumbnail'
+import bem from '~/utils/bem'
 import BasicTextElement, { ElementType } from '../BasicTextElement'
 
 const {
@@ -8,6 +9,7 @@ const {
 } = ElementType
 
 export type Props = {
+  customClass?: string
   url?: string
   alt?: string
   credits?: string|VNode
@@ -18,24 +20,27 @@ export type Props = {
 export default class Image extends Component<Props> {
   render () {
     const {
+      customClass,
       url,
       alt,
       credits,
       description,
       captionPosition
     } = this.props
-    const overlayLegend = captionPosition === 'overlay'
+    const overlayCaption = captionPosition === 'overlay'
     const caption = <>
       {description !== undefined && <BasicTextElement type={MEDIA_DESCRIPTION}>{description}</BasicTextElement>}
       {credits !== undefined && description !== undefined && <> </>}
       {credits !== undefined && <BasicTextElement type={MEDIA_CREDITS}>{credits}</BasicTextElement>}
     </>
-    return <div className='lm-article-image'>
+    const clss = bem('lm-article-image').mod({ 'caption-overlay': overlayCaption })
+    return <div className={clss.value}>
       <Thumbnail
+        customClass={customClass}
         imageUrl={url}
         imageAlt={alt}
-        textInsideBottom={overlayLegend ? caption : undefined}
-        textBelow={overlayLegend ? undefined : caption} />
+        textInsideBottom={overlayCaption ? caption : undefined}
+        textBelow={overlayCaption ? undefined : caption} />
     </div>
   }
 }

@@ -32,18 +32,22 @@ function elementTypeToDefaultTag (elementType: ElementType): keyof JSX.Intrinsic
   return 'p'
 }
 
-export type Props = { type?: ElementType }
+export type Props = {
+  type?: ElementType
+  customClass?: string
+}
 
 export default class BasicTextElement extends Component<Props> {
   render () {
-    const { PARAGRAPH } = ElementType
-    const { type = PARAGRAPH, children } = this.props
-    const clss = `lm-article-${type}`
+    const { PARAGRAPH, SUB_MARKER } = ElementType
+    const { type = PARAGRAPH, children, customClass } = this.props
+    const clsses = [`lm-article-${type}`]
+    if (customClass !== undefined) clsses.push(customClass)
     const tag = elementTypeToDefaultTag(type)
     return <Tag
       name={tag}
-      className={clss}>
-      {children}
+      className={clsses.join(' ')}>
+      {type === SUB_MARKER ? 'Article réservé aux abonnés' : children}
     </Tag>
   }
 }

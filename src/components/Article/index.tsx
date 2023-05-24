@@ -1,4 +1,5 @@
 import { Component, VNode } from 'preact'
+import StrToVNode from '../StrToVNodes'
 import BasicTextElement, { ElementType } from './BasicTextElement'
 import Image, { Props as ImageProps } from './Image'
 import ReadAlso, { Props as ReadAlsoProps } from './ReadAlso'
@@ -11,16 +12,24 @@ type BasicArticleElementProps = {
 type ImageElementProps = ImageProps & { type: 'image' }
 type ReadAlsoElementProps = ReadAlsoProps & {
   type: 'read-also'
+  label?: string|VNode
   content?: string|VNode
+  subscribed?: boolean
 }
 type ReadInEnglishElementProps = ReadInEnglishProps & {
   type: 'read-in-english'
+  content?: string|VNode
+}
+type HtmlElementProps = {
+  type: 'html',
+  content?: string|VNode
 }
 
-export type ArticleElementProps = BasicArticleElementProps
+export type ArticleElementProps = { customClass?: string } & (BasicArticleElementProps
   |ImageElementProps
   |ReadAlsoElementProps
   |ReadInEnglishElementProps
+  |HtmlElementProps)
 
 export type Props = {
   elements?: ArticleElementProps[]
@@ -32,11 +41,14 @@ export default class Article extends Component<Props> {
     const { elements = [] } = props
     return <div className='lm-article'>
       {elements.map(elementData => {
+        const { customClass } = elementData
         // Basic text elements
         if ([...Object.values(ElementType), undefined]
           .includes(elementData.type as any)) {
           const content = 'content' in elementData ? elementData.content : undefined
-          return <BasicTextElement type={elementData.type as ElementType|undefined}>
+          return <BasicTextElement
+            customClass={customClass}
+            type={elementData.type as ElementType|undefined}>
             {content}
           </BasicTextElement>
         }
@@ -50,6 +62,7 @@ export default class Article extends Component<Props> {
             captionPosition
           } = elementData
           return <Image
+            customClass={customClass}
             url={url}
             alt={alt}
             credits={credits}
@@ -58,15 +71,34 @@ export default class Article extends Component<Props> {
         }
         // ReadAlso
         else if (elementData.type === 'read-also') {
-          const { url, content } = elementData
-          return <ReadAlso url={url}>{content}</ReadAlso>
+          const { url, label, content, subscribed } = elementData
+          return <ReadAlso
+            customClass={customClass}
+            url={url}
+            label={label}
+            subscribed={subscribed}>
+            {content}
+          </ReadAlso>
         }
         // ReadInEnglish
         else if (elementData.type === 'read-in-english') {
-          const { url } = elementData
-          return <ReadInEnglish url={url} />
+          const { url, content } = elementData
+          return <ReadInEnglish
+            customClass={customClass}
+            url={url}>
+            {content}
+          </ReadInEnglish>
         }
-        // Partage
+        // [WIP] Partage
+        // [WIP] Quote
+        
+        // HTML
+        else if (elementData.type === 'html') {
+          const { content } = elementData
+          if (content === undefined) return <></>
+          if (typeof content === 'string') return <StrToVNode content={content} />
+          return content
+        }
         // Unknown
         else return <></>
       })}
