@@ -15,7 +15,7 @@ export default function selectorToElement (selector: string) {
       } else if (_attribute.includes('[')) {
         const keyValueAttribute = _attribute.match(/(?!\[).+(?<!\])/);
         if (keyValueAttribute && keyValueAttribute.length) {
-          const [key, value = ''] = keyValueAttribute[0].split('=');
+          const [key, value = ''] = keyValueAttribute[0].replace(/["']/gm, '').split('=');
           if (key) {
             element.setAttribute(toString(key), toString(value));
           }
