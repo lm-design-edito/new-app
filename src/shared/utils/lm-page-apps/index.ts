@@ -4,6 +4,7 @@ import strToNodes from '~/utils/str-to-nodes'
 import { Collection } from '~/utils/txt-base'
 import flattenGetters from '~/utils/flatten-getters'
 import { toBoolean, toNumber } from '~/utils/cast'
+import appConfig from '../../config'
 
 /* * * * * * * * * * * * * * * * * * *
  * Options
@@ -219,6 +220,14 @@ async function loadRenderer (name: Names) {
 export async function renderApp ({ name, options, root, pageConfig, silentLogger }: RenderOptions) {
   // Load renderer
   const renderer = await loadRenderer(name)
+  // Load app specific global styles if needed
+  if (name === Names.ARTICLE) {
+    const articleGlobalCssPath = appConfig.paths.STYLES_ARTICLE_URL.toString()
+    const exists = document.head.querySelector(`link[href="${articleGlobalCssPath}"]`)
+    if (exists === null) {
+      document.head.innerHTML += `<link rel="stylesheet" href="${articleGlobalCssPath}">`
+    }
+  }
   // Add lm-app-root class on the root
   root.classList.add('lm-app-root')
   // Select target inside root for rendering

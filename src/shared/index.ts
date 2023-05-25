@@ -4,19 +4,14 @@ import { getPageSlotsMap, renderApp } from '~/shared/lm-page-apps'
 import { expose, GlobalKey } from '~/shared/lm-page-globals'
 import flattenGetters from '~/utils/flatten-getters'
 import Logger from '~/utils/silent-log'
-import { injectStylesheet } from '~/utils/dynamic-css'
+import appConfig from './config'
 
-/* * * * * * * * * * * * * * * * * * * * * *
- * URLS
- * * * * * * * * * * * * * * * * * * * * * */
-// [WIP] maybe store this in a config file, with generic stuff like 
-// PAGE_SLOTS and PAGE_CONFIG for reserved collections, etc...
-const ROOT_URL = new URL('../', import.meta.url)            // ROOT
-const SHARED_URL = new URL('shared/', ROOT_URL)                // shared/
-const SCRIPTS_INDEX_URL = new URL(import.meta.url)             // shared/index.js
-const STYLES_URL = new URL('styles/', SHARED_URL)              // shared/styles/
-const STYLES_INDEX_URL = new URL('index.css', STYLES_URL)      // shared/styles/index.css
-const STYLES_DEV_URL = new URL('developpment.css', STYLES_URL) // shared/styles/developpment.css
+const {
+  SCRIPTS_INDEX_URL,
+  STYLES_INDEX_URL,
+  STYLES_DEV_URL
+} = appConfig.paths
+const { databaseReservedNames } = appConfig
 
 /* * * * * * * * * * * * * * * * * * * * * *
  * SILENT LOGGER
@@ -61,7 +56,7 @@ export async function initPage () {
   silentLogger.log('page-database/filtered', flattenGetters(pageDatabase.value))
 
   // Merge remote configs
-  const pageConfigCollection = pageDatabase.get('PAGE_CONFIG')
+  const pageConfigCollection = pageDatabase.get(databaseReservedNames.config)
   const remoteConfigInstructions = getRemoteConfigInstructions(pageConfigCollection)
   const pageConfigInstructions = Instructions.merge(
     inlineConfigInstructions,
@@ -103,7 +98,7 @@ export async function initPage () {
   })
   
   // Get page slots
-  const pageSlotsCollection = pageDatabase.get('PAGE_SLOTS')
+  const pageSlotsCollection = pageDatabase.get(databaseReservedNames.slots)
   const pageSlotsMap = getPageSlotsMap(pageSlotsCollection) // [WIP] maybe split this
   silentLogger.log('page-apps/slots-map', pageSlotsMap)
   
