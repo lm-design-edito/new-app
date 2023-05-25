@@ -1,9 +1,10 @@
 import { logEvent, EventNames, LogResult } from '~/shared/lm-analytics'
 import getHeaderElements from '~/shared/lm-get-header-element'
-import { toBoolean, toNull, toNumber, toString } from '~/utils/cast'
+import { toArray, toBoolean, toNull, toNumber, toString } from '~/utils/cast'
 import { injectCssRule } from '~/utils/dynamic-css'
 import interpolate, { ratio } from '~/utils/interpolate'
 import roundNumbers from '~/utils/round-numbers'
+import selectorToElement from '~/utils/selector-to-element'
 import { Collection } from '~/utils/txt-base'
 
 /* Config object */
@@ -14,7 +15,8 @@ export enum Options {
   HIDE_HEADER = 'hideHeader',
   TRACKING = 'tracking',
   CSS = 'css',
-  SCALES = 'scales'
+  SCALES = 'scales',
+  ADD_SLOTS = 'addSlots'
 }
 
 export type ConfigDataSource = {
@@ -35,6 +37,7 @@ export type Config = {
   }
   [Options.CSS]?: string,
   [Options.SCALES]?: Array<string>
+  [Options.ADD_SLOTS]?: Array<string>
 }
 
 export const optionsList = Object.values(Options)
@@ -54,6 +57,7 @@ export enum InlineOnlyInstructionsNames {
 
 export enum RemoteValidInstructionsNames {
   HIDE_HEADER = 'hideHeader',
+  ADD_SLOTS = 'addSlots',
   TRACK_FIRST_SCROLL = 'trackFirstScroll',
   TRACK_HALF_REACHED = 'trackHalfReached',
   TRACK_END_REACHED = 'trackEndReached',
@@ -97,6 +101,7 @@ export class Instructions {
       const strValue = toString(value)
       const nbrValue = toNumber(value)
       const boolValue = toBoolean(value)
+      const arrayValue = toArray(value)
       // ID
       if (name === InlineOnlyInstructionsNames.ID) {
         config[Options.ID] = strValue
@@ -166,6 +171,12 @@ export class Instructions {
         currentScales.push(toString(value))
         config[Options.SCALES] = currentScales
       }
+      // ADD_SLOT
+      else if (name === RemoteValidInstructionsNames.ADD_SLOTS) {
+        const currentSlots = config[Options.ADD_SLOTS] ?? []
+        arrayValue.forEach((value) => currentSlots.push(toString(value)))
+        config[Options.ADD_SLOTS] = currentSlots
+      }
     })
     return config
   }
@@ -227,7 +238,8 @@ export function applyConfig (config: Config, hooks?: ApplyConfigHooks) {
     [Options.HIDE_HEADER]: hideHeader,
     [Options.TRACKING]: tracking,
     [Options.CSS]: css,
-    [Options.SCALES]: scales
+    [Options.SCALES]: scales,
+    [Options.ADD_SLOTS]: addSlots
   } = config
 
   // ID
@@ -486,5 +498,35 @@ export function applyConfig (config: Config, hooks?: ApplyConfigHooks) {
     })
     if (onScalesAdded !== undefined) onScalesAdded(/* [WIP] */)
     injectCssRule(scalesCss.join(''), 'lm-scales')
+  }
+  
+  // SLOTS
+  if (addSlots !== undefined) {
+    addSlots.forEach((addSlot) => {
+      const [target, position, reference] = addSlot.split(/\s+/)
+      const references = [...document.querySelectorAll(reference)]
+      if (!references.length) {
+        const actualTarget = selectorToElement(target)
+        document.body.appendChild(actualTarget);
+        return;
+      }
+      references.forEach((reference) => {
+        const actualTarget = selectorToElement(target)
+        const parent = reference.parentElement;
+        if (!parent) { 
+          document.body.appendChild(actualTarget);
+          return; 
+        }
+        if (position === 'after') {
+          if (reference.nextElementSibling) {
+            parent.insertBefore(actualTarget, reference.nextElementSibling)
+          } else {
+            parent.appendChild(actualTarget);
+          }
+        } else {
+          parent.insertBefore(actualTarget, reference);
+        }
+      });
+    });
   }
 }
