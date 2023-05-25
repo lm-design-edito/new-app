@@ -20,6 +20,12 @@ export function toString (value: unknown) {
   return String(value)
 }
 
+export function toArray (value: unknown) {
+  if (Array.isArray(value)) return value
+  if (typeof value === 'object' && value !== null) return Object.values(value);
+  return [value]
+}
+
 export function toNull (value: unknown) {
   return null
 }
