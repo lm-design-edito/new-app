@@ -1,6 +1,6 @@
 import { logEvent, EventNames, LogResult } from '~/shared/lm-analytics'
 import getHeaderElements from '~/shared/lm-get-header-element'
-import { toArray, toBoolean, toNull, toNumber, toString } from '~/utils/cast'
+import { toArray, toBoolean, toNumber, toString } from '~/utils/cast'
 import { injectCssRule } from '~/utils/dynamic-css'
 import interpolate, { ratio } from '~/utils/interpolate'
 import roundNumbers from '~/utils/round-numbers'
@@ -57,12 +57,12 @@ export enum InlineOnlyInstructionsNames {
 
 export enum RemoteValidInstructionsNames {
   HIDE_HEADER = 'hideHeader',
-  ADD_SLOTS = 'addSlots',
   TRACK_FIRST_SCROLL = 'trackFirstScroll',
   TRACK_HALF_REACHED = 'trackHalfReached',
   TRACK_END_REACHED = 'trackEndReached',
   CSS = 'css',
-  ADD_SCALE = 'addScale'
+  ADD_SCALE = 'addScale',
+  ADD_SLOTS = 'addSlots'
 }
 
 export type InstructionName = InlineOnlyInstructionsNames|RemoteValidInstructionsNames
@@ -171,10 +171,10 @@ export class Instructions {
         currentScales.push(toString(value))
         config[Options.SCALES] = currentScales
       }
-      // ADD_SLOT
+      // ADD_SLOTS
       else if (name === RemoteValidInstructionsNames.ADD_SLOTS) {
         const currentSlots = config[Options.ADD_SLOTS] ?? []
-        arrayValue.forEach((value) => currentSlots.push(toString(value)))
+        arrayValue.forEach(value => currentSlots.push(toString(value)))
         config[Options.ADD_SLOTS] = currentSlots
       }
     })
