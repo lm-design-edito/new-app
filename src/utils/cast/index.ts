@@ -22,10 +22,12 @@ export function toString (value: unknown) {
 
 export function toArray (value: unknown) {
   if (Array.isArray(value)) return value
-  if (typeof value === 'object' && value !== null) return Object.values(value);
+  if (typeof value === 'object' && value !== null) return Object
+    .entries(value)
+    .map((key, value) => ({ key, value }))
   return [value]
 }
 
-export function toNull (value: unknown) {
+export function toNull (_value: unknown) {
   return null
 }
