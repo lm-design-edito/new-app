@@ -8,6 +8,7 @@ import ReadInEnglish, { Props as ReadInEnglishProps } from './ReadInEnglish'
 type BasicArticleElementProps = {
   type?: ElementType
   content?: string|VNode
+  url?: string
 }
 type ImageElementProps = ImageProps & { type: 'image' }
 type ReadAlsoElementProps = ReadAlsoProps & {
@@ -46,9 +47,11 @@ export default class Article extends Component<Props> {
         if ([...Object.values(ElementType), undefined]
           .includes(elementData.type as any)) {
           const content = 'content' in elementData ? elementData.content : undefined
+          const url = 'url' in elementData ? elementData.url : undefined
           return <BasicTextElement
             customClass={customClass}
-            type={elementData.type as ElementType|undefined}>
+            type={elementData.type as ElementType|undefined}
+            url={url}>
             {content}
           </BasicTextElement>
         }
