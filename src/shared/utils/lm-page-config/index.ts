@@ -3,6 +3,7 @@ import getHeaderElements from '~/shared/lm-get-header-element'
 import { toArray, toBoolean, toNumber, toString } from '~/utils/cast'
 import { injectCssRule } from '~/utils/dynamic-css'
 import interpolate, { ratio } from '~/utils/interpolate'
+import replaceAll from '~/utils/replace-all'
 import roundNumbers from '~/utils/round-numbers'
 import selectorToElement from '~/utils/selector-to-element'
 import { Collection } from '~/utils/txt-base'
@@ -126,14 +127,18 @@ export class Instructions {
       }
       // SHEETBASE_INLINE
       else if (name === InlineOnlyInstructionsNames.SHEETBASE_INLINE) {
-        const dataSource: ConfigDataSource = { type: 'sheet', content: strValue }
+        // [WIP] Q&D replacement of needed html escaped characters
+        const htmlUunescapedStrValue = replaceAll(strValue, '&gt;', '>')
+        const dataSource: ConfigDataSource = { type: 'sheet', content: htmlUunescapedStrValue }
         const dataSources = config[Options.DATA_SOURCES]
         if (dataSources === undefined) config[Options.DATA_SOURCES] = [dataSource]
         else dataSources.push(dataSource)
       }
       // TEXTBASE_INLINE
       else if (name === InlineOnlyInstructionsNames.TEXTBASE_INLINE) {
-        const dataSource: ConfigDataSource = { type: 'doc', content: strValue }
+        // [WIP] Q&D replacement of needed html escaped characters
+        const htmlUunescapedStrValue = replaceAll(strValue, '&gt;', '>')
+        const dataSource: ConfigDataSource = { type: 'doc', content: htmlUunescapedStrValue }
         const dataSources = config[Options.DATA_SOURCES]
         if (dataSources === undefined) config[Options.DATA_SOURCES] = [dataSource]
         else dataSources.push(dataSource)
