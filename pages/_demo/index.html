@@ -13,7 +13,18 @@
     <!-- Config -->
     <data class="lm-page-config" value="approxPublicationDate">2023-06-10</data>
     <data class="lm-page-config" value="id">demo-lm-apps</data>
-    <data class="lm-page-config" value="textbaseUrl">http://localhost:3000/data/demo.txt</data>
+    <data class="lm-page-config" value="textbaseInline">
+      # PAGE_CONFIG
+        ## config-1
+          _addScale:
+            name: len-text,
+            root: .demo-page,
+            bounds: 320 1440,
+            breakpoints: 8,
+            low: 12 13,
+            high: 44 90,
+            levels: 32;
+    </data>
 
     <!-- Slot: article -->
     <!-- Slot: article -->

@@ -3,6 +3,7 @@
   
   ## config
     _hideHeader: false
+    _addSlots: div.mon-article after .mon-scrllgngn-qui-existe-deja
 
 // =========================================================
 # PAGE_SLOTS
@@ -19,6 +20,7 @@
 
 // =========================================================
 # options
+
   ## my-footer
     _customClass: my-footer
     _bgColor: blue
