@@ -1,4 +1,4 @@
-import { Component, VNode, JSX } from 'preact'
+import { Component, JSX } from 'preact'
 import Tag from '~/components/Tag'
 
 export enum ElementType {

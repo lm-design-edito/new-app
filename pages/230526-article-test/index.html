@@ -1,0 +1,38 @@
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <!-- Application -->
+    <style>.lm-page-config, .lm-app-config { display: none; }</style>
+    <script src="/shared/index.js" type="module"></script>
+  </head>
+  <body>
+
+    <!-- Config -->
+    <data class="lm-page-config" value="approxPublicationDate">2023-06-10</data>
+    <data class="lm-page-config" value="id">demo-lm-apps</data>
+    <data class="lm-page-config" value="textbaseInline">
+      # PAGE_CONFIG
+        ## config
+        _addSlots: div.ma-div
+      
+      # PAGE_SLOTS
+        ## article-slot
+        _selector: div.ma-div
+        _name: article
+        _options: options/mon-article >>> toRef
+
+      # options
+        ## mon-article
+        _elements: options/mon-article-element
+          >>> toArray 1
+          >>> map append -%pos%
+          >>> map toRef
+
+        ## mon-article-element-0
+          _type: heading
+          _content: coucou
+    </data>
+  </body>
+</html>

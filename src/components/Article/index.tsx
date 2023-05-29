@@ -13,7 +13,6 @@ type BasicArticleElementProps = {
 type ImageElementProps = ImageProps & { type: 'image' }
 type ReadAlsoElementProps = ReadAlsoProps & {
   type: 'read-also'
-  label?: string|VNode
   content?: string|VNode
   subscribed?: boolean
 }
