@@ -155,7 +155,10 @@ async function main () {
     name: 'targetDestinationName',
     type: 'select',
     message: 'destination',
-    choices: Object.entries(Targets).map(([_key, value]) => ({ title: value, value }))
+    choices: Object
+      .entries(Targets)
+      .reverse()
+      .map(([, value]) => ({ title: value, value }))
   })
   console.log('')
 
