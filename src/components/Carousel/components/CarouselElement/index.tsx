@@ -1,6 +1,5 @@
 import { Component, JSX, createRef, VNode, RefObject } from 'preact'
 
-import { CarouselSettings } from '~/components/Carousel'
 import Img from '~/components/Img'
 
 import bem from '~/utils/bem'
@@ -19,7 +18,8 @@ interface Props {
   selected?: boolean
   visible?: boolean
   media?: Media
-  settings?: CarouselSettings
+  carouselDescription?: string
+  carouselCredits?: string
   onImageLoad?: () => void
   imageWrapperRef?: RefObject<HTMLDivElement>
 }
@@ -74,11 +74,11 @@ class CarouselElement extends Component<Props, {}> {
     let displayCaption = true
 
     let credits = ''
-    if (props.settings?.credits) credits = props.settings?.credits
+    if (props.carouselCredits) credits = props.carouselCredits
     if (props.media?.credits) credits = props.media?.credits
 
     let description = ''
-    if (props.settings?.description) description = props.settings?.description
+    if (props.carouselDescription) description = props.carouselDescription
     if (props.media?.description) description = props.media?.description
 
     if (credits === '' && description === '') { displayCaption = false }
