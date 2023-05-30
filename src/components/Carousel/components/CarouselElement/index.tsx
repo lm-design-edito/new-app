@@ -20,6 +20,7 @@ interface Props {
   visible?: boolean
   media?: Media
   settings?: CarouselSettings
+  onImageLoad?: () => void
   imageWrapperRef?: RefObject<HTMLDivElement>
 }
 
@@ -103,7 +104,11 @@ class CarouselElement extends Component<Props, {}> {
         <div ref={props.imageWrapperRef} className={imageClasses.join(' ')}>
           {props.media?.type === 'video'
             ? <video onClick={this.toggleVideo} ref={this.video} muted loop playsInline autoPlay={props.selected} src={mediaURL} />
-            : (props.media?.url && <Img src={mediaURL} loading='eager' />)}
+            : (props.media?.url
+              && <Img
+                onLoad={props.onImageLoad}
+                src={mediaURL}
+                loading='eager' />)}
         </div>
 
         {displayCaption

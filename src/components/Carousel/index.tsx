@@ -122,6 +122,7 @@ class Carousel extends Component<Props, State> {
 
     this.toggleFullscreen = this.toggleFullscreen.bind(this)
 
+    this.handleImageLoaded = this.handleImageLoaded.bind(this)
     this.handleScroll = this.handleScroll.bind(this)
     this.calculateDimensions = this.calculateDimensions.bind(this)
     this.fixArrowsPosition = this.fixArrowsPosition.bind(this)
@@ -324,6 +325,10 @@ class Carousel extends Component<Props, State> {
     )
   }
 
+  handleImageLoaded() {
+    if (this.scrollableRef.current) this.scrollableRef.current.scrollLeft = 0
+  }
+
   // [WIP][ELSA] !! 3 setState consécutifs !
   toggleFullscreen() {
     this.setState(
@@ -436,6 +441,7 @@ class Carousel extends Component<Props, State> {
                 visible={this.state.visibleIndex === i}
                 selected={this.state.index === i}
                 settings={this.settings}
+                onImageLoad={this.handleImageLoaded}
                 imageWrapperRef={this.imageWrapperRef}
               />
             })}
