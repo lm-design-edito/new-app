@@ -76,7 +76,7 @@ async function main () {
     return
   }
   // Dev
-  const watcher = watch([config.SRC, config.MODULES])
+  const watcher = watch([config.SRC /*, config.MODULES*/])
   const pathsToBuild = {
     fonts: true,
     assets: true,
