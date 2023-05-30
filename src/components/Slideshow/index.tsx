@@ -6,14 +6,7 @@ import Slide, { Media } from './components/Slide'
 import bem from '~/utils/bem'
 import styles from './styles.module.scss'
 
-interface ArrowsProps {
-  leftArrow: boolean
-  rightArrow: boolean
-  index: number
-  limit: number
-}
-
-interface SlideshowSettings {
+interface Props {
   leftArrow?: boolean
   rightArrow?: boolean
   dots?: boolean
@@ -24,10 +17,6 @@ interface SlideshowSettings {
   toggleDescriptionBtn?: boolean
   credits?: string
   description?: string
-}
-
-interface Props {
-  settings?: SlideshowSettings
   images?: Media[]
 }
 
@@ -37,12 +26,11 @@ interface State {
 }
 
 class Slideshow extends Component<Props, State> {
-  settings: any
-
   displayDots: boolean
   displayArrows: boolean
   displayControls: boolean
 
+  loop: boolean
   defaultLoopDuration: number
   loopDuration: number
 
@@ -61,17 +49,17 @@ class Slideshow extends Component<Props, State> {
   constructor(props: Props) {
     super(props)
 
-    this.settings = this.props.settings ?? {}
-    if (typeof this.settings === 'string') this.settings = {}
-
-    this.displayDots = this.settings.dots
-    this.displayArrows = this.settings.leftArrow || this.settings.rightArrow
+    this.displayDots = props.dots ?? false
+    this.displayArrows = (props.leftArrow || props.rightArrow) ?? false
     this.displayControls = this.displayDots || this.displayArrows
 
-    if (!this.displayControls) { this.settings.loop = true }
+    this.loop = props.loop ?? false
+    if (!this.displayControls) { this.loop = true }
 
     this.defaultLoopDuration = 2000
-    this.loopDuration = Number.isInteger(this.settings.duration) ? this.settings.duration : this.defaultLoopDuration
+    this.loopDuration = typeof props.duration === 'number'
+      ? props.duration
+      : this.defaultLoopDuration
 
     this.incrementIndex = this.incrementIndex.bind(this)
     this.decrementIndex = this.decrementIndex.bind(this)
@@ -83,11 +71,11 @@ class Slideshow extends Component<Props, State> {
      * METHODS
      * * * * * * * * * * * * * * * * * * */
   componentDidMount() {
-    if (this.settings.loop) {
+    if (this.loop === true) {
       this.setLoopTimer(this.loopDuration)
     }
 
-    if (!this.settings.toggleDescriptionBtn) {
+    if (!this.props.toggleDescriptionBtn) {
       this.setState(curr => ({
         ...curr,
         descriptionOpen: true
@@ -147,7 +135,7 @@ class Slideshow extends Component<Props, State> {
     const { props, state, bemClss } = this
 
     const containerClasses = [bemClss.value, styles['container']]
-    if (props.settings?.imageFit === 'cover') containerClasses.push(styles['container--cover'])
+    if (props.imageFit === 'cover') containerClasses.push(styles['container--cover'])
     else containerClasses.push(styles['container--contain'])
 
     const imagesClasses = [bemClss.elt('images').value, styles['images']]
@@ -159,7 +147,7 @@ class Slideshow extends Component<Props, State> {
     if (state.index === (props.images?.length ?? 0) - 1) rightArrowClasses.push(styles['arrow--disabled'])
     const dotsClasses = [bemClss.elt('dots').value, styles['dots']]
 
-    const containerStyle = `--slideshow-max-height: ${this.settings.height ? this.settings.height : 'none'}; `
+    const containerStyle = `--slideshow-max-height: ${props.height ?? 'none'};`
 
     return (
       < div className={containerClasses.join(' ')} style={containerStyle}>
@@ -168,7 +156,9 @@ class Slideshow extends Component<Props, State> {
             return <Slide
               media={media}
               selected={this.state.index === i}
-              settings={this.settings}
+              slideshowDescription={props.description}
+              slideshowCredits={props.credits}
+              toggleDescriptionBtn={props.toggleDescriptionBtn}
               toggleDescription={this.toggleDescription}
               descriptionOpen={this.state.descriptionOpen}
             />
@@ -196,12 +186,12 @@ class Slideshow extends Component<Props, State> {
             {this.displayArrows
               && <div className={arrowsClasses.join(' ')}>
 
-                {props.settings?.leftArrow
+                {props.leftArrow
                   && <div className={leftArrowClasses.join(' ')} onClick={this.decrementIndex}>
                     <Icon file={Icons.ARROW_LEFT} />
                   </div>}
 
-                {props.settings?.rightArrow
+                {props.rightArrow
                   && <div className={rightArrowClasses.join(' ')} onClick={this.incrementIndex}>
                     <Icon file={Icons.ARROW_RIGHT} />
                   </div>}
@@ -214,5 +204,5 @@ class Slideshow extends Component<Props, State> {
   }
 }
 
-export type { Props, State, SlideshowSettings, Media }
+export type { Props, State, Media }
 export default Slideshow

@@ -1,6 +1,6 @@
 import { render } from 'preact'
 import { Options, Renderer } from 'shared/utils/lm-page-apps'
-import Slideshow, { SlideshowSettings, Media, Props } from '~/components/Slideshow'
+import Slideshow, { Media, Props } from '~/components/Slideshow'
 import { toBoolean, toNumber, toString } from '~/utils/cast'
 
 /* * * * * * * * * * * * * * * * * * *
@@ -28,16 +28,7 @@ export default function SlideshowApp({
  * * * * * * * * * * * * * * * * * * */
 export function optionsToProps(options: Options): Props {
   const props: Props = {}
-  const { settings, images } = options
-  if (typeof settings === 'object'
-    && settings !== null) { props.settings = objectToSettings(settings) }
-  if (Array.isArray(images)) { props.images = arrayToImages(images) }
-  return props
-}
 
-// wip TS
-function objectToSettings(object: any): SlideshowSettings {
-  const settings: SlideshowSettings = {}
   const {
     leftArrow,
     rightArrow,
@@ -48,19 +39,23 @@ function objectToSettings(object: any): SlideshowSettings {
     imageFit,
     toggleDescriptionBtn,
     credits,
-    description
-  } = object
-  if (leftArrow !== undefined) { settings.leftArrow = toBoolean(leftArrow) }
-  if (rightArrow !== undefined) { settings.rightArrow = toBoolean(rightArrow) }
-  if (dots !== undefined) { settings.dots = toBoolean(dots) }
-  if (loop !== undefined) { settings.loop = toBoolean(loop) }
-  if (duration !== undefined) { settings.duration = toNumber(duration) }
-  if (height !== undefined) { settings.height = toString(height) }
-  if (imageFit !== undefined) { settings.imageFit = toString(imageFit) }
-  if (toggleDescriptionBtn !== undefined) { settings.toggleDescriptionBtn = toBoolean(toggleDescriptionBtn) }
-  if (credits !== undefined) { settings.credits = toString(credits) }
-  if (description !== undefined) { settings.description = toString(description) }
-  return settings
+    description,
+    images
+  } = options
+
+  if (leftArrow !== undefined) { props.leftArrow = toBoolean(leftArrow) }
+  if (rightArrow !== undefined) { props.rightArrow = toBoolean(rightArrow) }
+  if (dots !== undefined) { props.dots = toBoolean(dots) }
+  if (loop !== undefined) { props.loop = toBoolean(loop) }
+  if (duration !== undefined) { props.duration = toNumber(duration) }
+  if (height !== undefined) { props.height = toString(height) }
+  if (imageFit !== undefined) { props.imageFit = toString(imageFit) }
+  if (toggleDescriptionBtn !== undefined) { props.toggleDescriptionBtn = toBoolean(toggleDescriptionBtn) }
+  if (credits !== undefined) { props.credits = toString(credits) }
+  if (description !== undefined) { props.description = toString(description) }
+  if (Array.isArray(images)) { props.images = arrayToImages(images) }
+
+  return props
 }
 
 function arrayToImages(array: unknown[]): Media[] {
