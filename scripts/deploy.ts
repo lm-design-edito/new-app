@@ -147,6 +147,7 @@ async function main () {
   * Select target destination
   * * * * * * * * ** * * * * * * * * * * * */
   enum Targets {
+    FOR_TESTS_ONLY = 'gs://decodeurs/design-edito/_FOR_TESTS_ONLY',
     V0 = 'gs://decodeurs/design-edito/v0',
     V01 = 'gs://decodeurs/design-edito/v0.1'
   }
@@ -343,7 +344,14 @@ async function main () {
   )
   const DST_PROD_SHARED_INDEX = join(config.DST_PROD, 'shared', 'index.js')
   const dstProdSharedContent = await fs.readFile(DST_PROD_SHARED_INDEX, { encoding: 'utf-8' })
-  await fs.writeFile(DST_PROD_SHARED_INDEX, `/* v.${targetVersionArr.join('.')} */ ${dstProdSharedContent}`)
+  const targetVersionStr = targetVersionArr.join('.')
+  const dstProdSharedAppendedContent = `
+    /* v.${targetVersionStr} */
+    if (window.LM_PAGE === undefined) { window.LM_PAGE = {} };
+    window.LM_PAGE.version = '${targetVersionStr}';
+    window.LM_PAGE.target = '${targetDestinationName}';
+  `.trim().replace(/\n+/, ' ')
+  await fs.writeFile(DST_PROD_SHARED_INDEX, `${dstProdSharedAppendedContent} ${dstProdSharedContent}`)
   const DST_PROD_SHARED_INDEX_VERSIONNED = join(config.DST_PROD, 'shared', `index.v${targetVersionArr.join('.')}.js`)
   await fs.copyFile(DST_PROD_SHARED_INDEX, DST_PROD_SHARED_INDEX_VERSIONNED)
   console.log('')
