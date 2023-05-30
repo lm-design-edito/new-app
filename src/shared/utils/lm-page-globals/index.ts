@@ -2,11 +2,15 @@ import Logger from '~/utils/silent-log'
 import { Base } from '~/utils/txt-base'
 
 export enum GlobalKey {
+  VERSION = 'version',
+  TARGET = 'target',
   SILENT_LOGGER = 'silentLogger',
   DATABASE = 'database'
 }
 
 type LmPage = {
+  [GlobalKey.VERSION]?: string // those are injected from /scripts/deploy
+  [GlobalKey.TARGET]?: string // those are injected from /scripts/deploy
   [GlobalKey.SILENT_LOGGER]?: Logger
   [GlobalKey.DATABASE]?: Base
 }
