@@ -349,7 +349,7 @@ async function main () {
     /* v.${targetVersionStr} */
     if (window.LM_PAGE === undefined) { window.LM_PAGE = {} };
     window.LM_PAGE.version = '${targetVersionStr}';
-    window.LM_PAGE.target = '${targetDestinationName}';
+    window.LM_PAGE.target = '${targetDestinationName.split('/').at(-1)}';
   `.trim().split('\n').map(line => line.trim()).join(' ')
   await fs.writeFile(DST_PROD_SHARED_INDEX, `${dstProdSharedAppendedContent} ${dstProdSharedContent}`)
   const DST_PROD_SHARED_INDEX_VERSIONNED = join(config.DST_PROD, 'shared', `index.v${targetVersionArr.join('.')}.js`)
