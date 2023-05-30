@@ -82,16 +82,16 @@ class Carousel extends Component<Props, State> {
   constructor(props: Props) {
     super(props)
 
-    this.displayDots = this.props.dots ?? false
-    this.displayArrows = (this.props.leftArrow || this.props.rightArrow) ?? false
+    this.displayDots = props.dots ?? false
+    this.displayArrows = (props.leftArrow || props.rightArrow) ?? false
     this.displayControls = this.displayDots || this.displayArrows
 
     this.loop = props.loop ?? false
     if (!this.displayControls) { this.loop = true }
 
     this.defaultLoopDuration = 2000
-    this.loopDuration = typeof this.props.duration === 'number'
-      ? this.props.duration
+    this.loopDuration = typeof props.duration === 'number'
+      ? props.duration
       : this.defaultLoopDuration
 
     this.scrollableRef = createRef()
@@ -104,7 +104,7 @@ class Carousel extends Component<Props, State> {
     this.scrollBreakpoints = []
     this.indexThreshold = 0
 
-    this.gapValue = this.props.gapValue ?? 16
+    this.gapValue = props.gapValue ?? 16
     this.paddingValue = this.gapValue * 2.5
 
     this.toggleFullscreen = this.toggleFullscreen.bind(this)
@@ -373,18 +373,18 @@ class Carousel extends Component<Props, State> {
     const containerStyle = `
       --carousel-gap-value: ${this.gapValue}px;
       --carousel-padding-value: ${this.paddingValue}px;
-      ${this.props.backgroundColor ? `--carousel-bg-color: ${this.props.backgroundColor}` : ''};
-      ${this.props.imageBackgroundColor ? `--carousel-image-bg: ${this.props.imageBackgroundColor}` : ''};
-      ${this.props.titleColor ? `--carousel-title-color: ${this.props.titleColor}` : ''};
-      ${this.props.descriptionColor ? `--carousel-description-color: ${this.props.descriptionColor}` : ''};
-      ${this.props.creditsColor ? `--carousel-credits-color: ${this.props.creditsColor}` : ''};
-      ${this.props.dotColor ? `--carousel-dot-color: ${this.props.dotColor}` : ''};
-      ${this.props.fullscreenButtonColor ? `--carousel-fullscreen-btn-color: ${this.props.fullscreenButtonColor}` : ''};
-      ${this.props.arrowColor ? `--carousel-arrow-color: ${this.props.arrowColor}` : ''};
-      ${this.props.arrowColorDisabled ? `--carousel-arrow-color-disabled: ${this.props.arrowColorDisabled}` : ''};
-      ${this.props.arrowBackgroundColor ? `--carousel-arrow-bg: ${this.props.arrowBackgroundColor}` : ''};
-      ${this.props.arrowBackgroundColorHover ? `--carousel-arrow-bg-hover: ${this.props.arrowBackgroundColorHover}` : ''};
-      ${this.props.imageHeight && !this.state.fullscreen ? `--carousel-image-height: ${this.props.imageHeight}px` : ''};
+      ${props.backgroundColor ? `--carousel-bg-color: ${props.backgroundColor}` : ''};
+      ${props.imageBackgroundColor ? `--carousel-image-bg: ${props.imageBackgroundColor}` : ''};
+      ${props.titleColor ? `--carousel-title-color: ${props.titleColor}` : ''};
+      ${props.descriptionColor ? `--carousel-description-color: ${props.descriptionColor}` : ''};
+      ${props.creditsColor ? `--carousel-credits-color: ${props.creditsColor}` : ''};
+      ${props.dotColor ? `--carousel-dot-color: ${props.dotColor}` : ''};
+      ${props.fullscreenButtonColor ? `--carousel-fullscreen-btn-color: ${props.fullscreenButtonColor}` : ''};
+      ${props.arrowColor ? `--carousel-arrow-color: ${props.arrowColor}` : ''};
+      ${props.arrowColorDisabled ? `--carousel-arrow-color-disabled: ${props.arrowColorDisabled}` : ''};
+      ${props.arrowBackgroundColor ? `--carousel-arrow-bg: ${props.arrowBackgroundColor}` : ''};
+      ${props.arrowBackgroundColorHover ? `--carousel-arrow-bg-hover: ${props.arrowBackgroundColorHover}` : ''};
+      ${props.imageHeight && !this.state.fullscreen ? `--carousel-image-height: ${props.imageHeight}px` : ''};
     `
     // [WIP][ELSA] il vaut mieux passer des variables dans le style inline et appliquer le vrai style
     // depuis styles.module.scss genre 
@@ -399,14 +399,14 @@ class Carousel extends Component<Props, State> {
       <div ref={this.containerRef} className={containerClasses.join(' ')} style={containerStyle}>
 
         <div ref={this.titleRef} className={titleClasses.join(' ')}>
-          {this.props.title !== undefined && <h5>{this.props.title}</h5>}
+          {props.title !== undefined && <h5>{props.title}</h5>}
         </div>
 
         {/* [WIP][ELSA] plutôt que de faire un check sur settings.fullscreen et state.fullscreen ici
           * il vaudrait mieux s'assurer dans toggleFullscreen qu'on ne peut pas passer state.fullscreen
           * si settings.fullscreen !== true
          */}
-        {this.props.fullscreen
+        {props.fullscreen
           && <div onClick={this.toggleFullscreen} className={fullscreenBtnClasses.join(' ')}>
             {this.state.fullscreen
               ? <Icon file={Icons.FULLSCREEN_CLOSE} />
@@ -427,8 +427,8 @@ class Carousel extends Component<Props, State> {
                 media={media}
                 visible={this.state.visibleIndex === i}
                 selected={this.state.index === i}
-                carouselDescription={this.props.description}
-                carouselCredits={this.props.credits}
+                carouselDescription={props.description}
+                carouselCredits={props.credits}
                 onImageLoad={this.handleImageLoaded}
                 imageWrapperRef={this.imageWrapperRef}
               />
@@ -470,12 +470,12 @@ class Carousel extends Component<Props, State> {
             {this.displayArrows && <div
               className={arrowsClasses.join(' ')}
               style={arrowsStyle}>
-              {this.props.leftArrow && <div
+              {props.leftArrow && <div
                 className={leftArrowClasses.join(' ')}
                 onClick={this.decrementIndex}>
                 <Icon file={Icons.ARROW_LEFT} />
               </div>}
-              {this.props.rightArrow && <div
+              {props.rightArrow && <div
                 className={rightArrowClasses.join(' ')}
                 onClick={this.incrementIndex}>
                 <Icon file={Icons.ARROW_RIGHT} />
