@@ -1,6 +1,6 @@
 import { render } from 'preact'
 import { Options, Renderer } from 'shared/utils/lm-page-apps'
-import Carousel, { CarouselSettings, Media, Props } from '~/components/Carousel'
+import Carousel, { Media, Props } from '~/components/Carousel'
 import { toBoolean, toNumber, toString } from '~/utils/cast'
 
 /* * * * * * * * * * * * * * * * * * *
@@ -28,16 +28,7 @@ export default function CarouselApp({
  * * * * * * * * * * * * * * * * * * */
 export function optionsToProps (options: Options): Props {
   const props: Props = {}
-  const { settings, images } = options
-  // [WIP] Lift settings inside options
-  if (typeof settings === 'object'
-    && settings !== null) { props.settings = objectToSettings(settings) }
-  if (Array.isArray(images)) { props.images = arrayToImages(images) }
-  return props
-}
 
-function objectToSettings (object: any): CarouselSettings {
-  const settings: CarouselSettings = {}
   const {
     leftArrow,
     rightArrow,
@@ -63,36 +54,38 @@ function objectToSettings (object: any): CarouselSettings {
     title,
     credits,
     description,
-  } = object
+    images
+  } = options
 
-  if (leftArrow !== undefined) { settings.leftArrow = toBoolean(leftArrow) }
-  if (rightArrow !== undefined) { settings.rightArrow = toBoolean(rightArrow) }
-  if (arrowsPosition !== undefined) { settings.arrowsPosition = toString(arrowsPosition) }
-  if (dots !== undefined) { settings.dots = toBoolean(dots) }
-  if (loop !== undefined) { settings.loop = toBoolean(loop) }
-  if (duration !== undefined) { settings.duration = toNumber(duration) }
-  if (fullscreen !== undefined) { settings.fullscreen = toBoolean(fullscreen) }
-  if (imageHeight !== undefined) { settings.imageHeight = toNumber(imageHeight) }
-  if (imageFit !== undefined) { settings.imageFit = toString(imageFit) }
-  if (gapValue !== undefined) { settings.gapValue = toNumber(gapValue) }
+  if (leftArrow !== undefined) { props.leftArrow = toBoolean(leftArrow) }
+  if (rightArrow !== undefined) { props.rightArrow = toBoolean(rightArrow) }
+  if (arrowsPosition !== undefined) { props.arrowsPosition = toString(arrowsPosition) }
+  if (dots !== undefined) { props.dots = toBoolean(dots) }
+  if (loop !== undefined) { props.loop = toBoolean(loop) }
+  if (duration !== undefined) { props.duration = toNumber(duration) }
+  if (fullscreen !== undefined) { props.fullscreen = toBoolean(fullscreen) }
+  if (imageHeight !== undefined) { props.imageHeight = toNumber(imageHeight) }
+  if (imageFit !== undefined) { props.imageFit = toString(imageFit) }
+  if (gapValue !== undefined) { props.gapValue = toNumber(gapValue) }
 
-  if (backgroundColor !== undefined) { settings.backgroundColor = toString(backgroundColor) }
-  if (imageBackgroundColor !== undefined) { settings.imageBackgroundColor = toString(imageBackgroundColor) }
-  if (titleColor !== undefined) { settings.titleColor = toString(titleColor) }
-  if (descriptionColor !== undefined) { settings.descriptionColor = toString(descriptionColor) }
-  if (creditsColor !== undefined) { settings.creditsColor = toString(creditsColor) }
-  if (dotColor !== undefined) { settings.dotColor = toString(dotColor) }
-  if (fullscreenButtonColor !== undefined) { settings.fullscreenButtonColor = toString(fullscreenButtonColor) }
-  if (arrowColor !== undefined) { settings.arrowColor = toString(arrowColor) }
-  if (arrowColorDisabled !== undefined) { settings.arrowColorDisabled = toString(arrowColorDisabled) }
-  if (arrowBackgroundColor !== undefined) { settings.arrowBackgroundColor = toString(arrowBackgroundColor) }
-  if (arrowBackgroundColorHover !== undefined) { settings.arrowBackgroundColorHover = toString(arrowBackgroundColorHover) }
+  if (backgroundColor !== undefined) { props.backgroundColor = toString(backgroundColor) }
+  if (imageBackgroundColor !== undefined) { props.imageBackgroundColor = toString(imageBackgroundColor) }
+  if (titleColor !== undefined) { props.titleColor = toString(titleColor) }
+  if (descriptionColor !== undefined) { props.descriptionColor = toString(descriptionColor) }
+  if (creditsColor !== undefined) { props.creditsColor = toString(creditsColor) }
+  if (dotColor !== undefined) { props.dotColor = toString(dotColor) }
+  if (fullscreenButtonColor !== undefined) { props.fullscreenButtonColor = toString(fullscreenButtonColor) }
+  if (arrowColor !== undefined) { props.arrowColor = toString(arrowColor) }
+  if (arrowColorDisabled !== undefined) { props.arrowColorDisabled = toString(arrowColorDisabled) }
+  if (arrowBackgroundColor !== undefined) { props.arrowBackgroundColor = toString(arrowBackgroundColor) }
+  if (arrowBackgroundColorHover !== undefined) { props.arrowBackgroundColorHover = toString(arrowBackgroundColorHover) }
 
-  if (title !== undefined) { settings.title = toString(title) }
-  if (credits !== undefined) { settings.credits = toString(credits) }
-  if (description !== undefined) { settings.description = toString(description) }
+  if (title !== undefined) { props.title = toString(title) }
+  if (credits !== undefined) { props.credits = toString(credits) }
+  if (description !== undefined) { props.description = toString(description) }
 
-  return settings
+  if (Array.isArray(images)) { props.images = arrayToImages(images) }
+  return props
 }
 
 function arrayToImages (array: unknown[]): Media[] {

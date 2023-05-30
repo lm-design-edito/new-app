@@ -1,6 +1,5 @@
 import { Component, JSX, createRef, VNode, RefObject } from 'preact'
 
-import { CarouselSettings } from '~/components/Carousel'
 import Img from '~/components/Img'
 
 import bem from '~/utils/bem'
@@ -19,7 +18,9 @@ interface Props {
   selected?: boolean
   visible?: boolean
   media?: Media
-  settings?: CarouselSettings
+  carouselDescription?: string
+  carouselCredits?: string
+  onImageLoad?: () => void
   imageWrapperRef?: RefObject<HTMLDivElement>
 }
 
@@ -73,19 +74,14 @@ class CarouselElement extends Component<Props, {}> {
     let displayCaption = true
 
     let credits = ''
-    if (props.settings?.credits) credits = props.settings?.credits
+    if (props.carouselCredits) credits = props.carouselCredits
     if (props.media?.credits) credits = props.media?.credits
 
     let description = ''
-    if (props.settings?.description) description = props.settings?.description
+    if (props.carouselDescription) description = props.carouselDescription
     if (props.media?.description) description = props.media?.description
 
     if (credits === '' && description === '') { displayCaption = false }
-
-    let mediaURL = props.media?.url
-    if (props.media?.mobileUrl && window.innerWidth < 768) {
-      mediaURL = props.media.mobileUrl
-    }
 
     const wrapperClasses = [bemClss.elt('wrapper').value, styles['wrapper']]
     if (props.selected) wrapperClasses.push(styles['wrapper--selected'])
@@ -94,6 +90,8 @@ class CarouselElement extends Component<Props, {}> {
     if (props.media?.imageFit) wrapperClasses.push(styles[`wrapper--${props.media.imageFit}`])
 
     const imageClasses = [bemClss.elt('image').value, styles['image']]
+    const mobileImgClasses = [bemClss.elt('mobile-image').value, styles['mobile-image']]
+    const desktopImgClasses = [bemClss.elt('desktop-image').value, styles['desktop-image']]
     const captionClasses = [bemClss.elt('caption').value, styles['caption']]
     const descriptionClasses = [bemClss.elt('description').value, styles['description']]
     const creditsClasses = [bemClss.elt('credits').value, styles['credits']]
@@ -102,8 +100,22 @@ class CarouselElement extends Component<Props, {}> {
       <div className={wrapperClasses.join(' ')}>
         <div ref={props.imageWrapperRef} className={imageClasses.join(' ')}>
           {props.media?.type === 'video'
-            ? <video onClick={this.toggleVideo} ref={this.video} muted loop playsInline autoPlay={props.selected} src={mediaURL} />
-            : (props.media?.url && <Img src={mediaURL} loading='eager' />)}
+            ? <video onClick={this.toggleVideo} ref={this.video} muted loop playsInline autoPlay={props.selected} src={props.media?.url} />
+            : (props.media?.url
+              && <>
+                {props.media.mobileUrl
+                  && <Img
+                    className={mobileImgClasses.join(' ')}
+                    onLoad={props.onImageLoad}
+                    src={props.media.mobileUrl}
+                    loading='eager' />}
+                <Img
+                  className={desktopImgClasses.join(' ')}
+                  onLoad={props.onImageLoad}
+                  src={props.media.url}
+                  loading='eager' />
+              </>
+            )}
         </div>
 
         {displayCaption

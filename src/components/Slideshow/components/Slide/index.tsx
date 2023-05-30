@@ -1,6 +1,5 @@
 import { Component, JSX, createRef, RefObject } from 'preact'
 
-import { SlideshowSettings } from '~/components/Slideshow'
 import Icon, { Icons } from '~/components/Icon'
 import Img from '~/components/Img'
 
@@ -19,7 +18,9 @@ interface Media {
 interface Props {
   media?: Media
   selected?: boolean
-  settings?: SlideshowSettings
+  slideshowDescription?: string
+  slideshowCredits?: string
+  toggleDescriptionBtn?: boolean
   toggleDescription?: () => void
   descriptionOpen?: boolean
 }
@@ -112,11 +113,11 @@ class Slide extends Component<Props, {}> {
     let displayCaption = true
 
     let credits = ''
-    if (props.settings?.credits) credits = props.settings?.credits
+    if (props.slideshowCredits) credits = props.slideshowCredits
     if (props.media?.credits) credits = props.media?.credits
 
     let description = ''
-    if (props.settings?.description) description = props.settings?.description
+    if (props.slideshowDescription) description = props.slideshowDescription
     if (props.media?.description) description = props.media?.description
 
     if (credits === '' && description === '') { displayCaption = false }
@@ -153,7 +154,7 @@ class Slide extends Component<Props, {}> {
         {displayCaption
           && <div className={captionClasses.join(' ')} style={captionStyle}>
 
-            {(description && props.settings?.toggleDescriptionBtn)
+            {(description && props.toggleDescriptionBtn)
               && <div className={toggleDescriptionBtnClasses.join(' ')} onClick={props.toggleDescription}>
                 <p>{toggleDescriptionText}</p>
                 {props.descriptionOpen

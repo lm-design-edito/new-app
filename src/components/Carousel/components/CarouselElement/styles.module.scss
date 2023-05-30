@@ -48,6 +48,20 @@
     opacity: 0;
     z-index: -1;
   }
+
+  .mobile-image {
+    display: none;
+  }
+
+  @media (max-width: 768px) {
+    .mobile-image+.desktop-image {
+      display: none;
+    }
+
+    .mobile-image {
+      display: block;
+    }
+  }
 }
 
 .caption {

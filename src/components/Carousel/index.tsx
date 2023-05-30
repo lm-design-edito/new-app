@@ -17,7 +17,7 @@ interface State {
   fullscreen?: boolean
 }
 
-interface CarouselSettings {
+interface Props {
   leftArrow?: boolean
   rightArrow?: boolean
   arrowsPosition?: string
@@ -42,23 +42,15 @@ interface CarouselSettings {
   title?: string
   credits?: string
   description?: string
-}
-
-interface Props {
-  // [WIP][ELSA] je pense qu'il n'y a pas besoin de regrouper tous les settings derrière un objet "settings"
-  // (et que c'est plutôt pas très pratique), il vaudrait mieux avoir toutes les props au premier niveau
-  // et pas derrière props.settings
-  settings?: CarouselSettings
   images?: Media[]
 }
 
 class Carousel extends Component<Props, State> {
-  settings: CarouselSettings
-
   displayDots: boolean
   displayArrows: boolean
   displayControls: boolean
 
+  loop: boolean
   defaultLoopDuration: number
   loopDuration: number
 
@@ -89,22 +81,17 @@ class Carousel extends Component<Props, State> {
     * * * * * * * * * * * * * * * * * * */
   constructor(props: Props) {
     super(props)
-    // [WIP] j'ai l'impression que dans ce constructeur tu fais beaucoup de copies
-    // d'informations que tu as déja
-    // - this.settings qui copie props.settings <= ton composant devient figé après le premier
-    // rendu, il ne va pas s'update au changement
-    this.settings = this.props.settings ?? {}
-    if (typeof this.settings === 'string') this.settings = {}
 
-    this.displayDots = this.settings.dots ?? false
-    this.displayArrows = (this.settings.leftArrow || this.settings.rightArrow) ?? false
+    this.displayDots = props.dots ?? false
+    this.displayArrows = (props.leftArrow || props.rightArrow) ?? false
     this.displayControls = this.displayDots || this.displayArrows
 
-    if (!this.displayControls) { this.settings.loop = true }
+    this.loop = props.loop ?? false
+    if (!this.displayControls) { this.loop = true }
 
     this.defaultLoopDuration = 2000
-    this.loopDuration = typeof this.settings.duration === 'number'
-      ? this.settings.duration
+    this.loopDuration = typeof props.duration === 'number'
+      ? props.duration
       : this.defaultLoopDuration
 
     this.scrollableRef = createRef()
@@ -117,11 +104,12 @@ class Carousel extends Component<Props, State> {
     this.scrollBreakpoints = []
     this.indexThreshold = 0
 
-    this.gapValue = this.settings.gapValue ?? 16
+    this.gapValue = props.gapValue ?? 16
     this.paddingValue = this.gapValue * 2.5
 
     this.toggleFullscreen = this.toggleFullscreen.bind(this)
 
+    this.handleImageLoaded = this.handleImageLoaded.bind(this)
     this.handleScroll = this.handleScroll.bind(this)
     this.calculateDimensions = this.calculateDimensions.bind(this)
     this.fixArrowsPosition = this.fixArrowsPosition.bind(this)
@@ -135,7 +123,7 @@ class Carousel extends Component<Props, State> {
     * METHODS
     * * * * * * * * * * * * * * * * * * */
   componentDidMount() {
-    if (this.settings.loop) {
+    if (this.loop === true) {
       this.setLoopTimer(this.loopDuration)
     }
 
@@ -324,6 +312,10 @@ class Carousel extends Component<Props, State> {
     )
   }
 
+  handleImageLoaded() {
+    if (this.scrollableRef.current) this.scrollableRef.current.scrollLeft = 0
+  }
+
   // [WIP][ELSA] !! 3 setState consécutifs !
   toggleFullscreen() {
     this.setState(
@@ -353,9 +345,9 @@ class Carousel extends Component<Props, State> {
       : 'unset'
 
     const containerClasses = [bemClss.value, styles['container']]
-    if (props.settings?.imageFit === 'cover') containerClasses.push(styles['container--cover'])
+    if (props.imageFit === 'cover') containerClasses.push(styles['container--cover'])
     else containerClasses.push(styles['container--contain'])
-    if (props.settings?.arrowsPosition === 'bottom') containerClasses.push(styles['container--arrows-bottom'])
+    if (props.arrowsPosition === 'bottom') containerClasses.push(styles['container--arrows-bottom'])
     else containerClasses.push(styles['container--arrows-center'])
     if (this.state.fullscreen) containerClasses.push(styles['container--fullscreen'])
     const titleClasses = [bemClss.elt('title').value, styles['title']]
@@ -381,18 +373,18 @@ class Carousel extends Component<Props, State> {
     const containerStyle = `
       --carousel-gap-value: ${this.gapValue}px;
       --carousel-padding-value: ${this.paddingValue}px;
-      ${this.settings.backgroundColor ? `--carousel-bg-color: ${this.settings.backgroundColor}` : ''};
-      ${this.settings.imageBackgroundColor ? `--carousel-image-bg: ${this.settings.imageBackgroundColor}` : ''};
-      ${this.settings.titleColor ? `--carousel-title-color: ${this.settings.titleColor}` : ''};
-      ${this.settings.descriptionColor ? `--carousel-description-color: ${this.settings.descriptionColor}` : ''};
-      ${this.settings.creditsColor ? `--carousel-credits-color: ${this.settings.creditsColor}` : ''};
-      ${this.settings.dotColor ? `--carousel-dot-color: ${this.settings.dotColor}` : ''};
-      ${this.settings.fullscreenButtonColor ? `--carousel-fullscreen-btn-color: ${this.settings.fullscreenButtonColor}` : ''};
-      ${this.settings.arrowColor ? `--carousel-arrow-color: ${this.settings.arrowColor}` : ''};
-      ${this.settings.arrowColorDisabled ? `--carousel-arrow-color-disabled: ${this.settings.arrowColorDisabled}` : ''};
-      ${this.settings.arrowBackgroundColor ? `--carousel-arrow-bg: ${this.settings.arrowBackgroundColor}` : ''};
-      ${this.settings.arrowBackgroundColorHover ? `--carousel-arrow-bg-hover: ${this.settings.arrowBackgroundColorHover}` : ''};
-      ${this.settings.imageHeight && !this.state.fullscreen ? `--carousel-image-height: ${this.settings.imageHeight}px` : ''};
+      ${props.backgroundColor ? `--carousel-bg-color: ${props.backgroundColor}` : ''};
+      ${props.imageBackgroundColor ? `--carousel-image-bg: ${props.imageBackgroundColor}` : ''};
+      ${props.titleColor ? `--carousel-title-color: ${props.titleColor}` : ''};
+      ${props.descriptionColor ? `--carousel-description-color: ${props.descriptionColor}` : ''};
+      ${props.creditsColor ? `--carousel-credits-color: ${props.creditsColor}` : ''};
+      ${props.dotColor ? `--carousel-dot-color: ${props.dotColor}` : ''};
+      ${props.fullscreenButtonColor ? `--carousel-fullscreen-btn-color: ${props.fullscreenButtonColor}` : ''};
+      ${props.arrowColor ? `--carousel-arrow-color: ${props.arrowColor}` : ''};
+      ${props.arrowColorDisabled ? `--carousel-arrow-color-disabled: ${props.arrowColorDisabled}` : ''};
+      ${props.arrowBackgroundColor ? `--carousel-arrow-bg: ${props.arrowBackgroundColor}` : ''};
+      ${props.arrowBackgroundColorHover ? `--carousel-arrow-bg-hover: ${props.arrowBackgroundColorHover}` : ''};
+      ${props.imageHeight && !this.state.fullscreen ? `--carousel-image-height: ${props.imageHeight}px` : ''};
     `
     // [WIP][ELSA] il vaut mieux passer des variables dans le style inline et appliquer le vrai style
     // depuis styles.module.scss genre 
@@ -407,14 +399,14 @@ class Carousel extends Component<Props, State> {
       <div ref={this.containerRef} className={containerClasses.join(' ')} style={containerStyle}>
 
         <div ref={this.titleRef} className={titleClasses.join(' ')}>
-          {this.settings.title !== undefined && <h5>{this.settings.title}</h5>}
+          {props.title !== undefined && <h5>{props.title}</h5>}
         </div>
 
         {/* [WIP][ELSA] plutôt que de faire un check sur settings.fullscreen et state.fullscreen ici
           * il vaudrait mieux s'assurer dans toggleFullscreen qu'on ne peut pas passer state.fullscreen
           * si settings.fullscreen !== true
          */}
-        {this.settings.fullscreen
+        {props.fullscreen
           && <div onClick={this.toggleFullscreen} className={fullscreenBtnClasses.join(' ')}>
             {this.state.fullscreen
               ? <Icon file={Icons.FULLSCREEN_CLOSE} />
@@ -435,7 +427,9 @@ class Carousel extends Component<Props, State> {
                 media={media}
                 visible={this.state.visibleIndex === i}
                 selected={this.state.index === i}
-                settings={this.settings}
+                carouselDescription={props.description}
+                carouselCredits={props.credits}
+                onImageLoad={this.handleImageLoaded}
                 imageWrapperRef={this.imageWrapperRef}
               />
             })}
@@ -476,12 +470,12 @@ class Carousel extends Component<Props, State> {
             {this.displayArrows && <div
               className={arrowsClasses.join(' ')}
               style={arrowsStyle}>
-              {this.settings.leftArrow && <div
+              {props.leftArrow && <div
                 className={leftArrowClasses.join(' ')}
                 onClick={this.decrementIndex}>
                 <Icon file={Icons.ARROW_LEFT} />
               </div>}
-              {this.settings.rightArrow && <div
+              {props.rightArrow && <div
                 className={rightArrowClasses.join(' ')}
                 onClick={this.incrementIndex}>
                 <Icon file={Icons.ARROW_RIGHT} />
@@ -496,5 +490,5 @@ class Carousel extends Component<Props, State> {
 
 }
 
-export type { Props, State, CarouselSettings, Media }
+export type { Props, State, Media }
 export default Carousel
