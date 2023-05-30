@@ -5,6 +5,8 @@ import Img from '~/components/Img'
 import bem from '~/utils/bem'
 import styles from './styles.module.scss'
 
+const isMobile = window.innerWidth < 768
+
 interface Media {
   url?: string
   mobileUrl?: string
@@ -90,31 +92,33 @@ class CarouselElement extends Component<Props, {}> {
     if (props.media?.imageFit) wrapperClasses.push(styles[`wrapper--${props.media.imageFit}`])
 
     const imageClasses = [bemClss.elt('image').value, styles['image']]
-    const mobileImgClasses = [bemClss.elt('mobile-image').value, styles['mobile-image']]
-    const desktopImgClasses = [bemClss.elt('desktop-image').value, styles['desktop-image']]
     const captionClasses = [bemClss.elt('caption').value, styles['caption']]
     const descriptionClasses = [bemClss.elt('description').value, styles['description']]
     const creditsClasses = [bemClss.elt('credits').value, styles['credits']]
 
+    const imageUrl = isMobile
+      ? (props.media?.mobileUrl ?? props.media?.url)
+      : props.media?.url
+
     return (
       <div className={wrapperClasses.join(' ')}>
-        <div ref={props.imageWrapperRef} className={imageClasses.join(' ')}>
+        <div
+          ref={props.imageWrapperRef}
+          className={imageClasses.join(' ')}>
           {props.media?.type === 'video'
-            ? <video onClick={this.toggleVideo} ref={this.video} muted loop playsInline autoPlay={props.selected} src={props.media?.url} />
-            : (props.media?.url
-              && <>
-                {props.media.mobileUrl
-                  && <Img
-                    className={mobileImgClasses.join(' ')}
-                    onLoad={props.onImageLoad}
-                    src={props.media.mobileUrl}
-                    loading='eager' />}
-                <Img
-                  className={desktopImgClasses.join(' ')}
-                  onLoad={props.onImageLoad}
-                  src={props.media.url}
-                  loading='eager' />
-              </>
+            ? <video
+              muted
+              loop
+              playsInline
+              onClick={this.toggleVideo}
+              ref={this.video}
+              autoPlay={props.selected}
+              src={props.media?.url} />
+            : (imageUrl !== undefined
+              && <Img
+              onLoad={props.onImageLoad}
+              src={imageUrl}
+              loading='eager' />
             )}
         </div>
 
