@@ -65,8 +65,13 @@ html {
 .demo-app-option {
   font-family: Menlo, monospace;
   font-size: var(--len-text-level-1);
-  margin-bottom: 4px;
+  margin-top: 8px;
+  margin-bottom: 8px;
   width: max-content;
+}
+
+.demo-app-option .demo-app-option {
+  margin-left: 16px;
 }
 
 .demo-app-option em {
