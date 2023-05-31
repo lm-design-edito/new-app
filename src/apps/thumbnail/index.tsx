@@ -74,21 +74,14 @@ export function optionsToProps(options: Options): Props {
   if (shadeLinearGradient !== undefined) props.shadeLinearGradient = expectedString(shadeLinearGradient)
   if (shadeBlendMode !== undefined) props.shadeBlendMode = expectedString(shadeBlendMode)
   if (status !== undefined) props.status = expectedString(status)
-  if (statusOverrides !== undefined) {
+  if (props.status !== undefined && statusOverrides !== undefined) {
     const statusOverridesProp: Props['statusOverrides'] = {}
-    try {
-      const statusOverridesNames = Object.keys(statusOverrides as Options)
-      statusOverridesNames.forEach(statusOverrideName => {
-        const statusOverride = (statusOverrides as Options)[statusOverrideName]
-        try {
-          Object.keys(statusOverride as Options)
-          statusOverridesProp[statusOverrideName] = optionsToProps(statusOverride as Options)
-        } catch (err) {}
-      })
-    } catch (err) {}
+    if (statusOverrides!.hasOwnProperty(props.status)) {
+      statusOverridesProp[props.status] = optionsToProps((statusOverrides as any)[props.status])
+    }
     props.statusOverrides = statusOverridesProp
   }
-  if (status !== undefined) props.href = expectedString(href)
-  
+  if (href !== undefined) props.href = expectedString(href)
+
   return props
 }
