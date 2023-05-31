@@ -74,7 +74,6 @@ export type PropsPageData = {
   headerLogoFill1?: string
   headerLogoFill2?: string
   headerCustomClass?: string
-  headerCustomCss?: string
   headerNavItemsAlign?: string
   chapterName?: string
   isChapterHead?: boolean
@@ -90,7 +89,6 @@ export type Props = {
   bgColorTransitionDuration?: string|number
   pages?: PropsPageData[]
   headerCustomClass?: string
-  headerCustomCss?: string
   headerNavItemsAlign?: string // [WIP] more specific ? map to Header Props?
   onHalfVisible?: () => void // [WIP] keep that? Sure?
   onHalfHidden?: () => void // [WIP] keep that? Sure?
@@ -1052,9 +1050,6 @@ export default class Scrollgneugneu extends Component<Props, State> {
     const customClasses = []
     if (!isFalsy(props.headerCustomClass)) customClasses.push(props.headerCustomClass)
     if (!isFalsy(currentPageData?.headerCustomClass)) customClasses.push(currentPageData?.headerCustomClass)
-    const customCss = []
-    if (!isFalsy(props.headerCustomCss)) customCss.push(props.headerCustomCss)
-    if (!isFalsy(currentPageData?.headerCustomCss)) customCss.push(currentPageData?.headerCustomCss)
     const navItemsAlign = currentPageData?.headerNavItemsAlign ?? props.headerNavItemsAlign
     return <Header
       fill1={headerLogoFill1}
@@ -1084,8 +1079,7 @@ export default class Scrollgneugneu extends Component<Props, State> {
       hideCta={true} // [WIP] CTA not supported yet
       ctaContent={undefined} // [WIP] CTA not supported yet
       ctaOnClick={undefined} // [WIP] CTA not supported yet
-      customClass={customClasses.join(' ')}
-      customCss={customCss.join('\n\n')} />
+      customClass={customClasses.join(' ')} />
   }
 
   StickyBlocks () {

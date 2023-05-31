@@ -12,7 +12,6 @@ type NavItem = {
 
 type Props = {
   customClass?: string
-  customCss?: string
   fill1?: string
   fill2?: string
   fillTransitionTime?: string
@@ -118,11 +117,6 @@ class Header extends Component<Props> {
     return <div
       ref={n => { this.$wrapper = n }}
       className={wrapperClasses.join(' ')}>
-      {props.customCss !== undefined && <style>{
-        props.customCss
-          .trim()
-          .replace(/\s+/igm, ' ')
-      }</style>}
       <div className={logoClasses.join(' ')}>
         <Logo 
           fill1={props.fill1}
