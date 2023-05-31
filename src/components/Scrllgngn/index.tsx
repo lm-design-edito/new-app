@@ -2,7 +2,7 @@ import { Component, JSX } from 'preact'
 import IntersectionObserverComponent from '~/components/IntersectionObserver'
 import ResizeObserverComponent from '~/components/ResizeObserver'
 import Paginator, { State as PaginatorState } from '~/components/Paginator'
-import ArticleHeader, { NavItem as ArticleHeaderNavItem } from '~/components/ArticleHeader'
+import Header, { NavItem as HeaderNavItem } from '~/components/Header'
 import { throttle } from '~/utils/throttle-debounce'
 import clamp from '~/utils/clamp'
 import bem from '~/utils/bem'
@@ -91,7 +91,7 @@ export type Props = {
   pages?: PropsPageData[]
   headerCustomClass?: string
   headerCustomCss?: string
-  headerNavItemsAlign?: string // [WIP] more specific ? map to ArticleHeader Props?
+  headerNavItemsAlign?: string // [WIP] more specific ? map to Header Props?
   onHalfVisible?: () => void // [WIP] keep that? Sure?
   onHalfHidden?: () => void // [WIP] keep that? Sure?
   onEndVisible?: () => void // [WIP] keep that? Sure?
@@ -1056,7 +1056,7 @@ export default class Scrollgneugneu extends Component<Props, State> {
     if (!isFalsy(props.headerCustomCss)) customCss.push(props.headerCustomCss)
     if (!isFalsy(currentPageData?.headerCustomCss)) customCss.push(currentPageData?.headerCustomCss)
     const navItemsAlign = currentPageData?.headerNavItemsAlign ?? props.headerNavItemsAlign
-    return <ArticleHeader
+    return <Header
       fill1={headerLogoFill1}
       fill2={headerLogoFill2}
       navItems={[...pages]
@@ -1077,7 +1077,7 @@ export default class Scrollgneugneu extends Component<Props, State> {
             ? _e => this.navigateToChapter(pageChapterName)
             : undefined
         }]
-      }, [] as ArticleHeaderNavItem[])}
+      }, [] as HeaderNavItem[])}
       navItemsAlign={navItemsAlign}
       hideLogo={showHeader !== true}
       hideNav={showHeader !== true || showNav !== true}
@@ -1100,7 +1100,7 @@ export default class Scrollgneugneu extends Component<Props, State> {
       getBlockDistanceFromDisplay,
       loadCss,
       throttledHandleBlockResize,
-      Header
+      Header: ScrllgngnHeader
     } = this
     const { stickyBlocksLazyLoadDistance } = props
     const lazyLoadDistance = Math.max(stickyBlocksLazyLoadDistance ?? 2, 1)
@@ -1121,7 +1121,7 @@ export default class Scrollgneugneu extends Component<Props, State> {
       {<div
         style={headerBlockStyle}
         className={headerBlockClasses.join(' ')}>
-        <Header />
+        <ScrllgngnHeader />
       </div>}
       {/* STICKY BLOCKS */}
       {[...blocks].map(([blockIdentifier, scrollOrStickyBlockData]) => {
