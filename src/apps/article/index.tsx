@@ -31,7 +31,8 @@ export default function ArticleApp({
  * * * * * * * * * * * * * * * * * * */
 export function optionsToProps(options: Options): ArticleProps {
   const props: ArticleProps = {}
-  const { elements: _elements } = options
+  const { elements: _elements, customClass } = options
+  if (typeof customClass === 'string') props.customClass = customClass
   const elements = Array.isArray(_elements) ? _elements : [_elements]
   if (Array.isArray(elements)) {
     props.elements = [];

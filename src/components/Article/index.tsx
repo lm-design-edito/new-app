@@ -32,6 +32,7 @@ export type ArticleElementProps = { customClass?: string } & (BasicArticleElemen
   |HtmlElementProps)
 
 export type Props = {
+  customClass?: string
   elements?: ArticleElementProps[]
 }
 
@@ -39,7 +40,9 @@ export default class Article extends Component<Props> {
   render () {
     const { props } = this
     const { elements = [] } = props
-    return <div className='lm-article'>
+    const wrapperClasses = ['lm-article']
+    if (props.customClass !== undefined) wrapperClasses.push(props.customClass)
+    return <div className={wrapperClasses.join(' ')}>
       {elements.map(elementData => {
         const { customClass } = elementData
         // Basic text elements
