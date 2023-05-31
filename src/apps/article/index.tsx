@@ -2,7 +2,7 @@ import { isValidElement, render } from 'preact'
 import Article, { Props as ArticleProps, ArticleElementProps } from '~/components/Article'
 import { ElementType as BasicElementType } from '~/components/Article/BasicTextElement'
 import { Options, Renderer } from '~/shared/lm-page-apps'
-import { toBoolean, toVNode } from '~/utils/cast'
+import { toBoolean, toString, toVNode } from '~/utils/cast'
 import nodesToVNodes from '~/utils/nodes-to-vnodes'
 import selectorToElement from '~/utils/selector-to-element'
 
@@ -32,7 +32,7 @@ export default function ArticleApp({
 export function optionsToProps(options: Options): ArticleProps {
   const props: ArticleProps = {}
   const { elements: _elements, customClass } = options
-  if (typeof customClass === 'string') props.customClass = customClass
+  if (customClass !== undefined) props.customClass = toString(customClass)
   const elements = Array.isArray(_elements) ? _elements : [_elements]
   if (Array.isArray(elements)) {
     props.elements = [];

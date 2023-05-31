@@ -153,6 +153,7 @@
     </div>
     <div class="demo-app audioquote">
       <data class="lm-app-config" value="audioquote">
+        <data value="customClass">audioquote-custom-class</data>
         <data value="audioSrc" type="string">../demo/audio__do-maj.mp3</data>
         <data value="subsSrc" type="string">../demo/audio__do-maj.srt</data>
         <data value="subsGroups" type="string">3,6,8</data>
@@ -169,6 +170,8 @@
       </data>
     </div>
     <div class="demo-app-options">
+      <div class="demo-app-option"><em>customClass?:</em> string <span>Une classe CSS à appliquer sur le wrapper du bloc audioquote</span></div>
+      <div class="demo-app-option"><em>audioSrc?:</em> string <span>L'URL du fichier audio à jouer</span></div>
       <div class="demo-app-option"><em>audioSrc?:</em> string <span>L'URL du fichier audio à jouer</span></div>
       <div class="demo-app-option"><em>subsSrc?:</em> string <span>L'URL du fichier sous-titres (.srt)</span></div>
       <div class="demo-app-option"><em>subsGroups?:</em> string|Array&lt;string|number&gt; <span>Permet de grouper des lignes de sous-titres ensemble. Il suffit de préciser l'ID de la dernière ligne de sous-titres pour chaque groupe. Exemple : si l'on veut grouper les sous-titres 1 à 7, 8 à 12, 13 à 19 et enfin 20 jusqu'à la fin, on donnera à cette propriété l'une de ces valeurs : 7, 12, 19 (le dernier groupe est déduit).</span></div>

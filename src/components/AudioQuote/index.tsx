@@ -18,6 +18,7 @@ interface SubData {
 }
 
 interface Props {
+  customClass?: string
   audioSrc?: string
   subsSrc?: string
   subsGroups?: number[]
@@ -419,6 +420,7 @@ class AudioQuote extends Component<Props, State> {
       ['is-ended']: state.isEnded
     }).value
     const wrapperClasses = [wrapperBemClass, styles['wrapper']]
+    if (props.customClass !== undefined) wrapperClasses.push(props.customClass)
     if (state.isPlaying === true) wrapperClasses.push(styles['wrapper--is-playing'])
     if (state.isLoud === true) wrapperClasses.push(styles['wrapper--is-loud'])
     if (state.isEnded === true) wrapperClasses.push(styles['wrapper--is-ended'])

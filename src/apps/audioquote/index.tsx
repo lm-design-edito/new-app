@@ -29,6 +29,7 @@ export default function AudioQuoteApp({
 export function optionsToProps(options: Options): Props {
   const props: Props = {}
   const {
+    customClass,
     audioSrc,
     subsSrc,
     subsGroups,
@@ -44,6 +45,7 @@ export function optionsToProps(options: Options): Props {
     hidePauseButton,
   } = options
 
+  if (customClass !== undefined) { props.customClass = toString(customClass) }
   if (audioSrc !== undefined) { props.audioSrc = toString(audioSrc) }
   if (subsSrc !== undefined) { props.subsSrc = toString(subsSrc) }
 
