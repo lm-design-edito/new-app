@@ -1160,19 +1160,25 @@ export default class Scrollgneugneu extends Component<Props, State> {
           styles[`status-${blockStatus}`],
           ...generateLayoutClasses('sticky', layout, mobileLayout)
         ]
-        const blockContextVariables = {
-          '--width': _context.width,
-          '--height': _context.height,
-          '--page': _context.page,
-          '--progression': _context.progression,
-          '--page-progression': _context.pageProgression
+        const blockStyle = {
+          '--context-width': _context.width,
+          '--context-height': _context.height,
+          '--context-page': _context.page,
+          '--context-progression': _context.progression,
+          '--context-page-progression': _context.pageProgression
         }
-        const blockStyle = { ...blockContextVariables }
-        console.log(blockStyle)
+        const blockDataAttributes = {
+          'data-id': blockIdentifier,
+          'data-context-width': _context.width,
+          'data-context-height': _context.height,
+          'data-context-page': _context.page,
+          'data-context-progression': _context.progression,
+          'data-context-page-progression': _context.pageProgression
+        }
         return <div
           key={blockIdentifier}
-          data-id={blockIdentifier}
-          style={blockStyle}>
+          style={blockStyle}
+          {...blockDataAttributes}>
           <ResizeObserverComponent
             onResize={() => throttledHandleBlockResize()}>
             <div

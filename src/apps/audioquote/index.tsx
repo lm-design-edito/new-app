@@ -1,4 +1,4 @@
-import { isValidElement, render } from 'preact'
+import { render } from 'preact'
 import { Options, Renderer } from '~/shared/lm-page-apps'
 import AudioQuote, { Props } from '~/components/AudioQuote'
 import { toBoolean, toNumber, toString, toVNode } from '~/utils/cast'
