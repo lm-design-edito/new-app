@@ -1,29 +1,28 @@
-import { toString } from '../cast'
-
 export default function selectorToElement (selector: string) {
-  const selectorTag = selector.match(/^.*?(?=[#|\.|\/[]|$)/)
-  const tag = selectorTag && selectorTag[0] ? selectorTag[0] : 'div'
+  // RegExps
+  const tagRegexp = /^[A-Za-z]+/
+  // The dot is apparently a valid character but is prevented here
+  // in order to be able to match class elements
+  const idRegexp = /#[A-Za-z]+[\w\-\:]*/
+  const classRegexp = /\.[A-Za-z]+[\w\-]*/
+  const attributeRegexp = /\[[A-Za-z]+[\w\-]*(="[\w\-]+")?\]/
+  // Matched
+  const matchedTags = selector.match(tagRegexp) ?? []
+  const matchedIds = selector.match(idRegexp) ?? []
+  const matchedClasses = selector.match(classRegexp) ?? []
+  const matchedAttrs = selector.match(attributeRegexp) ?? []
+  // Extracted
+  const tag = matchedTags.at(-1) ?? 'div'
+  const id = matchedIds.at(-1) ?? null
+  const classes = matchedClasses.map(matchedClass => matchedClass .replace(/^\./, ''))
+  const attributes = matchedAttrs.map(matchedAttr => matchedAttr
+    .replace(/^\[/, '')
+    .replace(/\]$/, '')
+    .split('='))
+  // Returning
   const element = document.createElement(tag)
-  selector.split(/(?=[#|.[])/).forEach(_attribute => {
-    try {
-      const attribute = _attribute.trim()
-      const isClassAttr = attribute.includes('.')
-      const isIdAttr = attribute.includes('#')
-      const isOtherAttr = attribute.includes('[')
-      if (isClassAttr) element.classList.add(attribute.replace('.', ''))
-      else if (isIdAttr) element.setAttribute('id', attribute.replace('#', ''))
-      else if (isOtherAttr) {
-        const keyValueAttribute = attribute.match(/(?!\[).+(?<!\])/)
-        if (keyValueAttribute && keyValueAttribute.length) {
-          const [key, value = ''] = keyValueAttribute[0]
-            .replace(/["']/gm, '')
-            .split('=')
-          if (key) element.setAttribute(toString(key), toString(value))
-        }
-      }
-    } catch(e) {
-      console.log('ERR selectorToElement', e)
-    }
-  })
+  if (id !== null) { element.id = id }
+  element.classList.add(...classes)
+  attributes.forEach(([name, value = '']) => { element.setAttribute(name, value) })
   return element
 }
