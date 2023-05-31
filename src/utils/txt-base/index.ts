@@ -1,23 +1,17 @@
 import { VNode, isValidElement } from 'preact'
-import { masterTransformer, PrimitiveValue as TransformerPrimitiveValue } from './transformers'
+import {
+  masterTransformer,
+  PrimitiveValue as TransformerPrimitiveValue
+} from './transformers'
 
 type FieldPrimitiveValue = Exclude<TransformerPrimitiveValue, Base|Collection|Entry|Field>
   |EntryValue
   |CollectionValue
   |BaseValue
 type FieldValue = FieldPrimitiveValue|FieldValue[]
-
-type EntryValue = {
-  [fieldName: string]: FieldValue
-}
-
-type CollectionValue = {
-  [entryName: string]: EntryValue
-}
-
-type BaseValue = {
-  [collectionName: string]: CollectionValue
-}
+type EntryValue = { [fieldName: string]: FieldValue }
+type CollectionValue = { [entryName: string]: EntryValue }
+type BaseValue = { [collectionName: string]: CollectionValue }
 
 export const valueIsString = (v: unknown): v is string => (typeof v === 'string')
 export const valueIsNumber = (v: unknown): v is number => (typeof v === 'number')
@@ -142,7 +136,7 @@ export class Base {
       return undefined
     }
     // [WIP] why does TS think currentItem cannot be undefined ?
-    return currentItem
+    return currentItem as Field|Entry|Collection|Base|undefined
   }
 
   get value (): BaseValue {
@@ -429,7 +423,7 @@ export default function parse (str: string): { result: Base, errors?: ParserErro
         })
       }
     } else {
-      const addContentResult = addContent(line)
+      const addContentResult = addContent(`\n${line.trim()}`)
       if (addContentResult.error !== undefined) errorLogs.push({
         line: linePos,
         message: addContentResult.error
@@ -477,7 +471,7 @@ export default function parse (str: string): { result: Base, errors?: ParserErro
 
   function addContent (content: string): ParsingActionResult {
     if (currentField === null) return { error: `Cannot add content from '${content}' since there is no current field` }
-    currentField.updateRaw(curr => `${curr}${content.trim()}`)
+    currentField.updateRaw(curr => `${curr}${content}`)
     if (currentField !== null) return { success: content }
     return { error: `Cannot not add content from '${content}'` }
   }
