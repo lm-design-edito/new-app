@@ -27,8 +27,8 @@ type Props = {
   hideCta?: boolean
 }
 
-class ArticleHeader extends Component<Props> {
-  bemClss = bem('lm-article-header')
+class Header extends Component<Props> {
+  bemClss = bem('lm-header')
 
   constructor (props: Props) {
     super(props)
@@ -156,4 +156,4 @@ class ArticleHeader extends Component<Props> {
 }
 
 export type { Props, NavItem }
-export default ArticleHeader
+export default Header
