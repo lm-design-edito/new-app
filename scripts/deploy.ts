@@ -326,9 +326,11 @@ async function main () {
   /* * * * * * * * * * * * * * * * * * * * *
   * Write version related stuff
   * * * * * * * * ** * * * * * * * * * * * */
+  const buildDate = new Date()
   const thisVersionJsonData = {
     description: (versionDescription ?? '') as string,
-    build: Date.now(),
+    build: buildDate.valueOf(),
+    buildReadable: buildDate.toUTCString(),
     commit: gitStatusSeemsClean
       ? latestCommitNumber
       : `${latestCommitNumber} (with uncommited changes)`
