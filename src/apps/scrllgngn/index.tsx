@@ -45,7 +45,6 @@ export function optionsToProps (options: Options): Props {
     bgColorTransitionDuration,
     pages,
     headerCustomClass,
-    headerCustomCss,
     headerNavItemsAlign
   } = options
   // stickyBlocksLazyLoadDistance
@@ -63,8 +62,6 @@ export function optionsToProps (options: Options): Props {
   if (Array.isArray(pages)) { props.pages = arrayToPages(pages) }
   // headerCustomClass
   if (headerCustomClass !== undefined) { props.headerCustomClass = toString(headerCustomClass) }
-  // headerCustomCss
-  if (headerCustomCss !== undefined) { props.headerCustomCss = toString(headerCustomCss) }
   // headerNavItemsAlign
   if (headerNavItemsAlign !== undefined) { props.headerNavItemsAlign = toString(headerNavItemsAlign) }
   return props
@@ -86,7 +83,6 @@ function arrayToPages (array: unknown[]): PropsPageData[] {
         headerLogoFill1,
         headerLogoFill2,
         headerCustomClass,
-        headerCustomCss,
         headerNavItemsAlign,
         chapterName,
         isChapterHead,
@@ -105,8 +101,6 @@ function arrayToPages (array: unknown[]): PropsPageData[] {
       if (headerLogoFill2 !== undefined) { extractedPage.headerLogoFill2 = toString(headerLogoFill2) }
       // headerCustomClass
       if (headerCustomClass !== undefined) { extractedPage.headerCustomClass = toString(headerCustomClass) }
-      // headerCustomCss
-      if (headerCustomCss !== undefined) { extractedPage.headerCustomCss = toString(headerCustomCss) }
       // headerNavItemsAlign
       if (headerNavItemsAlign !== undefined) { extractedPage.headerNavItemsAlign = toString(headerNavItemsAlign) }
       // chapterName
