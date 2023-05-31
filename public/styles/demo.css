@@ -183,7 +183,7 @@ html {
  * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 .demo-app.carousel {
-  max-width: 1200px;
+  max-width: 1000px;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * 
@@ -259,6 +259,16 @@ html {
   margin: 0 auto;
   margin-top: 64px;
   max-width: 480px;
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * 
+ *
+ * SLIDESHOW
+ *
+ * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+ .demo-app.slideshow {
+  max-width: 1000px;
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * 
