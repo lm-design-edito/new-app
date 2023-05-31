@@ -1,7 +1,7 @@
 import { isValidElement, render } from 'preact'
 import { Options, Renderer } from '~/shared/lm-page-apps'
 import Thumbnail, { Props } from '~/components/Thumbnail'
-import { toString } from '~/utils/cast'
+import { toString, toVNode } from '~/utils/cast'
 
 /* * * * * * * * * * * * * * * * * * *
  * RENDERER
@@ -54,8 +54,7 @@ export function optionsToProps(options: Options): Props {
   const expectedString = (val: unknown) => val !== undefined ? toString(val) : undefined
   const expectedStringOrVNode = (val: unknown) => {
     if (val === undefined) return undefined
-    if (isValidElement(val)) return val
-    return toString(val)
+    return toVNode(val)
   }
 
   if (customClass !== undefined) props.customClass = expectedString(customClass)

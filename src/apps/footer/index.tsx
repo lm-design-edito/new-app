@@ -3,7 +3,7 @@ import { Options, Renderer } from '~/shared/lm-page-apps'
 import { optionsToProps as optionsToThumbnailProps } from '~/apps/thumbnail'
 import { Props as ThumbnailProps } from '~/components/Thumbnail'
 import Footer, { Props } from '~/components/Footer'
-import { toBoolean, toNumber, toString } from '~/utils/cast'
+import { toBoolean, toNumber, toString, toVNode } from '~/utils/cast'
 
 /* * * * * * * * * * * * * * * * * * *
  * RENDERER
@@ -49,14 +49,8 @@ export function optionsToProps(options: Options): Props {
   if (bgImageUrl !== undefined) props.bgImageUrl = toString(bgImageUrl)
   if (shadeLinearGradient !== undefined) props.shadeLinearGradient = toString(shadeLinearGradient)
   if (shadeBlendMode !== undefined) props.shadeBlendMode = toString(shadeBlendMode)
-  if (textAbove !== undefined) {
-    if (isValidElement(textAbove)) props.textAbove = textAbove
-    else props.textAbove = toString(textAbove)
-  }
-  if (textBelow !== undefined) {
-    if (isValidElement(textBelow)) props.textBelow = textBelow
-    else props.textBelow = toString(textBelow)
-  }
+  if (textAbove !== undefined) { props.textAbove = toVNode(textAbove) }
+  if (textBelow !== undefined) { props.textBelow = toVNode(textBelow) }
   if (Array.isArray(thumbnailsData)) {
     const propsThumbnailsData: ThumbnailProps[] = [];
     (thumbnailsData as unknown[]).forEach(thumbnailData => {

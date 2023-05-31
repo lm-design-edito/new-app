@@ -1,7 +1,7 @@
 import { isValidElement, render } from 'preact'
 import { Options, Renderer } from '~/shared/lm-page-apps'
 import AudioQuote, { Props } from '~/components/AudioQuote'
-import { toBoolean, toNumber, toString } from '~/utils/cast'
+import { toBoolean, toNumber, toString, toVNode } from '~/utils/cast'
 
 /* * * * * * * * * * * * * * * * * * *
  * RENDERER
@@ -59,25 +59,11 @@ export function optionsToProps(options: Options): Props {
   if (autoLoudWhenVisible !== undefined) { props.autoLoudWhenVisible = toBoolean(autoLoudWhenVisible) }
   if (autoMuteWhenHidden !== undefined) { props.autoMuteWhenHidden = toBoolean(autoMuteWhenHidden) }
 
-  if (isValidElement(title)) props.title = title
-  else if (title instanceof HTMLElement) props.title = title
-  else if (title !== undefined) props.title = toString(title)
-
-  if (isValidElement(playButton)) props.playButton = playButton
-  else if (playButton instanceof HTMLElement) props.playButton = playButton
-  else if (playButton !== undefined) props.playButton = toString(playButton)
-
-  if (isValidElement(pauseButton)) props.pauseButton = pauseButton
-  else if (pauseButton instanceof HTMLElement) props.pauseButton = pauseButton
-  else if (pauseButton !== undefined) props.pauseButton = toString(pauseButton)
-
-  if (isValidElement(loudButton)) props.loudButton = loudButton
-  else if (loudButton instanceof HTMLElement) props.loudButton = loudButton
-  else if (loudButton !== undefined) props.loudButton = toString(loudButton)
-
-  if (isValidElement(muteButton)) props.muteButton = muteButton
-  else if (muteButton instanceof HTMLElement) props.muteButton = muteButton
-  else if (muteButton !== undefined) props.muteButton = toString(muteButton)
+  if (title !== undefined) props.title = toVNode(title)
+  if (playButton !== undefined) props.playButton = toVNode(playButton)
+  if (pauseButton !== undefined) props.pauseButton = toVNode(pauseButton)
+  if (loudButton !== undefined) props.loudButton = toVNode(loudButton)
+  if (muteButton !== undefined) props.muteButton = toVNode(muteButton)
 
   if (hidePauseButton !== undefined) { props.hidePauseButton = toBoolean(hidePauseButton) }
 
