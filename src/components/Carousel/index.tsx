@@ -18,6 +18,7 @@ interface State {
 }
 
 interface Props {
+  customClass?: string
   leftArrow?: boolean
   rightArrow?: boolean
   arrowsPosition?: string
@@ -345,6 +346,7 @@ class Carousel extends Component<Props, State> {
       : 'unset'
 
     const containerClasses = [bemClss.value, styles['container']]
+    if (props.customClass !== undefined) containerClasses.push(props.customClass)
     if (props.imageFit === 'cover') containerClasses.push(styles['container--cover'])
     else containerClasses.push(styles['container--contain'])
     if (props.arrowsPosition === 'bottom') containerClasses.push(styles['container--arrows-bottom'])

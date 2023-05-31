@@ -30,6 +30,7 @@ export function optionsToProps (options: Options): Props {
   const props: Props = {}
 
   const {
+    customClass,
     leftArrow,
     rightArrow,
     arrowsPosition,
@@ -57,6 +58,7 @@ export function optionsToProps (options: Options): Props {
     images
   } = options
 
+  if (customClass !== undefined) { props.customClass = toString(customClass) }
   if (leftArrow !== undefined) { props.leftArrow = toBoolean(leftArrow) }
   if (rightArrow !== undefined) { props.rightArrow = toBoolean(rightArrow) }
   if (arrowsPosition !== undefined) { props.arrowsPosition = toString(arrowsPosition) }
