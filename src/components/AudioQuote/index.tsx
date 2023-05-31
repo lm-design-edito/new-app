@@ -219,7 +219,7 @@ class AudioQuote extends Component<Props, State> {
       const groupSubs = subsContent.filter(sub => sub.id >= group.startId && sub.id <= group.endId)
 
       groupSubs.map((sub, index, array) => {
-        let subContent = sub.content.trim()
+        let subContent = sub.content?.trim() ?? ''
         if (index !== array.length - 1) subContent += ' '
 
         const subClassList = [styles['sub']]
