@@ -192,7 +192,7 @@ export default class Article extends Component<Props> {
 //     if (elementName === 'image') {
 //       let renderedLegend: undefined|string|VNode = this.toVNode(props.legend)
 //       const legendProps = {} as Partial<ThumbnailProps>
-//       if (props.legend && props.legendOverlay === true) legendProps.textInsideBottom = renderedLegend
+//       if (props.legend && props.legendOverlay === true) legendProps.textCenterBottom = renderedLegend
 //       else legendProps.textBelow = renderedLegend
 //       return <Thumbnail
 //         customClass={clss}

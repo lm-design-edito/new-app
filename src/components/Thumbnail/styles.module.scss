@@ -1,15 +1,15 @@
 .wrapper { display: grid; }
 
-.before { grid-column: 1/2; }
+.left { grid-column: 1/2; }
 
 .above,
 .below,
 .image-wrapper { grid-column: 2/3; }
 
-.after { grid-column: 3/4; }
+.right { grid-column: 3/4; }
 
-.before,
-.after,
+.left,
+.right,
 .image-wrapper {
   display: grid;
 
@@ -20,6 +20,6 @@
 
 .top { align-self: flex-start; }
 
-.center { align-self: center; }
+.middle { align-self: center; }
 
 .bottom { align-self: flex-end; }

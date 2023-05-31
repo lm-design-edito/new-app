@@ -24,7 +24,7 @@
 }
 
 .text-top,
-.text-center,
+.text-middle,
 .text-bottom {
   z-index: 3;
 }
@@ -33,7 +33,7 @@
   align-self: flex-start;
 }
 
-.text-center {
+.text-middle {
   align-self: center;
 }
 

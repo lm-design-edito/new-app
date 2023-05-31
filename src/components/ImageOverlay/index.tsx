@@ -7,7 +7,7 @@ export type Props = {
   imageUrl?: string
   imageAlt?: string
   textTop?: string | VNode
-  textCenter?: string | VNode
+  textMiddle?: string | VNode
   textBottom?: string | VNode
   shadeLinearGradient?: string
   shadeBlendMode?: string
@@ -25,13 +25,13 @@ export default class ImageOverlay extends Component<Props, {}> {
     const imageClasses = [bemClss.elt('image').value, styles['image']]
     const shadeClasses = [bemClss.elt('shade').value, styles['shade']]
     const textTopClasses = [bemClss.elt('text-top').value, styles['text-top']]
-    const textCenterClasses = [bemClss.elt('text-center').value, styles['text-center']]
+    const textMiddleClasses = [bemClss.elt('text-middle').value, styles['text-middle']]
     const textBottomClasses = [bemClss.elt('text-bottom').value, styles['text-bottom']]
     const {
       imageUrl,
       imageAlt,
       textTop,
-      textCenter,
+      textMiddle,
       textBottom,
       shadeLinearGradient,
       shadeBlendMode
@@ -51,7 +51,7 @@ export default class ImageOverlay extends Component<Props, {}> {
       {<div className={shadeClasses.join(' ')} />}
       {/* text */}
       {textTop && <div className={textTopClasses.join(' ')}>{textTop}</div>}
-      {textCenter && <div className={textCenterClasses.join(' ')}>{textCenter}</div>}
+      {textMiddle && <div className={textMiddleClasses.join(' ')}>{textMiddle}</div>}
       {textBottom && <div className={textBottomClasses.join(' ')}>{textBottom}</div>}
     </div>
   }

@@ -39,7 +39,7 @@ export default class Image extends Component<Props> {
         customClass={customClass}
         imageUrl={url}
         imageAlt={alt}
-        textInsideBottom={overlayCaption ? caption : undefined}
+        textCenterBottom={overlayCaption ? caption : undefined}
         textBelow={overlayCaption ? undefined : caption} />
     </div>
   }

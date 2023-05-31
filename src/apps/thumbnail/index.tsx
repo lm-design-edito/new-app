@@ -33,15 +33,15 @@ export function optionsToProps(options: Options): Props {
     imageAlt, //?: string
     textAbove, //?: string|VNode
     textBelow, //?: string|VNode
-    textBeforeTop, //?: string|VNode
-    textBeforeCenter, //?: string|VNode
-    textBeforeBottom, //?: string|VNode
-    textAfterTop, //?: string|VNode
-    textAfterCenter, //?: string|VNode
-    textAfterBottom, //?: string|VNode
-    textInsideTop, //?: string|VNode
-    textInsideCenter, //?: string|VNode
-    textInsideBottom, //?: string|VNode
+    textLeftTop, //?: string|VNode
+    textLeftMiddle, //?: string|VNode
+    textLeftBottom, //?: string|VNode
+    textRightTop, //?: string|VNode
+    textRightMiddle, //?: string|VNode
+    textRightBottom, //?: string|VNode
+    textCenterTop, //?: string|VNode
+    textCenterMiddle, //?: string|VNode
+    textCenterBottom, //?: string|VNode
     shadeLinearGradient, //?: string
     shadeBlendMode, //?: string
     status, //?: string
@@ -63,15 +63,15 @@ export function optionsToProps(options: Options): Props {
   if (imageAlt !== undefined) props.imageAlt = expectedString(imageAlt)
   if (textAbove !== undefined) props.textAbove = expectedStringOrVNode(textAbove)
   if (textBelow !== undefined) props.textBelow = expectedStringOrVNode(textBelow)
-  if (textBeforeTop !== undefined) props.textBeforeTop = expectedStringOrVNode(textBeforeTop)
-  if (textBeforeCenter !== undefined) props.textBeforeCenter = expectedStringOrVNode(textBeforeCenter)
-  if (textBeforeBottom !== undefined) props.textBeforeBottom = expectedStringOrVNode(textBeforeBottom)
-  if (textAfterTop !== undefined) props.textAfterTop = expectedStringOrVNode(textAfterTop)
-  if (textAfterCenter !== undefined) props.textAfterCenter = expectedStringOrVNode(textAfterCenter)
-  if (textAfterBottom !== undefined) props.textAfterBottom = expectedStringOrVNode(textAfterBottom)
-  if (textInsideTop !== undefined) props.textInsideTop = expectedStringOrVNode(textInsideTop)
-  if (textInsideCenter !== undefined) props.textInsideCenter = expectedStringOrVNode(textInsideCenter)
-  if (textInsideBottom !== undefined) props.textInsideBottom = expectedStringOrVNode(textInsideBottom)
+  if (textLeftTop !== undefined) props.textLeftTop = expectedStringOrVNode(textLeftTop)
+  if (textLeftMiddle !== undefined) props.textLeftMiddle = expectedStringOrVNode(textLeftMiddle)
+  if (textLeftBottom !== undefined) props.textLeftBottom = expectedStringOrVNode(textLeftBottom)
+  if (textRightTop !== undefined) props.textRightTop = expectedStringOrVNode(textRightTop)
+  if (textRightMiddle !== undefined) props.textRightMiddle = expectedStringOrVNode(textRightMiddle)
+  if (textRightBottom !== undefined) props.textRightBottom = expectedStringOrVNode(textRightBottom)
+  if (textCenterTop !== undefined) props.textCenterTop = expectedStringOrVNode(textCenterTop)
+  if (textCenterMiddle !== undefined) props.textCenterMiddle = expectedStringOrVNode(textCenterMiddle)
+  if (textCenterBottom !== undefined) props.textCenterBottom = expectedStringOrVNode(textCenterBottom)
   if (shadeLinearGradient !== undefined) props.shadeLinearGradient = expectedString(shadeLinearGradient)
   if (shadeBlendMode !== undefined) props.shadeBlendMode = expectedString(shadeBlendMode)
   if (status !== undefined) props.status = expectedString(status)

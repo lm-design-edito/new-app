@@ -10,15 +10,15 @@ export type Props = {
   imageAlt?: string
   textAbove?: string|VNode
   textBelow?: string|VNode
-  textBeforeTop?: string|VNode
-  textBeforeCenter?: string|VNode
-  textBeforeBottom?: string|VNode
-  textAfterTop?: string|VNode
-  textAfterCenter?: string|VNode
-  textAfterBottom?: string|VNode
-  textInsideTop?: string|VNode
-  textInsideCenter?: string|VNode
-  textInsideBottom?: string|VNode
+  textLeftTop?: string|VNode
+  textLeftMiddle?: string|VNode
+  textLeftBottom?: string|VNode
+  textRightTop?: string|VNode
+  textRightMiddle?: string|VNode
+  textRightBottom?: string|VNode
+  textCenterTop?: string|VNode
+  textCenterMiddle?: string|VNode
+  textCenterBottom?: string|VNode
   shadeLinearGradient?: string
   shadeBlendMode?: string
   status?: string
@@ -53,15 +53,15 @@ export default class Thumbnail extends Component<Props, {}> {
       imageAlt,
       textAbove,
       textBelow,
-      textBeforeTop,
-      textBeforeCenter,
-      textBeforeBottom,
-      textAfterTop,
-      textAfterCenter,
-      textAfterBottom,
-      textInsideTop,
-      textInsideCenter,
-      textInsideBottom,
+      textLeftTop,
+      textLeftMiddle,
+      textLeftBottom,
+      textRightTop,
+      textRightMiddle,
+      textRightBottom,
+      textCenterTop,
+      textCenterMiddle,
+      textCenterBottom,
       shadeLinearGradient,
       shadeBlendMode,
       href,
@@ -71,18 +71,18 @@ export default class Thumbnail extends Component<Props, {}> {
     // Assign classes and styles
     const wrapperClasses = [customClass, bemClss.value, styles['wrapper']]
     const aboveClasses = [bemClss.elt('above').value, styles['above']]
-    const beforeClasses = [bemClss.elt('before').value, styles['before']]
-    const afterClasses = [bemClss.elt('after').value, styles['after']]
+    const leftClasses = [bemClss.elt('left').value, styles['left']]
+    const rightClasses = [bemClss.elt('right').value, styles['right']]
     const belowClasses = [bemClss.elt('below').value, styles['below']]
     const topClasses = [bemClss.elt('top').value, styles['top']]
-    const centerClasses = [bemClss.elt('center').value, styles['center']]
+    const middleClasses = [bemClss.elt('middle').value, styles['middle']]
     const bottomClasses = [bemClss.elt('bottom').value, styles['bottom']]
     const imgWrapperClasses = [bemClss.elt('image-wrapper').value, styles['image-wrapper']]
     const imgClasses = [bemClss.elt('image').value, styles['image']]
     const displayCursorPointer = href ?? onClick !== undefined
 
-    const displayBefore = (textBeforeTop ?? textBeforeCenter ?? textBeforeBottom) !== undefined
-    const displayAfter = (textAfterTop ?? textAfterCenter ?? textAfterBottom) !== undefined
+    const displayLeft = (textLeftTop ?? textLeftMiddle ?? textLeftBottom) !== undefined
+    const displayRight = (textRightTop ?? textRightMiddle ?? textRightBottom) !== undefined
     const wrapperStyle = {
       displayCursorPointer: displayCursorPointer
         ? 'cursor: pointer;'
@@ -108,11 +108,11 @@ export default class Thumbnail extends Component<Props, {}> {
     return <WrapperTag>
       {/* Above */}
       {textAbove && <div className={aboveClasses.join(' ')}>{textAbove}</div>}
-      {/* Before */}
-      {displayBefore && <div className={beforeClasses.join(' ')}>
-        {textBeforeTop && <div className={topClasses.join(' ')}>{textBeforeTop}</div>}
-        {textBeforeCenter && <div className={centerClasses.join(' ')}>{textBeforeCenter}</div>}
-        {textBeforeBottom && <div className={bottomClasses.join(' ')}>{textBeforeBottom}</div>}
+      {/* Left */}
+      {displayLeft && <div className={leftClasses.join(' ')}>
+        {textLeftTop && <div className={topClasses.join(' ')}>{textLeftTop}</div>}
+        {textLeftMiddle && <div className={middleClasses.join(' ')}>{textLeftMiddle}</div>}
+        {textLeftBottom && <div className={bottomClasses.join(' ')}>{textLeftBottom}</div>}
       </div>}
       {/* Image wrapper */}
       <div className={imgWrapperClasses.join(' ')}>
@@ -121,18 +121,18 @@ export default class Thumbnail extends Component<Props, {}> {
           <ImageOverlay
             imageUrl={imageUrl}
             imageAlt={imageAlt}
-            textTop={textInsideTop}
-            textCenter={textInsideCenter}
-            textBottom={textInsideBottom}
+            textTop={textCenterTop}
+            textMiddle={textCenterMiddle}
+            textBottom={textCenterBottom}
             shadeLinearGradient={shadeLinearGradient}
             shadeBlendMode={shadeBlendMode} />
         </div>}
       </div>
-      {/* After */}
-      {displayAfter && <div className={afterClasses.join(' ')}>
-        {textAfterTop && <div className={topClasses.join(' ')}>{textAfterTop}</div>}
-        {textAfterCenter && <div className={centerClasses.join(' ')}>{textAfterCenter}</div>}
-        {textAfterBottom && <div className={bottomClasses.join(' ')}>{textAfterBottom}</div>}
+      {/* Right */}
+      {displayRight && <div className={rightClasses.join(' ')}>
+        {textRightTop && <div className={topClasses.join(' ')}>{textRightTop}</div>}
+        {textRightMiddle && <div className={middleClasses.join(' ')}>{textRightMiddle}</div>}
+        {textRightBottom && <div className={bottomClasses.join(' ')}>{textRightBottom}</div>}
       </div>}
       {/* Below */}
       {textBelow && <div className={belowClasses.join(' ')}>{textBelow}</div>}
