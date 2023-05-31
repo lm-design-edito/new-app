@@ -31,7 +31,8 @@ export default function ArticleApp({
  * * * * * * * * * * * * * * * * * * */
 export function optionsToProps(options: Options): ArticleProps {
   const props: ArticleProps = {}
-  const { elements } = options
+  const { elements: _elements } = options
+  const elements = Array.isArray(_elements) ? _elements : [_elements]
   if (Array.isArray(elements)) {
     props.elements = [];
     (elements as unknown[]).forEach(elementData => {
