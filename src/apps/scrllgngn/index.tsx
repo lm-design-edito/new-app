@@ -177,37 +177,35 @@ function arrayToBlocks (array: unknown[]): PropsBlockData[] {
         if (layout !== undefined) { extractedStickyBlock.layout = toString(layout) as LayoutName }
         // mobileLayout
         if (mobileLayout !== undefined) { extractedStickyBlock.mobileLayout = toString(mobileLayout) as LayoutName }
-        // transitions
-        if (Array.isArray(transitions)) {
-          const extractedTransitions: TransitionDescriptor[] = []
-          transitions.forEach(transitionDescriptor => {
-            if (Array.isArray(transitionDescriptor)) {
-              const [name, duration] = transitionDescriptor
-              const nameIsValid = typeof name === 'string'
-              const durationIsValid = typeof duration === 'string' || typeof duration === 'number'
-              if (nameIsValid) {
-                if (!durationIsValid) extractedTransitions.push([name as TransitionName])
-                else extractedTransitions.push([name as TransitionName, duration])
-              }
-            }
-          })
-          extractedStickyBlock.transitions = extractedTransitions
+        // transitions // [WIP] should also expect a real array, not just a string input
+        if (transitions !== undefined) {
+          const transitionsArr: TransitionDescriptor[] = toString(transitions)
+            .split(';')
+            .filter(e => e !== undefined && e !== '')
+            .map(e => e
+              .split(',')
+              .map(e => e.trim()))
+            .map(transitionDescriptor => {
+              const name = transitionDescriptor[0] as TransitionName
+              const duration = transitionDescriptor[1] ?? ''
+              return [name, duration]
+            })
+            extractedStickyBlock.transitions = transitionsArr
         }
-        // Mobile transitions
-        if (Array.isArray(mobileTransitions)) {
-          const extractedMobileTransitions: TransitionDescriptor[] = []
-          mobileTransitions.forEach(transitionDescriptor => {
-            if (Array.isArray(transitionDescriptor)) {
-              const [name, duration] = transitionDescriptor
-              const nameIsValid = typeof name === 'string'
-              const durationIsValid = typeof duration === 'string' || typeof duration === 'number'
-              if (nameIsValid) {
-                if (!durationIsValid) extractedMobileTransitions.push([name as TransitionName])
-                else extractedMobileTransitions.push([name as TransitionName, duration])
-              }
-            }
-          })
-          extractedStickyBlock.mobileTransitions = extractedMobileTransitions
+        // mobileTransitions // [WIP] should also expect a real array, not just a string input
+        if (mobileTransitions !== undefined) {
+          const mobileTransitionsArr: TransitionDescriptor[] = toString(mobileTransitions)
+            .split(';')
+            .filter(e => e !== undefined && e !== '')
+            .map(e => e
+              .split(',')
+              .map(e => e.trim()))
+            .map(transitionDescriptor => {
+              const name = transitionDescriptor[0] as TransitionName
+              const duration = transitionDescriptor[1] ?? ''
+              return [name, duration]
+            })
+            extractedStickyBlock.mobileTransitions = mobileTransitionsArr
         }
         extractedBlocks.push(extractedStickyBlock)
       }
