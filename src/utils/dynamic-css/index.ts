@@ -46,7 +46,7 @@ export async function injectStylesheet (
 
 function updateStyleElements () {
   // Remove unused style tags
-  const styleTagsClass = 'lm-page-injected-styles'
+  const styleTagsClass = '__dynamic-styles'
   const allStylesTags = [...document.querySelectorAll(`.${styleTagsClass}`)]
   allStylesTags.forEach(styleTag => {
     const dataName = styleTag.getAttribute('data-name')

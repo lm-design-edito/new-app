@@ -403,7 +403,7 @@ export default class Scrollgneugneu extends Component<Props, State> {
       ].join('')
       const mediaQuery = '@media (min-width: 1025px)'
       const cssBlock = `${mediaQuery} { ${selectors} { ${layoutCss} } }`
-      injectCssRule(cssBlock, `${_layout}_${position}`)
+      injectCssRule(cssBlock, `${layoutClass}____${position}`)
     }
     if (mobileLayoutClass !== undefined) {
       classes.push(mobileLayoutClass)
@@ -414,7 +414,7 @@ export default class Scrollgneugneu extends Component<Props, State> {
       ].join('')
       const mediaQuery = '@media (max-width: 1024px)'
       const cssBlock = `${mediaQuery} { ${selectors} { ${mobileLayoutCss} } }`
-      injectCssRule(cssBlock, `${_mobileLayout}_${position}`)
+      injectCssRule(cssBlock, `${mobileLayoutClass}____${position}`)
     }
     return classes
   }
