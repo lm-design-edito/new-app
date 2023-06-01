@@ -7,6 +7,7 @@ import bem from '~/utils/bem'
 import styles from './styles.module.scss'
 
 interface Props {
+  customClass?: string
   leftArrow?: boolean
   rightArrow?: boolean
   dots?: boolean
@@ -135,6 +136,7 @@ class Slideshow extends Component<Props, State> {
     const { props, state, bemClss } = this
 
     const containerClasses = [bemClss.value, styles['container']]
+    if (props.customClass !== undefined) containerClasses.push(props.customClass)
     if (props.imageFit === 'cover') containerClasses.push(styles['container--cover'])
     else containerClasses.push(styles['container--contain'])
 
