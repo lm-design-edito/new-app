@@ -4,11 +4,15 @@ import { exec } from 'node:child_process'
 import { watch } from 'chokidar'
 import chalk from 'chalk'
 import { glob } from 'glob'
+import sass from 'sass'
 import { debounce } from 'throttle-debounce'
 import { build, BuildOptions } from 'esbuild'
-import sass from 'sass'
 import { sassPlugin, postcssModules } from 'esbuild-sass-plugin'
+import inlineImageModule from 'esbuild-plugin-inline-image'
 import * as config from './config.js'
+
+// This in order to handle wrong typings from the lib i guess
+const inlineImagePulgin = inlineImageModule as unknown as typeof inlineImageModule.default
 
 /* BUNDLE OPTIONS * * * * * * * * * * * * */
 const bundleOptions = (otherEntries: BuildOptions['entryPoints'] = {}): BuildOptions => ({
@@ -27,6 +31,9 @@ const bundleOptions = (otherEntries: BuildOptions['entryPoints'] = {}): BuildOpt
   logLevel: 'info',
   target: ['es2020'],
   plugins: [
+    inlineImagePulgin({
+      limit: -1
+    }),
     sassPlugin({
       type: 'style',
       filter: /style(s)?\.module\.scss/,
@@ -39,10 +46,10 @@ const bundleOptions = (otherEntries: BuildOptions['entryPoints'] = {}): BuildOpt
   ],
   assetNames: 'assets/[name].[hash]',
   loader: {
-    '.svg': 'file',
-    '.jpg': 'file',
-    '.png': 'file',
-    '.gif': 'file',
+    // '.svg': 'file',
+    // '.jpg': 'file',
+    // '.png': 'file',
+    // '.gif': 'file',
     '.module.scss': 'json',
     '.scss': 'file'
   },
