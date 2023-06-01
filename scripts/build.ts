@@ -46,10 +46,6 @@ const bundleOptions = (otherEntries: BuildOptions['entryPoints'] = {}): BuildOpt
   ],
   assetNames: 'assets/[name].[hash]',
   loader: {
-    // '.svg': 'file',
-    // '.jpg': 'file',
-    // '.png': 'file',
-    // '.gif': 'file',
     '.module.scss': 'json',
     '.scss': 'file'
   },

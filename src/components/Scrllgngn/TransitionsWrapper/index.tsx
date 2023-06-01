@@ -26,7 +26,7 @@ export default class TransitionsWrapper extends Component<Props> {
     const isValidRegex = /([0-9]+(\.[0-9]+)?|\.[0-9]+)[a-zA-Z]*/
     const hasNoUnitRegex = /^[0-9\.]+$/
     if (!isValidRegex.test(duration)) return '400ms'
-    if (hasNoUnitRegex) return `${duration}ms`
+    if (hasNoUnitRegex.test(duration)) return `${duration}ms`
     return duration
   }
 

@@ -389,14 +389,10 @@ export default class Scrollgneugneu extends Component<Props, State> {
         .replace(/\)/igm, '')
         .replace(/[^a-z0-9\-\_]/igm, '')
       : undefined
-    const layoutClass = hasLayout
-      ? `lm-scrllgngn__layout_${layoutClassExt}`
-      : undefined
+    const layoutClass = hasLayout ? `lm-scrllgngn__layout_${layoutClassExt}` : undefined
     const mobileLayoutClass = hasMobileLayout
       ? `lm-scrllgngn__mobile-layout_${mobileLayoutClassExt}`
-      : (hasLayout
-        ? `lm-scrllgngn__mobile-layout_${layoutClassExt}`
-        : undefined)
+      : (hasLayout ? `lm-scrllgngn__mobile-layout_${layoutClassExt}` : undefined)
     const classes: string[] = []
     if (layoutClass !== undefined) {
       classes.push(layoutClass)
@@ -407,7 +403,7 @@ export default class Scrollgneugneu extends Component<Props, State> {
       ].join('')
       const mediaQuery = '@media (min-width: 1025px)'
       const cssBlock = `${mediaQuery} { ${selectors} { ${layoutCss} } }`
-      injectCssRule(cssBlock)
+      injectCssRule(cssBlock, `${_layout}_${position}`)
     }
     if (mobileLayoutClass !== undefined) {
       classes.push(mobileLayoutClass)
@@ -418,7 +414,7 @@ export default class Scrollgneugneu extends Component<Props, State> {
       ].join('')
       const mediaQuery = '@media (max-width: 1024px)'
       const cssBlock = `${mediaQuery} { ${selectors} { ${mobileLayoutCss} } }`
-      injectCssRule(cssBlock)
+      injectCssRule(cssBlock, `${_mobileLayout}_${position}`)
     }
     return classes
   }
@@ -465,7 +461,6 @@ export default class Scrollgneugneu extends Component<Props, State> {
     // if (alignChunk === 'top') cssProps.push(`align-items: flex-start;`)
     // else if (alignChunk === 'middle') cssProps.push(`align-items: center;`)
     // else if (alignChunk === 'bottom') cssProps.push(`align-items: flex-end;`)
-
     return cssProps.join('')
   }
 
@@ -1156,6 +1151,7 @@ export default class Scrollgneugneu extends Component<Props, State> {
           ...generateLayoutClasses('sticky', layout, mobileLayout)
         ]
         const blockStyle = {
+          '--z-index': _zIndex,
           '--context-width': _context.width,
           '--context-height': _context.height,
           '--context-page': _context.page,
@@ -1170,17 +1166,14 @@ export default class Scrollgneugneu extends Component<Props, State> {
           'data-context-progression': _context.progression,
           'data-context-page-progression': _context.pageProgression
         }
-        return <div
-          key={blockIdentifier}
-          style={blockStyle}
-          {...blockDataAttributes}>
+        return <div key={blockIdentifier}>
           <ResizeObserverComponent
             onResize={() => throttledHandleBlockResize()}>
             <div
               ref={n => { blocksRefsMap.set(blockIdentifier, n) }}
               className={blockClasses.join(' ')}
-              data-id={blockIdentifier}
-              style={{ '--z-index': _zIndex }}>
+              style={blockStyle}
+              {...blockDataAttributes}>
               <TransitionsWrapper
                 isActive={blockStatus === 'current'}
                 transitions={transitions}
