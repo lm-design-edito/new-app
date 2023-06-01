@@ -1,11 +1,11 @@
-import { Component } from 'preact'
+import { Component, VNode } from 'preact'
 import { BlockContext } from '..'
 import HtmlBlockRenderer from './HtmlBlockRenderer'
 import ModuleBlockRenderer from './ModuleBlockRenderer'
 
 type Props = {
   type?: 'module' | 'html'
-  content?: string
+  content?: string|VNode
   context?: BlockContext
   // [WIP] use dynamic-css
   cssLoader?: (url: string) => Promise<void>
@@ -19,7 +19,7 @@ export default class BlockRenderer extends Component<Props> {
       case 'html':
       case undefined: return <HtmlBlockRenderer content={content} />
       case 'module': return <ModuleBlockRenderer
-        url={content}
+        url={typeof content === 'string' ? content : ''}
         context={context}
         cssLoader={cssLoader} />
       default: return <></>

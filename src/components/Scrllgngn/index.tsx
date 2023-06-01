@@ -1,4 +1,4 @@
-import { Component, JSX } from 'preact'
+import { Component, JSX, VNode } from 'preact'
 import IntersectionObserverComponent from '~/components/IntersectionObserver'
 import ResizeObserverComponent from '~/components/ResizeObserver'
 import Paginator, { State as PaginatorState } from '~/components/Paginator'
@@ -46,22 +46,22 @@ export type TransitionDuration = string|number
 export type TransitionDescriptor = [TransitionName]|[TransitionName, TransitionDuration]
 
 /* Props stuff */
-export type PropsCommonData = {
+export type PropsCommonBlockData = {
   id?: string
   zIndex?: number
   type?: 'html'|'module'
-  content?: string
+  content?: string|VNode
   trackScroll?: boolean
 }
-export type PropsScrollBlockData = PropsCommonData & {
+export type PropsScrollBlockData = PropsCommonBlockData & {
   depth?: 'scroll'
   layout?: LayoutName
   mobileLayout?: LayoutName
 }
-export type PropsStickyBlockData = PropsCommonData & {
+export type PropsStickyBlockData = PropsCommonBlockData & {
   depth: 'back'|'front'
-  layout?: LayoutName // [WIP] Don't bring that back in PropsCommonData before being sure there are not sticky blocks specific layout names
-  mobileLayout?: LayoutName // [WIP] Don't bring that back in PropsCommonData before being sure there are not sticky blocks specific layout names
+  layout?: LayoutName // [WIP] Don't bring that back in PropsCommonBlockData before being sure there are not sticky blocks specific layout names
+  mobileLayout?: LayoutName // [WIP] Don't bring that back in PropsCommonBlockData before being sure there are not sticky blocks specific layout names
   transitions?: TransitionDescriptor[]
   mobileTransitions?: TransitionDescriptor[]
 }

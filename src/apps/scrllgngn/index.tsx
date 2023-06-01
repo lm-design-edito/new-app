@@ -10,7 +10,7 @@ import Scrllgngn, {
   TransitionDescriptor,
   TransitionName
 } from '~/components/Scrllgngn'
-import { toBoolean, toNumber, toString } from '~/utils/cast'
+import { toBoolean, toNumber, toString, toVNode } from '~/utils/cast'
 
 /* * * * * * * * * * * * * * * * * * *
  * RENDERER
@@ -150,7 +150,7 @@ function arrayToBlocks (array: unknown[]): PropsBlockData[] {
         // type
         if (type === 'html' || type === 'module') { extractedScrollBlock.type = type }
         // content
-        if (content !== undefined) { extractedScrollBlock.content = toString(content) }
+        if (content !== undefined) { extractedScrollBlock.content = toVNode(content) }
         // trackScroll
         if (trackScroll !== undefined) { extractedScrollBlock.trackScroll = toBoolean(trackScroll) }
         // layout
@@ -170,7 +170,7 @@ function arrayToBlocks (array: unknown[]): PropsBlockData[] {
         // type
         if (type === 'html' || type === 'module') { extractedStickyBlock.type = type }
         // content
-        if (content !== undefined) { extractedStickyBlock.content = toString(content) }
+        if (content !== undefined) { extractedStickyBlock.content = toVNode(content) }
         // trackScroll
         if (trackScroll !== undefined) { extractedStickyBlock.trackScroll = toBoolean(trackScroll) }
         // layout
