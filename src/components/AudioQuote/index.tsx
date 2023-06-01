@@ -1,7 +1,5 @@
-import { Component, JSX, createRef, RefObject, VNode, isValidElement } from 'preact'
+import { Component, JSX, createRef, RefObject, VNode } from 'preact'
 import IntersectionObserverComponent from '~/components/IntersectionObserver'
-import StrToVNode from '~/components/StrToVNodes'
-import nodesToVNodes from '~/utils/nodes-to-vnodes'
 import bem from '~/utils/bem'
 import { toVNode } from '~/utils/cast'
 import styles from './styles.module.scss'
