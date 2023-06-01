@@ -1,6 +1,3 @@
-import randomUUID from '~/utils/random-uuid'
-import selectorToElement from '../selector-to-element'
-
 const rulesMap: Map<string, string> = new Map()
 const targetStyleElement = document.createElement('style')
 const targetStyleElementIdentifier = 'lm-page-injected-styles'
@@ -10,9 +7,8 @@ targetStyleElement.id = targetStyleElementIdentifier
 export function injectCssRule (rule: string, force?: boolean): string
 export function injectCssRule (rule: string, name: string, force?: boolean): string
 export function injectCssRule (rule: string, _forceOrName?: boolean|string, _force?: boolean): string {
-  const name = typeof _forceOrName === 'string' ? _forceOrName : randomUUID()
+  const name = typeof _forceOrName === 'string' ? _forceOrName : rule
   const force = _forceOrName === true || _force === true
-  // [WIP] maybe check for name instead of rule value ?
   const alreadyInMap = rulesMap.get(name)
   const shouldInject = force === true || alreadyInMap === undefined
   if (!shouldInject) return name
@@ -21,8 +17,8 @@ export function injectCssRule (rule: string, _forceOrName?: boolean|string, _for
   return name
 }
 
-export function removeCssRule (id: string) {
-  const deleted = rulesMap.delete(id)
+export function removeCssRule (name: string) {
+  const deleted = rulesMap.delete(name)
   if (deleted) updateStyleElements()
 }
 
@@ -61,32 +57,18 @@ function updateStyleElements () {
     
   // Update style tags
   rulesMap.forEach((rule, name) => {
-    const existingTag = document.querySelector(`.${styleTagsClass}[data-name="${name}"]`)
-    const targetCssValue = `/* ${name.replace(/\*\\/, '')} */\n${rule}`
+    const dataName = name.replace(/[^\w]/igm, '')
+    console.log(dataName)
+    const existingTag = document.querySelector(`.${styleTagsClass}[data-name="${dataName}"]`)
+    const targetCssValue = `/* ${name.replace(/[^\w]/, '-')} */\n${rule}`
     if (existingTag !== null) {
       existingTag.innerHTML = targetCssValue
     } else {
       const targetTag = document.createElement('style')
       targetTag.classList.add(styleTagsClass)
-      targetTag.setAttribute('data-name', name)
+      targetTag.setAttribute('data-name', dataName)
       targetTag.innerHTML = targetCssValue
       document.head.append(targetTag)
     }
   })
-
-  // const rulesArr = Array.from(rulesMap.entries())
-  // rulesArr.forEach(([name, rule]) => {
-  //   const existingTargetElement = document.querySelector(`.lm-page-injected-styles[data-name="${name}"]`)
-    
-  //   console.log(name)
-  //   console.log(rule)
-  //   console.log('-')
-  // })
-
-
-  // targetStyleElement.innerHTML = rulesArr
-  //   .map(([key, val]) => `/* ${key.replace(/[^\w\-]+/igm, '')} */\n${val}`)
-  //   .join('\n')
-  // const targetIsInDocument = document.getElementById(targetStyleElementIdentifier)
-  // if (!targetIsInDocument) document.head.append(targetStyleElement)
 }
