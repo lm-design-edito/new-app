@@ -68,7 +68,7 @@
     _id: page-1-fixed
     _depth: front
     _type: html
-    _content: <div style="width: 100%; background: grey; height: 100%; border: calc(100px * (0.7 - var(--progression))) solid black; border-radius: 40px;">I am the fixed block of page 1</div>
+    _content: <div style="width: 100%; background: grey; height: 100%; border: calc(100px * (1 - var(--context-progression))) solid black; border-radius: 40px;">I am the fixed block of page 1</div>
     _layout: right-half
     _trackScroll: true >>> toBoolean
   
