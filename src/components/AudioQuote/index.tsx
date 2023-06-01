@@ -3,6 +3,7 @@ import IntersectionObserverComponent from '~/components/IntersectionObserver'
 import StrToVNode from '~/components/StrToVNodes'
 import nodesToVNodes from '~/utils/nodes-to-vnodes'
 import bem from '~/utils/bem'
+import { toVNode } from '~/utils/cast'
 import styles from './styles.module.scss'
 
 interface SubGroupBoundaries {
@@ -26,11 +27,11 @@ interface Props {
   autoPauseWhenHidden?: boolean
   autoLoudWhenVisible?: boolean
   autoMuteWhenHidden?: boolean
-  title?: string|HTMLElement|VNode
-  playButton?: string|HTMLElement|VNode
-  pauseButton?: string|HTMLElement|VNode
-  loudButton?: string|HTMLElement|VNode
-  muteButton?: string|HTMLElement|VNode
+  title?: string|VNode
+  playButton?: string|VNode
+  pauseButton?: string|VNode
+  loudButton?: string|VNode
+  muteButton?: string|VNode
   hidePauseButton?: boolean
 }
 
@@ -400,14 +401,6 @@ class AudioQuote extends Component<Props, State> {
     }
   }
 
-  /* [WIP] Migrer cette logique au niveau de l'app */
-  toVNode(element?: string | HTMLElement | VNode): undefined | string | VNode {
-    if (element === undefined) return undefined
-    if (isValidElement(element)) return element
-    if (typeof element === 'string') return <StrToVNode content={element} />
-    return nodesToVNodes(element)[0]
-  }
-
   /* * * * * * * * * * * * * * * * * * *
      * RENDER
      * * * * * * * * * * * * * * * * * * */
@@ -439,28 +432,28 @@ class AudioQuote extends Component<Props, State> {
         {props.title !== undefined
           && <div
           className={titleClasses.join(' ')}>
-          {this.toVNode(props.title)}
+          {toVNode(props.title)}
         </div>}
         <button
           onClick={this.handlePlayClick}
           className={playButtonClasses.join(' ')}>
-          {this.toVNode(props.playButton) ?? 'Lancer la lecture'}
+          {toVNode(props.playButton ?? 'Lancer la lecture')}
         </button>
         {props.hidePauseButton !== true
           && <button
           onClick={this.handlePauseClick}
           className={pauseButtonClasses.join(' ')}>
-          {this.toVNode(props.pauseButton) ?? 'Mettre en pause'}
+          {toVNode(props.pauseButton ?? 'Mettre en pause')}
         </button>}
         <button
           onClick={this.handleLoudClick}
           className={loudButtonClasses.join(' ')}>
-          {this.toVNode(props.loudButton) ?? 'Activer le son'}
+          {toVNode(props.loudButton ?? 'Activer le son')}
         </button>
         <button
           onClick={this.handleMuteClick}
           className={muteButtonClasses.join(' ')}>
-          {this.toVNode(props.muteButton) ?? 'Couper le son'}
+          {toVNode(props.muteButton ?? 'Couper le son')}
         </button>
         <video
           src={props.audioSrc}
