@@ -306,7 +306,7 @@ export function applyConfig (config: Config, hooks?: ApplyConfigHooks) {
   // CSS
   if (css !== undefined) {
     const { onCssInjected } = hooks ?? {}
-    const key = injectCssRule(css, 'css-from-config')
+    const key = injectCssRule(css, 'lm-page-config-css')
     if (onCssInjected !== undefined) onCssInjected(key, css)
   }
 

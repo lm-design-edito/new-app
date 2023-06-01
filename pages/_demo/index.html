@@ -2,13 +2,14 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="../demo/styles__demo.css">
+    <link rel="stylesheet" href="https://assets-decodeurs.lemonde.fr/redacweb/design-edito-new-app-v-0-1-demo/styles__demo.css">
   </head>
   <body class="lm-page demo-page">
 
     <!-- Application -->
     <style>.lm-page-config, .lm-app-config { display: none; }</style>
     <script src="/shared/index.js" type="module"></script>
+    <!-- <script src="https://assets-decodeurs.lemonde.fr/design-edito/v0.1/shared/index.js" type="module"></script> -->
 
     <!-- Config -->
     <data class="lm-page-config" value="approxPublicationDate">2023-06-10</data>
@@ -88,7 +89,7 @@
           </data>
           <data>
             <data value="type">image</data>
-            <data value="url">../demo/images__bowie.jpg</data>
+            <data value="url">https://assets-decodeurs.lemonde.fr/redacweb/design-edito-new-app-v-0-1-demo/images__bowie.jpg</data>
             <data value="alt">Alt</data>
             <data value="credits">un crédit</data>
             <data value="description">Une description</data>
@@ -127,6 +128,7 @@
         <div class="demo-app-option"><em>customClass?:</em> string <span>Une classe CSS à appliquer sur le wrapper de l'élément</span></div>
         <div class="demo-app-option"><em>url?:</em> string <span>L'adresse de l'image à afficher</span></div>
         <div class="demo-app-option"><em>alt?:</em> string <span>Le texte de description pour les lecteurs d'écrans</span></div>
+        <div class="demo-app-option"><em>loading?:</em> 'lazy'|'eager' (default: 'lazy') <span>Définit si l'image doit être chargée au chargement de la page ou à l'apparition dans l'écran</span></div>
         <div class="demo-app-option"><em>description?:</em> string|html <span>La description de l'image à afficher sous l'image</span></div>
         <div class="demo-app-option"><em>credits?:</em> string|html <span>Le crédit photo à afficher sous l'image</span></div>
         <div class="demo-app-option"><em>captionPosition?:</em> 'overlay'|'below' (default: 'below') <span>La position de la légende de l'image</span></div>
@@ -154,8 +156,8 @@
     <div class="demo-app audioquote">
       <data class="lm-app-config" value="audioquote">
         <data value="customClass">audioquote-custom-class</data>
-        <data value="audioSrc" type="string">../demo/audio__do-maj.mp3</data>
-        <data value="subsSrc" type="string">../demo/audio__do-maj.srt</data>
+        <data value="audioSrc" type="string">https://assets-decodeurs.lemonde.fr/redacweb/design-edito-new-app-v-0-1-demo/audio__do-maj.mp3</data>
+        <data value="subsSrc" type="string">https://assets-decodeurs.lemonde.fr/redacweb/design-edito-new-app-v-0-1-demo/audio__do-maj.srt</data>
         <data value="subsGroups" type="string">3,6,8</data>
         <data value="title" type="string">La gamme de Do majeur :</data>
         <data value="playButton" type="html"><strong>Jouer</strong></data>
@@ -205,23 +207,23 @@
         <data value="fullscreen" type="boolean">true</data>
         <data value="images">
           <data>
-            <data value="url" type="string">../demo/images__roadtrip_ukraine-1_2880.jpg</data>
+            <data value="url" type="string">https://assets-decodeurs.lemonde.fr/redacweb/design-edito-new-app-v-0-1-demo/images__roadtrip_ukraine-1_2880.jpg</data>
             <data value="description" type="string">Une première image</data>
           </data>
           <data>
-            <data value="url" type="string">../demo/images__roadtrip_ukraine-2_2880.jpg</data>
+            <data value="url" type="string">https://assets-decodeurs.lemonde.fr/redacweb/design-edito-new-app-v-0-1-demo/images__roadtrip_ukraine-2_2880.jpg</data>
             <data value="description" type="string">Une deuxième image</data>
           </data>
           <data>
-            <data value="url" type="string">../demo/images__roadtrip_ukraine-3_2880.jpg</data>
+            <data value="url" type="string">https://assets-decodeurs.lemonde.fr/redacweb/design-edito-new-app-v-0-1-demo/images__roadtrip_ukraine-3_2880.jpg</data>
             <data value="description" type="string">Une troisième image</data>
           </data>
           <data>
-            <data value="url" type="string">../demo/images__roadtrip_ukraine-4_2880.jpg</data>
+            <data value="url" type="string">https://assets-decodeurs.lemonde.fr/redacweb/design-edito-new-app-v-0-1-demo/images__roadtrip_ukraine-4_2880.jpg</data>
             <data value="description" type="string">Une quatrième image</data>
           </data>
           <data>
-            <data value="url" type="string">../demo/images__roadtrip_ukraine-5_2880.jpg</data>
+            <data value="url" type="string">https://assets-decodeurs.lemonde.fr/redacweb/design-edito-new-app-v-0-1-demo/images__roadtrip_ukraine-5_2880.jpg</data>
             <data value="description" type="string">Une cinquième image</data>
           </data>
         </data>
@@ -271,32 +273,32 @@
     <div class="demo-app footer">
       <data class="lm-app-config" value="footer">
         <data value="bgColor" type="string">rgb(25, 25, 25)</data>
-        <data value="bgImageUrl" type="string">../demo/images__bdif-1.jpeg</data>
+        <data value="bgImageUrl" type="string">https://assets-decodeurs.lemonde.fr/redacweb/design-edito-new-app-v-0-1-demo/images__bdif-1.jpeg</data>
         <data value="shadeLinearGradient" type="string">to top, rgb(0, 0, 0, 1) 20%, rgb(0, 0, 0, .7) 60%</data>
         <data value="shadeBlendMode" type="string">darken</data>
         <data value="textAbove" type="string">Dans la même série</data>
         <data value="textBelow" type="string">Vestibulum sit amet rutrum velit, pretium sodales augue. Cras quis placerat sapien. Morbi faucibus, velit eget sagittis imperdiet, justo felis ultricies est, sed euismod orci orci in sem. </data>
         <data value="thumbnailsData">
           <data>
-            <data value="imageUrl" type="string">../demo/images__bdif-2.gif</data>
+            <data value="imageUrl" type="string">https://assets-decodeurs.lemonde.fr/redacweb/design-edito-new-app-v-0-1-demo/images__bdif-2.gif</data>
             <data value="imageAlt" type="string">Image from ButDoesItFloat</data>
             <data value="textBelow" type="string">Un autre article sur le même sujet</data>
             <data value="href" type="string">#</data>
           </data>
           <data>
-            <data value="imageUrl" type="string">../demo/images__bdif-3.jpeg</data>
+            <data value="imageUrl" type="string">https://assets-decodeurs.lemonde.fr/redacweb/design-edito-new-app-v-0-1-demo/images__bdif-3.jpeg</data>
             <data value="imageAlt" type="string">Image from ButDoesItFloat</data>
             <data value="textBelow" type="string">Un autre article sur le même sujet</data>
             <data value="href" type="string">#</data>
           </data>
           <data>
-            <data value="imageUrl" type="string">../demo/images__bdif-4.jpeg</data>
+            <data value="imageUrl" type="string">https://assets-decodeurs.lemonde.fr/redacweb/design-edito-new-app-v-0-1-demo/images__bdif-4.jpeg</data>
             <data value="imageAlt" type="string">Image from ButDoesItFloat</data>
             <data value="textBelow" type="string">Un autre article sur le même sujet</data>
             <data value="href" type="string">#</data>
           </data>
           <data>
-            <data value="imageUrl" type="string">../demo/images__bdif-6.jpeg</data>
+            <data value="imageUrl" type="string">https://assets-decodeurs.lemonde.fr/redacweb/design-edito-new-app-v-0-1-demo/images__bdif-6.jpeg</data>
             <data value="imageAlt" type="string">Image from ButDoesItFloat</data>
             <data value="textBelow" type="string">Un autre article sur le même sujet</data>
             <data value="href" type="string">#</data>
@@ -313,6 +315,97 @@
       <div class="demo-app-option"><em>textAbove?:</em> string|html <span>Texte à afficher au dessus de la rangée de thumbnails</span></div>
       <div class="demo-app-option"><em>textBelow?:</em> string|html <span>Texte à afficher en dessous de la rangée de thumbnails</span></div>
       <div class="demo-app-option"><em>thumbnailsData?:</em> ThumbnailProps[] <span>Voir les options de l'application <a href="#thumbnail">thumbnail</a></span></div>
+    </div>
+
+    <!-- Slot: scrllgngn -->
+    <h3 class="demo-app-name" id="scrllgngn">Scrllgngn</h3>
+    <div class="demo-app-description">
+      Un outil qui permet de synchroniser l'affichage de blocs fixes au passage dans l'écran de blocs qui scrollent
+    </div>
+    <div class="demo-app scrllgngn">
+      <data class="lm-app-config" value="scrllgngn">
+        <data value="customClass">scrllgngn-custom-class</data>
+        <data value="thresholdOffset">80%</data>
+        <data value="pages">
+          <data>
+            <data value="id">page-1</data>
+            <data value="bgColor">blue</data>
+            <data value="blocks">
+              <data>
+                <data value="id">scrolling-block-1</data>
+                <data value="depth">scroll</data>
+                <data value="type">html</data>
+                <data value="content" type="html"><div style="height: 120vh; display: flex; justify-content: center; align-items: center; background-color: white;">Du contenu mamène</div></data>
+                <data value="layout">left-half</data>
+                
+              </data>
+              <data>
+                <data value="id">front-block-1</data>
+                <data value="depth">front</data>
+                <data value="type">html</data>
+                <data value="content" type="html"><div style="width: 100%; height: 100%;">Bloc fixe 1</div></data>
+                <data value="trackScroll" type="boolean">true</data>
+                <data value="layout">right-half</data>
+                <data value="transitions">whirl, 600ms; grow, 600ms</data>
+              </data>
+            </data>
+          </data>
+          <data>
+            <data value="id">page-2</data>
+            <data value="bgColor">red</data>
+            <data value="blocks">
+              <data>
+                <data value="id">scrolling-block-2</data>
+                <data value="depth">scroll</data>
+                <data value="type">html</data>
+                <data value="content" type="html"><div style="height: 120vh; display: flex; justify-content: center; align-items: center; background-color: white;">Du contenu mamène</div></data>
+                <data value="layout">left-half</data>
+              </data>
+              <data>
+                <data value="id">front-block-2</data>
+                <data value="depth">front</data>
+                <data value="type">html</data>
+                <data value="content" type="html"><div style="width: 100%; height: 100%;">Bloc fixe 2</div></data>
+                <data value="trackScroll" type="boolean">true</data>
+                <data value="layout">right-half</data>
+                <data value="transitions">whirl, 600ms; grow, 600ms</data>
+              </data>
+            </data>
+          </data>
+        </data>
+      </data>
+    </div>
+    <div class="demo-app-options">
+      <div class="demo-app-option"><em>customClass?:</em> string <span>Une classe CSS à ajouter sur l'élément conteneur de l'app</span></div>
+      stickyBlocksLazyLoadDistance (2)
+      stickyBlocksViewportHeight (100vh)
+      stickyBlocksOffsetTop (0px)
+      thresholdOffset (0)
+      bgColorTransitionDuration (200ms)
+      headerCustomClass
+      headerNavItemsAlign
+      pages
+        id
+        showHeader
+        showNav
+        headerLogoFill1
+        headerLogoFill2
+        headerCustomClass
+        headerNavItemsAlign
+        chapterName
+        isChapterHead
+        bgColor
+        blocks
+          id
+          zIndex
+          type
+          content
+          trackScroll
+          depth
+          layout
+          mobileLayout
+          transitions
+          mobileTransitions
     </div>
 
     <!-- Slot: slideshow -->
@@ -333,23 +426,23 @@
         <data value="fullscreen" type="boolean">true</data>
         <data value="images">
           <data>
-            <data value="url" type="string">../demo/images__roadtrip_ukraine-1_2880.jpg</data>
+            <data value="url" type="string">https://assets-decodeurs.lemonde.fr/redacweb/design-edito-new-app-v-0-1-demo/images__roadtrip_ukraine-1_2880.jpg</data>
             <data value="description" type="string">Une première image</data>
           </data>
           <data>
-            <data value="url" type="string">../demo/images__roadtrip_ukraine-2_2880.jpg</data>
+            <data value="url" type="string">https://assets-decodeurs.lemonde.fr/redacweb/design-edito-new-app-v-0-1-demo/images__roadtrip_ukraine-2_2880.jpg</data>
             <data value="description" type="string">Une deuxième image</data>
           </data>
           <data>
-            <data value="url" type="string">../demo/images__roadtrip_ukraine-3_2880.jpg</data>
+            <data value="url" type="string">https://assets-decodeurs.lemonde.fr/redacweb/design-edito-new-app-v-0-1-demo/images__roadtrip_ukraine-3_2880.jpg</data>
             <data value="description" type="string">Une troisième image</data>
           </data>
           <data>
-            <data value="url" type="string">../demo/images__roadtrip_ukraine-4_2880.jpg</data>
+            <data value="url" type="string">https://assets-decodeurs.lemonde.fr/redacweb/design-edito-new-app-v-0-1-demo/images__roadtrip_ukraine-4_2880.jpg</data>
             <data value="description" type="string">Une quatrième image</data>
           </data>
           <data>
-            <data value="url" type="string">../demo/images__roadtrip_ukraine-5_2880.jpg</data>
+            <data value="url" type="string">https://assets-decodeurs.lemonde.fr/redacweb/design-edito-new-app-v-0-1-demo/images__roadtrip_ukraine-5_2880.jpg</data>
             <data value="description" type="string">Une cinquième image</data>
           </data>
         </data>
@@ -385,7 +478,7 @@
     </div>
     <div class="demo-app thumbnail">
       <data class="lm-app-config" value="thumbnail">
-        <data value="imageUrl" type="string">../demo/images__bdif-4.jpeg</data>
+        <data value="imageUrl" type="string">https://assets-decodeurs.lemonde.fr/redacweb/design-edito-new-app-v-0-1-demo/images__bdif-4.jpeg</data>
         <data value="imageAlt" type="string">Image from ButDoesItFloat</data>
         <data value="textCenterTop" type="string">Un texte en haut</data>
         <data value="textCenterMiddle" type="string">Un texte au milieu</data>
@@ -405,6 +498,7 @@
       <div class="demo-app-option"><em>customClass?:</em> string <span>Une classe CSS à ajouter sur l'élément conteneur de l'app</span></div>
       <div class="demo-app-option"><em>imageUrl?:</em> string <span>L'URL de l'image à afficher</span></div>
       <div class="demo-app-option"><em>imageAlt?:</em> string <span>Le texte de description pour les lecteurs d'écran</span></div>
+      <div class="demo-app-option"><em>loading?:</em> 'lazy'|'eager' (default: 'lazy') <span>Définit si l'image doit être chargée au chargement de la page ou à l'apparition dans l'écran</span></div>
       <div class="demo-app-option"><em>textAbove?:</em> string|html <span>Le texte à afficher au dessus du thumbnail</span></div>
       <div class="demo-app-option"><em>textBelow?:</em> string|html <span>Le texte à afficher en dessous du thumbnail</span></div>
       <div class="demo-app-option"><em>textLeftTop?:</em> string|html <span>Le texte à afficher à gauche en haut du thumbnail</span></div>
