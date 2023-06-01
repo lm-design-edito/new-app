@@ -6,6 +6,7 @@ import logger from 'morgan'
 import Debug from 'debug'
 import http from 'http'
 import { glob } from 'glob'
+import cors from 'cors'
 
 const { readFile, readdir } = fs.promises
 
@@ -28,6 +29,7 @@ server.listen(port)
 server.on('error', onError)
 server.on('listening', onListening)
 
+app.use(cors({ origin: true }))
 app.use(logger('dev'))
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
