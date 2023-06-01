@@ -1,4 +1,4 @@
-import { Component, VNode } from 'preact'
+import { Component, JSX, VNode } from 'preact'
 import Thumbnail from '~/components/Thumbnail'
 import bem from '~/utils/bem'
 import BasicTextElement, { ElementType } from '../BasicTextElement'
@@ -12,6 +12,7 @@ export type Props = {
   customClass?: string
   url?: string
   alt?: string
+  loading?: JSX.HTMLAttributes<HTMLImageElement>['loading']
   credits?: string|VNode
   description?: string|VNode
   captionPosition?: 'overlay'|'below'
@@ -23,6 +24,7 @@ export default class Image extends Component<Props> {
       customClass,
       url,
       alt,
+      loading,
       credits,
       description,
       captionPosition
@@ -39,6 +41,7 @@ export default class Image extends Component<Props> {
         customClass={customClass}
         imageUrl={url}
         imageAlt={alt}
+        loading={loading}
         textCenterBottom={overlayCaption ? caption : undefined}
         textBelow={overlayCaption ? undefined : caption} />
     </div>

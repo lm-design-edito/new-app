@@ -1,4 +1,4 @@
-import { Component, FunctionComponent, VNode } from 'preact'
+import { Component, FunctionComponent, JSX, VNode } from 'preact'
 import { JSXInternal } from 'preact/src/jsx'
 import ImageOverlay from '~/components/ImageOverlay'
 import bem from '~/utils/bem'
@@ -8,6 +8,7 @@ export type Props = {
   customClass?: string
   imageUrl?: string
   imageAlt?: string
+  loading?: JSX.HTMLAttributes<HTMLImageElement>['loading']
   textAbove?: string|VNode
   textBelow?: string|VNode
   textLeftTop?: string|VNode
@@ -51,6 +52,7 @@ export default class Thumbnail extends Component<Props, {}> {
       customClass,
       imageUrl,
       imageAlt,
+      loading,
       textAbove,
       textBelow,
       textLeftTop,
@@ -121,6 +123,7 @@ export default class Thumbnail extends Component<Props, {}> {
           <ImageOverlay
             imageUrl={imageUrl}
             imageAlt={imageAlt}
+            loading={loading}
             textTop={textCenterTop}
             textMiddle={textCenterMiddle}
             textBottom={textCenterBottom}

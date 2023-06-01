@@ -1,4 +1,4 @@
-import { Component, VNode } from 'preact'
+import { Component, JSX, VNode } from 'preact'
 import Img from '~/components/Img'
 import bem from '~/utils/bem'
 import styles from './styles.module.scss'
@@ -6,6 +6,7 @@ import styles from './styles.module.scss'
 export type Props = {
   imageUrl?: string
   imageAlt?: string
+  loading?: JSX.HTMLAttributes<HTMLImageElement>['loading']
   textTop?: string | VNode
   textMiddle?: string | VNode
   textBottom?: string | VNode
@@ -30,6 +31,7 @@ export default class ImageOverlay extends Component<Props, {}> {
     const {
       imageUrl,
       imageAlt,
+      loading,
       textTop,
       textMiddle,
       textBottom,
@@ -46,7 +48,12 @@ export default class ImageOverlay extends Component<Props, {}> {
       className={wrapperClasses.join(' ')}
       style={wrapperStyle}>
       {/* image */}
-      {imageUrl && <div className={imageClasses.join(' ')}><Img src={imageUrl} alt={imageAlt} /></div>}
+      {imageUrl && <div className={imageClasses.join(' ')}>
+        <Img
+          src={imageUrl}
+          alt={imageAlt}
+          loading={loading} />
+      </div>}
       {/* shade */}
       {<div className={shadeClasses.join(' ')} />}
       {/* text */}
