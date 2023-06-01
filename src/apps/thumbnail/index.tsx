@@ -51,37 +51,33 @@ export function optionsToProps(options: Options): Props {
   } = options
 
   const props: Props = {}
-  const expectedString = (val: unknown) => val !== undefined ? toString(val) : undefined
-  const expectedStringOrVNode = (val: unknown) => {
-    if (val === undefined) return undefined
-    return toVNode(val)
-  }
-
-  if (customClass !== undefined) props.customClass = expectedString(customClass)
-  if (imageUrl !== undefined) props.imageUrl = expectedString(imageUrl)
-  if (imageAlt !== undefined) props.imageAlt = expectedString(imageAlt)
-  if (textAbove !== undefined) props.textAbove = expectedStringOrVNode(textAbove)
-  if (textBelow !== undefined) props.textBelow = expectedStringOrVNode(textBelow)
-  if (textLeftTop !== undefined) props.textLeftTop = expectedStringOrVNode(textLeftTop)
-  if (textLeftMiddle !== undefined) props.textLeftMiddle = expectedStringOrVNode(textLeftMiddle)
-  if (textLeftBottom !== undefined) props.textLeftBottom = expectedStringOrVNode(textLeftBottom)
-  if (textRightTop !== undefined) props.textRightTop = expectedStringOrVNode(textRightTop)
-  if (textRightMiddle !== undefined) props.textRightMiddle = expectedStringOrVNode(textRightMiddle)
-  if (textRightBottom !== undefined) props.textRightBottom = expectedStringOrVNode(textRightBottom)
-  if (textCenterTop !== undefined) props.textCenterTop = expectedStringOrVNode(textCenterTop)
-  if (textCenterMiddle !== undefined) props.textCenterMiddle = expectedStringOrVNode(textCenterMiddle)
-  if (textCenterBottom !== undefined) props.textCenterBottom = expectedStringOrVNode(textCenterBottom)
-  if (shadeLinearGradient !== undefined) props.shadeLinearGradient = expectedString(shadeLinearGradient)
-  if (shadeBlendMode !== undefined) props.shadeBlendMode = expectedString(shadeBlendMode)
-  if (status !== undefined) props.status = expectedString(status)
+  if (customClass !== undefined) props.customClass = toString(customClass)
+  if (imageUrl !== undefined) props.imageUrl = toString(imageUrl)
+  if (imageAlt !== undefined) props.imageAlt = toString(imageAlt)
+  if (textAbove !== undefined) props.textAbove = toVNode(textAbove)
+  if (textBelow !== undefined) props.textBelow = toVNode(textBelow)
+  if (textLeftTop !== undefined) props.textLeftTop = toVNode(textLeftTop)
+  if (textLeftMiddle !== undefined) props.textLeftMiddle = toVNode(textLeftMiddle)
+  if (textLeftBottom !== undefined) props.textLeftBottom = toVNode(textLeftBottom)
+  if (textRightTop !== undefined) props.textRightTop = toVNode(textRightTop)
+  if (textRightMiddle !== undefined) props.textRightMiddle = toVNode(textRightMiddle)
+  if (textRightBottom !== undefined) props.textRightBottom = toVNode(textRightBottom)
+  if (textCenterTop !== undefined) props.textCenterTop = toVNode(textCenterTop)
+  if (textCenterMiddle !== undefined) props.textCenterMiddle = toVNode(textCenterMiddle)
+  if (textCenterBottom !== undefined) props.textCenterBottom = toVNode(textCenterBottom)
+  if (shadeLinearGradient !== undefined) props.shadeLinearGradient = toString(shadeLinearGradient)
+  if (shadeBlendMode !== undefined) props.shadeBlendMode = toString(shadeBlendMode)
+  if (status !== undefined) props.status = toString(status)
   if (props.status !== undefined && statusOverrides !== undefined) {
+    const currentStatus = props.status
     const statusOverridesProp: Props['statusOverrides'] = {}
-    if (statusOverrides!.hasOwnProperty(props.status)) {
-      statusOverridesProp[props.status] = optionsToProps((statusOverrides as any)[props.status])
-    }
+    try {
+      const unknownOverrides = (statusOverrides as any)[currentStatus] as unknown
+      const overrides = optionsToProps(unknownOverrides as Options)
+      statusOverridesProp[currentStatus] = overrides
+    } catch (err) {}
     props.statusOverrides = statusOverridesProp
   }
-  if (href !== undefined) props.href = expectedString(href)
-
+  if (href !== undefined) props.href = toString(href)
   return props
 }
