@@ -21,8 +21,13 @@ export default class TransitionsWrapper extends Component<Props> {
   }
 
   stringifyDuration (duration?: TransitionDuration) {
-    const isNumber = typeof duration === 'number'
-    return isNumber ? `${duration}ms` : duration
+    if (duration === undefined) return '400ms'
+    if (typeof duration === 'number') return `${duration}ms`
+    const isValidRegex = /([0-9]+(\.[0-9]+)?|\.[0-9]+)[a-zA-Z]*/
+    const hasNoUnitRegex = /^[0-9\.]+$/
+    if (!isValidRegex.test(duration)) return '400ms'
+    if (hasNoUnitRegex) return `${duration}ms`
+    return duration
   }
 
   unifyTransitions (
