@@ -82,6 +82,7 @@ export type PropsPageData = {
 }
 
 export type Props = {
+  customClass?: string
   stickyBlocksLazyLoadDistance?: number
   stickyBlocksViewportHeight?: string // [WIP] No relative units, maybe some regex checks here?
   stickyBlocksOffsetTop?: number
@@ -1342,6 +1343,7 @@ export default class Scrollgneugneu extends Component<Props, State> {
         .value,
       styles['wrapper']
     ]
+    if (props.customClass !== undefined) wrapperClasses.push(props.customClass)
     if (blocksShouldStick) wrapperClasses.push(
       styles['wrapper_stick-blocks'],
       wrapperBemClass.mod('stick-blocks').value

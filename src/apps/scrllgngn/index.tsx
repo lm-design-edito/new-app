@@ -38,6 +38,7 @@ export default function ScrllgngnApp ({
 export function optionsToProps (options: Options): Props {
   const props: Props = {}
   const {
+    customClass,
     stickyBlocksLazyLoadDistance,
     stickyBlocksViewportHeight,
     stickyBlocksOffsetTop,
@@ -47,6 +48,8 @@ export function optionsToProps (options: Options): Props {
     headerCustomClass,
     headerNavItemsAlign
   } = options
+  // customClass
+  if (customClass !== undefined) { props.customClass = toString(customClass) }
   // stickyBlocksLazyLoadDistance
   if (stickyBlocksLazyLoadDistance !== undefined) { props.stickyBlocksLazyLoadDistance = toNumber(stickyBlocksLazyLoadDistance) }
   // stickyBlocksViewportHeight
