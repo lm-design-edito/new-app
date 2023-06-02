@@ -1,0 +1,8 @@
+.wrapper {
+  height: 0;
+  transition: 200ms height ease-in-out;
+
+  &_is-open {
+    height: var(--lm-drawer-content-height);
+  }
+}
