@@ -58,7 +58,6 @@ function updateStyleElements () {
   // Update style tags
   rulesMap.forEach((rule, name) => {
     const dataName = name.replace(/[^\w]/igm, '')
-    console.log(dataName)
     const existingTag = document.querySelector(`.${styleTagsClass}[data-name="${dataName}"]`)
     const targetCssValue = `/* ${name.replace(/[^\w]/, '-')} */\n${rule}`
     if (existingTag !== null) {
