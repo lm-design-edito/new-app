@@ -9,6 +9,7 @@ export type Props = {
   customClass?: string
   bgColor?: string
   bgImageUrl?: string
+  bgImageAlt?: string
   shadeLinearGradient?: string
   shadeBlendMode?: string
   textAbove?: string|VNode
@@ -45,6 +46,7 @@ export default class Footer extends Component<Props, {}> {
       customClass,
       bgColor = 'transparent',
       bgImageUrl,
+      bgImageAlt,
       shadeLinearGradient,
       shadeBlendMode,
       textAbove,
@@ -75,7 +77,7 @@ export default class Footer extends Component<Props, {}> {
         style={wrapperStyle}>
         {/* Bg image */}
         {bgImageUrl !== undefined && <div className={backgroundImageClasses.join(' ')}>
-          <Img src={bgImageUrl} />
+          <Img src={bgImageUrl} alt={bgImageAlt} />
         </div>}
         {/* Shade */}
         {<div className={shadeClasses.join(' ')} />}

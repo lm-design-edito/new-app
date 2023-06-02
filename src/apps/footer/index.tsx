@@ -33,6 +33,7 @@ export function optionsToProps(options: Options): Props {
     customClass, //?: string
     bgColor, //?: string
     bgImageUrl, //?: string
+    bgImageAlt, //?: string
     shadeLinearGradient, //?: string
     shadeBlendMode, //?: string
     textAbove, //?: string|VNode
@@ -47,6 +48,7 @@ export function optionsToProps(options: Options): Props {
   if (customClass !== undefined) props.customClass = toString(customClass)
   if (bgColor !== undefined) props.bgColor = toString(bgColor)
   if (bgImageUrl !== undefined) props.bgImageUrl = toString(bgImageUrl)
+  if (bgImageAlt !== undefined) props.bgImageAlt = toString(bgImageAlt)
   if (shadeLinearGradient !== undefined) props.shadeLinearGradient = toString(shadeLinearGradient)
   if (shadeBlendMode !== undefined) props.shadeBlendMode = toString(shadeBlendMode)
   if (textAbove !== undefined) { props.textAbove = toVNode(textAbove) }
