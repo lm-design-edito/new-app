@@ -67,7 +67,9 @@ export default class Article extends Component<Props> {
             captionPosition,
             toggleCaptionBtn,
             openCaptionText,
-            closeCaptionText
+            closeCaptionText,
+            openCaptionIcon,
+            closeCaptionIcon
           } = elementData
           return <Image
             customClass={customClass}
@@ -79,6 +81,8 @@ export default class Article extends Component<Props> {
             toggleCaptionBtn={toggleCaptionBtn}
             openCaptionText={openCaptionText}
             closeCaptionText={closeCaptionText}
+            openCaptionIcon={openCaptionIcon}
+            closeCaptionIcon={closeCaptionIcon}
           />
         }
         // ReadAlso

@@ -67,6 +67,8 @@ function unknownToElement (unknown: unknown): ArticleElementProps|undefined {
     toggleCaptionBtn,
     openCaptionText,
     closeCaptionText,
+    openCaptionIcon,
+    closeCaptionIcon,
     subscribed,
     label
   } = object
@@ -91,6 +93,8 @@ function unknownToElement (unknown: unknown): ArticleElementProps|undefined {
     if (toggleCaptionBtn !== undefined) elementProps.toggleCaptionBtn = toBoolean(toggleCaptionBtn)
     if (openCaptionText !== undefined) elementProps.openCaptionText = toString(openCaptionText)
     if (closeCaptionText !== undefined) elementProps.closeCaptionText = toString(closeCaptionText)
+    if (openCaptionIcon !== undefined) elementProps.openCaptionIcon = toVNode(openCaptionIcon)
+    if (closeCaptionIcon !== undefined) elementProps.closeCaptionIcon = toVNode(closeCaptionIcon)
     return elementProps
   }
   if (type === 'read-also') {
