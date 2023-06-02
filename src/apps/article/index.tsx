@@ -65,6 +65,7 @@ function unknownToElement (unknown: unknown): ArticleElementProps|undefined {
     description,
     captionPosition,
     toggleCaptionBtn,
+    captionDefaultStatus,
     openCaptionText,
     closeCaptionText,
     openCaptionIcon,
@@ -91,6 +92,8 @@ function unknownToElement (unknown: unknown): ArticleElementProps|undefined {
     if (captionPosition === 'overlay') elementProps.captionPosition = captionPosition
     else elementProps.captionPosition = 'below'
     if (toggleCaptionBtn !== undefined) elementProps.toggleCaptionBtn = toBoolean(toggleCaptionBtn)
+    if (captionDefaultStatus === 'open') elementProps.captionDefaultStatus = captionDefaultStatus
+    else elementProps.captionDefaultStatus = 'closed'
     if (openCaptionText !== undefined) elementProps.openCaptionText = toString(openCaptionText)
     if (closeCaptionText !== undefined) elementProps.closeCaptionText = toString(closeCaptionText)
     if (openCaptionIcon !== undefined) elementProps.openCaptionIcon = toVNode(openCaptionIcon)

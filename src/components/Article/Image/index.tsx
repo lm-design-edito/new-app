@@ -18,6 +18,7 @@ export type Props = {
   description?: string | VNode
   captionPosition?: 'overlay' | 'below'
   toggleCaptionBtn?: boolean
+  captionDefaultStatus?: 'open' | 'closed'
   openCaptionText?: string
   closeCaptionText?: string
   openCaptionIcon?: VNode
@@ -35,6 +36,7 @@ export default class Image extends Component<Props> {
       description,
       captionPosition,
       toggleCaptionBtn,
+      captionDefaultStatus,
       openCaptionText,
       closeCaptionText,
       openCaptionIcon,
@@ -59,6 +61,7 @@ export default class Image extends Component<Props> {
         textCenterBottom={hasOverlayCaption ? caption : undefined}
         textBelow={hasOverlayCaption ? undefined : caption}
         toggleCaptionBtn={hasToggleCaptionBtn}
+        captionDefaultStatus={captionDefaultStatus}
         openCaptionText={openCaptionText ?? 'Voir plus'}
         closeCaptionText={closeCaptionText ?? 'Voir moins'}
         openCaptionIcon={openCaptionIcon ?? <Icon file={Icons.TOGGLE_OPEN} />}

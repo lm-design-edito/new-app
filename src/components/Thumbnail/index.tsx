@@ -23,6 +23,7 @@ export type Props = {
   shadeLinearGradient?: string
   shadeBlendMode?: string
   toggleCaptionBtn?: boolean
+  captionDefaultStatus?: 'open'|'closed'
   openCaptionText?: string
   closeCaptionText?: string
   openCaptionIcon?: VNode
@@ -72,6 +73,7 @@ export default class Thumbnail extends Component<Props, {}> {
       shadeLinearGradient,
       shadeBlendMode,
       toggleCaptionBtn,
+      captionDefaultStatus,
       openCaptionText,
       closeCaptionText,
       openCaptionIcon,
@@ -140,6 +142,7 @@ export default class Thumbnail extends Component<Props, {}> {
             shadeLinearGradient={shadeLinearGradient}
             shadeBlendMode={shadeBlendMode}
             toggleCaptionBtn={toggleCaptionBtn}
+            captionDefaultStatus={captionDefaultStatus}
             openCaptionText={openCaptionText}
             closeCaptionText={closeCaptionText}
             openCaptionIcon={openCaptionIcon}

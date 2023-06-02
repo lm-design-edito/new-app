@@ -21,6 +21,7 @@ export type Props = {
   shadeLinearGradient?: string
   shadeBlendMode?: string
   toggleCaptionBtn?: boolean
+  captionDefaultStatus?: 'open'|'closed'
   openCaptionText?: string
   closeCaptionText?: string
   openCaptionIcon?: VNode
@@ -31,7 +32,7 @@ export default class ImageOverlay extends Component<Props, State> {
   bemClss = bem('lm-image-overlay')
 
   state = {
-    captionIsOpen: false,
+    captionIsOpen: this.props.captionDefaultStatus === 'open' ? true : false,
   }
 
   /* * * * * * * * * * * * * * * * * * *

@@ -66,6 +66,7 @@ export default class Article extends Component<Props> {
             description,
             captionPosition,
             toggleCaptionBtn,
+            captionDefaultStatus,
             openCaptionText,
             closeCaptionText,
             openCaptionIcon,
@@ -79,6 +80,7 @@ export default class Article extends Component<Props> {
             description={description}
             captionPosition={captionPosition}
             toggleCaptionBtn={toggleCaptionBtn}
+            captionDefaultStatus={captionDefaultStatus}
             openCaptionText={openCaptionText}
             closeCaptionText={closeCaptionText}
             openCaptionIcon={openCaptionIcon}
