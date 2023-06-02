@@ -41,6 +41,13 @@ export type Config = {
   [Options.ADD_SLOTS]?: Array<string>
 }
 
+export enum ConfigSlotPosition {
+  AFTER = 'after',
+  BEFORE = 'before',
+  END_OF = 'endof',
+  START_OF = 'startof'
+}
+
 export const optionsList = Object.values(Options)
 export const isValidOptionName = (name: string): name is Options => {
   return optionsList.includes(name as Options)
@@ -517,19 +524,32 @@ export function applyConfig (config: Config, hooks?: ApplyConfigHooks) {
       }
       references.forEach((reference) => {
         const actualTarget = selectorToElement(target)
-        const parent = reference.parentElement;
-        if (!parent) { 
-          document.body.appendChild(actualTarget);
-          return; 
+        const parent = position === ConfigSlotPosition.END_OF || position === ConfigSlotPosition.START_OF ? reference : reference.parentElement;
+        
+        switch(position) {
+          case ConfigSlotPosition.START_OF:
+            reference.prepend(actualTarget);
+            break;
+          case ConfigSlotPosition.END_OF:
+            reference.append(actualTarget);
+            break;
+          case ConfigSlotPosition.AFTER: 
+            if (parent) {
+              if (reference.nextElementSibling) {
+                parent.insertBefore(actualTarget, reference.nextElementSibling)
+              } else {
+                parent.appendChild(actualTarget);
+              }
+            }
+            break;
+          default:
+            if (parent) {
+              parent.insertBefore(actualTarget, reference);
+            }
+            break;
         }
-        if (position === 'after') {
-          if (reference.nextElementSibling) {
-            parent.insertBefore(actualTarget, reference.nextElementSibling)
-          } else {
-            parent.appendChild(actualTarget);
-          }
-        } else {
-          parent.insertBefore(actualTarget, reference);
+        if (!parent) {
+          document.body.appendChild(actualTarget);
         }
       });
     });
