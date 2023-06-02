@@ -64,6 +64,9 @@ function unknownToElement (unknown: unknown): ArticleElementProps|undefined {
     credits,
     description,
     captionPosition,
+    toggleCaptionBtn,
+    openCaptionText,
+    closeCaptionText,
     subscribed,
     label
   } = object
@@ -85,6 +88,9 @@ function unknownToElement (unknown: unknown): ArticleElementProps|undefined {
     if (description !== undefined) { elementProps.description = toVNode(description) }
     if (captionPosition === 'overlay') elementProps.captionPosition = captionPosition
     else elementProps.captionPosition = 'below'
+    if (toggleCaptionBtn !== undefined) elementProps.toggleCaptionBtn = toBoolean(toggleCaptionBtn)
+    if (openCaptionText !== undefined) elementProps.openCaptionText = toString(openCaptionText)
+    if (closeCaptionText !== undefined) elementProps.closeCaptionText = toString(closeCaptionText)
     return elementProps
   }
   if (type === 'read-also') {

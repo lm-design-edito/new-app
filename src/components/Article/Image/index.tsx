@@ -2,6 +2,7 @@ import { Component, JSX, VNode } from 'preact'
 import Thumbnail from '~/components/Thumbnail'
 import bem from '~/utils/bem'
 import BasicTextElement, { ElementType } from '../BasicTextElement'
+import Icon, { Icons } from '~/components/Icon'
 
 const {
   MEDIA_CREDITS,
@@ -13,13 +14,18 @@ export type Props = {
   url?: string
   alt?: string
   loading?: JSX.HTMLAttributes<HTMLImageElement>['loading']
-  credits?: string|VNode
-  description?: string|VNode
-  captionPosition?: 'overlay'|'below'
+  credits?: string | VNode
+  description?: string | VNode
+  captionPosition?: 'overlay' | 'below'
+  toggleCaptionBtn?: boolean
+  openCaptionText?: string
+  closeCaptionText?: string
+  openCaptionIcon?: VNode
+  closeCaptionIcon?: VNode
 }
 
 export default class Image extends Component<Props> {
-  render () {
+  render() {
     const {
       customClass,
       url,
@@ -27,23 +33,37 @@ export default class Image extends Component<Props> {
       loading,
       credits,
       description,
-      captionPosition
+      captionPosition,
+      toggleCaptionBtn,
+      openCaptionText,
+      closeCaptionText,
+      openCaptionIcon,
+      closeCaptionIcon
     } = this.props
-    const overlayCaption = captionPosition === 'overlay'
-    const caption = <>
+    const hasOverlayCaption = captionPosition === 'overlay'
+    const hasToggleCaptionBtn = hasOverlayCaption && (toggleCaptionBtn === true)
+    const clss = 'lm-article-image'
+    const wrapperClass = bem(clss).mod({ 'caption-overlay': hasOverlayCaption })
+    const captionClass = bem(clss).elt('caption')
+    const caption = <div className={captionClass.value}>
       {description !== undefined && <BasicTextElement type={MEDIA_DESCRIPTION}>{description}</BasicTextElement>}
       {credits !== undefined && description !== undefined && <> </>}
       {credits !== undefined && <BasicTextElement type={MEDIA_CREDITS}>{credits}</BasicTextElement>}
-    </>
-    const clss = bem('lm-article-image').mod({ 'caption-overlay': overlayCaption })
-    return <div className={clss.value}>
+    </div>
+    return <div className={wrapperClass.value}>
       <Thumbnail
         customClass={customClass}
         imageUrl={url}
         imageAlt={alt}
         loading={loading}
-        textCenterBottom={overlayCaption ? caption : undefined}
-        textBelow={overlayCaption ? undefined : caption} />
+        textCenterBottom={hasOverlayCaption ? caption : undefined}
+        textBelow={hasOverlayCaption ? undefined : caption}
+        toggleCaptionBtn={hasToggleCaptionBtn}
+        openCaptionText={openCaptionText ?? 'Voir plus'}
+        closeCaptionText={closeCaptionText ?? 'Voir moins'}
+        openCaptionIcon={openCaptionIcon ?? <Icon file={Icons.TOGGLE_OPEN} />}
+        closeCaptionIcon={closeCaptionIcon ?? <Icon file={Icons.TOGGLE_CLOSE} />}
+      />
     </div>
   }
 }

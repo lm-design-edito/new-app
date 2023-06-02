@@ -223,6 +223,33 @@ a.lm-article-read-also .lm-article-read-also__title {
   margin: 8px;
 }
 
+.lm-article-image .lm-article-image__caption {
+  opacity: 1;
+  transition: opacity 200ms ease-in-out;
+}
+
+.lm-article-image .lm-image-overlay_caption-closed .lm-article-image__caption {
+  opacity: 0;
+}
+
+.lm-article-image .lm-toggle-button {
+  font-family: var(--ff-marr-sans);
+  color: #A4A9B4;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  font-size: 0.9em;
+  width: fit-content;
+}
+
+.lm-article-image .lm-toggle-button span {
+  padding-right: 0.6em;
+}
+
+.lm-article-image .lm-toggle-button svg path {
+  fill: #A4A9B4;
+}
+
 .lm-article-image .lm-image-overlay__text-bottom .lm-article-media-description,
 .lm-article-image .lm-image-overlay__text-bottom .lm-article-media-credits {
   color: white;
