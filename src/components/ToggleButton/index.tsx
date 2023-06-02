@@ -4,6 +4,7 @@ import bem from '~/utils/bem'
 import styles from './styles.module.scss'
 
 export type Props = {
+  customClass?: string
   isOpen?: boolean
   openText?: string
   closeText?: string
@@ -21,8 +22,12 @@ export default class ToggleButton extends Component<Props, {}> {
   render() {
     const { props, bemClss } = this
 
-    const wrapperClasses = [bemClss.mod({ 'is-open': props.isOpen }).value, styles['wrapper']]
-
+    const wrapperClasses = [
+      bemClss.mod({ 'is-open': props.isOpen }).value,
+      props.customClass,
+      styles['wrapper']
+    ]
+    
     const text = props.isOpen ? props.closeText : props.openText
     const icon = props.isOpen ? props.closeIcon : props.openIcon
 
