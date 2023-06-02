@@ -242,6 +242,9 @@ export async function renderApp ({ name, options, root, pageConfig, silentLogger
     root.appendChild(target)
   }
   target.classList.add('lm-app', `lm-app_${name}`)
+  for (const fontName of (pageConfig?.customFonts ?? [])) {
+    target.classList.add(`lm-app_${fontName}`) 
+  }
   // Perform the actual rendering
   const rendered = renderer({
     root: target,

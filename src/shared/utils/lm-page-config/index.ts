@@ -17,7 +17,8 @@ export enum Options {
   TRACKING = 'tracking',
   CSS = 'css',
   SCALES = 'scales',
-  ADD_SLOTS = 'addSlots'
+  ADD_SLOTS = 'addSlots',
+  CUSTOM_FONTS = 'customFonts'
 }
 
 export type ConfigDataSource = {
@@ -39,6 +40,7 @@ export type Config = {
   [Options.CSS]?: string,
   [Options.SCALES]?: Array<string>
   [Options.ADD_SLOTS]?: Array<string>
+  [Options.CUSTOM_FONTS]?: FontName[]
 }
 
 export enum ConfigSlotPosition {
@@ -46,6 +48,10 @@ export enum ConfigSlotPosition {
   BEFORE = 'before',
   END_OF = 'endof',
   START_OF = 'startof'
+}
+
+export enum FontName {
+  EUCLID_FLEX_XL = 'euclid-flex-xl'
 }
 
 export const optionsList = Object.values(Options)
@@ -70,7 +76,8 @@ export enum RemoteValidInstructionsNames {
   TRACK_END_REACHED = 'trackEndReached',
   CSS = 'css',
   ADD_SCALE = 'addScale',
-  ADD_SLOTS = 'addSlots'
+  ADD_SLOTS = 'addSlots',
+  CUSTOM_FONTS = 'customFonts'
 }
 
 export type InstructionName = InlineOnlyInstructionsNames|RemoteValidInstructionsNames
@@ -183,11 +190,26 @@ export class Instructions {
         currentScales.push(toString(value))
         config[Options.SCALES] = currentScales
       }
+      // [WIP] ADD_SLOT pour inline ?
       // ADD_SLOTS
       else if (name === RemoteValidInstructionsNames.ADD_SLOTS) {
         const currentSlots = config[Options.ADD_SLOTS] ?? []
         arrayValue.forEach(value => currentSlots.push(toString(value)))
         config[Options.ADD_SLOTS] = currentSlots
+      }
+      // [WIP] CUSTOM_FONT pour inline ? : (
+      // CUSTOM_FONTS
+      else if (name === RemoteValidInstructionsNames.CUSTOM_FONTS) {
+        const currentCustomFonts = config[Options.CUSTOM_FONTS] ?? []
+        /* [WIP] add check */
+        arrayValue.forEach(value => {
+          const strValue = toString(value)
+          const isFontName = Object.values(FontName).includes(strValue as FontName)
+          if (!isFontName) return
+          const fontName = strValue as FontName
+          currentCustomFonts.push(fontName)
+        })
+        config[Options.CUSTOM_FONTS] = currentCustomFonts
       }
     })
     return config
