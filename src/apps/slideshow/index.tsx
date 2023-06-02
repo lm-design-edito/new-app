@@ -1,7 +1,7 @@
 import { render } from 'preact'
 import { Options, Renderer } from 'shared/utils/lm-page-apps'
 import Slideshow, { Media, Props } from '~/components/Slideshow'
-import { toBoolean, toNumber, toString } from '~/utils/cast'
+import { toBoolean, toNumber, toString, toVNode } from '~/utils/cast'
 
 /* * * * * * * * * * * * * * * * * * *
  * RENDERER
@@ -53,8 +53,8 @@ export function optionsToProps(options: Options): Props {
   if (height !== undefined) { props.height = toString(height) }
   if (imageFit !== undefined) { props.imageFit = toString(imageFit) }
   if (toggleDescriptionBtn !== undefined) { props.toggleDescriptionBtn = toBoolean(toggleDescriptionBtn) }
-  if (credits !== undefined) { props.credits = toString(credits) }
-  if (description !== undefined) { props.description = toString(description) }
+  if (credits !== undefined) { props.credits = toVNode(credits) }
+  if (description !== undefined) { props.description = toVNode(description) }
   if (Array.isArray(images)) { props.images = arrayToImages(images) }
 
   return props
@@ -78,8 +78,8 @@ function arrayToImages(array: unknown[]): Media[] {
       if (mobileUrl !== undefined) { image.mobileUrl = toString(mobileUrl) }
       if (type !== undefined) { image.type = toString(type) }
       if (imageFit !== undefined) { image.imageFit = toString(imageFit) }
-      if (description !== undefined) { image.description = toString(description) }
-      if (credits !== undefined) { image.credits = toString(credits) }
+      if (description !== undefined) { image.description = toVNode(description) }
+      if (credits !== undefined) { image.credits = toVNode(credits) }
       images.push(image)
     }
   })

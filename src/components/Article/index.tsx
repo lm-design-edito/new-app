@@ -64,7 +64,13 @@ export default class Article extends Component<Props> {
             alt,
             credits,
             description,
-            captionPosition
+            captionPosition,
+            toggleCaptionBtn,
+            captionDefaultStatus,
+            openCaptionText,
+            closeCaptionText,
+            openCaptionIcon,
+            closeCaptionIcon
           } = elementData
           return <Image
             customClass={customClass}
@@ -72,7 +78,14 @@ export default class Article extends Component<Props> {
             alt={alt}
             credits={credits}
             description={description}
-            captionPosition={captionPosition} />
+            captionPosition={captionPosition}
+            toggleCaptionBtn={toggleCaptionBtn}
+            captionDefaultStatus={captionDefaultStatus}
+            openCaptionText={openCaptionText}
+            closeCaptionText={closeCaptionText}
+            openCaptionIcon={openCaptionIcon}
+            closeCaptionIcon={closeCaptionIcon}
+          />
         }
         // ReadAlso
         else if (elementData.type === 'read-also') {

@@ -9,8 +9,7 @@ export type Props = {
   customClass?: string
   bgColor?: string
   bgImageUrl?: string
-  shadeLinearGradient?: string
-  shadeBlendMode?: string
+  bgImageAlt?: string
   textAbove?: string|VNode
   textBelow?: string|VNode
   thumbnailsData?: ThumbnailProps[]
@@ -45,8 +44,7 @@ export default class Footer extends Component<Props, {}> {
       customClass,
       bgColor = 'transparent',
       bgImageUrl,
-      shadeLinearGradient,
-      shadeBlendMode,
+      bgImageAlt,
       textAbove,
       textBelow,
       thumbnailsData = [],
@@ -61,11 +59,7 @@ export default class Footer extends Component<Props, {}> {
     const aboveClasses = [bemClss.elt('above').value, styles['above']]
     const belowClasses = [bemClss.elt('below').value, styles['below']]
 
-    const wrapperStyle = {
-      ['--bg-color']: bgColor,
-      ['--shade-linear-gradient']: `linear-gradient(${shadeLinearGradient})`,
-      ['--shade-blend-mode']: shadeBlendMode
-    }
+    const wrapperStyle = {['--bg-color']: bgColor}
 
     return <IntersectionObserverComponent
       threshold={visibilityThreshold}
@@ -75,7 +69,7 @@ export default class Footer extends Component<Props, {}> {
         style={wrapperStyle}>
         {/* Bg image */}
         {bgImageUrl !== undefined && <div className={backgroundImageClasses.join(' ')}>
-          <Img src={bgImageUrl} />
+          <Img src={bgImageUrl} alt={bgImageAlt} />
         </div>}
         {/* Shade */}
         {<div className={shadeClasses.join(' ')} />}

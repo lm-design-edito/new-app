@@ -93,11 +93,11 @@
   align-items: center;
   font-size: 0.9em;
 
-  p {
+  span {
     padding-right: 0.6em;
   }
 
   svg path {
-    color: var(--slideshow-credits-color);
+    fill: var(--slideshow-credits-color);
   }
 }

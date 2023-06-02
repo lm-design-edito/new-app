@@ -1,4 +1,4 @@
-import { Component, JSX, createRef, RefObject } from 'preact'
+import { Component, JSX, createRef, RefObject, VNode } from 'preact'
 
 import Icon, { Icons } from '~/components/Icon'
 import CarouselElement, { Media } from './components/CarouselElement'
@@ -40,9 +40,9 @@ interface Props {
   arrowColorDisabled?: string
   arrowBackgroundColor?: string
   arrowBackgroundColorHover?: string
-  title?: string
-  credits?: string
-  description?: string
+  title?: string|VNode
+  credits?: string|VNode
+  description?: string|VNode
   images?: Media[]
 }
 
@@ -401,7 +401,7 @@ class Carousel extends Component<Props, State> {
       <div ref={this.containerRef} className={containerClasses.join(' ')} style={containerStyle}>
 
         <div ref={this.titleRef} className={titleClasses.join(' ')}>
-          {props.title !== undefined && <h5>{props.title}</h5>}
+          {props.title !== undefined && props.title}
         </div>
 
         {/* [WIP][ELSA] plutôt que de faire un check sur settings.fullscreen et state.fullscreen ici

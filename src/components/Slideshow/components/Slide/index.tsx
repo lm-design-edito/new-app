@@ -1,7 +1,9 @@
-import { Component, JSX, createRef, RefObject } from 'preact'
+import { Component, JSX, createRef, RefObject, VNode } from 'preact'
 
 import Icon, { Icons } from '~/components/Icon'
 import Img from '~/components/Img'
+import ToggleButton from '~/components/ToggleButton'
+import Drawer from '~/components/Drawer'
 
 import bem from '~/utils/bem'
 import styles from './styles.module.scss'
@@ -11,40 +13,29 @@ interface Media {
   mobileUrl?: string
   type?: string
   imageFit?: string
-  description?: string
-  credits?: string
+  description?: string|VNode
+  credits?: string|VNode
 }
 
 interface Props {
   media?: Media
   selected?: boolean
-  slideshowDescription?: string
-  slideshowCredits?: string
+  slideshowDescription?: string|VNode
+  slideshowCredits?: string|VNode
   toggleDescriptionBtn?: boolean
   toggleDescription?: () => void
   descriptionOpen?: boolean
 }
 
-interface State {
-  descriptionHeight: number
-}
-
 class Slide extends Component<Props, {}> {
-  descriptionRef: RefObject<HTMLDivElement>
   video: RefObject<HTMLVideoElement> | null = null
   lastSelected: boolean
 
   bemClss = bem('lm-slide')
 
-  state = {
-    descriptionHeight: 20
-  }
 
   constructor(props: Props) {
     super(props)
-
-    this.descriptionRef = createRef()
-    this.calculateDescriptionHeight = this.calculateDescriptionHeight.bind(this)
 
     if (props.media?.type === 'video') {
       this.video = createRef()
@@ -52,15 +43,6 @@ class Slide extends Component<Props, {}> {
 
     this.lastSelected = false
     this.toggleVideo = this.toggleVideo.bind(this)
-  }
-
-  componentDidMount() {
-    this.calculateDescriptionHeight()
-    window.addEventListener('resize', this.calculateDescriptionHeight)
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener('resize', this.calculateDescriptionHeight)
   }
 
   toggleVideo() {
@@ -72,23 +54,6 @@ class Slide extends Component<Props, {}> {
     } else {
       this.video.current.pause()
     }
-  }
-
-  calculateDescriptionHeight() {
-    if (!this.descriptionRef) return
-
-    const descriptionBlock = this.descriptionRef.current
-
-    if (!descriptionBlock) return
-
-    const descriptionHeight = descriptionBlock
-      .getBoundingClientRect()
-      .height
-
-    this.setState(curr => ({
-      ...curr,
-      descriptionHeight
-    }))
   }
 
   /* * * * * * * * * * * * * * *
@@ -112,15 +77,15 @@ class Slide extends Component<Props, {}> {
 
     let displayCaption = true
 
-    let credits = ''
+    let credits = undefined
     if (props.slideshowCredits) credits = props.slideshowCredits
     if (props.media?.credits) credits = props.media?.credits
 
-    let description = ''
+    let description = undefined
     if (props.slideshowDescription) description = props.slideshowDescription
     if (props.media?.description) description = props.media?.description
 
-    if (credits === '' && description === '') { displayCaption = false }
+    if (credits === undefined && description === undefined) { displayCaption = false }
 
     let mediaURL = props.media?.url
     if (props.media?.mobileUrl && window.innerWidth < 768) {
@@ -138,10 +103,8 @@ class Slide extends Component<Props, {}> {
     const descriptionClasses = [bemClss.elt('description').value, styles['description']]
     if (!props.descriptionOpen) descriptionClasses.push(styles['description--hidden'])
 
-    const toggleDescriptionText = props.descriptionOpen ? 'Voir moins' : 'Voir plus'
-
-    const captionTranslate = props.descriptionOpen ? 0 : this.state.descriptionHeight + 4
-    const captionStyle = `transform: translateY(${captionTranslate}px);`
+    const creditsContent = <div className={creditsClasses.join(' ')}><p>{credits}</p></div>
+    const descriptionContent = <div className={descriptionClasses.join(' ')}><p>{description}</p></div>
 
     return (
       <div className={containerClasses.join(' ')}>
@@ -151,33 +114,36 @@ class Slide extends Component<Props, {}> {
             : <Img src={mediaURL} loading='eager' />}
         </div>
 
-        {displayCaption
-          && <div className={captionClasses.join(' ')} style={captionStyle}>
+        {displayCaption && <div className={captionClasses.join(' ')}>
+          
+          {props.toggleDescriptionBtn
+            ? <>
+              <ToggleButton
+                customClass={toggleDescriptionBtnClasses.join(' ')}
+                isOpen={props.descriptionOpen}
+                openText={'Voir plus'}
+                closeText={'Voir moins'}
+                openIcon={<Icon file={Icons.TOGGLE_OPEN} />}
+                closeIcon={<Icon file={Icons.TOGGLE_CLOSE} />}
+                onClick={props.toggleDescription}
+              />
+              {credits && creditsContent}
+              <Drawer opened={props.descriptionOpen}>
+                {description && descriptionContent}
+              </Drawer>
+            </>
+            : <>
+              {credits && creditsContent}
+              {description && descriptionContent}
+            </>
+          }
 
-            {(description && props.toggleDescriptionBtn)
-              && <div className={toggleDescriptionBtnClasses.join(' ')} onClick={props.toggleDescription}>
-                <p>{toggleDescriptionText}</p>
-                {props.descriptionOpen
-                  ? <Icon file={Icons.TOGGLE_CLOSE} />
-                  : <Icon file={Icons.TOGGLE_OPEN} />}
-              </div>}
-
-            {credits
-              && <div className={creditsClasses.join(' ')}>
-                <p>{credits}</p>
-              </div>}
-
-            {description
-              && <div className={descriptionClasses.join(' ')} ref={this.descriptionRef}>
-                <p>{description}</p>
-              </div>}
-
-          </div>}
+        </div>}
       </div>
     )
 
   }
 }
 
-export type { Props, State, Media }
+export type { Props, Media }
 export default Slide

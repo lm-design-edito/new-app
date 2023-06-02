@@ -22,6 +22,12 @@ export type Props = {
   textCenterBottom?: string|VNode
   shadeLinearGradient?: string
   shadeBlendMode?: string
+  toggleCaptionBtn?: boolean
+  captionDefaultStatus?: 'open'|'closed'
+  openCaptionText?: string
+  closeCaptionText?: string
+  openCaptionIcon?: VNode
+  closeCaptionIcon?: VNode
   status?: string
   statusOverrides?: { [statusName: string]: Omit<Props, 'status'|'statusOverrides'> }
   href?: string
@@ -66,6 +72,12 @@ export default class Thumbnail extends Component<Props, {}> {
       textCenterBottom,
       shadeLinearGradient,
       shadeBlendMode,
+      toggleCaptionBtn,
+      captionDefaultStatus,
+      openCaptionText,
+      closeCaptionText,
+      openCaptionIcon,
+      closeCaptionIcon,
       href,
       onClick
     } = fullProps
@@ -128,7 +140,13 @@ export default class Thumbnail extends Component<Props, {}> {
             textMiddle={textCenterMiddle}
             textBottom={textCenterBottom}
             shadeLinearGradient={shadeLinearGradient}
-            shadeBlendMode={shadeBlendMode} />
+            shadeBlendMode={shadeBlendMode}
+            toggleCaptionBtn={toggleCaptionBtn}
+            captionDefaultStatus={captionDefaultStatus}
+            openCaptionText={openCaptionText}
+            closeCaptionText={closeCaptionText}
+            openCaptionIcon={openCaptionIcon}
+            closeCaptionIcon={closeCaptionIcon} />
         </div>}
       </div>
       {/* Right */}
