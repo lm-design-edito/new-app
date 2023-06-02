@@ -1,4 +1,4 @@
-import { Component, JSX } from 'preact'
+import { Component, JSX, VNode } from 'preact'
 
 import Icon, { Icons } from '~/components/Icon'
 import Slide, { Media } from './components/Slide'
@@ -16,8 +16,8 @@ interface Props {
   height?: string
   imageFit?: string
   toggleDescriptionBtn?: boolean
-  credits?: string
-  description?: string
+  credits?: string|VNode
+  description?: string|VNode
   images?: Media[]
 }
 

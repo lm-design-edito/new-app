@@ -12,16 +12,16 @@ interface Media {
   mobileUrl?: string
   type?: string
   imageFit?: string
-  description?: string
-  credits?: string
+  description?: string|VNode
+  credits?: string|VNode
 }
 
 interface Props {
   selected?: boolean
   visible?: boolean
   media?: Media
-  carouselDescription?: string
-  carouselCredits?: string
+  carouselDescription?: string|VNode
+  carouselCredits?: string|VNode
   onImageLoad?: () => void
   imageWrapperRef?: RefObject<HTMLDivElement>
 }
@@ -75,15 +75,15 @@ class CarouselElement extends Component<Props, {}> {
 
     let displayCaption = true
 
-    let credits = ''
+    let credits = undefined
     if (props.carouselCredits) credits = props.carouselCredits
     if (props.media?.credits) credits = props.media?.credits
 
-    let description = ''
+    let description = undefined
     if (props.carouselDescription) description = props.carouselDescription
     if (props.media?.description) description = props.media?.description
 
-    if (credits === '' && description === '') { displayCaption = false }
+    if (credits === undefined && description === undefined) { displayCaption = false }
 
     const wrapperClasses = [bemClss.elt('wrapper').value, styles['wrapper']]
     if (props.selected) wrapperClasses.push(styles['wrapper--selected'])

@@ -208,8 +208,8 @@
         <data value="dots" type="boolean">true</data>
         <data value="loop" type="boolean">false</data>
         <data value="imageFit" type="string">contain</data>
-        <data value="title" type="string">Ici le titre</data>
-        <data value="credits" type="string">Samuel Gratacap pour « Le Monde »</data>
+        <data value="title" type="html">Ici le titre</data>
+        <data value="credits" type="html">Samuel Gratacap pour « Le Monde »</data>
         <data value="fullscreen" type="boolean">true</data>
         <data value="images">
           <data>
@@ -247,9 +247,9 @@
       <div class="demo-app-option"><em>imageHeight?:</em> number <span>Hauteur des images, en px</span></div>
       <div class="demo-app-option"><em>imageFit?:</em> 'cover'|'contain' (contain) <span>Adaptation des images à leur conteneur</span></div>
       <div class="demo-app-option"><em>gapValue?:</em> number (16) <span>Espace entre les images, en px</span></div>
-      <div class="demo-app-option"><em>title?:</em> string <span>Titre du carousel</span></div>
-      <div class="demo-app-option"><em>description?:</em> string <span>Description par défaut (si pas de description liée à l'image)</span></div>
-      <div class="demo-app-option"><em>credits?:</em> string <span>Crédits par défaut (si pas de crédits liés à l'image)</span></div>
+      <div class="demo-app-option"><em>title?:</em> string|html <span>Titre du carousel</span></div>
+      <div class="demo-app-option"><em>description?:</em> string|html <span>Description par défaut (si pas de description liée à l'image)</span></div>
+      <div class="demo-app-option"><em>credits?:</em> string|html <span>Crédits par défaut (si pas de crédits liés à l'image)</span></div>
       <div class="demo-app-option"><em>backgroundColor?:</em> string (#2A303C) <span>Couleur de fond</span></div>
       <div class="demo-app-option"><em>imageBackgroundColor?:</em> string (#000000) <span>Couleur de fond des images (quand ne remplissent pas leur container)</span></div>
       <div class="demo-app-option"><em>titleColor?:</em> string (rgba(255, 255, 255, 1)) <span>Couleur du titre</span></div>
@@ -266,8 +266,8 @@
         <div class="demo-app-option"><em>mobileUrl?:</em> string (par défaut : valeur de "url") <span>Lien vers le média à afficher en dessous de 768px de largeur</span></div>
         <div class="demo-app-option"><em>type?:</em> 'image'|'video' (image) <span>Type de média</span></div>
         <div class="demo-app-option"><em>imageFit?:</em> 'cover'|'contain' ("imageFit" du carousel) <span>Adaptation de l’image à son conteneur</span></div>
-        <div class="demo-app-option"><em>description?:</em> string ("description" du carousel) <span>Texte de description</span></div>
-        <div class="demo-app-option"><em>credits?:</em> string ("credits" du carousel) <span>Crédits du média</span></div>
+        <div class="demo-app-option"><em>description?:</em> string|html ("description" du carousel) <span>Texte de description</span></div>
+        <div class="demo-app-option"><em>credits?:</em> string|html ("credits" du carousel) <span>Crédits du média</span></div>
       </div>
     </div>
 
@@ -424,8 +424,7 @@
         <data value="dots" type="boolean">true</data>
         <data value="loop" type="boolean">false</data>
         <data value="imageFit" type="string">contain</data>
-        <data value="title" type="string">Ici le titre</data>
-        <data value="credits" type="string">Samuel Gratacap pour « Le Monde »</data>
+        <data value="credits" type="html">Samuel Gratacap pour « Le Monde »</data>
         <data value="fullscreen" type="boolean">true</data>
         <data value="images">
           <data>
@@ -462,15 +461,15 @@
       <div class="demo-app-option"><em>height?:</em> string <span>Hauteur des images, avec une unité (px, vh, etc.)</span></div>
       <div class="demo-app-option"><em>imageFit?:</em> 'cover'|'contain' (contain) <span>Adaptation des images à leur conteneur</span></div>
       <div class="demo-app-option"><em>toggleDescriptionBtn?:</em> boolean (false) <span>Affichage du bouton pour toggle la description</span></div>
-      <div class="demo-app-option"><em>credits?:</em> string <span>Crédits par défaut (si pas de crédits liés à l'image)</span></div>
-      <div class="demo-app-option"><em>description?:</em> string <span>Description par défaut (si pas de description liée à l'image)</span></div>
+      <div class="demo-app-option"><em>credits?:</em> string|html <span>Crédits par défaut (si pas de crédits liés à l'image)</span></div>
+      <div class="demo-app-option"><em>description?:</em> string|html <span>Description par défaut (si pas de description liée à l'image)</span></div>
       <div class="demo-app-option"><em>images?:</em> Media[] <span>Liste d'images (et/ou de vidéos) à afficher</span>
         <div class="demo-app-option"><em>url?:</em> string <span>Lien vers le média (photo ou vidéo)</span></div>
         <div class="demo-app-option"><em>mobileUrl?:</em> string (par défaut : valeur de "url")<span>Lien vers le média à afficher en dessous de 768px de largeur</span></div>
         <div class="demo-app-option"><em>type?:</em> 'image'|'video' (image)<span>Type de média</span></div>
         <div class="demo-app-option"><em>imageFit?:</em> 'cover'|'contain' ("imageFit" du carousel)<span>Adaptation de l’image à son conteneur</span></div>
-        <div class="demo-app-option"><em>description?:</em> string ("description" du carousel)<span>Texte de description</span></div>
-        <div class="demo-app-option"><em>credits?:</em> string ("credits" du carousel)<span>Crédits du média</span></div>
+        <div class="demo-app-option"><em>description?:</em> string|html ("description" du carousel)<span>Texte de description</span></div>
+        <div class="demo-app-option"><em>credits?:</em> string|html ("credits" du carousel)<span>Crédits du média</span></div>
       </div>
     </div>
     

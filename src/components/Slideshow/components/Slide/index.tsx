@@ -1,4 +1,4 @@
-import { Component, JSX, createRef, RefObject } from 'preact'
+import { Component, JSX, createRef, RefObject, VNode } from 'preact'
 
 import Icon, { Icons } from '~/components/Icon'
 import Img from '~/components/Img'
@@ -13,15 +13,15 @@ interface Media {
   mobileUrl?: string
   type?: string
   imageFit?: string
-  description?: string
-  credits?: string
+  description?: string|VNode
+  credits?: string|VNode
 }
 
 interface Props {
   media?: Media
   selected?: boolean
-  slideshowDescription?: string
-  slideshowCredits?: string
+  slideshowDescription?: string|VNode
+  slideshowCredits?: string|VNode
   toggleDescriptionBtn?: boolean
   toggleDescription?: () => void
   descriptionOpen?: boolean
@@ -77,15 +77,15 @@ class Slide extends Component<Props, {}> {
 
     let displayCaption = true
 
-    let credits = ''
+    let credits = undefined
     if (props.slideshowCredits) credits = props.slideshowCredits
     if (props.media?.credits) credits = props.media?.credits
 
-    let description = ''
+    let description = undefined
     if (props.slideshowDescription) description = props.slideshowDescription
     if (props.media?.description) description = props.media?.description
 
-    if (credits === '' && description === '') { displayCaption = false }
+    if (credits === undefined && description === undefined) { displayCaption = false }
 
     let mediaURL = props.media?.url
     if (props.media?.mobileUrl && window.innerWidth < 768) {
