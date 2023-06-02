@@ -389,10 +389,10 @@ export default class Scrollgneugneu extends Component<Props, State> {
         .replace(/\)/igm, '')
         .replace(/[^a-z0-9\-\_]/igm, '')
       : undefined
-    const layoutClass = hasLayout ? `lm-scrllgngn__layout_${layoutClassExt}` : undefined
+    const layoutClass = hasLayout ? `${styles['block']}_layout-${layoutClassExt}` : undefined
     const mobileLayoutClass = hasMobileLayout
-      ? `lm-scrllgngn__mobile-layout_${mobileLayoutClassExt}`
-      : (hasLayout ? `lm-scrllgngn__mobile-layout_${layoutClassExt}` : undefined)
+      ? `${styles['block']}_mobile-layout-${mobileLayoutClassExt}`
+      : (hasLayout ? `${styles['block']}_mobile-layout-${layoutClassExt}` : undefined)
     const classes: string[] = []
     if (layoutClass !== undefined) {
       classes.push(layoutClass)
@@ -444,14 +444,14 @@ export default class Scrollgneugneu extends Component<Props, State> {
     // Create
     const cssProps: string[] = []
     // Position properties
-    cssProps.push(`width: calc(${widthNum ?? 1} * 100% / ${widthDenum ?? 1});`)
+    cssProps.push(`width: calc(${widthNum ?? 1} * var(--scrolling-block-width) / ${widthDenum ?? 1});`)
     if (position === 'scrolling') cssProps.push(`margin-left: calc(${hOffsetNum ?? 0} * 100% / ${hOffsetDenum ?? 1});`)
     else if (position === 'sticky') {
       cssProps.push(`height: calc(${heightNum ?? 1} * var(--sticky-blocks-viewport-height) / ${heightDenum ?? 1});`)
       cssProps.push(`transform: translate(
         calc(${hOffsetNum ?? 0} * var(--scrolling-block-width) / ${hOffsetDenum ?? 1}),
         calc(${vOffsetNum ?? 0} * var(--sticky-blocks-viewport-height) / ${vOffsetDenum ?? 1})
-      );`)
+      );`.replace(/\n/igm, ' ').replace(/\s+/igm, ' '))
     }
     // [WIP] got rid of this // Content justification properties
     // if (justifyChunk === 'left') cssProps.push(`justify-content: flex-start;`)
