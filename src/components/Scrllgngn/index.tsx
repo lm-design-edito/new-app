@@ -28,6 +28,7 @@ export type LayoutPosFormula = LayoutHPosFormula|`${LayoutHPosFormula}_${LayoutV
 export type LayoutFormula = LayoutPosFormula
 
 export type LayoutName = LayoutFormula
+  |'fullscreen'
   |'full-screen'
   |'left-half'
   |'center-half'
@@ -352,6 +353,7 @@ export default class Scrollgneugneu extends Component<Props, State> {
   }
 
   static layoutNameToFormula (name: string): LayoutFormula|undefined {
+    if (name === 'fullscreen') return '1_1'
     if (name === 'full-screen') return '1_1'
     if (name === 'left-half') return '1/2_1'
     if (name === 'center-half') return '1/2(1/4)_1'

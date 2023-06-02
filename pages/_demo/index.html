@@ -128,10 +128,10 @@
         <div class="demo-app-option"><em>customClass?:</em> string <span>Une classe CSS à appliquer sur le wrapper de l'élément</span></div>
         <div class="demo-app-option"><em>url?:</em> string <span>L'adresse de l'image à afficher</span></div>
         <div class="demo-app-option"><em>alt?:</em> string <span>Le texte de description pour les lecteurs d'écrans</span></div>
-        <div class="demo-app-option"><em>loading?:</em> 'lazy'|'eager' (default: 'lazy') <span>Définit si l'image doit être chargée au chargement de la page ou à l'apparition dans l'écran</span></div>
+        <div class="demo-app-option"><em>loading?:</em> 'lazy'|'eager' (Par défaut : 'lazy') <span>Définit si l'image doit être chargée au chargement de la page ou à l'apparition dans l'écran</span></div>
         <div class="demo-app-option"><em>description?:</em> string|html <span>La description de l'image à afficher sous l'image</span></div>
         <div class="demo-app-option"><em>credits?:</em> string|html <span>Le crédit photo à afficher sous l'image</span></div>
-        <div class="demo-app-option"><em>captionPosition?:</em> 'overlay'|'below' (default: 'below') <span>La position de la légende de l'image</span></div>
+        <div class="demo-app-option"><em>captionPosition?:</em> 'overlay'|'below' (Par défaut : 'below') <span>La position de la légende de l'image</span></div>
         <div class="demo-app-option">—</div>
         <div class="demo-app-option"><em>type:</em> 'read-also' <span>Le type d'élément à afficher (read-also) en l'occurence)</span></div>
         <div class="demo-app-option"><em>customClass?:</em> string <span>Une classe CSS à appliquer sur le wrapper de l'élément</span></div>
@@ -322,20 +322,92 @@
     <div class="demo-app-description">
       Un outil qui permet de synchroniser l'affichage de blocs fixes au passage dans l'écran de blocs qui scrollent
     </div>
-    <div class="demo-app scrllgngn">
+    <style>
+      .scrllgngn .scr-page-content {
+        margin: 80px 96px;
+        padding: 32px;
+        background-color: white;
+        font-family: var(--ff-the-antiqua-b);
+        font-size: var(--len-text-level-8);
+      }
+
+      .scrllgngn .scr-page-content p {
+        margin-bottom: 32px;
+      }
+
+      .scrllgngn .scr-page-content p:last-child {
+        margin-bottom: 0;
+      }
+
+      .scrllgngn .scr-block-container {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .scrllgngn .scr-square-block {
+        position: relative;
+        width: 160px;
+        height: 160px;
+        background: rgb(20, 20, 20, .8);
+        border-radius: calc(80px * (1 - var(--context-progression)));
+      }
+
+      .scrllgngn .scr-pill-block {
+        position: relative;
+        width: calc(160px + var(--context-progression) * 200px);
+        height: calc(48px - var(--context-progression) * 24px);
+        background: rgb(20, 20, 20, .8);
+        border-radius: 48px;
+      }
+
+      .scrllgngn .scr-square-block::before,
+      .scrllgngn .scr-pill-block::before {
+        color: white;
+        font-family: var(--ff-marr-sans);
+        font-weight: 500;
+        font-size: var(--len-text-level-1);
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+
+      .scrllgngn [data-context-page="0"] .scr-square-block::before,
+      .scrllgngn [data-context-page="0"] .scr-pill-block::before {
+        content: 'Page 0';
+      }
+      .scrllgngn [data-context-page="1"] .scr-square-block::before,
+      .scrllgngn [data-context-page="1"] .scr-pill-block::before {
+        content: 'Page 1';
+      }
+      .scrllgngn [data-context-page="2"] .scr-square-block::before,
+      .scrllgngn [data-context-page="2"] .scr-pill-block::before {
+        content: 'Page 2';
+      }
+    </style>
+    <div class="scrllgngn">
       <data class="lm-app-config" value="scrllgngn">
         <data value="customClass">scrllgngn-custom-class</data>
-        <data value="thresholdOffset">80%</data>
+        <data value="thresholdOffset">60%</data> 
         <data value="pages">
           <data>
             <data value="id">page-1</data>
-            <data value="bgColor">blue</data>
+            <data value="bgColor">#7FDBFF</data>
             <data value="blocks">
               <data>
                 <data value="id">scrolling-block-1</data>
                 <data value="depth">scroll</data>
                 <data value="type">html</data>
-                <data value="content" type="html"><div style="height: 120vh; display: flex; justify-content: center; align-items: center; background-color: white;">Du contenu mamène</div></data>
+                <data value="content" type="html">
+                  <div class="scr-page-content">
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. In blandit tincidunt imperdiet. Nulla sollicitudin augue non leo scelerisque varius. Mauris ut lobortis tortor. Nam porta, ex sit amet placerat aliquet, erat nisl tincidunt dui, quis tincidunt orci arcu eu dui. Vestibulum tincidunt lobortis lacus, et imperdiet nisi porta et. Quisque dapibus maximus viverra. Sed luctus dolor vel nisl sodales venenatis. Fusce ut nunc fringilla, facilisis nisl sed, cursus sapien. Aliquam sit amet mauris turpis. Curabitur euismod nisi quis hendrerit blandit.</p>
+                    <p>Nam in posuere urna, et elementum sem. Nunc mattis diam ut scelerisque vulputate. Ut vitae diam sapien. Pellentesque metus arcu, porta hendrerit aliquet vitae, lacinia eget augue. Duis erat nibh, auctor vel dignissim sed, rutrum tincidunt enim. Morbi vel elementum nulla, at sodales mi. Donec in accumsan ligula, non volutpat nibh. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec id aliquet ligula. Sed accumsan consequat lacus vitae malesuada. Nunc vitae mattis leo. Aenean fermentum vehicula viverra. Nam quis lorem dictum, laoreet massa vitae, mattis ipsum. Praesent non ipsum tempor eros dignissim fringilla.</p>
+                    <p>Nulla aliquet, sem id malesuada feugiat, quam quam iaculis nisi, non aliquam erat orci sed libero. Curabitur quam ante, condimentum et malesuada nec, luctus at risus. Donec at sollicitudin nibh, ac commodo ligula. Interdum et malesuada fames ac ante ipsum primis in faucibus. Cras interdum arcu id augue aliquam interdum. Pellentesque et efficitur enim. Donec lobortis suscipit laoreet. Quisque id lectus nibh. Duis mattis, risus vulputate lobortis sollicitudin, leo metus aliquam ligula, ut volutpat nisl lectus eget urna. Maecenas ullamcorper arcu vel sem interdum interdum. Morbi quis neque semper dui ultricies aliquam. Fusce sagittis sagittis sem eu volutpat. Sed ultricies, tellus eu aliquam molestie, elit quam auctor nibh, nec venenatis ligula dolor non ipsum. Phasellus accumsan tempor felis, eu bibendum orci luctus tempor. Nam a dictum massa. Nunc eros ipsum, laoreet ut dolor et, fringilla molestie leo.</p>
+                  </div>
+                </data>
                 <data value="layout">left-half</data>
                 
               </data>
@@ -343,7 +415,11 @@
                 <data value="id">front-block-1</data>
                 <data value="depth">front</data>
                 <data value="type">html</data>
-                <data value="content" type="html"><div style="width: 100%; height: 100%;">Bloc fixe 1</div></data>
+                <data value="content" type="html">
+                  <div class="scr-block-container">
+                    <div class="scr-square-block"></div>
+                  </div>
+                </data>
                 <data value="trackScroll" type="boolean">true</data>
                 <data value="layout">right-half</data>
                 <data value="transitions">whirl, 600ms; grow, 600ms</data>
@@ -352,23 +428,93 @@
           </data>
           <data>
             <data value="id">page-2</data>
-            <data value="bgColor">red</data>
+            <data value="bgColor">#01FF70</data>
             <data value="blocks">
               <data>
                 <data value="id">scrolling-block-2</data>
                 <data value="depth">scroll</data>
                 <data value="type">html</data>
-                <data value="content" type="html"><div style="height: 120vh; display: flex; justify-content: center; align-items: center; background-color: white;">Du contenu mamène</div></data>
+                <data value="content" type="html">
+                  <div class="scr-page-content">
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. In blandit tincidunt imperdiet. Nulla sollicitudin augue non leo scelerisque varius. Mauris ut lobortis tortor. Nam porta, ex sit amet placerat aliquet, erat nisl tincidunt dui, quis tincidunt orci arcu eu dui. Vestibulum tincidunt lobortis lacus, et imperdiet nisi porta et. Quisque dapibus maximus viverra. Sed luctus dolor vel nisl sodales venenatis. Fusce ut nunc fringilla, facilisis nisl sed, cursus sapien. Aliquam sit amet mauris turpis. Curabitur euismod nisi quis hendrerit blandit.</p>
+                  </div>
+                </data>
+                <data value="layout">left-half</data>
+              </data>
+              <data>
+                <data value="id">front-block-1</data>
+              </data>
+            </data>
+          </data>
+          <data>
+            <data value="id">page-3</data>
+            <data value="bgColor">#2ECC40</data>
+            <data value="blocks">
+              <data>
+                <data value="id">scrolling-block-3</data>
+                <data value="depth">scroll</data>
+                <data value="type">html</data>
+                <data value="content" type="html">
+                  <div class="scr-page-content">
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. In blandit tincidunt imperdiet. Nulla sollicitudin augue non leo scelerisque varius. Mauris ut lobortis tortor. Nam porta, ex sit amet placerat aliquet, erat nisl tincidunt dui, quis tincidunt orci arcu eu dui. Vestibulum tincidunt lobortis lacus, et imperdiet nisi porta et. Quisque dapibus maximus viverra. Sed luctus dolor vel nisl sodales venenatis. Fusce ut nunc fringilla, facilisis nisl sed, cursus sapien. Aliquam sit amet mauris turpis. Curabitur euismod nisi quis hendrerit blandit.</p>
+                  </div>
+                </data>
+                <data value="layout">left-half</data>
+              </data>
+              <data>
+                <data value="id">front-block-1</data>
+              </data>
+            </data>
+          </data>
+          <data>
+            <data value="id">page-4</data>
+            <data value="bgColor">#3D9970</data>
+            <data value="blocks">
+              <data>
+                <data value="id">scrolling-block-4</data>
+                <data value="depth">scroll</data>
+                <data value="type">html</data>
+                <data value="content" type="html">
+                  <div class="scr-page-content">
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. In blandit tincidunt imperdiet. Nulla sollicitudin augue non leo scelerisque varius. Mauris ut lobortis tortor. Nam porta, ex sit amet placerat aliquet, erat nisl tincidunt dui, quis tincidunt orci arcu eu dui. Vestibulum tincidunt lobortis lacus, et imperdiet nisi porta et. Quisque dapibus maximus viverra. Sed luctus dolor vel nisl sodales venenatis. Fusce ut nunc fringilla, facilisis nisl sed, cursus sapien. Aliquam sit amet mauris turpis. Curabitur euismod nisi quis hendrerit blandit.</p>
+                    <p>Nam in posuere urna, et elementum sem. Nunc mattis diam ut scelerisque vulputate. Ut vitae diam sapien. Pellentesque metus arcu, porta hendrerit aliquet vitae, lacinia eget augue. Duis erat nibh, auctor vel dignissim sed, rutrum tincidunt enim. Morbi vel elementum nulla, at sodales mi. Donec in accumsan ligula, non volutpat nibh. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec id aliquet ligula. Sed accumsan consequat lacus vitae malesuada. Nunc vitae mattis leo. Aenean fermentum vehicula viverra. Nam quis lorem dictum, laoreet massa vitae, mattis ipsum. Praesent non ipsum tempor eros dignissim fringilla.</p>
+                  </div>
+                </data>
                 <data value="layout">left-half</data>
               </data>
               <data>
                 <data value="id">front-block-2</data>
                 <data value="depth">front</data>
                 <data value="type">html</data>
-                <data value="content" type="html"><div style="width: 100%; height: 100%;">Bloc fixe 2</div></data>
+                <data value="content" type="html">
+                  <div class="scr-block-container">
+                    <div class="scr-pill-block"></div>
+                  </div>
+                </data>
                 <data value="trackScroll" type="boolean">true</data>
                 <data value="layout">right-half</data>
                 <data value="transitions">whirl, 600ms; grow, 600ms</data>
+              </data>
+            </data>
+          </data>
+          <data>
+            <data value="id">page-5</data>
+            <data value="bgColor">#FF4136</data>
+            <data value="blocks">
+              <data>
+                <data value="id">scrolling-block-5</data>
+                <data value="depth">scroll</data>
+                <data value="type">html</data>
+                <data value="content" type="html">
+                  <div class="scr-page-content">
+                    <p>Nulla aliquet, sem id malesuada feugiat, quam quam iaculis nisi, non aliquam erat orci sed libero. Curabitur quam ante, condimentum et malesuada nec, luctus at risus. Donec at sollicitudin nibh, ac commodo ligula. Interdum et malesuada fames ac ante ipsum primis in faucibus. Cras interdum arcu id augue aliquam interdum. Pellentesque et efficitur enim. Donec lobortis suscipit laoreet. Quisque id lectus nibh. Duis mattis, risus vulputate lobortis sollicitudin, leo metus aliquam ligula, ut volutpat nisl lectus eget urna. Maecenas ullamcorper arcu vel sem interdum interdum. Morbi quis neque semper dui ultricies aliquam. Fusce sagittis sagittis sem eu volutpat. Sed ultricies, tellus eu aliquam molestie, elit quam auctor nibh, nec venenatis ligula dolor non ipsum. Phasellus accumsan tempor felis, eu bibendum orci luctus tempor. Nam a dictum massa. Nunc eros ipsum, laoreet ut dolor et, fringilla molestie leo.</p>
+                    <p>Nam in posuere urna, et elementum sem. Nunc mattis diam ut scelerisque vulputate. Ut vitae diam sapien. Pellentesque metus arcu, porta hendrerit aliquet vitae, lacinia eget augue. Duis erat nibh, auctor vel dignissim sed, rutrum tincidunt enim. Morbi vel elementum nulla, at sodales mi. Donec in accumsan ligula, non volutpat nibh. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec id aliquet ligula. Sed accumsan consequat lacus vitae malesuada. Nunc vitae mattis leo. Aenean fermentum vehicula viverra. Nam quis lorem dictum, laoreet massa vitae, mattis ipsum. Praesent non ipsum tempor eros dignissim fringilla.</p>
+                  </div>
+                </data>
+                <data value="layout">left-half</data>
+              </data>
+              <data>
+                <data value="id">front-block-2</data>
               </data>
             </data>
           </data>
@@ -377,35 +523,37 @@
     </div>
     <div class="demo-app-options">
       <div class="demo-app-option"><em>customClass?:</em> string <span>Une classe CSS à ajouter sur l'élément conteneur de l'app</span></div>
-      stickyBlocksLazyLoadDistance (2)
-      stickyBlocksViewportHeight (100vh)
-      stickyBlocksOffsetTop (0px)
-      thresholdOffset (0)
-      bgColorTransitionDuration (200ms)
-      headerCustomClass
-      headerNavItemsAlign
-      pages
-        id
-        showHeader
-        showNav
-        headerLogoFill1
-        headerLogoFill2
-        headerCustomClass
-        headerNavItemsAlign
-        chapterName
-        isChapterHead
-        bgColor
-        blocks
-          id
-          zIndex
-          type
-          content
-          trackScroll
-          depth
-          layout
-          mobileLayout
-          transitions
-          mobileTransitions
+      <div class="demo-app-option"><em>stickyBlocksLazyLoadDistance?:</em> number <span>(Par défaut : 2) Pour un block fixe, le nombre de pages avant et après sa zone d'affichage à l'écran au delà duquel le bloc disparait physiquement de la page</span></div>
+      <div class="demo-app-option"><em>stickyBlocksViewportHeight?:</em> string <span>(Par défaut : 100vh) La hauteur (unité de longueur css valide) de la zone d'affichage des blocs fixes. Attention, cette valeur doit être déduite de l'éventuelle valeur fournie à stickyBlocksOffsetTop (voir ci-dessous)</span></div>
+      <div class="demo-app-option"><em>stickyBlocksOffsetTop?:</em> number <span>(Par défaut : 0) La distance au haut de l'écran (valeur numérique représentant des pixels) à laquelle les blocs fixes doivent s'attacher.</span></div>
+      <div class="demo-app-option"><em>thresholdOffset?:</em> string <span>(Par défaut : 0%) La distance au haut de l'écran (unité de longueur css valide) où vient se placer le seuil de changement de page</span></div>
+      <div class="demo-app-option"><em>bgColorTransitionDuration?:</em> string|number <span>(Par défaut 200ms) La durée (unité de temps css valide, ou nombre de ms) de transition pour la couleur de fond du scrllgngn lors du changement de page (si celle-ci précise une couleur de fond à appliquer au scrllgngn)</span></div>
+      <div class="demo-app-option"><em>headerCustomClass?:</em> string <span>(Déprécié) Une classe à appliquer sur le wrapper de l'élément header intégré au Scrllgngn</span></div>
+      <div class="demo-app-option"><em>headerNavItemsAlign?:</em> 'left'|'center'|'right' <span>(Déprécié) (Défaut 'left') Détermine la position des éléments de navigation intégrés au header du scrllgngn</span></div>
+      <div class="demo-app-option"><em>pages?:</em> PageProps[] <span>Une liste d'objets décrivant les pages du Scrllgngn</span>
+        <div class="demo-app-option"><em>id?:</em> string <span>Un identifiant unique à donner à chaque page (optionnel, mais recommandé)</span></div>
+        <div class="demo-app-option"><em>showHeader?:</em> boolean <span>(Déprécié) Détermine si le header intégré au scrllgngn doit être visible lorsque la page est active</span></div>
+        <div class="demo-app-option"><em>showNav?:</em> boolean <span>(Déprécié) Détermine si la nav dans le header intégré au scrllgngn doit être visible lorsque la page est active</span></div>
+        <div class="demo-app-option"><em>headerLogoFill1?:</em> string <span>(Déprécié) Couleur (couleur valide css) de remplissage principal du logo dans le header intégré au scrllgngn lorsque la page est active</span></div>
+        <div class="demo-app-option"><em>headerLogoFill2?:</em> string <span>(Déprécié) Couleur (couleur valide css) de remplissage secondaire du logo dans le header intégré au scrllgngn lorsque la page est active</span></div>
+        <div class="demo-app-option"><em>headerCustomClass?:</em> string <span>(Déprécié) Une classe à ajouter au wrapper du header intégré au scrllgngn lorsque la page est active (s'ajoute à l'option générale donnée au scrllgngn)</span></div>
+        <div class="demo-app-option"><em>headerNavItemsAlign?:</em> 'left'|'center'|'right' <span>(Déprécié) (Défaut la valeur de l'option générale donnée au scrllgngn) Détermine la position des éléments de navigation intégrés au header du scrllgngn, lorsque la page est active</span></div>
+        <div class="demo-app-option"><em>chapterName?:</em> string <span>(Déprécié) Le nom du chapitre auquel est rattachée la page active</span></div>
+        <div class="demo-app-option"><em>isChapterHead?:</em> boolean <span>(Déprécié) Détermine si la page active est la tête du chapitre donné dans l'option chapterName</span></div>
+        <div class="demo-app-option"><em>bgColor?:</em> string <span>Couleur (couleur valide css) à appliquer au background du scrllgngn lorsque la page est active</span></div>
+        <div class="demo-app-option"><em>blocks?:</em> BlockProps[] <span>Liste des blocks rattachés à la page</span>
+          <div class="demo-app-option"><em>id?:</em> Un identifiant unique à donner à chaque bloc. Si le bloc doit être présent sur plusieurs pages, les options qui le qualifient sont toujours celles définies sur sa première page d'apparition. En conséquence, il suffit seulement de préciser l'id du bloc dans les pages ultérieures.<span></span></div>
+          <div class="demo-app-option"><em>zIndex?:</em> number <span>Une valeur numérique permettant d'ordonner la position des blocs fixes dans la profondeur, quand une page en contient plusieurs</span></div>
+          <div class="demo-app-option"><em>type?:</em> 'html'|'module' <span>Détermine si la valeur fournie à la propriété content représente du contenu html ou bien un lien vers un "module" de scrllgngn (voir nulle part la documentation qui n'existe pas encore)</span></div>
+          <div class="demo-app-option"><em>content?:</em> string|html <span>Du contenu html si type='html', l'url d'un module de scrllgngn si type='module'</span></div>
+          <div class="demo-app-option"><em>trackScroll?:</em> boolean <span>(Par défaut : false)</span>Permet au bloc de reçevoir les informations de pourcentage de scroll dans sa zone d'affichage à chaque évènement scroll. À utiliser avec grande parcimonie, peut ralentir considérablemnt l'expérience sur les machines les moins puissantes</div>
+          <div class="demo-app-option"><em>depth?:</em> 'back'|'scroll'|'front' <span>(Par défaut : 'scroll') Détermine si le bloc doit faire partie du contenu scrollable de la page, ou bien s'il doit-être fixé au premier plan ou à l'arrière plan de la page</span></div>
+          <div class="demo-app-option"><em>layout?:</em> string|'left-half'|'right-half'|'fullscreen' <span>Principalement utile pour les blocs fixes : une chaine de caractères décrivant la zone d'affichage du bloc. (La documentation est au même endroit que celle des modules de scrllgngn (ça veut dire qu'il n'y en a pas hein...)).</span></div>
+          <div class="demo-app-option"><em>mobileLayout?:</em> string|'left-half'|'right-half'|'fullscreen' <span>(Par défaut : la valeur donnée à layout) Valeur layout de remplacement pour les écrans inférieurs à 1024px de large</span></div>
+          <div class="demo-app-option"><em>transitions?:</em> string <span>Chaine de caractères décrivant les transitions d'apparition et de disparitions à appliquer sur le bloc. La chaine est au format : nom, durée; nom, durée; etc... Les noms de transition disponibles sont 'fade'|'grow'|'whirl'|'slide-up'|'right-open'|'left-open', et les durées indiquées sont des durées valides css, ou bien supposées en ms si pas d'unité précisée</span></div>
+          <div class="demo-app-option"><em>mobileTransitions?:</em> string <span>Même principe que mobileLayout par rapport à layout</span></div>
+        </div>
+      </div>
     </div>
 
     <!-- Slot: slideshow -->
@@ -498,7 +646,7 @@
       <div class="demo-app-option"><em>customClass?:</em> string <span>Une classe CSS à ajouter sur l'élément conteneur de l'app</span></div>
       <div class="demo-app-option"><em>imageUrl?:</em> string <span>L'URL de l'image à afficher</span></div>
       <div class="demo-app-option"><em>imageAlt?:</em> string <span>Le texte de description pour les lecteurs d'écran</span></div>
-      <div class="demo-app-option"><em>loading?:</em> 'lazy'|'eager' (default: 'lazy') <span>Définit si l'image doit être chargée au chargement de la page ou à l'apparition dans l'écran</span></div>
+      <div class="demo-app-option"><em>loading?:</em> 'lazy'|'eager' <span>(Par défaut : 'lazy'). Définit si l'image doit être chargée au chargement de la page ou à l'apparition dans l'écran</span></div>
       <div class="demo-app-option"><em>textAbove?:</em> string|html <span>Le texte à afficher au dessus du thumbnail</span></div>
       <div class="demo-app-option"><em>textBelow?:</em> string|html <span>Le texte à afficher en dessous du thumbnail</span></div>
       <div class="demo-app-option"><em>textLeftTop?:</em> string|html <span>Le texte à afficher à gauche en haut du thumbnail</span></div>
