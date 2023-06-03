@@ -21,5 +21,3 @@ export default makeTransformer(
     return value
   }
 )
-
-// [WIP] make toVNode transformer
