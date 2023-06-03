@@ -393,7 +393,7 @@
         content: 'Page 2';
       }
     </style>
-    <div class="scrllgngn">
+    <div class="demo-app scrllgngn">
       <data class="lm-app-config" value="scrllgngn">
         <data value="customClass">scrllgngn-custom-class</data>
         <data value="thresholdOffset">60%</data> 
@@ -547,7 +547,7 @@
         <div class="demo-app-option"><em>isChapterHead?:</em> boolean <span>(Déprécié) Détermine si la page active est la tête du chapitre donné dans l'option chapterName</span></div>
         <div class="demo-app-option"><em>bgColor?:</em> string <span>Couleur (couleur valide css) à appliquer au background du scrllgngn lorsque la page est active</span></div>
         <div class="demo-app-option"><em>blocks?:</em> BlockProps[] <span>Liste des blocks rattachés à la page</span>
-          <div class="demo-app-option"><em>id?:</em> Un identifiant unique à donner à chaque bloc. Si le bloc doit être présent sur plusieurs pages, les options qui le qualifient sont toujours celles définies sur sa première page d'apparition. En conséquence, il suffit seulement de préciser l'id du bloc dans les pages ultérieures.<span></span></div>
+          <div class="demo-app-option"><em>id?:</em> string <span>Un identifiant unique à donner à chaque bloc. Si le bloc doit être présent sur plusieurs pages, les options qui le qualifient sont toujours celles définies sur sa première page d'apparition. En conséquence, il suffit seulement de préciser l'id du bloc dans les pages ultérieures.</span></div>
           <div class="demo-app-option"><em>zIndex?:</em> number <span>Une valeur numérique permettant d'ordonner la position des blocs fixes dans la profondeur, quand une page en contient plusieurs</span></div>
           <div class="demo-app-option"><em>type?:</em> 'html'|'module' <span>Détermine si la valeur fournie à la propriété content représente du contenu html ou bien un lien vers un "module" de scrllgngn (voir nulle part la documentation qui n'existe pas encore)</span></div>
           <div class="demo-app-option"><em>content?:</em> string|html <span>Du contenu html si type='html', l'url d'un module de scrllgngn si type='module'</span></div>
@@ -555,8 +555,8 @@
           <div class="demo-app-option"><em>depth?:</em> 'back'|'scroll'|'front' <span>(Par défaut : 'scroll') Détermine si le bloc doit faire partie du contenu scrollable de la page, ou bien s'il doit-être fixé au premier plan ou à l'arrière plan de la page</span></div>
           <div class="demo-app-option"><em>layout?:</em> string|'left-half'|'right-half'|'fullscreen' <span>Principalement utile pour les blocs fixes : une chaine de caractères décrivant la zone d'affichage du bloc. (La documentation est au même endroit que celle des modules de scrllgngn (ça veut dire qu'il n'y en a pas hein...)).</span></div>
           <div class="demo-app-option"><em>mobileLayout?:</em> string|'left-half'|'right-half'|'fullscreen' <span>(Par défaut : la valeur donnée à layout) Valeur layout de remplacement pour les écrans inférieurs à 1024px de large</span></div>
-          <div class="demo-app-option"><em>transitions?:</em> string <span>Chaine de caractères décrivant les transitions d'apparition et de disparitions à appliquer sur le bloc. La chaine est au format : nom, durée; nom, durée; etc... Les noms de transition disponibles sont 'fade'|'grow'|'whirl'|'slide-up'|'right-open'|'left-open', et les durées indiquées sont des durées valides css, ou bien supposées en ms si pas d'unité précisée</span></div>
-          <div class="demo-app-option"><em>mobileTransitions?:</em> string <span>Même principe que mobileLayout par rapport à layout</span></div>
+          <div class="demo-app-option"><em>transitions?:</em> string <span>Blocs fixes uniquement. Chaine de caractères décrivant les transitions d'apparition et de disparitions à appliquer sur le bloc. La chaine est au format : nom, durée; nom, durée; etc... Les noms de transition disponibles sont 'fade'|'grow'|'whirl'|'slide-up'|'right-open'|'left-open', et les durées indiquées sont des durées valides css, ou bien supposées en ms si pas d'unité précisée</span></div>
+          <div class="demo-app-option"><em>mobileTransitions?:</em> string <span>Blocs fixes uniquement. Même principe que mobileLayout par rapport à layout</span></div>
         </div>
       </div>
     </div>
