@@ -13,9 +13,9 @@ export default makeTransformer(
       if (nodes.length === 1 && nodes[0] instanceof HTMLElement) {
         return nodes[0]
       } else {
-        const div = document.createElement('div')
-        nodes.forEach(node => div.appendChild(node))
-        return div
+        const span = document.createElement('span')
+        nodes.forEach(node => span.appendChild(node))
+        return span
       }
     }
     return value
