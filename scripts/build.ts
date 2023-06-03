@@ -279,7 +279,12 @@ async function copyTypeCheckAndBundle (pathsToBuild: {
     styles: now,
     total: now
   }
-  // Typechecking is not part of the promise
+  // Typechecking and DS_Store removal are not part of the promise
+  const dsStores = await glob(join(config.SRC, '**/.DS_Store'))
+  dsStores.map(async dsStore => {
+    await fs.rm(dsStore)
+    console.log('Removed',dsStore)
+  })
   if (pathsToBuild.typeCheck === true) { processTypeCheck() }
   // Fonts, assets, styles and scripts are in the promise
   const fontsPromise = pathsToBuild.fonts === true ? processFonts() : new Promise(r => r(true))
