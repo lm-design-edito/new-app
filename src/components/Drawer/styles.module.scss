@@ -1,8 +1,9 @@
 .wrapper {
   height: 0;
-  transition: 200ms height ease-in-out;
+  transition: 200ms height;
+  overflow: hidden;
+}
 
-  &_is-open {
-    height: var(--lm-drawer-content-height);
-  }
+.wrapper.wrapper_is-opened {
+  height: var(--content-height);
 }

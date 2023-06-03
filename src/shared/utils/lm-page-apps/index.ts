@@ -105,7 +105,9 @@ export enum Names {
   ARTICLE = 'article',
   AUDIOQUOTE = 'audioquote',
   CAROUSEL = 'carousel',
+  EVENT_DISPATCHER = 'event-dispatcher',
   FOOTER = 'footer',
+  HEADER = 'header',
   SCRLLGNGN = 'scrllgngn',
   SLIDESHOW = 'slideshow',
   THUMBNAIL = 'thumbnail'
@@ -208,6 +210,8 @@ async function loadRenderer (name: Names) {
   if (name === Names.ARTICLE) { renderer = (await import('../../../apps/article')).default }
   if (name === Names.AUDIOQUOTE) { renderer = (await import('../../../apps/audioquote')).default }
   if (name === Names.CAROUSEL) { renderer = (await import('../../../apps/carousel')).default }
+  if (name === Names.HEADER) { renderer = (await import('../../../apps/header')).default }
+  if (name === Names.EVENT_DISPATCHER) { renderer = (await import('../../../apps/event-dispatcher')).default }
   if (name === Names.FOOTER) { renderer = (await import('../../../apps/footer')).default }
   if (name === Names.SCRLLGNGN) { renderer = (await import('../../../apps/scrllgngn')).default }
   if (name === Names.SLIDESHOW) { renderer = (await import('../../../apps/slideshow')).default }
@@ -242,6 +246,7 @@ export async function renderApp ({ name, options, root, pageConfig, silentLogger
     root.appendChild(target)
   }
   target.classList.add('lm-app', `lm-app_${name}`)
+  // Apply customFonts [WIP] review this
   for (const fontName of (pageConfig?.customFonts ?? [])) {
     target.classList.add(`lm-app_${fontName}`) 
   }

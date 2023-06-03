@@ -142,7 +142,11 @@ export class Instructions {
       // SHEETBASE_INLINE
       else if (name === InlineOnlyInstructionsNames.SHEETBASE_INLINE) {
         // [WIP] Q&D replacement of needed html escaped characters
-        const htmlUunescapedStrValue = replaceAll(strValue, '&gt;', '>')
+        const htmlUunescapedStrValue = replaceAll(
+          replaceAll(strValue, '&gt;', '>'),
+          '&lt;',
+          '<'
+        )
         const dataSource: ConfigDataSource = { type: 'sheet', content: htmlUunescapedStrValue }
         const dataSources = config[Options.DATA_SOURCES]
         if (dataSources === undefined) config[Options.DATA_SOURCES] = [dataSource]
@@ -151,7 +155,11 @@ export class Instructions {
       // TEXTBASE_INLINE
       else if (name === InlineOnlyInstructionsNames.TEXTBASE_INLINE) {
         // [WIP] Q&D replacement of needed html escaped characters
-        const htmlUunescapedStrValue = replaceAll(strValue, '&gt;', '>')
+        const htmlUunescapedStrValue = replaceAll(
+          replaceAll(strValue, '&gt;', '>'),
+          '&lt;',
+          '<'
+        )
         const dataSource: ConfigDataSource = { type: 'doc', content: htmlUunescapedStrValue }
         const dataSources = config[Options.DATA_SOURCES]
         if (dataSources === undefined) config[Options.DATA_SOURCES] = [dataSource]

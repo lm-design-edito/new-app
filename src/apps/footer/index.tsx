@@ -1,9 +1,9 @@
-import { isValidElement, render } from 'preact'
+import { render } from 'preact'
 import { Options, Renderer } from '~/shared/lm-page-apps'
 import { optionsToProps as optionsToThumbnailProps } from '~/apps/thumbnail'
 import { Props as ThumbnailProps } from '~/components/Thumbnail'
 import Footer, { Props } from '~/components/Footer'
-import { toBoolean, toNumber, toString, toVNode } from '~/utils/cast'
+import { toNumber, toString, toVNode } from '~/utils/cast'
 
 /* * * * * * * * * * * * * * * * * * *
  * RENDERER

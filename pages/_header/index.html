@@ -1,0 +1,85 @@
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://assets-decodeurs.lemonde.fr/redacweb/design-edito-new-app-v-0-1-demo/styles__demo.css">
+  </head>
+  <body class="lm-page demo-page">
+
+    <!-- Application -->
+    <style>.lm-page-config, .lm-app-config { display: none; }</style>
+    <script src="/shared/index.js" type="module"></script>
+    <!-- <script src="https://assets-decodeurs.lemonde.fr/design-edito/v0.1/shared/index.js" type="module"></script> -->
+
+    <!-- Config -->
+    <data class="lm-page-config" value="approxPublicationDate">2023-06-10</data>
+    <data class="lm-page-config" value="id">demo-lm-apps</data>
+    <data class="lm-page-config" value="textbaseInline">
+      # PAGE_SLOTS
+        ## header-slot
+          _selector: .header-slot
+          _name: header
+          _options: options/header-slot >>> toRef
+
+        ## event-dispatcher-1-slot
+          _selector: .event-dispatcher-1-slot
+          _name: event-dispatcher
+          _options: options/event-dispatcher-1-slot >>> toRef
+
+      # options
+        // HEADER =====================================
+        ## header-slot
+          _customClass: my-header
+          _hideLogo: false >>> toBoolean
+          _hideNav: false >>> toBoolean
+          _hideCta: false >>> toBoolean
+          _fill1: blue
+          _fill2: red
+          _fillTransitionTime: 600ms
+          _navItems: options/header-nav-item-
+            >>> toArray 2
+            >>> map append %pos%
+            >>> map toRef
+          _navItemsAlign: center
+          _ctaContent: <strong>I am the CTA</strong> >>> toHtml
+          _ctaActionType: toggle-panel
+          _panelContent: <div style="height: 400px; background-color: coral; margin-top: 8px;">
+            <strong>I am the panel dude</strong>
+          </div> >>> toHtml
+
+        ## header-nav-item-0
+          _value: item-0
+          _content: Item 0
+          _isActive: false >>> toBoolean
+
+        ## header-nav-item-1
+          _value: item-1
+          _content: Item 1
+          _isActive: true >>> toBoolean
+
+        // EVENT-DISPATCHER-1 =====================================
+        ## event-dispatcher-1-slot
+          _customClass: my-event-dispatcher-1
+          _trigger: enter-bottom
+          _instruction: set-header-props
+          _content: <strong>lol</strong> >>> toHtml  
+          _payload: options/event-dispatcher-1-payload >>> toRef
+        
+        ## event-dispatcher-1-payload
+          _fill1: orange
+
+    </data>
+
+    <!-- Slots -->
+    <style>
+      .header-slot {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+      }
+    </style>
+    <div class="header-slot"></div>
+    <div class="event-dispatcher-1-slot" style="margin-top: 120vh; margin-bottom: 120vh;">event dispatcher 1</div>
+  </body>
+</html>

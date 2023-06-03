@@ -1,8 +1,27 @@
 .wrapper {
   position: relative;
   display: grid;
-  padding: 8px 0;
   grid-template-columns: auto 1fr auto;
+  grid-template-rows: auto auto;
+  grid-template-areas: 
+    "logo nav cta"
+    "panel panel panel";
+}
+
+.logo {
+  grid-area: logo;
+}
+
+.nav {
+  grid-area: nav;
+}
+
+.cta-wrapper {
+  grid-area: cta;
+}
+
+.panel {
+  grid-area: panel;
 }
 
 .logo,
