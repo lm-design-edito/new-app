@@ -1,4 +1,4 @@
-import { exec } from 'node:child_process'
+import { exec, execSync } from 'node:child_process'
 import { join } from 'node:path'
 import { promises as fs } from 'node:fs'
 import tree from 'tree-cli'
@@ -78,6 +78,10 @@ async function main () {
       message: `\n${styles.danger(
         `You are about to deploy uncommited\n`
         + `changes and you probably shouldn't.\n\n`
+        + `The deployment process implies adding\n`
+        + `a milestone empty commit to your git\n`
+        + `history. This operation will git reset *\n`
+        + `before commiting the deployment event.\n\n`
         + `Are you perfectly sure?`.toUpperCase()
       )}`
     })
@@ -462,6 +466,29 @@ async function main () {
   ))
   console.log('')
 
+ /* * * * * * * * * * * * * * * * * * * * *
+  * Create a milestone commit
+  * * * * * * * * ** * * * * * * * * * * * */
+  console.log(styles.title(`Creating a milestone empty commit`))
+  await new Promise(resolve => exec(
+    `git reset * && git commit --allow-empty -m "[deployment] v.${targetVersionStr} / ${targetDestinationName}"`,
+    (err, stdout, stderr) => {
+      if (err !== null || stderr !== '') {
+        const errorMessage = 'Something went wrong while creating the milestone commit'
+          + `\nerr: ${err}`
+          + `\nstderr: ${stderr}`
+          + `\nstdout: ${stdout}`
+        console.log(styles.error(errorMessage))
+        console.log('')
+        console.log(styles.important('You should do this by hand since the deployment has already been done.'))
+        console.log(styles.regular(`git reset * && git commit --allow-empty -m "[deployment] v.${targetVersionStr} / ${targetDestinationName}"`))
+        console.log('')
+      }
+      resolve(stdout)
+    }
+  ))
+  console.log('')
+  
   console.log(styles.important('That\'s all good my friend. 🍸\n\n'))
 }
 
