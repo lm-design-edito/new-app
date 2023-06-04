@@ -34,6 +34,18 @@ export function toArray (value: unknown) {
   return [value]
 }
 
+export function toRecord (value: unknown) {
+  const record: Record<string, unknown> = {}
+  try {
+    Object
+      .keys(value as any)
+      .forEach(key => { record[key] = (value as any)[key] })
+  } catch (err) {
+    return record
+  }
+  return record
+}
+
 export function toVNode (value: unknown): VNode {
   if (typeof value === 'string') return <>{value}</>
   else if (value instanceof HTMLElement) return nodesToVNodes(value)[0]
