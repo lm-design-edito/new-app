@@ -11,8 +11,7 @@ import { toNumber, toString, toVNode } from '~/utils/cast'
 export default function FooterApp({
   options,
   root,
-  silentLogger,
-  pageConfig
+  silentLogger
 }: Parameters<Renderer>[0]): ReturnType<Renderer> {
   const props = optionsToProps(options)
   const app = <Footer {...props} />

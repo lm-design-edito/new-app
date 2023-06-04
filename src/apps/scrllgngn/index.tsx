@@ -18,8 +18,7 @@ import { toBoolean, toNumber, toString, toVNode } from '~/utils/cast'
 export default function ScrllgngnApp ({
   options,
   root,
-  silentLogger,
-  pageConfig
+  silentLogger
 }: Parameters<Renderer>[0]): ReturnType<Renderer> {
   const props = optionsToProps(options)
   const app = <Scrllgngn {...props} /> 

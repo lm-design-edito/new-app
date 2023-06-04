@@ -1,10 +1,8 @@
-import { isValidElement, render } from 'preact'
+import { render } from 'preact'
 import Article, { Props as ArticleProps, ArticleElementProps } from '~/components/Article'
 import { ElementType as BasicElementType } from '~/components/Article/BasicTextElement'
 import { Options, Renderer } from '~/shared/lm-page-apps'
 import { toBoolean, toString, toVNode } from '~/utils/cast'
-import nodesToVNodes from '~/utils/nodes-to-vnodes'
-import selectorToElement from '~/utils/selector-to-element'
 
 /* * * * * * * * * * * * * * * * * * *
  * RENDERER
@@ -12,8 +10,7 @@ import selectorToElement from '~/utils/selector-to-element'
 export default function ArticleApp({
   options,
   root,
-  silentLogger,
-  pageConfig
+  silentLogger
 }: Parameters<Renderer>[0]): ReturnType<Renderer> {
   const props = optionsToProps(options)
   const app = <Article {...props} />

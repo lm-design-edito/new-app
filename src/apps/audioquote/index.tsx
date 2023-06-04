@@ -9,8 +9,7 @@ import { toBoolean, toNumber, toString, toVNode } from '~/utils/cast'
 export default function AudioQuoteApp({
   options,
   root,
-  silentLogger,
-  pageConfig
+  silentLogger
 }: Parameters<Renderer>[0]): ReturnType<Renderer> {
   const props = optionsToProps(options)
   const app = <AudioQuote {...props} />

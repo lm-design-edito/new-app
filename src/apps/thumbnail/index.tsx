@@ -1,4 +1,4 @@
-import { isValidElement, render } from 'preact'
+import { render } from 'preact'
 import { Options, Renderer } from '~/shared/lm-page-apps'
 import Thumbnail, { Props } from '~/components/Thumbnail'
 import { toString, toVNode } from '~/utils/cast'
@@ -9,8 +9,7 @@ import { toString, toVNode } from '~/utils/cast'
 export default function ThumbnailApp({
   options,
   root,
-  silentLogger,
-  pageConfig
+  silentLogger
 }: Parameters<Renderer>[0]): ReturnType<Renderer> {
   const props = optionsToProps(options)
   const app = <Thumbnail {...props} />

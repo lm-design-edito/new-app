@@ -1,7 +1,7 @@
 import { render } from 'preact'
 import { Options, Renderer } from '~/shared/lm-page-apps'
 import Header, { Props, CtaActionType } from '~/components/Header'
-import { toBoolean, toNumber, toString, toVNode } from '~/utils/cast'
+import { toBoolean, toString, toVNode } from '~/utils/cast'
 
 /* * * * * * * * * * * * * * * * * * *
  * RENDERER
@@ -9,8 +9,7 @@ import { toBoolean, toNumber, toString, toVNode } from '~/utils/cast'
 export default function HeaderApp({
   options,
   root,
-  silentLogger,
-  pageConfig
+  silentLogger
 }: Parameters<Renderer>[0]): ReturnType<Renderer> {
   const props = optionsToProps(options)
   const app = <Header {...props} />
