@@ -1,13 +1,16 @@
 import { Component, JSX, VNode } from 'preact'
-import IntersectionObserverComponent from '~/components/IntersectionObserver'
-import ResizeObserverComponent from '~/components/ResizeObserver'
-import Paginator, { State as PaginatorState } from '~/components/Paginator'
-import Header, { NavItem as HeaderNavItem } from '~/components/Header'
+
 import { throttle } from '~/utils/throttle-debounce'
 import clamp from '~/utils/clamp'
 import bem from '~/utils/bem'
-import isFalsy from '~/utils/is-falsy'
 import { injectCssRule } from '~/utils/dynamic-css' // [WIP] use injectCssRule everywhere
+
+import IntersectionObserverComponent from '~/components/IntersectionObserver'
+import ResizeObserverComponent from '~/components/ResizeObserver'
+import Paginator, { State as PaginatorState } from '~/components/Paginator'
+import { Props as HeaderProps } from '~/components/Header'
+import { Instruction, dispatchEvent } from '~/components/EventDispatcher'
+
 import TransitionsWrapper from './TransitionsWrapper'
 import BlockRenderer from './BlockRenderer'
 import styles from './styles.module.scss'
@@ -70,16 +73,10 @@ export type PropsBlockData = PropsScrollBlockData|PropsStickyBlockData
 
 export type PropsPageData = {
   id?: string
-  showHeader?: boolean
-  showNav?: boolean
-  headerLogoFill1?: string
-  headerLogoFill2?: string
-  headerCustomClass?: string
-  headerNavItemsAlign?: string
-  chapterName?: string
-  isChapterHead?: boolean
   bgColor?: JSX.CSSProperties['backgroundColor']
   blocks?: PropsBlockData[]
+  dispatchOnEnter?: [Instruction, any][]
+  dispatchOnLeave?: [Instruction, any][]
 }
 
 export type Props = {
@@ -90,12 +87,6 @@ export type Props = {
   thresholdOffset?: string
   bgColorTransitionDuration?: string|number
   pages?: PropsPageData[]
-  headerCustomClass?: string
-  headerNavItemsAlign?: string // [WIP] more specific ? map to Header Props?
-  onHalfVisible?: () => void // [WIP] keep that? Sure?
-  onHalfHidden?: () => void // [WIP] keep that? Sure?
-  onEndVisible?: () => void // [WIP] keep that? Sure?
-  onEndHidden?: () => void // [WIP] keep that? Sure?
 }
 
 /* Context stuff */
@@ -491,9 +482,7 @@ export default class Scrollgneugneu extends Component<Props, State> {
     this.cleanRefsMaps = this.cleanRefsMaps.bind(this)
     this.getCurrentPageData = this.getCurrentPageData.bind(this)
     this.getPreviousPageData = this.getPreviousPageData.bind(this)
-    this.navigateToChapter = this.navigateToChapter.bind(this)
     this.injectModulesStyles = this.injectModulesStyles.bind(this)
-    this.Header = this.Header.bind(this)
     this.StickyBlocks = this.StickyBlocks.bind(this)
     this.ScrollingBlocks = this.ScrollingBlocks.bind(this)
   }
@@ -869,7 +858,7 @@ export default class Scrollgneugneu extends Component<Props, State> {
       currBlocksContext,
       blocksContextPage,
       blocksContextSize)
-    const { blocks } = state
+    const { blocks, pages } = state
     const newBlocks = new Map(blocks)
     newBlocksContexts.forEach((blockContext, blockId) => {
       const blockData = newBlocks.get(blockId)
@@ -879,12 +868,42 @@ export default class Scrollgneugneu extends Component<Props, State> {
         _context: blockContext
       })
     })
-    return this.setState(curr => ({
-      ...curr,
-      currPagePos: newCurrentPagePos,
-      prevPagePos: curr.currPagePos,
-      blocks: newBlocks
-    }))
+    // Dispatch on leave
+    const prevPageData = state.currPagePos !== undefined
+      ? pages.get(state.currPagePos)
+      : undefined
+    if (prevPageData !== undefined) {
+      const toDispatch = prevPageData.dispatchOnLeave
+      if (toDispatch !== undefined
+        && toDispatch.length !== 0) {
+        toDispatch.forEach(([instruction, payload]) => {
+          console.log('dispatchEvent', instruction, payload)
+          dispatchEvent(instruction, payload)
+        })
+      }
+    }
+    // Dispatch on enter
+    const newPageData = newCurrentPagePos !== undefined
+      ? pages.get(newCurrentPagePos)
+      : undefined
+    if (newPageData !== undefined) {
+      const toDispatch = newPageData.dispatchOnEnter
+      if (toDispatch !== undefined
+        && toDispatch.length !== 0) {
+        toDispatch.forEach(([instruction, payload]) => {
+          console.log('dispatchEvent', instruction, payload)
+          dispatchEvent(instruction, payload)
+        })
+      }
+    }
+    return this.setState(curr => {
+      return {
+        ...curr,
+        currPagePos: newCurrentPagePos,
+        prevPagePos: curr.currPagePos,
+        blocks: newBlocks
+      }
+    })
   }
 
   handleWindowScroll () {
@@ -1021,65 +1040,6 @@ export default class Scrollgneugneu extends Component<Props, State> {
       .forEach(cssBlock => injectCssRule(cssBlock))
   }
 
-  navigateToChapter (chapterName: string) {
-    const { state, pagesRefsMap } = this
-    const { pages } = state
-    const [targetPagePos] = [...pages].find(([_, pageData]) => {
-      return pageData.chapterName === chapterName
-        && pageData.isChapterHead === true
-    }) ?? []
-    const targetPageRef = targetPagePos !== undefined
-      ? pagesRefsMap.get(targetPagePos)
-      : undefined
-    if (targetPageRef === null || targetPageRef === undefined) return;
-    targetPageRef.scrollIntoView({ behavior: 'smooth' })
-  }
-
-  Header () {
-    const { props, state, getCurrentPageData } = this
-    const { pages } = state
-    const currentPageData = getCurrentPageData()
-    const {
-      headerLogoFill1,
-      headerLogoFill2,
-      showHeader,
-      showNav
-    } = (currentPageData ?? {})
-    const customClasses = []
-    if (!isFalsy(props.headerCustomClass)) customClasses.push(props.headerCustomClass)
-    if (!isFalsy(currentPageData?.headerCustomClass)) customClasses.push(currentPageData?.headerCustomClass)
-    const navItemsAlign = currentPageData?.headerNavItemsAlign ?? props.headerNavItemsAlign
-    return <Header
-      fill1={headerLogoFill1}
-      fill2={headerLogoFill2}
-      navItems={[...pages]
-        .filter(pagePosAndData => {
-          const [_, pageData] = pagePosAndData
-          const { chapterName } = pageData
-          const chapterNameIsEmpty = isFalsy(chapterName)
-          return !chapterNameIsEmpty
-        }).reduce((acc, pagePosAndData) => {
-        const [_, pageData] = pagePosAndData
-        const pageChapterName = pageData.chapterName
-        const alreadyInNav = acc.find(navItem => navItem.value === pageChapterName)
-        if (alreadyInNav) return acc;
-        return [...acc, {
-          value: pageChapterName,
-          isActive: currentPageData?.chapterName === pageChapterName,
-          onClick: pageChapterName !== undefined
-            ? _e => this.navigateToChapter(pageChapterName)
-            : undefined
-        }]
-      }, [] as HeaderNavItem[])}
-      navItemsAlign={navItemsAlign}
-      hideLogo={showHeader !== true}
-      hideNav={showHeader !== true || showNav !== true}
-      hideCta={true} // [WIP] CTA not supported yet
-      ctaContent={undefined} // [WIP] CTA not supported yet
-      ctaOnClick={undefined} // [WIP] CTA not supported yet
-      customClass={customClasses.join(' ')} />
-  }
-
   StickyBlocks () {
     const { generateLayoutClasses } = Scrollgneugneu
     const {
@@ -1092,29 +1052,11 @@ export default class Scrollgneugneu extends Component<Props, State> {
       getBlockDistanceFromDisplay,
       loadCss,
       throttledHandleBlockResize,
-      Header: ScrllgngnHeader
     } = this
     const { stickyBlocksLazyLoadDistance } = props
     const lazyLoadDistance = Math.max(stickyBlocksLazyLoadDistance ?? 2, 1)
     const { blocks, currPagePos } = state
-    const headerZIndex = [...blocks.values()].reduce((acc, curr) => {
-      if (curr._zIndex > acc) return curr._zIndex
-      return acc
-    }, 0)
-    const headerBlockClasses = [
-      wrapperBemClass.elt('header').value,
-      styles['block'],
-      styles['block_sticky'],
-      styles['header']
-    ]
-    const headerBlockStyle = { '--z-index': headerZIndex }
     return <>
-      {/* HEADER */}
-      {<div
-        style={headerBlockStyle}
-        className={headerBlockClasses.join(' ')}>
-        <ScrllgngnHeader />
-      </div>}
       {/* STICKY BLOCKS */}
       {[...blocks].map(([blockIdentifier, scrollOrStickyBlockData]) => {
         const blockDistance = getBlockDistanceFromDisplay(blockIdentifier)
@@ -1349,10 +1291,6 @@ export default class Scrollgneugneu extends Component<Props, State> {
       styles['wrapper_offset-blocks'],
       wrapperBemClass.mod('offset-blocks').value
     )
-    if (currPageData?.showHeader !== true) wrapperClasses.push(
-      styles['wrapper_hide-header'],
-      wrapperBemClass.mod('hide-header').value
-    )
 
     // Scroll panel CSS classes
     const scrollPanelBemClass = wrapperBemClass.element('scroll-panel')
@@ -1393,24 +1331,10 @@ export default class Scrollgneugneu extends Component<Props, State> {
             <ScrollingBlocks />
           </ResizeObserverComponent>
         </IntersectionObserverComponent>
-        {/* HALF LENGTH DETECTION */}
-        {scrollingPanelHeight !== undefined && <IntersectionObserverComponent
-          style={{ position: 'absolute', top: `${(scrollingPanelHeight ?? 0) / 2}px` }}
-          render={<div />}
-          callback={ioEntry => {
-            const { onHalfVisible, onHalfHidden } = props
-            if (ioEntry.isIntersecting && onHalfVisible !== undefined) return onHalfVisible()
-            if (!ioEntry.isIntersecting && onHalfHidden !== undefined) return onHalfHidden()
-          }} />}
         {/* BOTTOM BOUND DETECTION */}
         <IntersectionObserverComponent
           render={<div ref={n => { this.btmBoundRef = n }} />}
-          callback={ioEntry => {
-            throttledBoundsDetection(ioEntry)
-            const { onEndVisible, onEndHidden } = props
-            if (ioEntry.isIntersecting && onEndVisible !== undefined) return onEndVisible()
-            if (!ioEntry.isIntersecting && onEndHidden !== undefined) return onEndHidden()
-          }} />
+          callback={throttledBoundsDetection} />
       </div>
     </div>
   }

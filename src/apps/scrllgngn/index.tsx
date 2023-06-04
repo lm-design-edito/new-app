@@ -11,6 +11,8 @@ import Scrllgngn, {
   TransitionName
 } from '~/components/Scrllgngn'
 import { toBoolean, toNumber, toString, toVNode } from '~/utils/cast'
+import { Instruction } from '~/components/EventDispatcher'
+import flattenGetters from '~/utils/flatten-getters'
 
 /* * * * * * * * * * * * * * * * * * *
  * RENDERER
@@ -43,9 +45,7 @@ export function optionsToProps (options: Options): Props {
     stickyBlocksOffsetTop,
     thresholdOffset,
     bgColorTransitionDuration,
-    pages,
-    headerCustomClass,
-    headerNavItemsAlign
+    pages
   } = options
   // customClass
   if (customClass !== undefined) { props.customClass = toString(customClass) }
@@ -62,10 +62,6 @@ export function optionsToProps (options: Options): Props {
   else if (bgColorTransitionDuration !== undefined) { props.bgColorTransitionDuration = toNumber(bgColorTransitionDuration) }
   // pages
   if (Array.isArray(pages)) { props.pages = arrayToPages(pages) }
-  // headerCustomClass
-  if (headerCustomClass !== undefined) { props.headerCustomClass = toString(headerCustomClass) }
-  // headerNavItemsAlign
-  if (headerNavItemsAlign !== undefined) { props.headerNavItemsAlign = toString(headerNavItemsAlign) }
   return props
 }
 
@@ -80,39 +76,31 @@ function arrayToPages (array: unknown[]): PropsPageData[] {
       const extractedPage: PropsPageData = {}
       const {
         id,
-        showHeader,
-        showNav,
-        headerLogoFill1,
-        headerLogoFill2,
-        headerCustomClass,
-        headerNavItemsAlign,
-        chapterName,
-        isChapterHead,
         bgColor,
-        blocks
+        blocks,
+        dispatchOnEnter,
+        dispatchOnLeave
       } = pageData
       // id
       if (id !== undefined) { extractedPage.id = toString(id) }
-      // showHeader
-      if (showHeader !== undefined) { extractedPage.showHeader = toBoolean(showHeader) }
-      // showNav
-      if (showNav !== undefined) { extractedPage.showNav = toBoolean(showNav) }
-      // headerLogoFill1
-      if (headerLogoFill1 !== undefined) { extractedPage.headerLogoFill1 = toString(headerLogoFill1) }
-      // headerLogoFill2
-      if (headerLogoFill2 !== undefined) { extractedPage.headerLogoFill2 = toString(headerLogoFill2) }
-      // headerCustomClass
-      if (headerCustomClass !== undefined) { extractedPage.headerCustomClass = toString(headerCustomClass) }
-      // headerNavItemsAlign
-      if (headerNavItemsAlign !== undefined) { extractedPage.headerNavItemsAlign = toString(headerNavItemsAlign) }
-      // chapterName
-      if (chapterName !== undefined) { extractedPage.chapterName = toString(chapterName) }
-      // isChapterHead
-      if (isChapterHead !== undefined) { extractedPage.isChapterHead = toBoolean(isChapterHead) }
       // bgColor
       if (bgColor !== undefined) { extractedPage.bgColor = toString(bgColor) }
       // blocks
       if (Array.isArray(blocks)) { extractedPage.blocks = arrayToBlocks(blocks) }
+      // dispatchOnEnter // [WIP] should be possible to dispatch multiple events
+      if (dispatchOnEnter !== undefined
+        && Array.isArray(dispatchOnEnter)) {
+        const [instruction, payload] = dispatchOnEnter
+        // [WIP] should typecheck and all but...
+        extractedPage.dispatchOnEnter = [[instruction, flattenGetters(payload)]]
+      }
+      // dispatchOnLeave // [WIP] should be possible to dispatch multiple events
+      if (dispatchOnLeave !== undefined
+        && Array.isArray(dispatchOnLeave)) {
+        const [instruction, payload] = dispatchOnLeave
+        // [WIP] should typecheck and all but...
+        extractedPage.dispatchOnLeave = [[instruction, flattenGetters(payload)]]
+      }
       extractedPages.push(extractedPage)
     }
   })

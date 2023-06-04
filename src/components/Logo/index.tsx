@@ -5,8 +5,14 @@ import { injectCssRule } from '~/utils/dynamic-css'
 import logoUrl from './logo.svg'
 import styles from './styles.module.scss'
 
-injectCssRule(`.${styles['logo']} .fill-1 { fill: var(--fill-1); }`, 'lm-logo-fill-1')
-injectCssRule(`.${styles['logo']} .fill-2 { fill: var(--fill-2); }`, 'lm-logo-fill-2')
+injectCssRule(`.${styles['logo']} .fill-1 {
+  fill: var(--fill-1);
+  transition: fill var(--fill-transition-time);
+}`, 'lm-logo/fill-1')
+injectCssRule(`.${styles['logo']} .fill-2 {
+  fill: var(--fill-2);
+  transition: fill var(--fill-transition-time);
+}`, 'lm-logo/fill-2')
 
 export interface Props {
   fill1?: string

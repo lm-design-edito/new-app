@@ -435,6 +435,30 @@ async function main () {
   console.log('')
 
   /* * * * * * * * * * * * * * * * * * * * *
+  * Create a milestone commit
+  * * * * * * * * ** * * * * * * * * * * * */
+  console.log(styles.title(`Creating a milestone empty commit`))
+  await new Promise(resolve => exec(
+    `git reset * && git commit --allow-empty -m "[deployment] - v.${targetVersionStr} - ${targetDestinationName}"`,
+    (err, stdout, stderr) => {
+      if (err !== null || stderr !== '') {
+        const errorMessage = 'Something went wrong while creating the milestone commit'
+          + `\nerr: ${err}`
+          + `\nstderr: ${stderr}`
+          + `\nstdout: ${stdout}`
+        console.log(styles.error(errorMessage))
+        console.log('')
+        console.log(styles.important('You should do this by hand since the deployment has already been done.'))
+        console.log(styles.regular(`git reset * && git commit --allow-empty -m "[deployment] v.${targetVersionStr} / ${targetDestinationName}"`))
+        console.log('')
+      }
+      resolve(stdout)
+    }
+  ))
+  console.log(styles.regular(`[deployment] - v.${targetVersionStr} - ${targetDestinationName}`))
+  console.log('')
+
+  /* * * * * * * * * * * * * * * * * * * * *
   * Making files public
   * * * * * * * * ** * * * * * * * * * * * */
   console.log(styles.title(`Making files public`))
@@ -462,29 +486,6 @@ async function main () {
       if (stdout !== '') console.log(styles.regular(stdout))
       if (err === null) versionsJsonExists = true
       resolve(true)
-    }
-  ))
-  console.log('')
-
- /* * * * * * * * * * * * * * * * * * * * *
-  * Create a milestone commit
-  * * * * * * * * ** * * * * * * * * * * * */
-  console.log(styles.title(`Creating a milestone empty commit`))
-  await new Promise(resolve => exec(
-    `git reset * && git commit --allow-empty -m "[deployment] v.${targetVersionStr} / ${targetDestinationName}"`,
-    (err, stdout, stderr) => {
-      if (err !== null || stderr !== '') {
-        const errorMessage = 'Something went wrong while creating the milestone commit'
-          + `\nerr: ${err}`
-          + `\nstderr: ${stderr}`
-          + `\nstdout: ${stdout}`
-        console.log(styles.error(errorMessage))
-        console.log('')
-        console.log(styles.important('You should do this by hand since the deployment has already been done.'))
-        console.log(styles.regular(`git reset * && git commit --allow-empty -m "[deployment] v.${targetVersionStr} / ${targetDestinationName}"`))
-        console.log('')
-      }
-      resolve(stdout)
     }
   ))
   console.log('')

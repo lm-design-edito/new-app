@@ -6,7 +6,7 @@ import {
   Instruction
 } from '~/components/EventDispatcher'
 
-type Handler = (payload: Record<string, unknown>) => void
+export type Handler = (payload: Record<string, unknown>) => void
 
 type Props = {
   on?: [Instruction, Handler][]

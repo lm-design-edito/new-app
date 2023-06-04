@@ -40,16 +40,15 @@ type UpdateHeaderProps = CommonProps & {
 
 export const customEventName = randomUUID()
 export const customEventTarget = document.createElement('div')
-export function dispatchEvent (instruction: Instruction.SET_HEADER_PROPS, payload?: HeaderProps): void
-export function dispatchEvent (instruction: Instruction.UPDATE_HEADER_PROPS, payload?: Partial<HeaderProps>): void
-export function dispatchEvent (instruction: any, payload: any): void {
-  const customEvent = new CustomEvent(customEventName, {
-    detail: {
-      instruction,
-      payload
+export function dispatchEvent (instruction: Instruction, payload: any): void {
+  customEventTarget.dispatchEvent(new CustomEvent(
+    customEventName, {
+      detail: {
+        instruction,
+        payload
+      }
     }
-  })
-  customEventTarget.dispatchEvent(customEvent)
+  ))
 }
 
 export type Props = NoInstructionProps
@@ -76,9 +75,9 @@ export default class EventDispatcher extends Component<Props, {}> {
     const isCloserToTop = distanceToTop < distanceToBottom
     const expectsTop = trigger === ENTER_TOP || trigger === LEAVE_TOP
     if (isCloserToTop !== expectsTop) return
-    const { SET_HEADER_PROPS, UPDATE_HEADER_PROPS } = Instruction
-    if (props.instruction === SET_HEADER_PROPS) dispatchEvent(props.instruction, props.payload)
-    else if (props.instruction === UPDATE_HEADER_PROPS) dispatchEvent(props.instruction, props.payload)
+    const { instruction, payload } = props
+    if (instruction === undefined) return;
+    dispatchEvent(instruction, payload)
   }
 
   render () {

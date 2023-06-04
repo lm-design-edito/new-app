@@ -15,20 +15,20 @@
     <data class="lm-page-config" value="approxPublicationDate">2023-06-10</data>
     <data class="lm-page-config" value="id">demo-lm-apps</data>
     <data class="lm-page-config" value="textbaseInline">
+      # PAGE_CONFIG
+        ## config
+          _customFonts: euclid-flex-xl >>> toArray 1
+
+      // HEADER =====================================
+      
       # PAGE_SLOTS
         ## header-slot
           _selector: .header-slot
           _name: header
-          _options: options/header-slot >>> toRef
-
-        ## event-dispatcher-1-slot
-          _selector: .event-dispatcher-1-slot
-          _name: event-dispatcher
-          _options: options/event-dispatcher-1-slot >>> toRef
-
+          _options: options/header-slot--initial-state >>> toRef
+      
       # options
-        // HEADER =====================================
-        ## header-slot
+        ## header-slot--initial-state
           _customClass: my-header
           _hideLogo: false >>> toBoolean
           _hideNav: false >>> toBoolean
@@ -43,7 +43,7 @@
           _navItemsAlign: center
           _ctaContent: <strong>I am the CTA</strong> >>> toHtml
           _ctaActionType: toggle-panel
-          _panelContent: <div style="height: 400px; background-color: coral; margin-top: 8px;">
+          _panelContent: <div style="height: 400px; background-color: violet; margin-top: 8px;">
             <strong>I am the panel dude</strong>
           </div> >>> toHtml
 
@@ -57,16 +57,108 @@
           _content: Item 1
           _isActive: true >>> toBoolean
 
-        // EVENT-DISPATCHER-1 =====================================
+        ## header-slot--dark-state
+          _customClass: my-header
+          _hideLogo: false >>> toBoolean
+          _hideNav: false >>> toBoolean
+          _hideCta: false >>> toBoolean
+          _fill1: red
+          _fill2: blue
+          _fillTransitionTime: 600ms
+          _navItems: options/header-nav-item-
+            >>> toArray 2
+            >>> map append %pos%
+            >>> map toRef
+          _navItemsAlign: center
+          _ctaContent: <strong>I am the CTA</strong> >>> toHtml
+          _ctaActionType: toggle-panel
+          _panelContent: <div style="height: 400px; background-color: teal; margin-top: 8px;">
+            <strong>I am the panel dude</strong>
+          </div> >>> toHtml
+      
+      // SCRLLGNGN =====================================
+  
+      # PAGE_SLOTS
+        ## scrllgngn-slot
+          _selector: .scrllgngn-slot
+          _name: scrllgngn
+          _options: options/scrllgngn-slot >>> toRef
+      
+      # options
+        ## scrllgngn-slot
+          _thresholdOffset: 80vh
+          _pages: options/scrllgngn-page-
+            >>> toArray 2
+            >>> map append %pos%
+            >>> map toRef
+        
+        ## scrllgngn-page-0
+          _id: page-0
+          _bgColor: coral
+          _blocks: options/scrllgngn-page-0-block-0 >>> toArray 1 >>> map toRef
+          _dispatchOnEnter: set-header-props, options/header-slot--initial-state
+            >>> split ,
+            >>> map trim
+            >>> map toRef
+          _dispatchOnLeave: set-header-props, options/header-slot--dark-state
+            >>> split ,
+            >>> map trim
+            >>> map toRef
+
+        ## scrllgngn-page-0-block-0
+          _id: page-0-block-0
+          _type: html
+          _content: <div style="height: 120vh; display: flex; align-items: center;"><h1>PAGE 1</h1></div> >>> toHtml
+          _depth: scroll
+        
+        ## scrllgngn-page-1
+          _id: page-1
+          _bgColor: cornflowerblue
+          _blocks: options/scrllgngn-page-1-block-0 >>> toArray 1 >>> map toRef
+          _dispatchOnEnter:
+          _dispatchOnLeave:
+
+        ## scrllgngn-page-1-block-0
+          _id: page-1-block-0
+          _type: html
+          _content: <div style="height: 120vh; display: flex; align-items: center;"><h1>PAGE 2</h1></div> >>> toHtml
+          _depth: scroll
+
+      // EVENT-DISPATCHER-1 =====================================
+
+      # PAGE_SLOTS
+        ## event-dispatcher-1-slot
+          _selector: .event-dispatcher-1-slot
+          _name: event-dispatcher
+          _options: options/event-dispatcher-1-slot >>> toRef
+        
+      # options
         ## event-dispatcher-1-slot
           _customClass: my-event-dispatcher-1
           _trigger: enter-bottom
-          _instruction: set-header-props
-          _content: <strong>lol</strong> >>> toHtml  
+          _instruction: update-header-props
           _payload: options/event-dispatcher-1-payload >>> toRef
         
         ## event-dispatcher-1-payload
           _fill1: orange
+      
+      // EVENT-DISPATCHER-2 =====================================
+
+      # PAGE_SLOTS
+        ## event-dispatcher-2-slot
+          _selector: .event-dispatcher-2-slot
+          _name: event-dispatcher
+          _options: options/event-dispatcher-2-slot >>> toRef
+        
+      # options
+        ## event-dispatcher-2-slot
+          _customClass: my-event-dispatcher-2
+          _trigger: leave-bottom
+          _instruction: update-header-props
+          _payload: options/event-dispatcher-2-payload >>> toRef
+        
+        ## event-dispatcher-2-payload
+          _fill1: blue
 
     </data>
 
@@ -77,9 +169,12 @@
         top: 0;
         left: 0;
         right: 0;
+        z-index: 3;
       }
     </style>
     <div class="header-slot"></div>
-    <div class="event-dispatcher-1-slot" style="margin-top: 120vh; margin-bottom: 120vh;">event dispatcher 1</div>
+    <div class="scrllgngn-slot"></div>
+    <!-- <div class="event-dispatcher-1-slot" style="margin-top: 120vh"></div>
+    <div class="event-dispatcher-2-slot" style="margin-bottom: 120vh;"></div> -->
   </body>
 </html>
