@@ -1156,6 +1156,8 @@ export default class Scrollgneugneu extends Component<Props, State> {
           '--z-index': _zIndex,
           '--context-width': _context.width,
           '--context-height': _context.height,
+          '--context-width-px': `${_context.width}px`,
+          '--context-height-px': `${_context.height}px`,
           '--context-page': _context.page,
           '--context-progression': _context.progression,
           '--context-page-progression': _context.pageProgression
