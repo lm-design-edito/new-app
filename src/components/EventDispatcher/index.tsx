@@ -2,6 +2,7 @@ import { Component, VNode } from 'preact'
 import { Props as HeaderProps } from '~/components/Header'
 import IntersectionObserverComponent from '~/components/IntersectionObserver'
 import bem from '~/utils/bem'
+import randomUUID from '~/utils/random-uuid'
 import EventCatcher from '../EventCatcher'
 
 export enum Trigger {
@@ -37,7 +38,8 @@ type UpdateHeaderProps = CommonProps & {
   payload?: Partial<HeaderProps>
 }
 
-export const customEventName = 'lm-event-dispatcher-event'
+export const customEventName = randomUUID()
+export const customEventTarget = document.createElement('div')
 export function dispatchEvent (instruction: Instruction.SET_HEADER_PROPS, payload?: HeaderProps): void
 export function dispatchEvent (instruction: Instruction.UPDATE_HEADER_PROPS, payload?: Partial<HeaderProps>): void
 export function dispatchEvent (instruction: any, payload: any): void {
@@ -47,9 +49,7 @@ export function dispatchEvent (instruction: any, payload: any): void {
       payload
     }
   })
-  console.log('i am dispatcher')
-  console.log(customEvent)
-  window.dispatchEvent(customEvent)
+  customEventTarget.dispatchEvent(customEvent)
 }
 
 export type Props = NoInstructionProps
@@ -95,7 +95,6 @@ export default class EventDispatcher extends Component<Props, {}> {
       <IntersectionObserverComponent callback={handleIntersection}>
         {actualContent}
       </IntersectionObserverComponent>
-      <EventCatcher />
     </div>
   }
 }
