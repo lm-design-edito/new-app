@@ -84,6 +84,7 @@ export type Props = {
   stickyBlocksLazyLoadDistance?: number
   stickyBlocksViewportHeight?: string // [WIP] No relative units, maybe some regex checks here?
   stickyBlocksOffsetTop?: number
+  forceStickBlocks?: 'before'|'after'|'both'
   thresholdOffset?: string
   bgColorTransitionDuration?: string|number
   pages?: PropsPageData[]
@@ -877,7 +878,6 @@ export default class Scrollgneugneu extends Component<Props, State> {
       if (toDispatch !== undefined
         && toDispatch.length !== 0) {
         toDispatch.forEach(([instruction, payload]) => {
-          console.log('dispatchEvent', instruction, payload)
           dispatchEvent(instruction, payload)
         })
       }
@@ -891,7 +891,6 @@ export default class Scrollgneugneu extends Component<Props, State> {
       if (toDispatch !== undefined
         && toDispatch.length !== 0) {
         toDispatch.forEach(([instruction, payload]) => {
-          console.log('dispatchEvent', instruction, payload)
           dispatchEvent(instruction, payload)
         })
       }
@@ -1259,7 +1258,8 @@ export default class Scrollgneugneu extends Component<Props, State> {
     } = this
     const {
       stickyBlocksViewportHeight,
-      stickyBlocksOffsetTop
+      stickyBlocksOffsetTop,
+      forceStickBlocks
     } = props
     const {
       scrollingPanelHeight,
@@ -1269,11 +1269,16 @@ export default class Scrollgneugneu extends Component<Props, State> {
     const currPageData = getCurrentPageData()
 
     // Detect if blocks must be fixed or offset
-    const { topVisible, cntVisible, btmVisible } = state
-    const blocksShouldStick = cntVisible
-      && !(topVisible ?? false)
-      && !(btmVisible ?? false)
-    const blocksAreOffset = !blocksShouldStick && btmVisible
+    const {
+      topVisible = false,
+      cntVisible = false,
+      btmVisible = false
+    } = state
+
+    const blocksShouldStick = (cntVisible && !topVisible && !btmVisible)
+      || (cntVisible && topVisible && (forceStickBlocks === 'before' || forceStickBlocks === 'both'))
+    const blocksShouldOffset = (!blocksShouldStick && btmVisible)
+      || (cntVisible && btmVisible && ((forceStickBlocks === 'after' || forceStickBlocks === 'both')))
 
     // Wrapper CSS classes
     const wrapperClasses = [
@@ -1287,7 +1292,7 @@ export default class Scrollgneugneu extends Component<Props, State> {
       styles['wrapper_stick-blocks'],
       wrapperBemClass.mod('stick-blocks').value
     )
-    if (blocksAreOffset) wrapperClasses.push(
+    if (blocksShouldOffset) wrapperClasses.push(
       styles['wrapper_offset-blocks'],
       wrapperBemClass.mod('offset-blocks').value
     )

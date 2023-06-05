@@ -43,6 +43,7 @@ export function optionsToProps (options: Options): Props {
     stickyBlocksLazyLoadDistance,
     stickyBlocksViewportHeight,
     stickyBlocksOffsetTop,
+    forceStickBlocks,
     thresholdOffset,
     bgColorTransitionDuration,
     pages
@@ -53,6 +54,15 @@ export function optionsToProps (options: Options): Props {
   if (stickyBlocksLazyLoadDistance !== undefined) { props.stickyBlocksLazyLoadDistance = toNumber(stickyBlocksLazyLoadDistance) }
   // stickyBlocksViewportHeight
   if (stickyBlocksViewportHeight !== undefined) { props.stickyBlocksViewportHeight = toString(stickyBlocksViewportHeight) }
+  // pages 
+  if (forceStickBlocks !== undefined) {
+    const strForceStickBlocks = toString(forceStickBlocks)
+    if (strForceStickBlocks === 'before'
+      || strForceStickBlocks === 'after'
+      ||strForceStickBlocks === 'both') {
+      props.forceStickBlocks = strForceStickBlocks
+    }
+  }
   // stickyBlocksOffsetTop
   if (stickyBlocksOffsetTop !== undefined) { props.stickyBlocksOffsetTop = toNumber(stickyBlocksOffsetTop) }
   // thresholdOffset
