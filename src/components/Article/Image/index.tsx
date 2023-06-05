@@ -3,6 +3,7 @@ import Thumbnail from '~/components/Thumbnail'
 import bem from '~/utils/bem'
 import BasicTextElement, { ElementType } from '../BasicTextElement'
 import Icon, { Icons } from '~/components/Icon'
+import { toString } from '~/utils/cast'
 
 const {
   MEDIA_CREDITS,
@@ -56,7 +57,7 @@ export default class Image extends Component<Props> {
       <Thumbnail
         customClass={customClass}
         imageUrl={url}
-        imageAlt={alt}
+        imageAlt={alt ?? toString(description)}
         loading={loading}
         textCenterBottom={hasOverlayCaption ? caption : undefined}
         textBelow={hasOverlayCaption ? undefined : caption}
