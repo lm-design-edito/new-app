@@ -15,6 +15,18 @@
     <data class="lm-page-config" value="approxPublicationDate">2023-06-10</data>
     <data class="lm-page-config" value="id">demo-lm-apps</data>
     <data class="lm-page-config" value="textbaseInline">
+      # collection
+      ## obj
+      _prop: value
+
+      # collection
+      ## obj
+      _prop: other-value
+
+      # collection
+      ## obj
+      _prop:RESET: reset-value
+
       # PAGE_CONFIG
         ## config
           _customFonts: euclid-flex-xl >>> toArray 1
@@ -144,6 +156,9 @@
           _fill1: blue
 
     </data>
+    <script>setTimeout(() => {
+      console.log(window.LM_PAGE.database.get('collection').get('obj').get('prop').value)
+    }, 1000)</script>
 
     <!-- Slots -->
     <style>

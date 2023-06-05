@@ -284,7 +284,7 @@ export class Entry {
 
 export class Field {
   label = 'FIELD'
-  static nameRegexp = /[a-zA-Z0-9\-\_]+/
+  static nameRegexp = /[a-zA-Z0-9\-\_]+(:[a-zA-Z]+)?/
   name: string
   parent: Entry
   parents: [Base, Collection, Entry]
@@ -454,17 +454,18 @@ export default function parse (str: string): { result: Base, errors?: ParserErro
 
   function addField (matched: string): ParsingActionResult {
     if (currentEntry === null) return { error: `Cannot create field from '${matched}' since there is no current entry` }
-    const fieldNameWithType = matched
+    const fieldNameWithAction = matched
       .trim()
       .replace(/^_/, '')
       .replace(/:$/, '')
-    const fieldType = fieldNameWithType
-      .match(/:[a-z]+$/)?.[0]
+    const fieldAction = fieldNameWithAction
+      .match(/:[a-zA-Z]+$/)?.[0]
       .replace(/^:/, '')
-    const fieldName = fieldType === undefined
-      ? fieldNameWithType
-      : fieldNameWithType.replace(/:[a-z]+$/, '')
-    currentField = currentEntry.create(fieldName.trim(), '')
+    const fieldName = fieldAction === undefined
+      ? fieldNameWithAction.trim()
+      : fieldNameWithAction.replace(/:[a-zA-Z]+$/, '').trim()
+    currentField = currentEntry.create(fieldName, '')
+    if (fieldAction === 'RESET') { currentField.raw = '' }
     if (currentField !== null) return { success: currentField }
     return { error: `Cannot not create a field from '${matched}'` }
   }
