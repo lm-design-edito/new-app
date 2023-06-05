@@ -3,7 +3,6 @@ import { Props as HeaderProps } from '~/components/Header'
 import IntersectionObserverComponent from '~/components/IntersectionObserver'
 import bem from '~/utils/bem'
 import randomUUID from '~/utils/random-uuid'
-import EventCatcher from '../EventCatcher'
 
 export enum Trigger {
   ENTER_BOTTOM = 'enter-bottom',

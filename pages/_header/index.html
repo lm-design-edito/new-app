@@ -58,23 +58,8 @@
           _isActive: true >>> toBoolean
 
         ## header-slot--dark-state
-          _customClass: my-header
-          _hideLogo: false >>> toBoolean
-          _hideNav: false >>> toBoolean
-          _hideCta: false >>> toBoolean
           _fill1: red
           _fill2: blue
-          _fillTransitionTime: 600ms
-          _navItems: options/header-nav-item-
-            >>> toArray 2
-            >>> map append %pos%
-            >>> map toRef
-          _navItemsAlign: center
-          _ctaContent: <strong>I am the CTA</strong> >>> toHtml
-          _ctaActionType: toggle-panel
-          _panelContent: <div style="height: 400px; background-color: teal; margin-top: 8px;">
-            <strong>I am the panel dude</strong>
-          </div> >>> toHtml
       
       // SCRLLGNGN =====================================
   
@@ -96,14 +81,14 @@
           _id: page-0
           _bgColor: coral
           _blocks: options/scrllgngn-page-0-block-0 >>> toArray 1 >>> map toRef
-          _dispatchOnEnter: set-header-props, options/header-slot--initial-state
-            >>> split ,
-            >>> map trim
-            >>> map toRef
-          _dispatchOnLeave: set-header-props, options/header-slot--dark-state
-            >>> split ,
-            >>> map trim
-            >>> map toRef
+          // _dispatchOnEnter: set-header-props, options/header-slot--initial-state
+          //   >>> split ,
+          //   >>> map trim
+          //   >>> map toRef
+          // _dispatchOnLeave: update-header-props, options/header-slot--dark-state
+          //   >>> split ,
+          //   >>> map trim
+          //   >>> map toRef
 
         ## scrllgngn-page-0-block-0
           _id: page-0-block-0
@@ -115,8 +100,6 @@
           _id: page-1
           _bgColor: cornflowerblue
           _blocks: options/scrllgngn-page-1-block-0 >>> toArray 1 >>> map toRef
-          _dispatchOnEnter:
-          _dispatchOnLeave:
 
         ## scrllgngn-page-1-block-0
           _id: page-1-block-0
@@ -174,7 +157,7 @@
     </style>
     <div class="header-slot"></div>
     <div class="scrllgngn-slot"></div>
-    <!-- <div class="event-dispatcher-1-slot" style="margin-top: 120vh"></div>
-    <div class="event-dispatcher-2-slot" style="margin-bottom: 120vh;"></div> -->
+    <div class="event-dispatcher-1-slot" style="margin-top: 120vh; position: absolute; top: 0;"></div>
+    <div class="event-dispatcher-2-slot" style="margin-bottom: 120vh; position:  absolute; top: 120vh;"></div>
   </body>
 </html>
