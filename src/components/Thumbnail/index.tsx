@@ -7,6 +7,8 @@ import styles from './styles.module.scss'
 export type Props = {
   customClass?: string
   imageUrl?: string
+  imageSrcset?: string
+  imageSizes?: string
   imageAlt?: string
   loading?: JSX.HTMLAttributes<HTMLImageElement>['loading']
   textAbove?: string|VNode
@@ -57,6 +59,8 @@ export default class Thumbnail extends Component<Props, {}> {
     const {
       customClass,
       imageUrl,
+      imageSrcset,
+      imageSizes,
       imageAlt,
       loading,
       textAbove,
@@ -134,6 +138,8 @@ export default class Thumbnail extends Component<Props, {}> {
         {imageUrl && <div className={imgClasses.join(' ')}>
           <ImageOverlay
             imageUrl={imageUrl}
+            imageSrcset={imageSrcset}
+            imageSizes={imageSizes}
             imageAlt={imageAlt}
             loading={loading}
             textTop={textCenterTop}

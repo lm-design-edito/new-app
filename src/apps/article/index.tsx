@@ -57,6 +57,8 @@ function unknownToElement (unknown: unknown): ArticleElementProps|undefined {
     customClass,
     content,
     url,
+    srcset,
+    sizes,
     alt,
     credits,
     description,
@@ -83,6 +85,8 @@ function unknownToElement (unknown: unknown): ArticleElementProps|undefined {
     const elementProps: ArticleElementProps = { type }
     if (typeof customClass === 'string') elementProps.customClass = customClass
     if (typeof url === 'string') elementProps.url = url
+    if (typeof srcset === 'string') elementProps.srcset = srcset
+    if (typeof sizes === 'string') elementProps.sizes = sizes
     if (typeof alt === 'string') elementProps.alt = alt
     if (credits !== undefined) { elementProps.credits = toVNode(credits) }
     if (description !== undefined) { elementProps.description = toVNode(description) }

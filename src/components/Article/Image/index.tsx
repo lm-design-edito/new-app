@@ -13,6 +13,8 @@ const {
 export type Props = {
   customClass?: string
   url?: string
+  srcset?: string
+  sizes?: string
   alt?: string
   loading?: JSX.HTMLAttributes<HTMLImageElement>['loading']
   credits?: string | VNode
@@ -30,7 +32,10 @@ export default class Image extends Component<Props> {
   render() {
     const {
       customClass,
+      /* [WIP] remplacer url par src */
       url,
+      srcset,
+      sizes,
       alt,
       loading,
       credits,
@@ -57,6 +62,8 @@ export default class Image extends Component<Props> {
       <Thumbnail
         customClass={customClass}
         imageUrl={url}
+        imageSrcset={srcset}
+        imageSizes={sizes}
         imageAlt={alt ?? toString(description)}
         loading={loading}
         textCenterBottom={hasOverlayCaption ? caption : undefined}

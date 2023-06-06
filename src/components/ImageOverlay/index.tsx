@@ -13,6 +13,8 @@ type State = {
 
 export type Props = {
   imageUrl?: string
+  imageSrcset?: string
+  imageSizes?: string
   imageAlt?: string
   loading?: JSX.HTMLAttributes<HTMLImageElement>['loading']
   textTop?: string | VNode
@@ -59,6 +61,8 @@ export default class ImageOverlay extends Component<Props, State> {
 
     const {
       imageUrl,
+      imageSrcset,
+      imageSizes,
       imageAlt,
       loading,
       textTop,
@@ -97,6 +101,8 @@ export default class ImageOverlay extends Component<Props, State> {
       {imageUrl && <div className={imageClasses.join(' ')}>
         <Img
           src={imageUrl}
+          srcset={imageSrcset}
+          sizes={imageSizes}
           alt={imageAlt}
           loading={loading} />
       </div>}

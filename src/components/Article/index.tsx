@@ -61,6 +61,8 @@ export default class Article extends Component<Props> {
         else if (elementData.type === 'image') {
           const {
             url,
+            srcset,
+            sizes,
             alt,
             credits,
             description,
@@ -75,6 +77,8 @@ export default class Article extends Component<Props> {
           return <Image
             customClass={customClass}
             url={url}
+            srcset={srcset}
+            sizes={sizes}
             alt={alt}
             credits={credits}
             description={description}
