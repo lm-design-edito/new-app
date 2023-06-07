@@ -4,8 +4,8 @@ import ToggleButton from '~/components/ToggleButton'
 import bem from '~/utils/bem'
 
 export type Props = {
-  openText?: string
-  closeText?: string
+  openText?: string | VNode
+  closeText?: string | VNode
   openIcon?: VNode
   closeIcon?: VNode
   customClass?: string
@@ -42,19 +42,25 @@ export default class SidePara extends Component<Props, State> {
     const clsses = [wrapperBemClass]
     if (customClass !== undefined) clsses.push(customClass)
 
+    const containerClss = clss.elt('container')
+    const toggleBtnClss = clss.elt('toggle-btn')
+
     return (
       <div className={clsses.join(' ')}>
-        <ToggleButton 
-          isOpen={state.isOpened}
-          openText={openText}
-          closeText={closeText}
-          openIcon={openIcon}
-          closeIcon={closeIcon}
-          onClick={handleCtaClick}
-        />
-        <Drawer opened={state.isOpened}>
-          {children !== undefined ? children : 'Side Para'}
-        </Drawer>
+        <div className={containerClss.value}>
+          <ToggleButton 
+            isOpen={state.isOpened}
+            openText={openText}
+            closeText={closeText}
+            openIcon={openIcon}
+            closeIcon={closeIcon}
+            onClick={handleCtaClick}
+            customClass={toggleBtnClss.value}
+          />
+          <Drawer opened={state.isOpened}>
+            {children !== undefined ? children : 'Side Para'}
+          </Drawer>
+        </div>
       </div>
     )
   }

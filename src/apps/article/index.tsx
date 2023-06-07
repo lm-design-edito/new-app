@@ -128,8 +128,8 @@ function unknownToElement (unknown: unknown): ArticleElementProps|undefined {
     const elementProps: ArticleElementProps = { type }
     if (typeof customClass === 'string') elementProps.customClass = customClass
     // if (label !== undefined) { elementProps.label = toVNode(label) }
-    if (openText !== undefined) elementProps.openText = toString(openText)
-    if (closeText !== undefined) elementProps.closeText = toString(closeText)
+    if (openText !== undefined) elementProps.openText = toVNode(openText)
+    if (closeText !== undefined) elementProps.closeText = toVNode(closeText)
     if (content !== undefined) { elementProps.content = toVNode(content) }
     if (openIcon !== undefined) elementProps.openIcon = toVNode(openIcon)
     if (closeIcon !== undefined) elementProps.closeIcon = toVNode(closeIcon)
