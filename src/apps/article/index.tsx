@@ -119,6 +119,14 @@ function unknownToElement (unknown: unknown): ArticleElementProps|undefined {
   }
   if (type === 'quote') { /* [WIP] */}
   if (type === 'share') { /* [WIP] */}
+  if (type === 'side-para') { 
+    const elementProps: ArticleElementProps = { type }
+    if (typeof customClass === 'string') elementProps.customClass = customClass
+    if (label !== undefined) { elementProps.label = toVNode(label) }
+    if (content !== undefined) { elementProps.content = toVNode(content) }
+    return elementProps
+    /* [WIP] */
+  }
   if (type === 'html') {
     const elementProps: ArticleElementProps = { type }
     if (typeof customClass === 'string') elementProps.customClass = customClass

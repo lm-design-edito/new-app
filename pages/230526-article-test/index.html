@@ -26,13 +26,18 @@
       # options
         ## mon-article
         _elements: options/mon-article-element
-          >>> toArray 1
+          >>> toArray 2
           >>> map append -%pos%
           >>> map toRef
 
         ## mon-article-element-0
           _type: heading
           _content: coucou
+
+        ## mon-article-element-1
+          _type: side-para
+          _label: Label side Para
+          _content: hello
     </data>
   </body>
 </html>

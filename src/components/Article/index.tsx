@@ -4,6 +4,7 @@ import BasicTextElement, { ElementType } from './BasicTextElement'
 import Image, { Props as ImageProps } from './Image'
 import ReadAlso, { Props as ReadAlsoProps } from './ReadAlso'
 import ReadInEnglish, { Props as ReadInEnglishProps } from './ReadInEnglish'
+import SidePara, { Props as SideParaProps } from './SidePara'
 
 type BasicArticleElementProps = {
   type?: ElementType
@@ -20,6 +21,10 @@ type ReadInEnglishElementProps = ReadInEnglishProps & {
   type: 'read-in-english'
   content?: string|VNode
 }
+type SideParaElementProps = SideParaProps & { 
+  type: 'side-para' 
+  content?: string|VNode
+}
 type HtmlElementProps = {
   type: 'html',
   content?: string|VNode
@@ -29,7 +34,9 @@ export type ArticleElementProps = { customClass?: string } & (BasicArticleElemen
   |ImageElementProps
   |ReadAlsoElementProps
   |ReadInEnglishElementProps
-  |HtmlElementProps)
+  |SideParaElementProps
+  |HtmlElementProps
+  )
 
 export type Props = {
   customClass?: string
@@ -110,6 +117,14 @@ export default class Article extends Component<Props> {
             url={url}>
             {content}
           </ReadInEnglish>
+        } else if (elementData.type === 'side-para') {
+          const { label, content } = elementData
+          return <SidePara
+            customClass={customClass}
+            label={label}
+            >
+            {content}
+          </SidePara>
         }
         // [WIP] Partage
         // [WIP] Quote
