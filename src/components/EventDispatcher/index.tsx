@@ -4,6 +4,13 @@ import IntersectionObserverComponent from '~/components/IntersectionObserver'
 import bem from '~/utils/bem'
 import randomUUID from '~/utils/random-uuid'
 
+let hasScrolled = false
+const scrollHandler = () => {
+  hasScrolled = true
+  window.removeEventListener('scroll', scrollHandler)
+}
+window.addEventListener('scroll', scrollHandler)
+
 export enum Trigger {
   ENTER_BOTTOM = 'enter-bottom',
   LEAVE_BOTTOM = 'leave-bottom',
@@ -63,17 +70,23 @@ export default class EventDispatcher extends Component<Props, {}> {
   handleIntersection (ioEntry: IntersectionObserverEntry) {
     const { props } = this
     const { trigger } = props
+    const { ENTER_BOTTOM, ENTER_TOP, LEAVE_TOP, LEAVE_BOTTOM } = Trigger
+    if (!hasScrolled) {
+      if (trigger === ENTER_BOTTOM
+        || trigger === ENTER_TOP
+        || trigger === LEAVE_BOTTOM
+        || trigger === LEAVE_TOP) return
+    }
     const { isIntersecting, boundingClientRect } = ioEntry
-    const { ENTER_BOTTOM, ENTER_TOP, LEAVE_TOP } = Trigger
     const expectsIntersecting = trigger === ENTER_BOTTOM || trigger === ENTER_TOP
-    if (isIntersecting !== expectsIntersecting) return
+    if (isIntersecting !== expectsIntersecting) return;
     const { top } = boundingClientRect
     const { innerHeight } = window
     const distanceToTop = top
     const distanceToBottom = innerHeight - top
     const isCloserToTop = distanceToTop < distanceToBottom
     const expectsTop = trigger === ENTER_TOP || trigger === LEAVE_TOP
-    if (isCloserToTop !== expectsTop) return
+    if (isCloserToTop !== expectsTop) return;
     const { instruction, payload } = props
     if (instruction === undefined) return;
     dispatchEvent(instruction, payload)
@@ -82,7 +95,7 @@ export default class EventDispatcher extends Component<Props, {}> {
   render () {
     const { props, handleIntersection } = this
     const { trigger, instruction, customClass, content } = props
-    const actualContent = props.content ?? <div />
+    const actualContent = content ?? <div />
     const bemClass = bem('lm-event-dispatcher').mod({
       [`trigger-${trigger}`]: trigger !== undefined,
       [`instruction-${instruction}`]: instruction !== undefined
@@ -90,7 +103,8 @@ export default class EventDispatcher extends Component<Props, {}> {
     const wrapperClasses = [bemClass.value]
     if (customClass !== undefined) wrapperClasses.push(customClass)
     return <div className={wrapperClasses.join(' ')}>
-      <IntersectionObserverComponent callback={handleIntersection}>
+      <IntersectionObserverComponent
+        callback={handleIntersection}>
         {actualContent}
       </IntersectionObserverComponent>
     </div>
