@@ -21,14 +21,12 @@ export type Props = {
   hideLogo?: boolean
   hideNav?: boolean
   hideCta?: boolean
-  fill1?: string
-  fill2?: string
-  fillTransitionTime?: string
   navItems?: NavItem[]
   navItemsAlign?: string // [WIP] more specific (left|center|right)
   ctaContent?: string|VNode
   ctaActionType?: CtaActionType
   ctaOnClick?: (event: JSX.TargetedMouseEvent<HTMLButtonElement>) => void
+  subnavContent?: string|VNode
   panelContent?: string|VNode
 }
 
@@ -134,6 +132,7 @@ export default class Header extends Component<Props, State> {
     const logoClasses = [bemClss.elt('logo').value, styles['logo']]
     const navClasses = [bemClss.elt('nav').value, styles['nav']]
     const ctaWrapperClasses = [bemClss.elt('cta-wrapper').value, styles['cta-wrapper']]
+    const subnavClasses = [bemClss.elt('subnav').value, styles['subnav']]
     const panelClasses = [bemClss.elt('panel').value, styles['panel']]
     const hasNavItems = props.navItems !== undefined
       && props.navItems.length > 0
@@ -145,12 +144,7 @@ export default class Header extends Component<Props, State> {
       ref={n => { this.$wrapper = n }}
       className={wrapperClasses.join(' ')}>
       {/* Logo */}
-      <div className={logoClasses.join(' ')}>
-        <Logo 
-          fill1={props.fill1}
-          fill2={props.fill2}
-          fillTransitionTime={props.fillTransitionTime} />
-      </div>
+      <div className={logoClasses.join(' ')}><Logo /></div>
       {/* Nav */}
       {hasNavItems && <div className={navClasses.join(' ')}>
         <div className={navLeftSpacerClasses.join(' ')} />
@@ -175,6 +169,10 @@ export default class Header extends Component<Props, State> {
         onClick={handleCtaClick}>
         {props.ctaContent}
       </button>}
+      {/* SUBNAV */}
+      <div className={subnavClasses.join(' ')}>
+        {props.subnavContent}
+      </div>
       {/* PANEL */}
       {props.panelContent !== undefined
         && <div className={panelClasses.join(' ')}>

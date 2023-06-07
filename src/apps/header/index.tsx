@@ -87,14 +87,12 @@ export function optionsToProps(options: Options): Props {
     hideLogo,
     hideNav,
     hideCta,
-    fill1,
-    fill2,
-    fillTransitionTime,
     navItems,
     navItemsAlign,
     ctaContent,
     ctaActionType,
     // ctaOnClick, // Cannot handle functions from options
+    subnavContent,
     panelContent
   } = options
   const props: Props = {}
@@ -102,9 +100,6 @@ export function optionsToProps(options: Options): Props {
   if (hideLogo !== undefined) { props.hideLogo = toBoolean(hideLogo) }
   if (hideNav !== undefined) { props.hideNav = toBoolean(hideNav) }
   if (hideCta !== undefined) { props.hideCta = toBoolean(hideCta) }
-  if (fill1 !== undefined) { props.fill1 = toString(fill1) }
-  if (fill2 !== undefined) { props.fill2 = toString(fill2) }
-  if (fillTransitionTime !== undefined) { props.fillTransitionTime = toString(fillTransitionTime) }
   if (Array.isArray(navItems)) { 
     const propsNavItems = arrayToNavItems(navItems)
     props.navItems = propsNavItems
@@ -118,6 +113,7 @@ export function optionsToProps(options: Options): Props {
       .includes(strCtaActionType as CtaActionType)
     if (isActionType) { props.ctaActionType = strCtaActionType as CtaActionType }
   }
+  if (subnavContent !== undefined) { props.subnavContent = toVNode(subnavContent) }
   if (panelContent !== undefined) { props.panelContent = toVNode(panelContent) }
   return props
 }
