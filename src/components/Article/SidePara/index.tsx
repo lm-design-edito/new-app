@@ -42,8 +42,6 @@ export default class SidePara extends Component<Props, State> {
     const clsses = [wrapperBemClass]
     if (customClass !== undefined) clsses.push(customClass)
 
-    const labelClss = clss.elt('label')
-
     return (
       <div className={clsses.join(' ')}>
         <ToggleButton 
