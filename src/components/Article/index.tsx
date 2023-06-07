@@ -118,10 +118,13 @@ export default class Article extends Component<Props> {
             {content}
           </ReadInEnglish>
         } else if (elementData.type === 'side-para') {
-          const { label, content } = elementData
+          const { openText, closeText, openIcon, closeIcon, content } = elementData
           return <SidePara
             customClass={customClass}
-            label={label}
+            openText={openText}
+            closeText={closeText}
+            openIcon={openIcon}
+            closeIcon={closeIcon}
             >
             {content}
           </SidePara>

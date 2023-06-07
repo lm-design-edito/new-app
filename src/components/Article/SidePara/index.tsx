@@ -1,9 +1,13 @@
 import { Component, JSX, VNode } from 'preact'
 import Drawer from '~/components/Drawer'
+import ToggleButton from '~/components/ToggleButton'
 import bem from '~/utils/bem'
 
 export type Props = {
-  label?: string|VNode
+  openText?: string
+  closeText?: string
+  openIcon?: VNode
+  closeIcon?: VNode
   customClass?: string
 }
 
@@ -20,7 +24,7 @@ export default class SidePara extends Component<Props, State> {
     this.handleCtaClick = this.handleCtaClick.bind(this)
   }
 
-  handleCtaClick (event: JSX.TargetedMouseEvent<HTMLButtonElement>) {
+  handleCtaClick () {
       this.setState(curr => ({
         ...curr,
         isOpened: !curr.isOpened
@@ -29,7 +33,7 @@ export default class SidePara extends Component<Props, State> {
 
   render() {
     const { props, state, handleCtaClick } = this
-    const { label, customClass, children } = props
+    const { openText, closeText, openIcon, closeIcon, customClass, children } = props
 
     const clss = bem('lm-article-side-para')
     const wrapperBemClass = clss.mod({
@@ -42,9 +46,14 @@ export default class SidePara extends Component<Props, State> {
 
     return (
       <div className={clsses.join(' ')}>
-        <button onClick={handleCtaClick} className={labelClss.value}>
-          {label !== undefined ? label : 'Side Para label'}
-        </button>
+        <ToggleButton 
+          isOpen={state.isOpened}
+          openText={openText}
+          closeText={closeText}
+          openIcon={openIcon}
+          closeIcon={closeIcon}
+          onClick={handleCtaClick}
+        />
         <Drawer opened={state.isOpened}>
           {children !== undefined ? children : 'Side Para'}
         </Drawer>
