@@ -1,8 +1,4 @@
 const rulesMap: Map<string, string> = new Map()
-const targetStyleElement = document.createElement('style')
-const targetStyleElementIdentifier = 'lm-page-injected-styles'
-targetStyleElement.classList.add(targetStyleElementIdentifier)
-targetStyleElement.id = targetStyleElementIdentifier
 
 export function injectCssRule (rule: string, force?: boolean): string
 export function injectCssRule (rule: string, name: string, force?: boolean): string
