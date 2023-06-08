@@ -67,6 +67,7 @@ export default class Article extends Component<Props> {
         // Image
         else if (elementData.type === 'image') {
           const {
+            customWrapperClass,
             url,
             srcset,
             sizes,
@@ -82,6 +83,7 @@ export default class Article extends Component<Props> {
             closeCaptionIcon
           } = elementData
           return <Image
+            customWrapperClass={customWrapperClass}
             customClass={customClass}
             url={url}
             srcset={srcset}

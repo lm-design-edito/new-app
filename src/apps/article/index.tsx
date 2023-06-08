@@ -55,6 +55,7 @@ function unknownToElement (unknown: unknown): ArticleElementProps|undefined {
   const {
     type,
     customClass,
+    customWrapperClass,
     content,
     url,
     srcset,
@@ -88,6 +89,7 @@ function unknownToElement (unknown: unknown): ArticleElementProps|undefined {
   }
   if (type === 'image') {
     const elementProps: ArticleElementProps = { type }
+    if (customWrapperClass !== undefined) elementProps.customWrapperClass = toString(customWrapperClass)
     if (typeof customClass === 'string') elementProps.customClass = customClass
     if (typeof url === 'string') elementProps.url = url
     if (typeof srcset === 'string') elementProps.srcset = srcset

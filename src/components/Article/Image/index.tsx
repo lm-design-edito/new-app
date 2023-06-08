@@ -11,6 +11,7 @@ const {
 } = ElementType
 
 export type Props = {
+  customWrapperClass?: string
   customClass?: string
   url?: string
   srcset?: string
@@ -31,6 +32,7 @@ export type Props = {
 export default class Image extends Component<Props> {
   render() {
     const {
+      customWrapperClass,
       customClass,
       /* [WIP] remplacer url par src */
       url,
@@ -53,7 +55,7 @@ export default class Image extends Component<Props> {
     const clss = 'lm-article-image'
     const wrapperClass = bem(clss).mod({ 'caption-overlay': hasOverlayCaption })
     const wrapperClasses = [wrapperClass.value]
-    if (customClass !== undefined) wrapperClasses.push(customClass)
+    if (customWrapperClass !== undefined) wrapperClasses.push(customWrapperClass)
     const captionClass = bem(clss).elt('caption')
     const caption = <div className={captionClass.value}>
       {description !== undefined && <BasicTextElement type={MEDIA_DESCRIPTION}>{description}</BasicTextElement>}
@@ -62,6 +64,7 @@ export default class Image extends Component<Props> {
     </div>
     return <div className={wrapperClasses.join(' ')}>
       <Thumbnail
+        customClass={customClass}
         imageUrl={url}
         imageSrcset={srcset}
         imageSizes={sizes}
