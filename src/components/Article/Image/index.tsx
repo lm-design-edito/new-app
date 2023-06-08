@@ -52,15 +52,16 @@ export default class Image extends Component<Props> {
     const hasToggleCaptionBtn = hasOverlayCaption && (toggleCaptionBtn === true)
     const clss = 'lm-article-image'
     const wrapperClass = bem(clss).mod({ 'caption-overlay': hasOverlayCaption })
+    const wrapperClasses = [wrapperClass.value]
+    if (customClass !== undefined) wrapperClasses.push(customClass)
     const captionClass = bem(clss).elt('caption')
     const caption = <div className={captionClass.value}>
       {description !== undefined && <BasicTextElement type={MEDIA_DESCRIPTION}>{description}</BasicTextElement>}
       {credits !== undefined && description !== undefined && <> </>}
       {credits !== undefined && <BasicTextElement type={MEDIA_CREDITS}>{credits}</BasicTextElement>}
     </div>
-    return <div className={wrapperClass.value}>
+    return <div className={wrapperClasses.join(' ')}>
       <Thumbnail
-        customClass={customClass}
         imageUrl={url}
         imageSrcset={srcset}
         imageSizes={sizes}

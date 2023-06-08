@@ -28,7 +28,7 @@ if (!shouldntInit) initPage()
 export async function initPage () {
   silentLogger.log('page-init', `Start init the page from ${SCRIPTS_INDEX_URL.toString()}`)
 
-  // Keep lm-page-stylesheet at the end of the head
+  // Keep lm-page-stylesheet elements at the end of the head
   const headNode = document.head
   let headNodeLastMutatedStylesheetNodes: Node[] = []
   const headObserver = new MutationObserver(mutationList => {
