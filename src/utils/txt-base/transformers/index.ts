@@ -13,6 +13,7 @@ import toLowerCase from './one-to-one/toLowerCase'
 import toUpperCase from './one-to-one/toUpperCase'
 import trim from './one-to-one/trim'
 import replace from './one-to-one/replace'
+import replaceWithRef from './one-to-one/replaceWithRef'
 import add from './one-to-one/add'
 import subtract from './one-to-one/subtract'
 import divide from './one-to-one/divide'
@@ -49,6 +50,7 @@ const transformerNamesObj: { [key: string]: Transformer } = {
   toUpperCase,
   trim,
   replace,
+  replaceWithRef,
   add,
   subtract,
   multiply,
@@ -72,7 +74,6 @@ const transformerNamesObj: { [key: string]: Transformer } = {
 
 const transformersNames: Map<string, Transformer> = new Map(Object.entries(transformerNamesObj))
 export const getTransformer = (name: string) => transformersNames.get(name)
-
 export type PrimitiveValue = string
   |number
   |boolean

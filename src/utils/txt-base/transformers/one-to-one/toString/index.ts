@@ -1,4 +1,6 @@
+import { toString } from '~/utils/cast'
 import clamp from '~/utils/clamp'
+import { Base, Collection, Entry, Field } from '~/utils/txt-base'
 import { argsStrToArgsArr, makeTransformer } from '../..'
 import { TransformerType } from '../../types'
 
@@ -14,6 +16,10 @@ export default makeTransformer(
       return value.toString(base)
     }
     if (value instanceof HTMLElement) return value.outerHTML.toString()
+    if (value instanceof Base
+      || value instanceof Collection
+      || value instanceof Entry
+      || value instanceof Field) return toString(value.value)
     return value?.toString() ?? 'null'
   }
 )
