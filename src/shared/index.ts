@@ -28,24 +28,11 @@ if (!shouldntInit) initPage()
 export async function initPage () {
   silentLogger.log('page-init', `Start init the page from ${SCRIPTS_INDEX_URL.toString()}`)
 
-  // Keep lm-page-stylesheet elements at the end of the head
-  // const headNode = document.head
-  // let headNodeLastMutatedStylesheetNodes: Node[] = []
-  // const headObserver = new MutationObserver(mutationList => {
-  //   const onlyStylesheetsMutated = mutationList.every(({ addedNodes, removedNodes }) => {
-  //     const nodes = [...addedNodes, ...removedNodes]
-  //     return nodes.every(node => headNodeLastMutatedStylesheetNodes.includes(node))
-  //   })
-  //   if (onlyStylesheetsMutated) return;
-  //   const lmPageStylesheets = [...document.querySelectorAll('.lm-page-stylesheet')]
-  //   headNodeLastMutatedStylesheetNodes = [...lmPageStylesheets]
-  //   lmPageStylesheets.forEach(stylesheet => headNode.appendChild(stylesheet))
-  // })
-  // headObserver.observe(headNode, { childList: true })
-  
+  // Keep lm-page-stylesheet elements at the end of the body
   // [WIP] find something better after Adaptation
   const lmPageStylesheets = [...document.querySelectorAll('link[href^="https://assets-decodeurs.lemonde.fr/redacweb"]')]
-  document.body.append(...lmPageStylesheets)
+  document.body.append(...lmPageStylesheets.map(node => node.cloneNode()))
+  lmPageStylesheets.forEach(stylesheetNode => stylesheetNode.remove())
   
   // Load styles (dont await)
   document.head.innerHTML += `<link rel="stylesheet" href="${STYLES_INDEX_URL.toString()}">`
