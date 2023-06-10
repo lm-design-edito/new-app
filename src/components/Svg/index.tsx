@@ -58,11 +58,20 @@ class Svg extends Component<Props, State> {
     })
     this.setState({ loading: true, error: null })
     try {
-      const response = await window.fetch(src)
-      if (!response.ok) throw new Error(`${response.status}: ${response.statusText}`)
-      const text = await response.text()
+      let svgData: string|null = null
+      // [WIP] fix this, this is not cleau (because of content security policy from lemonde.fr)
+      if (src.match(/^data:image\/svg/)) {
+        const data = src.split(',')
+        const [, ...imageDataChunks] = data
+        const imageData = imageDataChunks.join(',')
+        svgData = imageData
+      } else {
+        const response = await window.fetch(src)
+        if (!response.ok) throw new Error(`${response.status}: ${response.statusText}`)
+        svgData = await response.text()
+      }
       const fakeDiv = document.createElement('DIV')
-      fakeDiv.innerHTML = text
+      fakeDiv.innerHTML = svgData
       const $svg = fakeDiv.querySelector('svg')
       if ($svg === null) throw new Error('Not a svg')
       const contents = $svg.innerHTML
