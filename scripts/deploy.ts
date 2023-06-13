@@ -198,6 +198,11 @@ async function main () {
       process.exit(0)
     }
     console.log('')
+    let newVersionMessage = `If this is the first upload for this target version`
+    newVersionMessage += `\nmake sure to have the target url updated in`
+    newVersionMessage += `\n/src/shared/config.ts`
+    console.warn(styles.danger(newVersionMessage))
+    console.log('')
   }
 
   let versionsJsonStr: string|null = null
