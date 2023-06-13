@@ -29,7 +29,13 @@ const bundleOptions = (otherEntries: BuildOptions['entryPoints'] = {}): BuildOpt
   sourcemap: true,
   treeShaking: true,
   logLevel: 'info',
-  target: ['es2020'],
+  target: [
+    'es2020',
+    'chrome51',
+    'edge18',
+    'firefox53',
+    'safari11'
+  ],
   plugins: [
     inlineImagePulgin({
       limit: -1
