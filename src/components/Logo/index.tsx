@@ -4,7 +4,9 @@ import bem from '~/utils/bem'
 import logoUrl from './logo.svg'
 import styles from './styles.module.scss'
 
-export interface Props {}
+export interface Props {
+  href?: string
+}
 
 export default class Logo extends Component<Props, {}> {
   static clss: string = 'lm-logo'
@@ -13,7 +15,7 @@ export default class Logo extends Component<Props, {}> {
   render() {
     const logoClasses = [bem(this.clss).value, styles['logo']]
     return <a
-      href='https://lemonde.fr'
+      href={this.props.href ?? 'https://lemonde.fr'}
       className={logoClasses.join(' ')}>
       <Svg src={logoUrl} />
     </a>

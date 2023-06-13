@@ -18,6 +18,7 @@ export enum CtaActionType {
 
 export type Props = {
   customClass?: string
+  logoHref?: string
   hideLogo?: boolean
   hideNav?: boolean
   hideCta?: boolean
@@ -144,7 +145,9 @@ export default class Header extends Component<Props, State> {
       ref={n => { this.$wrapper = n }}
       className={wrapperClasses.join(' ')}>
       {/* Logo */}
-      <div className={logoClasses.join(' ')}><Logo /></div>
+      <div className={logoClasses.join(' ')}>
+        <Logo href={props.logoHref} />
+      </div>
       {/* Nav */}
       {hasNavItems && <div className={navClasses.join(' ')}>
         <div className={navLeftSpacerClasses.join(' ')} />

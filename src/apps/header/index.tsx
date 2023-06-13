@@ -84,6 +84,7 @@ export default function HeaderApp({
 export function optionsToProps(options: Options): Props {
   const {
     customClass,
+    logoHref,
     hideLogo,
     hideNav,
     hideCta,
@@ -97,6 +98,7 @@ export function optionsToProps(options: Options): Props {
   } = options
   const props: Props = {}
   if (customClass !== undefined) { props.customClass = toString(customClass) }
+  if (logoHref !== undefined) { props.logoHref = toString(logoHref) }
   if (hideLogo !== undefined) { props.hideLogo = toBoolean(hideLogo) }
   if (hideNav !== undefined) { props.hideNav = toBoolean(hideNav) }
   if (hideCta !== undefined) { props.hideCta = toBoolean(hideCta) }
