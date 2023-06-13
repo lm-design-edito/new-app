@@ -49,7 +49,8 @@ class SheetBaseField {
         return window.parseFloat(this.raw.replace(/,/gm, '.'))
       case 'bigint':
         if (this.raw === '') return
-        return window.BigInt(this.raw)
+        if (window.BigInt !== undefined) return window.BigInt(this.raw)
+        return
       case 'boolean': {
         if (this.raw === '') return
         const isTrue = this.raw.toLowerCase().trim() === '1'
