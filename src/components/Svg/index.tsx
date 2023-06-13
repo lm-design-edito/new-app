@@ -64,7 +64,7 @@ class Svg extends Component<Props, State> {
         const data = src.split(',')
         const [, ...imageDataChunks] = data
         const imageData = imageDataChunks.join(',')
-        svgData = imageData
+        svgData = window.decodeURIComponent(imageData)
       } else {
         const response = await window.fetch(src)
         if (!response.ok) throw new Error(`${response.status}: ${response.statusText}`)
