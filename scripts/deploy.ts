@@ -382,13 +382,13 @@ async function main () {
     return process.exit(0)
   }
   console.log('')
-  
+
  /* * * * * * * * * * * * * * * * * * * * *
   * Rsync dry run
   * * * * * * * * ** * * * * * * * * * * * */
   console.log(styles.title(`Dry running rsync to ${targetDestinationName}`))
   await new Promise(resolve => exec(
-    `gsutil -m rsync -ncrpj html,js,map,css,svg,png,jpg,gif,woff,woff2,eot,ttf ${config.DST_PROD}/ ${targetDestinationName}/`,
+    `gsutil -m -h "Cache-Control:public, max-age=60" rsync -ncrpj html,js,map,css,svg,png,jpg,gif,woff,woff2,eot,ttf ${config.DST_PROD}/ ${targetDestinationName}/`,
     (err, stdout, stderr) => {
       if (err !== null) console.error(styles.error(err.message))
       if (stderr !== '' && err === null) console.log(styles.regular(stderr))
@@ -413,7 +413,7 @@ async function main () {
   * * * * * * * * ** * * * * * * * * * * * */
   console.log(styles.title(`Rsyncing to ${targetDestinationName}`))
   await new Promise(resolve => exec(
-    `gsutil -m rsync -crpj html,js,map,css,svg,png,jpg,gif,woff,woff2,eot,ttf ${config.DST_PROD}/ ${targetDestinationName}/`,
+    `gsutil -m -h "Cache-Control:public, max-age=60" rsync -crpj html,js,map,css,svg,png,jpg,gif,woff,woff2,eot,ttf ${config.DST_PROD}/ ${targetDestinationName}/`,
     (err, stdout, stderr) => {
       if (err !== null) console.error(styles.error(err.message))
       if (stderr !== '' && err === null) console.log(styles.regular(stderr))
@@ -477,18 +477,18 @@ async function main () {
   /* * * * * * * * * * * * * * * * * * * * *
   * Setting cache to 60s
   * * * * * * * * ** * * * * * * * * * * * */
-  console.log(styles.title(`Setting cache to 60s`))
-  await new Promise(resolve => exec(
-    `gsutil -m setmeta -rh "Cache-Control:public, max-age=60" ${targetDestinationName}`,
-    (err, stdout, stderr) => {
-      if (err !== null) console.error(styles.error(err.message))
-      if (stderr !== '' && err === null) console.log(styles.regular(stderr))
-      if (stdout !== '') console.log(styles.regular(stdout))
-      if (err === null) versionsJsonExists = true
-      resolve(true)
-    }
-  ))
-  console.log('')
+  // console.log(styles.title(`Setting cache to 60s`))
+  // await new Promise(resolve => exec(
+  //   `gsutil -m setmeta -rh "Cache-Control:public, max-age=60" ${targetDestinationName}`,
+  //   (err, stdout, stderr) => {
+  //     if (err !== null) console.error(styles.error(err.message))
+  //     if (stderr !== '' && err === null) console.log(styles.regular(stderr))
+  //     if (stdout !== '') console.log(styles.regular(stdout))
+  //     if (err === null) versionsJsonExists = true
+  //     resolve(true)
+  //   }
+  // ))
+  // console.log('')
   
   console.log(styles.important('That\'s all good my friend. 🍸\n\n'))
 }
