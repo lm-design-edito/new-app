@@ -31,10 +31,10 @@ const bundleOptions = (otherEntries: BuildOptions['entryPoints'] = {}): BuildOpt
   logLevel: 'info',
   target: [
     'es2020',
-    'chrome51',
-    'edge18',
-    'firefox53',
-    'safari11'
+    'chrome63',
+    'edge79',
+    'firefox67',
+    'safari12'
   ],
   plugins: [
     inlineImagePulgin({
