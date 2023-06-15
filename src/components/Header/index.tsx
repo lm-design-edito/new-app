@@ -24,6 +24,7 @@ export type Props = {
   hideCta?: boolean
   navItems?: NavItem[]
   navItemsAlign?: string // [WIP] more specific (left|center|right)
+  navPosition?: 'top'|'below'
   ctaContent?: string|VNode
   ctaActionType?: CtaActionType
   ctaOnClick?: (event: JSX.TargetedMouseEvent<HTMLButtonElement>) => void
@@ -118,6 +119,7 @@ export default class Header extends Component<Props, State> {
         'nav-items-left-align': leftAlignItems,
         'nav-items-center-align': centerAlignItems,
         'nav-items-right-align': rightAlignItems,
+        'nav-below': props.navPosition === 'below',
         'panel-opened': state.panelIsOpened,
         'panel-closed': !state.panelIsOpened
       }).value,
@@ -130,6 +132,7 @@ export default class Header extends Component<Props, State> {
     if (leftAlignItems) wrapperClasses.push(styles['wrapper_left-align-items'])
     if (centerAlignItems) wrapperClasses.push(styles['wrapper_center-align-items'])
     if (rightAlignItems) wrapperClasses.push(styles['wrapper_right-align-items'])
+    if (props.navPosition === 'below') wrapperClasses.push(styles['wrapper_nav-below'])
     const logoClasses = [bemClss.elt('logo').value, styles['logo']]
     const navClasses = [bemClss.elt('nav').value, styles['nav']]
     const ctaWrapperClasses = [bemClss.elt('cta-wrapper').value, styles['cta-wrapper']]

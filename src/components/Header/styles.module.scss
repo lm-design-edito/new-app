@@ -2,9 +2,10 @@
   position: relative;
   display: grid;
   grid-template-columns: auto 1fr auto;
-  grid-template-rows: auto auto auto;
+  grid-template-rows: auto;
   grid-template-areas: 
     "logo nav cta"
+    "nav-below nav-below nav-below"
     "subnav subnav subnav"
     "panel panel panel";
 }
@@ -52,6 +53,12 @@
   }
 }
 
+.wrapper.wrapper_nav-below {
+  .nav {
+    grid-area: nav-below;
+  }
+}
+
 .wrapper.wrapper_hide-cta {
   .cta-wrapper {
     opacity: 0;
@@ -91,16 +98,16 @@
   }
 }
 
+.nav-spacer {
+  display: block;
+}
+
 // This below results in the same than no rule at all so...
 // .wrapper.wrapper_left-align-items {
 //   .nav-item:first-child {
 //     margin-left: 0;
 //   }
 // }
-
-.nav-spacer {
-  display: block;
-}
 
 .wrapper.wrapper_center-align-items {
   .nav-left-spacer {
@@ -122,11 +129,6 @@
   flex-shrink: 0;
   flex-grow: 0;
   cursor: pointer;
-}
-
-// [WIP] in js, detect if no custom css, then apply this via .wrapper_default-nav-style
-.nav-item.nav-item_active {
-  text-decoration: underline;
 }
 
 .cta-wrapper {

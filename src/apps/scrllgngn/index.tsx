@@ -11,8 +11,8 @@ import Scrllgngn, {
   TransitionName
 } from '~/components/Scrllgngn'
 import { toBoolean, toNumber, toString, toVNode } from '~/utils/cast'
-import { Instruction } from '~/components/EventDispatcher'
 import flattenGetters from '~/utils/flatten-getters'
+import { Instruction } from '~/components/EventDispatcher'
 
 /* * * * * * * * * * * * * * * * * * *
  * RENDERER
@@ -101,15 +101,17 @@ function arrayToPages (array: unknown[]): PropsPageData[] {
       if (dispatchOnEnter !== undefined
         && Array.isArray(dispatchOnEnter)) {
         const [instruction, payload] = dispatchOnEnter
-        // [WIP] should typecheck and all but...
-        extractedPage.dispatchOnEnter = [[instruction, flattenGetters(payload)]]
+        if (Object.values(Instruction).includes(instruction)) {
+          extractedPage.dispatchOnEnter = [[instruction, flattenGetters(payload)]]
+        }
       }
       // dispatchOnLeave // [WIP] should be possible to dispatch multiple events
       if (dispatchOnLeave !== undefined
         && Array.isArray(dispatchOnLeave)) {
         const [instruction, payload] = dispatchOnLeave
-        // [WIP] should typecheck and all but...
-        extractedPage.dispatchOnLeave = [[instruction, flattenGetters(payload)]]
+        if (Object.values(Instruction).includes(instruction)) {
+          extractedPage.dispatchOnLeave = [[instruction, flattenGetters(payload)]]
+        }
       }
       extractedPages.push(extractedPage)
     }

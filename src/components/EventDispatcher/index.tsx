@@ -21,6 +21,7 @@ export enum Trigger {
 export enum Instruction {
   SET_HEADER_PROPS = 'set-header-props',
   UPDATE_HEADER_PROPS = 'update-header-props',
+  SET_PAGE_CURRENT_CHAPTER = 'set-page-current-chapter'
 }
 
 type CommonProps = {

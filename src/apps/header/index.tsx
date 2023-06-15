@@ -15,6 +15,7 @@ class EventCatchingHeaderApp extends Component<Props, Props> {
     super(props)
     this.handleSetHeaderPropsEvent = this.handleSetHeaderPropsEvent.bind(this)
     this.handleUpdateHeaderPropsEvent = this.handleUpdateHeaderPropsEvent.bind(this)
+    this.handleSetPageCurrentChapterEvent = this.handleSetPageCurrentChapterEvent.bind(this)
   }
 
   handleSetHeaderPropsEvent: Handler = payload => {
@@ -39,21 +40,41 @@ class EventCatchingHeaderApp extends Component<Props, Props> {
       ...headerPropsPayload
     }))
   }
-  
+
+  handleSetPageCurrentChapterEvent: Handler = payload => {
+    const { value } = payload
+    const strValue = toString(value)
+    const { navItems } = this.props
+    if (navItems === undefined) return
+    const newNavItems = navItems.map(navItem => {
+      if (navItem.value === strValue) return {
+        ...navItem,
+        isActive: true
+      }
+      return {
+        ...navItem,
+        isActive: false
+      }
+    })
+    this.setState(curr => ({
+      ...curr,
+      navItems: newNavItems
+    }))
+  }
+
   render () {
     const {
       state,
       handleSetHeaderPropsEvent,
-      handleUpdateHeaderPropsEvent
+      handleUpdateHeaderPropsEvent,
+      handleSetPageCurrentChapterEvent
     } = this
     return <EventCatcher
-      on={[[
-        Instruction.SET_HEADER_PROPS,
-        handleSetHeaderPropsEvent
-      ], [
-        Instruction.UPDATE_HEADER_PROPS,
-        handleUpdateHeaderPropsEvent
-      ]]}>
+      on={[
+        [Instruction.SET_HEADER_PROPS, handleSetHeaderPropsEvent],
+        [Instruction.UPDATE_HEADER_PROPS, handleUpdateHeaderPropsEvent],
+        [Instruction.SET_PAGE_CURRENT_CHAPTER, handleSetPageCurrentChapterEvent]
+      ]}>
       <Header {...state} />
     </EventCatcher>
   }
@@ -90,6 +111,7 @@ export function optionsToProps(options: Options): Props {
     hideCta,
     navItems,
     navItemsAlign,
+    navPosition,
     ctaContent,
     ctaActionType,
     // ctaOnClick, // Cannot handle functions from options
@@ -107,6 +129,11 @@ export function optionsToProps(options: Options): Props {
     props.navItems = propsNavItems
   }
   if (navItemsAlign !== undefined) { props.navItemsAlign = toString(navItemsAlign) }
+  if (navPosition !== undefined) {
+    const strNavPosition = toString(navPosition)
+    if (strNavPosition === 'top'
+      || strNavPosition === 'below') { props.navPosition = strNavPosition }
+  }
   if (ctaContent !== undefined) { props.ctaContent = toVNode(ctaContent) }
   if (ctaActionType !== undefined) {
     const strCtaActionType = toString(ctaActionType)

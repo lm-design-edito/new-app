@@ -869,11 +869,11 @@ export default class Scrollgneugneu extends Component<Props, State> {
         _context: blockContext
       })
     })
+
+    const pageHasReallyChanged = state.currPagePos !== newCurrentPagePos
     // Dispatch on leave
-    const prevPageData = state.currPagePos !== undefined
-      ? pages.get(state.currPagePos)
-      : undefined
-    if (prevPageData !== undefined) {
+    const prevPageData = state.currPagePos !== undefined ? pages.get(state.currPagePos) : undefined
+    if (pageHasReallyChanged && prevPageData !== undefined) {
       const toDispatch = prevPageData.dispatchOnLeave
       if (toDispatch !== undefined
         && toDispatch.length !== 0) {
@@ -883,10 +883,8 @@ export default class Scrollgneugneu extends Component<Props, State> {
       }
     }
     // Dispatch on enter
-    const newPageData = newCurrentPagePos !== undefined
-      ? pages.get(newCurrentPagePos)
-      : undefined
-    if (newPageData !== undefined) {
+    const newPageData = newCurrentPagePos !== undefined ? pages.get(newCurrentPagePos) : undefined
+    if (pageHasReallyChanged && newPageData !== undefined) {
       const toDispatch = newPageData.dispatchOnEnter
       if (toDispatch !== undefined
         && toDispatch.length !== 0) {
