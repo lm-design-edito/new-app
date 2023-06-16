@@ -131,6 +131,11 @@
   cursor: pointer;
 }
 
+.nav-item_active {
+  // Needed in order to querySelector styles['nav-item_active'] in js
+  cursor: pointer;
+}
+
 .cta-wrapper {
   display: flex;
   align-items: center;
