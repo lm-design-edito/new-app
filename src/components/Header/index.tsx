@@ -3,11 +3,13 @@ import bem from '~/utils/bem'
 import Logo from '~/components/Logo'
 import styles from './styles.module.scss'
 import Drawer from '../Drawer'
+import smoothScrollTo from '~/utils/smooth-scroll-to'
 
 export type NavItem = {
   value?: string
   content?: string|VNode
   isActive?: boolean
+  clickAction?: 'scroll-to-chapter'
   onClick?: (event: JSX.TargetedMouseEvent<HTMLButtonElement>) => void
 }
 
@@ -46,6 +48,7 @@ export default class Header extends Component<Props, State> {
     super(props)
     this.scrollActiveNavItemIntoView = this.scrollActiveNavItemIntoView.bind(this)
     this.handleCtaClick = this.handleCtaClick.bind(this)
+    this.handleNavItemClick = this.handleNavItemClick.bind(this)
   }
 
   componentDidMount (): void {
@@ -98,11 +101,26 @@ export default class Header extends Component<Props, State> {
     if (ctaOnClick !== undefined) ctaOnClick(event)
   }
 
+  handleNavItemClick (navItem: NavItem, event: JSX.TargetedMouseEvent<HTMLButtonElement>) {
+    const { value, clickAction, onClick } = navItem
+    if (clickAction === 'scroll-to-chapter') {
+      const targetNode = document.querySelector(`#${value}`)
+      if (targetNode !== null) smoothScrollTo(targetNode)
+    }
+    if (onClick !== undefined) onClick(event)
+  }
+
   /* * * * * * * * * * * * * * *
    * RENDER
    * * * * * * * * * * * * * * */
   render (): JSX.Element|null {
-    const { props, state, bemClss, handleCtaClick } = this
+    const {
+      props,
+      state,
+      bemClss,
+      handleCtaClick,
+      handleNavItemClick
+    } = this
 
     /* Classes and style */
     const hideLogo = props.hideLogo === true
@@ -163,7 +181,7 @@ export default class Header extends Component<Props, State> {
           return <button
             className={navItemClasses.join(' ')}
             data-id={navItem.value}
-            onClick={navItem.onClick}>
+            onClick={e => handleNavItemClick(navItem, e)}>
             {content}
           </button>
         })}

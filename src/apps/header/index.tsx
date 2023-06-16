@@ -155,11 +155,18 @@ function arrayToNavItems (array: unknown[]): NonNullable<Props['navItems']> {
     const {
       value,
       content,
+      clickAction,
       isActive
     } = unknown as Record<string, unknown>
     const navItemProps: NonNullable<Props['navItems']>[number] = {}
     if (value !== undefined) { navItemProps.value = toString(value) }
     if (content !== undefined) { navItemProps.content = toVNode(content) }
+    if (clickAction !== undefined) {
+      const strClickAction = toString(clickAction)
+      if (strClickAction === 'scroll-to-chapter') {
+        navItemProps.clickAction = strClickAction 
+      }
+    }
     if (isActive !== undefined) { navItemProps.isActive = toBoolean(isActive) }
     navItemsProps.push(navItemProps)
   })
