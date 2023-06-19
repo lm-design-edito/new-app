@@ -149,7 +149,10 @@ function arrayToBlocks (array: unknown[]): PropsBlockData[] {
         // type
         if (type === 'html' || type === 'module') { extractedScrollBlock.type = type }
         // content
-        if (content !== undefined) { extractedScrollBlock.content = toVNode(content) }
+        if (content !== undefined) {
+          if (type === 'module') { extractedScrollBlock.content = toString(content) }
+          else { extractedScrollBlock.content = toVNode(content) }
+        }
         // trackScroll
         if (trackScroll !== undefined) { extractedScrollBlock.trackScroll = toBoolean(trackScroll) }
         // layout
@@ -169,7 +172,10 @@ function arrayToBlocks (array: unknown[]): PropsBlockData[] {
         // type
         if (type === 'html' || type === 'module') { extractedStickyBlock.type = type }
         // content
-        if (content !== undefined) { extractedStickyBlock.content = toVNode(content) }
+        if (content !== undefined) {
+          if (type === 'module') { extractedStickyBlock.content = toString(content) }
+          else { extractedStickyBlock.content = toVNode(content) }
+        }
         // trackScroll
         if (trackScroll !== undefined) { extractedStickyBlock.trackScroll = toBoolean(trackScroll) }
         // layout
