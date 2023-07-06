@@ -90,13 +90,16 @@ function unknownToElement (unknown: unknown): ArticleElementProps|undefined {
   if (type === 'image') {
     const elementProps: ArticleElementProps = { type }
     if (customWrapperClass !== undefined) elementProps.customWrapperClass = toString(customWrapperClass)
-    if (typeof customClass === 'string') elementProps.customClass = customClass
-    if (typeof url === 'string') elementProps.url = url
-    if (typeof srcset === 'string') elementProps.srcset = srcset
-    if (typeof sizes === 'string') elementProps.sizes = sizes
-    if (typeof alt === 'string') elementProps.alt = alt
+    if (customClass !== undefined) elementProps.customClass = toString(customClass)
+    if (url !== undefined) elementProps.url = toString(url)
+    if (srcset !== undefined) elementProps.srcset = toString(srcset)
+    if (sizes !== undefined) elementProps.sizes = toString(sizes)
     if (credits !== undefined) { elementProps.credits = toVNode(credits) }
     if (description !== undefined) { elementProps.description = toVNode(description) }
+    
+    if (alt !== undefined) elementProps.alt = toString(alt)
+    else if (description !== undefined) elementProps.alt = toString(description)
+
     if (captionPosition === 'overlay') elementProps.captionPosition = captionPosition
     else elementProps.captionPosition = 'below'
     if (toggleCaptionBtn !== undefined) elementProps.toggleCaptionBtn = toBoolean(toggleCaptionBtn)
