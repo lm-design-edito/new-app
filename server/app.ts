@@ -125,12 +125,18 @@ app.use('/', async (req, res, next) => {
 
 app.use('/pages', async (req, res, next) => {
   if (req.path === '/') return res.redirect('/')
-  const TARGET = join(PAGES, req.path, 'index.html')
+  const HTML_TARGET = join(PAGES, req.path, 'index.html')
+  const TARGET = join(PAGES, req.path)
   try {
-    const fileContent = await readFile(TARGET, { encoding: 'utf-8' })
+    const fileContent = await readFile(HTML_TARGET, { encoding: 'utf-8' })
     return res.type('text/html').send(fileContent)
   } catch (err) {
-    return res.type('text/html').status(404).send('404')
+    try {
+      const fileContent = await readFile(TARGET, { encoding: 'utf-8' })
+      return res.type('text/plain').send(fileContent)
+    } catch (err) {
+      return res.type('text/html').status(404).send('404')
+    }
   }
 })
 
