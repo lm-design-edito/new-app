@@ -1,0 +1,268 @@
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
+  <body class="lm-page demo-page">
+
+    <!-- Application -->
+    <style>.lm-page-config, .lm-app-config { display: none; }</style>
+    <script src="/shared/index.js" type="module"></script>
+
+    <style>
+      .article.article--longform.article--longform-nocover.article--content > div {
+        width: 100%;
+      }
+    </style>
+
+    <div class="lm-page-config" value="textbaseInline">
+      # PAGE_CONFIG
+        ## config-obj-1
+          _addScale:
+            name: text-scale,
+            root: body,
+            bounds: 320 1920,
+            low: 14 16,
+            high: 32 62,
+            levels: 32,
+            breakpoints: 20
+          _css: 
+            .lm-scrllgngn__block.lm-scrllgngn__block_scrolling {
+              opacity: 1;
+              transition: opacity 400ms;
+            }
+      
+            .lm-scrllgngn__block.lm-scrllgngn__block_scrolling.lm-scrllgngn__block_previous,
+            .lm-scrllgngn__block.lm-scrllgngn__block_scrolling.lm-scrllgngn__block_inactive {
+              opacity: 0;
+            }
+      
+            .fade-in {
+              opacity: 0;
+              animation: fade-in var(--duration, 1200ms) var(--delay, 200ms) forwards;
+            }
+      
+            .slide-in {
+              animation: slide-in var(--duration, 1200ms) var(--delay, 200ms) forwards;
+            }
+      
+            @keyframes fade-in {
+              from { opacity: 0; }
+              to { opacity: 1; }
+            }
+      
+            @keyframes slide-in {
+              from { transform: translateY(50px); }
+              to { transform: translateY(0px); }
+            }
+      
+            .block-bg {
+              width: 100%;
+              height: 100vh;
+              background-color: rgb(11, 11, 17);
+            }
+      
+            .block-video {
+              width: 100vw;
+              height: 100vh;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+            }
+      
+            .block-video video {
+              width: 100%;
+              max-width: 1024px;
+              object-fit: contain;
+            }
+      
+            .block-opacifier {
+              width: 100%;
+              height: 100vh;
+              background-color: rgb(0, 0, 0, .6);
+            }
+      
+            .block-intro-text {
+              width: fit-content;
+              max-width: 600px;
+              height: var(--height, 100vh);
+              margin: 0 auto;
+              display: flex;
+              align-items: var(--align-items, flex-end);
+              padding-bottom: var(--padding-bottom, calc(3vh + 60px));
+              padding-top: var(--padding-top, 0);
+              font-family: var(--ff-the-antiqua-b);
+              font-weight: 450;
+              font-size: var(--text-scale-level-10);
+              color: white;
+              text-align: center;
+            }
+      
+            .block-intro-text__inner {
+              padding: 16px;
+              background-color: rgb(0, 0, 0, .5);
+            }
+      
+      // ===========================================================
+      // ===========================================================
+      //
+      // INTRO SCRLLGNGN 
+      //
+      // ===========================================================
+      // ===========================================================
+      
+      # PAGE_SLOTS
+        ## intro-scrllgngn
+          _name: scrllgngn
+          _selector: .intro-scrllgngn-slot
+          _options: ../../../intro-scrllgngn/options >>> toRef
+      
+      # intro-scrllgngn
+        ## options
+          _customClass: intro-scrllgngn
+          _thresholdOffset: 80%
+          _forceStickBlocks: before
+          _pages:
+            ../../page-1,
+            ../../page-2,
+            ../../page-3
+            >>> split ,
+            >>> map trim
+            >>> map toRef
+      
+        // ===============================
+        // MULTI-PAGE
+        // ===============================
+      
+        ## block-bg
+          _id: block-bg
+          _type: html
+          _depth: back
+          _layout: fullscreen
+          _transitions: fade, 600
+          _content: <div class="block-bg"></div> >>> toHtml
+      
+        ## block-video
+          _id: block-video
+          _type: html
+          _depth: back
+          _layout: fullscreen
+          _transitions: fade, 600
+          _content: <div class="block-video fade-in" style="--delay: 0ms;">
+            <video autoplay loop muted playsinline>
+              <source src="https://assets-decodeurs.lemonde.fr/redacweb/2308-tankers/TANKER-3-optim-1.mp4">
+            </video>
+          </div> >>> toHtml
+      
+        ## block-opacifier
+          _id: block-opacifier
+          _type: html
+          _depth: back
+          _layout: fullscreen
+          _transitions: fade, 600
+          _content: <div class="block-opacifier"></div> >>> toHtml
+      
+        // ===============================
+        // PAGE 1
+        // ===============================
+      
+        ## page-1
+          _id: page-1
+          _blocks: 
+            ../../block-bg,
+            ../../block-video,
+            ../../block-intro-text-1
+            >>> split ,
+            >>> map trim
+            >>> map toRef
+      
+        ## block-intro-text-1
+          _id: block-intro-text-1
+          _type: html
+          _depth: scroll
+          _layout: fullscreen
+          _content: <div class="block-intro-text">
+            <div class="block-intro-text__inner">
+              <div class="fade-in" style="--delay: 400ms;">
+                <div class="slide-in" style="--delay: 400ms;">
+                  Nulla facilisi. In ut turpis nisl. Quisque vel efficitur nisi. Nullam ornare viverra enim quis aliquam. Vivamus dapibus, risus in luctus euismod, tellus diam blandit enim, et dapibus eros augue sit amet magna.
+                </div>
+              </div>
+            </div>
+          </div> >>> toHtml
+      
+        // ===============================
+        // PAGE 2
+        // ===============================
+      
+        ## page-2
+          _id: page-2
+          _blocks: 
+            ../../block-bg,
+            ../../block-video,
+            ../../block-opacifier,
+            ../../block-intro-text-2
+            >>> split ,
+            >>> map trim
+            >>> map toRef
+      
+        ## block-intro-text-2
+          _id: block-intro-text-2
+          _type: html
+          _depth: scroll
+          _layout: fullscreen
+          _content: <div class="block-intro-text" style="--height: 80vh; --align-items: flex-start; --padding-top: 40vh; --padding-botom: 0;">
+            <div class="block-intro-text__inner">
+              Nulla facilisi. In ut turpis nisl. Quisque vel efficitur nisi. Nullam ornare viverra enim quis aliquam. Vivamus dapibus, risus in luctus euismod, tellus diam blandit enim, et dapibus eros augue sit amet magna.
+            </div>
+          </div> >>> toHtml
+      
+        // ===============================
+        // PAGE 3
+        // ===============================
+      
+        ## page-3
+          _id: page-3
+          _blocks: 
+            ../../block-bg,
+            ../../block-video,
+            ../../block-opacifier,
+            ../../block-intro-text-3
+            >>> split ,
+            >>> map trim
+            >>> map toRef
+      
+        ## block-intro-text-3
+          _id: block-intro-text-3
+          _type: html
+          _depth: scroll
+          _layout: fullscreen
+          _content: <div class="block-intro-text" style="--height: 95vh; --align-items: flex-start; --padding-top: 40vh; --padding-botom: 0vh;">
+            <div class="block-intro-text__inner">
+              Nulla facilisi. In ut turpis nisl. Quisque vel efficitur nisi. Nullam ornare viverra enim quis aliquam. Vivamus dapibus, risus in luctus euismod, tellus diam blandit enim, et dapibus eros augue sit amet magna.
+            </div>
+          </div> >>> toHtml
+      
+      </div>
+      
+      <!-- Scrllgngn -->
+      <div class="intro-scrllgngn-slot" style="min-width: 100%; min-height: 100vh; background-color: rgb(11, 11, 17);"></div>
+
+    <div style="width: fit-content; margin: 40px auto; font-family: var(--ff-marr-sans); font-weight: 700; font-size: var(--text-scale-level-28); max-width: 540px; text-align: center;">
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+    </div>
+    <div>
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam justo ex, maximus nec nisl pulvinar, pellentesque vulputate nibh. Aliquam eu ullamcorper lectus. Sed lobortis eget nisi vel porttitor. Vestibulum rutrum nibh non odio volutpat fermentum. Pellentesque faucibus viverra sodales. Quisque placerat dolor quis porttitor scelerisque. Sed a suscipit est, sit amet pellentesque dui. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.
+
+Aenean nulla sem, semper ut vehicula sit amet, fermentum at nulla. Nulla accumsan quam quis eleifend accumsan. Pellentesque sed mi sem. Curabitur ac neque eu diam lacinia vulputate. In hac habitasse platea dictumst. Pellentesque bibendum purus vel tellus lobortis, ut scelerisque nulla placerat. Praesent efficitur sodales maximus. Aliquam orci massa, maximus vitae dolor sit amet, sollicitudin consectetur diam. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Nulla posuere cursus augue, id laoreet diam elementum accumsan. Etiam enim diam, laoreet eu libero quis, mattis sagittis velit.
+
+Phasellus cursus ultricies felis vitae dignissim. Sed tincidunt ornare placerat. Fusce sed ex lacus. Quisque scelerisque mattis est, a porta quam porta ac. Aenean ullamcorper tellus sapien, in bibendum neque ultrices nec. Etiam tincidunt orci ligula, sit amet blandit leo tincidunt ut. Sed maximus odio vel convallis volutpat. Phasellus dapibus vel libero at euismod. Suspendisse aliquam elit vitae ipsum placerat pretium. Phasellus vitae massa id nulla maximus hendrerit. Nulla sed odio vehicula, ornare nunc vel, tincidunt velit. Nulla aliquet nisi ipsum, eget tristique ipsum tempus imperdiet.
+
+Proin maximus aliquet lobortis. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Vestibulum at tortor volutpat, tincidunt nisl eu, feugiat tellus. Curabitur sed risus ullamcorper enim finibus aliquam. Aliquam nisi nibh, auctor aliquam venenatis vitae, ultricies consectetur dui. Fusce lacinia a justo non vehicula. Quisque massa magna, elementum eget ligula vitae, fringilla facilisis urna. Sed venenatis imperdiet nibh, vitae interdum arcu sollicitudin id. Curabitur ornare libero et dolor luctus ullamcorper. Duis convallis ex purus, at aliquam est scelerisque sit amet. Praesent condimentum venenatis aliquet. Proin ut ante id augue pulvinar gravida.
+
+Sed sodales ullamcorper sem in volutpat. Vivamus imperdiet ex mattis pretium hendrerit. Nulla facilisi. Aliquam finibus ipsum et ornare bibendum. Duis tempor id nisi in cursus. Nullam sem lacus, congue at tristique et, maximus in lectus. Donec bibendum commodo turpis. Fusce sollicitudin non ipsum vitae porttitor. Nulla facilisi. Donec commodo eget est a laoreet. Morbi sollicitudin sem vel ex posuere finibus. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Integer sit amet vulputate magna, eu facilisis turpis. Aliquam ligula tellus, lobortis in gravida at, malesuada nec lectus. Integer fermentum, tellus quis egestas cursus, eros elit varius sem, nec mattis odio purus sit amet sapien.
+
+
+    </div>
+  </body>
+</html>

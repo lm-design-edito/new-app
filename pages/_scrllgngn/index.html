@@ -1,0 +1,136 @@
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
+  <body class="lm-page demo-page">
+
+    <!-- Application -->
+    <style>.lm-page-config, .lm-app-config { display: none; }</style>
+    <script src="/shared/index.js" type="module"></script>
+
+    <div class="lm-page-config" value="textbaseInline">
+      # coll
+      ## obj
+      _prop: val
+    </div>
+
+    <!-- Header -->
+    <div class="header">
+      <style>
+        .header {
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          background-color: rgb(244, 244, 244);
+          padding: 8px;
+          z-index: 2;
+        }
+        .header .fill-1 { fill: black; }
+        .header .fill-2 { fill: rgb(0, 0, 0, .3); }
+
+        .scrllgngn {
+          z-index: 1;
+          margin-top: 72px;
+          margin-bottom: 70vh;
+        }
+      </style>
+      <div class="lm-app-config" value="header">
+        <data value="navItems">
+          <data>
+            <data value="value">item-1</data>
+            <data value="content">Item 1</data>
+            <data value="clickAction">scroll-to-chapter</data>
+            <data value="isActive" type="boolean">false</data>
+          </data>
+          <data>
+            <data value="value">item-2</data>
+            <data value="content">Item 2</data>
+            <data value="clickAction">scroll-to-chapter</data>
+            <data value="isActive" type="boolean">false</data>
+          </data>
+          <data>
+            <data value="value">item-3</data>
+            <data value="content">Item 3</data>
+            <data value="clickAction">scroll-to-chapter</data>
+            <data value="isActive" type="boolean">true</data>
+          </data>
+        </data>
+        <data value="navItemsAlign">center</data>
+        <data value="navPosition">below</data>
+        <data value="ctaContent" type="html"><strong>Click</strong></data>
+        <data value="ctaActionType">toggle-panel</data>
+        <data value="panelContent" type="html">
+          <div style="height: 200px; display: flex; justify-content: center; align-items: center; background-color: violet">Panel content</div>
+        </data>
+      </div>
+    </div>
+
+    <!-- Scrllgngn -->
+    <div class="scrllgngn">
+      <div class="lm-app-config" value="scrllgngn">
+        <data value="thresholdOffset">80vh</data>
+        <data value="pages">
+          <data>
+            <data value="id">page-1</data>
+            <data value="dispatchOnEnter">
+              <data>set-page-current-chapter</data>
+              <data>
+                <data value="value">item-1</data>
+              </data>
+            </data>
+            <data value="bgColor">orange</data>
+            <data value="blocks">
+              <data>
+                <data value="id">block-1</data>
+                <data value="depth">scroll</data>
+                <data value="content" type="html">
+                  <div id="item-1" style="height: 120vh; padding: 60px;">Lorem ipsum</div>
+                </data>
+              </data>
+            </data>
+          </data>
+          <data>
+            <data value="id">page-2</data>
+            <data value="dispatchOnEnter">
+              <data>set-page-current-chapter</data>
+              <data>
+                <data value="value">item-2</data>
+              </data>
+            </data>
+            <data value="bgColor">yellow</data>
+            <data value="blocks">
+              <data>
+                <data value="id">block-2</data>
+                <data value="depth">scroll</data>
+                <data value="content" type="html">
+                  <div id="item-2" style="height: 120vh; padding: 60px;">Lorem ipsum</div>
+                </data>
+              </data>
+            </data>
+          </data>
+          <data>
+            <data value="id">page-3</data>
+            <data value="dispatchOnEnter">
+              <data>set-page-current-chapter</data>
+              <data>
+                <data value="value">item-3</data>
+              </data>
+            </data>
+            <data value="bgColor">purple</data>
+            <data value="blocks">
+              <data>
+                <data value="id">block-3</data>
+                <data value="depth">scroll</data>
+                <data value="content" type="html">
+                  <div id="item-3" style="height: 120vh; padding: 60px;">Lorem ipsum</div>
+                </data>
+              </data>
+            </data>
+          </data>
+        </data>
+      </div>
+    </div>
+  </body>
+</html>
