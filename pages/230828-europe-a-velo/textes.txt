@@ -1,0 +1,179 @@
+// ===================
+// SHARED
+// ===================
+
+# shared
+## chunks
+
+_titleTextChunk: {{{COUNTRY_CHUNK}}} à vélo
+_buttonTextChunk: Découvrir {{{COUNTRY_CHUNK}}} à vélo
+
+_line1_catChunk: L'urbaine
+_line2_catChunk: La familiale
+_line3_catChunk: La sportive
+_line4_catChunk: L'itinérante
+_line5_catChunk: L'aventurière
+
+
+# scrllgngn
+
+// ===================
+// TITRE
+// ===================
+
+## block-title
+
+_headingChunk:
+L'Europe, un sur-titre
+
+_titleChunk:
+L'Europe à vélo
+
+_signatureChunk:
+Par <a href="https://www.lemonde.fr/signataires/thomas-doustaly/">Thomas Doustaly</a> • 4&nbsp;septembre&nbsp;2023
+
+// ===================
+// INTRO
+// ===================
+
+## block-intro
+  
+_introChunk:
+Duis ac tortor felis. Aenean fermentum gravida dolor, sit amet interdum ipsum euismod eu. Nunc hendrerit nunc.
+
+// ===================
+// PAGE 1/8
+// ===================
+
+## page-1
+_cssClassChunk: spain
+_countryChunk: l'Espagne
+_urlChunk: https://www.lemonde.fr/
+
+## block-card-1
+_line1_titleChunk: A Séville
+_line2_titleChunk: Sur le Senda del Oso, dans les Asturies
+_line3_titleChunk: De La Vall d'Uixo à l'observatoire de Javalambre
+_line4_titleChunk: Avec les marcheurs de Saint-Jacques de Compostelle
+_line5_titleChunk: Dans le désert des Bardenas à VTT
+
+
+// ===================
+// PAGE 2/8
+// ===================
+
+## page-2
+_cssClassChunk: germany
+_countryChunk: l'Allemagne
+_urlChunk: https://www.lemonde.fr/
+
+## block-card-2
+_line1_titleChunk: A Francfort
+_line2_titleChunk: Sur l'île de Rügen
+_line3_titleChunk: Dans la forêt de Bavière
+_line4_titleChunk: Au pied des Alpes
+_line5_titleChunk: Dans la région des mille lacs
+
+// ===================
+// PAGE 3/8
+// ===================
+
+## page-3
+_cssClassChunk: italy
+_countryChunk: l'Italie
+_urlChunk: https://www.lemonde.fr/
+
+## block-card-3
+_line1_titleChunk: A Parme
+_line2_titleChunk: Sur une piste de rêve au-dessus du lac de Garde
+_line3_titleChunk: Sur la piste cyclable de la Riviera dei Fiori, à San Remo
+_line4_titleChunk: Sur le tour du Chianti, depuis Florence
+_line5_titleChunk: Dans le Gargano et ses deux sites classés
+
+// ===================
+// PAGE 4/8
+// ===================
+
+## page-4
+_cssClassChunk: belgium
+_countryChunk: la Belgique
+_urlChunk: https://www.lemonde.fr/
+
+## block-card-4
+_line1_titleChunk: A Louvain
+_line2_titleChunk: Dans la vallée de la Meuse
+_line3_titleChunk: Sur les pavés des Flandres
+_line4_titleChunk: Autour de Bruxelles
+_line5_titleChunk: Au pays des deux Ourthes
+
+// ===================
+// PAGE 5/8
+// ===================
+
+## page-5
+_cssClassChunk: spain
+_countryChunk: l'Espagne
+_urlChunk: https://www.lemonde.fr/
+
+## block-card-5
+_line1_titleChunk: A Séville
+_line2_titleChunk: Sur le Senda del Oso, dans les Asturies
+_line3_titleChunk: De La Vall d'Uixo à l'observatoire de Javalambre
+_line4_titleChunk: Avec les marcheurs de Saint-Jacques de Compostelle
+_line5_titleChunk: Dans le désert des Bardenas à VTT
+
+// ===================
+// PAGE 6/8
+// ===================
+
+## page-6
+_cssClassChunk: germany
+_countryChunk: l'Allemagne
+_urlChunk: https://www.lemonde.fr/
+
+## block-card-6
+_line1_titleChunk: A Francfort
+_line2_titleChunk: Sur l'île de Rügen
+_line3_titleChunk: Dans la forêt de Bavière
+_line4_titleChunk: Au pied des Alpes
+_line5_titleChunk: Dans la région des mille lacs
+
+// ===================
+// PAGE 7/8
+// ===================
+
+## page-7
+_cssClassChunk: italy
+_countryChunk: l'Italie
+_urlChunk: https://www.lemonde.fr/
+
+## block-card-7
+_line1_titleChunk: A Parme
+_line2_titleChunk: Sur une piste de rêve au-dessus du lac de Garde
+_line3_titleChunk: Sur la piste cyclable de la Riviera dei Fiori, à San Remo
+_line4_titleChunk: Sur le tour du Chianti, depuis Florence
+_line5_titleChunk: Dans le Gargano et ses deux sites classés
+
+// ===================
+// PAGE 8/8
+// ===================
+
+## page-8
+_cssClassChunk: belgium
+_countryChunk: la Belgique
+_urlChunk: https://www.lemonde.fr/
+
+## block-card-8
+_line1_titleChunk: A Louvain
+_line2_titleChunk: Dans la vallée de la Meuse
+_line3_titleChunk: Sur les pavés des Flandres
+_line4_titleChunk: Autour de Bruxelles
+_line5_titleChunk: Au pays des deux Ourthes
+
+// ===================
+// CRÉDITS
+// ===================
+
+## block-credits
+
+_creditsChunk: Crédits
