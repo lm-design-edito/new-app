@@ -1,0 +1,44 @@
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
+  <body class="lm-page">
+
+    <!-- Application -->
+    <style>.lm-page-config, .lm-app-config { display: none; }</style>
+    <script src="/shared/index.js" type="module"></script>
+
+    <!-- Config -->
+    <data class="lm-page-config" value="approxPublicationDate">2023-08-29</data>
+    <data class="lm-page-config" value="id">2308-video-test</data>
+    <data class="lm-page-config" value="textbaseInline">
+      # PAGE_SLOTS
+        ## article-slot
+          _name: article
+          _selector: .article
+          _options: article/options >>> toRef
+
+      # article
+        ## options
+          _elements:
+          ../../element-1,
+          ../../element-2
+          >>> split ,
+          >>> map trim
+          >>> map toRef
+
+        ## element-1
+          _type: html
+          _content: <div>
+            <video autoplay loop playsinline muted poster="https://assets-decodeurs.lemonde.fr/redacweb/design-edito-2305-adaptation-11-bretagne-assets/01-saint-malo-poster-intro.jpg">
+              <source type="video/mp4" src="https://assets-decodeurs.lemonde.fr/redacweb/design-edito-2305-adaptation-11-bretagne-assets/01-saint-malo-video-intro-mobile.mp4"></video>
+            </video>
+          </div>
+          >>> toHtml
+    </data>
+
+    <!-- Slots -->
+    <div class="article"></div>
+  </body>
+</html>
