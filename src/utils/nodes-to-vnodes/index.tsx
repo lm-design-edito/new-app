@@ -1,4 +1,5 @@
 import { VNode, createElement } from 'preact'
+import MutedVideo from './MutedVideo'
 
 export default function nodesToVNodes (inputNodes: Node|Node[]): VNode[] {
   const nodes = Array.isArray(inputNodes) ? inputNodes : [inputNodes]
@@ -6,7 +7,7 @@ export default function nodesToVNodes (inputNodes: Node|Node[]): VNode[] {
   return vNodes
 }
 
-export const htmlBooleanAttributesNames = [
+export const boolAttrNames = [
   'allowfullscreen',
   'async',
   'autofocus',
@@ -41,18 +42,31 @@ function nodeToVNode (node: Node): VNode {
 }
 
 function elementToVNode (element: Element): VNode {
-  const { tagName, attributes, childNodes } = element
-  const attributesNameVal: { [key: string]: string } = [...attributes].reduce((acc, curr) => {
-    const attrShouldBeBoolean = htmlBooleanAttributesNames.includes(curr.name)
+  const { tagName: tagNameInAnyCase, attributes, childNodes } = element
+  const tagName = tagNameInAnyCase.toLowerCase()
+  const attributesProps: { [key: string]: string | boolean } = [...attributes].reduce((acc, curr) => {
+    const attrShouldBeBoolean = boolAttrNames.includes(curr.name)
     return {
       ...acc,
-      [curr.name]: attrShouldBeBoolean ? true : curr.value
+      [curr.name]: attrShouldBeBoolean
+        ? true
+        : curr.value
     }
   }, {})
+  const children = [...childNodes].map(node => nodeToVNode(node))
+
+  // If muted video
+  const isVideo = tagName === 'video'
+  const isMuted = attributes.getNamedItem('muted') !== null
+  if (isVideo && isMuted) return <MutedVideo {...attributesProps}>
+    {children}
+  </MutedVideo>
+
+  // Any other case
   const vNode = createElement(
     tagName.toLowerCase(),
-    { ...attributesNameVal },
-    [...childNodes].map(node => nodeToVNode(node))
+    { ...attributesProps },
+    children
   )
   return vNode
 }
