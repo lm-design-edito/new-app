@@ -11,24 +11,28 @@
 .spain {
   --c-accent: #CD7154;
   --c-accent-light: #F8F2F0;
+  --c-accent-transparent: #CD71544D;
   --cursor-url: url("https://assets-decodeurs.lemonde.fr/redacweb/230828-europe-a-velo/cursor-spain.svg");
 }
 
 .germany {
   --c-accent: #397CA1;
   --c-accent-light: #F0F3F4;
+  --c-accent-transparent: #397CA14D;
   --cursor-url: url("https://assets-decodeurs.lemonde.fr/redacweb/230828-europe-a-velo/cursor-spain.svg");
 }
 
 .italy {
   --c-accent: #62A59D;
   --c-accent-light: #F0F6F5;
+  --c-accent-transparent: #62A59D4D;
   --cursor-url: url("https://assets-decodeurs.lemonde.fr/redacweb/230828-europe-a-velo/cursor-spain.svg");
 }
 
 .belgium {
   --c-accent: #DD9736;
   --c-accent-light: #FFFAF4;
+  --c-accent-transparent: #DD97364D;
   --cursor-url: url("https://assets-decodeurs.lemonde.fr/redacweb/230828-europe-a-velo/cursor-spain.svg");
 }
 
@@ -407,11 +411,6 @@
   letter-spacing: 0.05em;
 }
 
-.eav-map__container {
-  height: 100%;
-  background-color: #fff;
-}
-
 .eav-map__header {
   display: flex;
   flex-direction: column;
@@ -419,6 +418,7 @@
   font-family: var(--ff-the-antiqua-b);
   font-weight: 800;
   padding-top: 5vh;
+  align-self: flex-start;
 }
 
 .eav-map__header__index {
@@ -473,4 +473,146 @@
   padding: 40vh 0;
   max-width: calc(100% - var(--spacers-scale-level-22));
   margin: 0 auto;
+}
+
+
+
+
+
+
+/* MAPS / ai2html */
+
+.eav-map__container {
+  height: 100%;
+  background-color: #fff;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  align-items: center;
+}
+
+#uk-map-box.eav-map__box {
+  width: 60%;
+}
+
+@media (max-width: 767px) {
+  #uk-map-box.eav-map__box {
+    width: 90%;
+  }
+}
+
+.eav-map__box,
+.eav-map__box .g-artboard {
+  margin: 0 auto;
+}
+
+.eav-map__box p {
+  margin: 0;
+}
+
+.eav-map__box .g-aiAbs {
+  position: absolute;
+}
+
+.eav-map__box .g-aiImg {
+  position: absolute;
+  top: 0;
+  display: block;
+  width: 100% !important;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.eav-map__box .g-aiSymbol {
+  position: absolute;
+  box-sizing: border-box;
+}
+
+.eav-map__box .g-aiPointText p {
+  white-space: nowrap;
+}
+
+.eav-map {
+  position: relative;
+  overflow: hidden;
+}
+
+.eav-map p {
+  font-family: var(--ff-the-antiqua-b);
+  font-weight: 700;
+  line-height: 14px;
+  height: auto;
+  opacity: 1;
+  letter-spacing: 0em;
+  font-size: var(--text-scale-level-2);
+  text-align: left;
+  color: var(--c-text);
+  text-transform: none;
+  padding-bottom: 0;
+  padding-top: 0;
+  mix-blend-mode: normal;
+  font-style: normal;
+  position: static;
+}
+
+/* cursor */
+.eav-map .g-pstyle0 {
+  height: var(--text-scale-level-2);
+  text-align: center;
+  color: #fff;
+  position: relative;
+  top: 0;
+  z-index: 1;
+}
+
+.eav-map .g-pstyle0::before {
+  /* --cursor-width: 50px; */
+  /* --cursor-width: var(--spacers-scale-level-20); */
+  --cursor-width: 2em;
+
+  content: '';
+  display: block;
+  width: var(--cursor-width);
+  height: calc(1.5 * var(--cursor-width));
+  background-image: var(--cursor-url);
+  background-repeat: no-repeat;
+  background-size: 100% auto;
+  position: absolute;
+  top: -5px;
+  z-index: -1;
+}
+
+/* text with label */
+.eav-map .g-pstyle1 {
+  /* height: var(--text-scale-level-2); */
+  text-align: right;
+  background-color: var(--c-light);
+  padding: var(--spacers-scale-level-1);
+  border-radius: 2px;
+  box-shadow: 3px 3px 8px 0px var(--c-accent-transparent);
+}
+
+.g-typovilles {
+  width: unset !important
+}
+
+/* capitales */
+.eav-map .g-pstyle2 {
+  font-weight: 800;
+  height: var(--text-scale-level-2);
+  text-align: right;
+}
+
+.eav-map .g-pstyle3 {
+  color: transparent;
+}
+
+.eav-map .g-pstyle3::before {
+  --point-width: 10px;
+
+  content: '';
+  display: block;
+  height: var(--point-width);
+  width: var(--point-width);
+  background-color: var(--c-text);
+  border-radius: 100%;
 }

@@ -128,7 +128,6 @@ _mapTemplate:
   {{{ILLUSTRATION_CHUNK}}}
 </div>
 >>> replaceWithRef {{{TITLE_CHUNK}}} ../titleTemplate
->>> replaceWithRef {{{ILLUSTRATION_CHUNK}}} ../illustrationTemplate
 
 
 // ===========================================================
@@ -168,8 +167,8 @@ _customClass: velo-scrllgngn
 _thresholdOffset: 50%
 _forceStickBlocks: before
 _pages:
-../../page-title,
-../../page-intro,
+// ../../page-title,
+// ../../page-intro,
 
 ../../page-1,
 ../../page-2,
@@ -301,6 +300,9 @@ _blocks:
 >>> map trim
 >>> map toRef
 
+_map:
+<div>mappppp</div>
+
 ## block-card-1
 _id: block-card-1
 _type: html
@@ -323,7 +325,7 @@ _content: shared/chunks/cardTemplate
 ## block-map-1
 _id: block-map-1
 _type: html
-_depth: back
+_depth: front
 _zIndex: 1
 _layout: right-half
 _mobileLayout: fullscreen
@@ -334,6 +336,7 @@ _content: shared/chunks/mapTemplate
 >>> replaceWithRef {{{CSS_CLASS_CHUNK}}} ../../page-1/cssClassChunk
 >>> replaceWithRef {{{COUNTRY_CHUNK}}} ../../page-1/countryChunk
 >>> replaceWithRef {{{URL_CHUNK}}} ../../page-1/urlChunk
+>>> replaceWithRef {{{ILLUSTRATION_CHUNK}}} ../../page-1/map
 >>> replace {{{INDEX_CHUNK}}} 1
 >>> toHtml
 
@@ -394,6 +397,7 @@ _content: shared/chunks/mapTemplate
 >>> replaceWithRef {{{CSS_CLASS_CHUNK}}} ../../page-2/cssClassChunk
 >>> replaceWithRef {{{COUNTRY_CHUNK}}} ../../page-2/countryChunk
 >>> replaceWithRef {{{URL_CHUNK}}} ../../page-2/urlChunk
+>>> replaceWithRef {{{ILLUSTRATION_CHUNK}}} ../../page-2/map
 >>> replace {{{INDEX_CHUNK}}} 2
 >>> toHtml
 
@@ -444,6 +448,7 @@ _content: shared/chunks/mapTemplate
 >>> replaceWithRef {{{CSS_CLASS_CHUNK}}} ../../page-3/cssClassChunk
 >>> replaceWithRef {{{COUNTRY_CHUNK}}} ../../page-3/countryChunk
 >>> replaceWithRef {{{URL_CHUNK}}} ../../page-3/urlChunk
+>>> replaceWithRef {{{ILLUSTRATION_CHUNK}}} ../../page-3/map
 >>> replace {{{INDEX_CHUNK}}} 3
 >>> toHtml
 
@@ -494,6 +499,7 @@ _content: shared/chunks/mapTemplate
 >>> replaceWithRef {{{CSS_CLASS_CHUNK}}} ../../page-4/cssClassChunk
 >>> replaceWithRef {{{COUNTRY_CHUNK}}} ../../page-4/countryChunk
 >>> replaceWithRef {{{URL_CHUNK}}} ../../page-4/urlChunk
+>>> replaceWithRef {{{ILLUSTRATION_CHUNK}}} ../../page-4/map
 >>> replace {{{INDEX_CHUNK}}} 4
 >>> toHtml
 
@@ -544,6 +550,7 @@ _content: shared/chunks/mapTemplate
 >>> replaceWithRef {{{CSS_CLASS_CHUNK}}} ../../page-5/cssClassChunk
 >>> replaceWithRef {{{COUNTRY_CHUNK}}} ../../page-5/countryChunk
 >>> replaceWithRef {{{URL_CHUNK}}} ../../page-5/urlChunk
+>>> replaceWithRef {{{ILLUSTRATION_CHUNK}}} ../../page-5/map
 >>> replace {{{INDEX_CHUNK}}} 5
 >>> toHtml
 
@@ -594,6 +601,7 @@ _content: shared/chunks/mapTemplate
 >>> replaceWithRef {{{CSS_CLASS_CHUNK}}} ../../page-6/cssClassChunk
 >>> replaceWithRef {{{COUNTRY_CHUNK}}} ../../page-6/countryChunk
 >>> replaceWithRef {{{URL_CHUNK}}} ../../page-6/urlChunk
+>>> replaceWithRef {{{ILLUSTRATION_CHUNK}}} ../../page-6/map
 >>> replace {{{INDEX_CHUNK}}} 6
 >>> toHtml
 
@@ -644,6 +652,7 @@ _content: shared/chunks/mapTemplate
 >>> replaceWithRef {{{CSS_CLASS_CHUNK}}} ../../page-7/cssClassChunk
 >>> replaceWithRef {{{COUNTRY_CHUNK}}} ../../page-7/countryChunk
 >>> replaceWithRef {{{URL_CHUNK}}} ../../page-7/urlChunk
+>>> replaceWithRef {{{ILLUSTRATION_CHUNK}}} ../../page-7/map
 >>> replace {{{INDEX_CHUNK}}} 7
 >>> toHtml
 
@@ -694,6 +703,7 @@ _content: shared/chunks/mapTemplate
 >>> replaceWithRef {{{CSS_CLASS_CHUNK}}} ../../page-8/cssClassChunk
 >>> replaceWithRef {{{COUNTRY_CHUNK}}} ../../page-8/countryChunk
 >>> replaceWithRef {{{URL_CHUNK}}} ../../page-8/urlChunk
+>>> replaceWithRef {{{ILLUSTRATION_CHUNK}}} ../../page-8/map
 >>> replace {{{INDEX_CHUNK}}} 8
 >>> toHtml
 
