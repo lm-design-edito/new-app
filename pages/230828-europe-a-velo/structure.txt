@@ -7,7 +7,7 @@ name: text-scale,
 root: body,
 bounds: 320 1440,
 low: 12 14,
-high: 32 62,
+high: 48 90,
 levels: 32,
 breakpoints: 20
 
@@ -45,7 +45,6 @@ _cardTemplate:
   <div class="eav-card">
     <div class="eav-card__element">
       <div class="eav-card__element__number">
-        <!-- [WIP] ici svg -->
         <p>1</p>
       </div>
       <div class="eav-card__element__title">
@@ -56,7 +55,6 @@ _cardTemplate:
     </div>
     <div class="eav-card__element">
       <div class="eav-card__element__number">
-        <!-- [WIP] ici svg -->
         <p>2</p>
       </div>
       <div class="eav-card__element__title">
@@ -67,7 +65,6 @@ _cardTemplate:
     </div>
     <div class="eav-card__element">
       <div class="eav-card__element__number">
-        <!-- [WIP] ici svg -->
         <p>3</p>
       </div>
       <div class="eav-card__element__title">
@@ -78,7 +75,6 @@ _cardTemplate:
     </div>
     <div class="eav-card__element">
       <div class="eav-card__element__number">
-        <!-- [WIP] ici svg -->
         <p>4</p>
       </div>
       <div class="eav-card__element__title">
@@ -89,7 +85,6 @@ _cardTemplate:
     </div>
     <div class="eav-card__element">
       <div class="eav-card__element__number">
-        <!-- [WIP] ici svg -->
         <p>5</p>
       </div>
       <div class="eav-card__element__title">
@@ -114,9 +109,9 @@ _cardTemplate:
 >>> replaceWithRef {{{BUTTON_CHUNK}}} ../buttonTemplate
 
 _titleTemplate: 
-<div>
+<h3 class="eav-map__header__title">
   {{{TITLE_TEXT_CHUNK}}}
-</div>
+</h3>
 >>> replaceWithRef {{{TITLE_TEXT_CHUNK}}} ../titleTextChunk
 
 _illustrationTemplate: 
@@ -126,7 +121,10 @@ _illustrationTemplate:
 
 _mapTemplate: 
 <div class="eav-map__container {{{CSS_CLASS_CHUNK}}}">
-  {{{TITLE_CHUNK}}}
+  <div class="eav-map__header">
+    <p class="eav-map__header__index">{{{INDEX_CHUNK}}}/8</p>
+    {{{TITLE_CHUNK}}}
+  </div>
   {{{ILLUSTRATION_CHUNK}}}
 </div>
 >>> replaceWithRef {{{TITLE_CHUNK}}} ../titleTemplate
@@ -167,22 +165,22 @@ _options: ../../../scrllgngn/options >>> toRef
 # scrllgngn
 ## options
 _customClass: velo-scrllgngn
-_thresholdOffset: 100%
+_thresholdOffset: 50%
 _forceStickBlocks: before
 _pages:
-// ../../page-title,
-// ../../page-intro,
+../../page-title,
+../../page-intro,
 
 ../../page-1,
-// ../../page-2,
-// ../../page-3,
-// ../../page-4,
-// ../../page-5,
-// ../../page-6,
-// ../../page-7,
-// ../../page-8,
+../../page-2,
+../../page-3,
+../../page-4,
+../../page-5,
+../../page-6,
+../../page-7,
+../../page-8,
 
-// ../../page-credits,
+../../page-credits,
 
 >>> split ,
 >>> map trim
@@ -197,7 +195,7 @@ _id: page-title
 _blocks: 
 ../../block-title,
 ../../block-title-background,
-../../block-empty-scroll
+../../block-noise,
 >>> split ,
 >>> map trim
 >>> map toRef
@@ -208,7 +206,7 @@ _type: html
 _depth: scroll
 _layout: fullscreen
 _content: 
-  <div>
+  <div class="eav-block-title__container">
       <div class="eav-block-title">
         <p class="eav-heading">{{{HEADING_CHUNK}}}</p>
         <h3 class="eav-title">{{{TITLE_CHUNK}}}</h3>
@@ -228,16 +226,20 @@ _depth: back
 _layout: fullscreen
 _transitions: fade, 600
 _content:
-<div class="eav-block-title__background"></div>
+<div class="eav-block-title__background">
+  <div class="eav-block-texture"></div>
+</div>
 >>> toHtml
 
-## block-empty-scroll
-_id: block-empty-scroll
+## block-noise
+_id: block-noise
 _type: html
-_depth: scroll
+_depth: back
+_zIndex: 2
 _layout: fullscreen
-_content:  
-<div></div>
+_transitions: fade, 600
+_content:
+<div class="eav-block-noise"></div>
 >>> toHtml
 
 
@@ -249,7 +251,8 @@ _content:
 _id: page-intro
 _blocks: 
 ../../block-intro,
-../../block-intro-image
+../../block-intro-image,
+../../block-noise,
 >>> split ,
 >>> map trim
 >>> map toRef
@@ -258,9 +261,10 @@ _blocks:
 _id: block-intro
 _type: html
 _depth: scroll
-_layout: fullscreen
+_layout: left-half
+_mobileLayout: fullscreen
 _content: 
-  <div>
+  <div class="eav-block-intro__container">
     <div class="eav-block-intro">
       <p class="eav-block-intro__text">{{{INTRO_CHUNK}}}</p>
     </div>
@@ -273,10 +277,13 @@ _content:
 _id: block-intro-image
 _type: html
 _depth: back
-_layout: fullscreen
+_layout: right-half
+_mobileLayout: fullscreen
 _transitions: fade, 600
 _content: 
-<div></div>
+<div class="eav-block-intro__image">
+  <div class="eav-block-texture"></div>
+</div>
 >>> toHtml
 
 // ===============================
@@ -289,6 +296,7 @@ _blocks:
 ../../block-card-1,
 ../../block-map-1,
 ../../block-background,
+../../block-noise,
 >>> split ,
 >>> map trim
 >>> map toRef
@@ -297,7 +305,8 @@ _blocks:
 _id: block-card-1
 _type: html
 _depth: scroll
-_layout: fullscreen
+_layout: left-half
+_mobileLayout: fullscreen
 _content: shared/chunks/cardTemplate
 >>> toRef
 >>> toString
@@ -314,20 +323,25 @@ _content: shared/chunks/cardTemplate
 ## block-map-1
 _id: block-map-1
 _type: html
-_depth: scroll
-_layout: fullscreen
+_depth: back
+_zIndex: 1
+_layout: right-half
+_mobileLayout: fullscreen
+_transitions: fade, 600
 _content: shared/chunks/mapTemplate
 >>> toRef
 >>> toString
 >>> replaceWithRef {{{CSS_CLASS_CHUNK}}} ../../page-1/cssClassChunk
 >>> replaceWithRef {{{COUNTRY_CHUNK}}} ../../page-1/countryChunk
 >>> replaceWithRef {{{URL_CHUNK}}} ../../page-1/urlChunk
+>>> replace {{{INDEX_CHUNK}}} 1
 >>> toHtml
 
 ## block-background
 _id: block-background
 _type: html
 _depth: back
+_zIndex: 0
 _layout: fullscreen
 _content: 
 <div class="eav-block-background"></div>
@@ -343,6 +357,7 @@ _blocks:
 ../../block-card-2,
 ../../block-map-2,
 ../../block-background,
+../../block-noise,
 >>> split ,
 >>> map trim
 >>> map toRef
@@ -351,7 +366,8 @@ _blocks:
 _id: block-card-2
 _type: html
 _depth: scroll
-_layout: fullscreen
+_layout: right-half
+_mobileLayout: fullscreen
 _content: shared/chunks/cardTemplate
 >>> toRef
 >>> toString
@@ -368,14 +384,17 @@ _content: shared/chunks/cardTemplate
 ## block-map-2
 _id: block-map-2
 _type: html
-_depth: scroll
-_layout: fullscreen
+_depth: back
+_layout: left-half
+_mobileLayout: fullscreen
+_transitions: fade, 600
 _content: shared/chunks/mapTemplate
 >>> toRef
 >>> toString
 >>> replaceWithRef {{{CSS_CLASS_CHUNK}}} ../../page-2/cssClassChunk
 >>> replaceWithRef {{{COUNTRY_CHUNK}}} ../../page-2/countryChunk
 >>> replaceWithRef {{{URL_CHUNK}}} ../../page-2/urlChunk
+>>> replace {{{INDEX_CHUNK}}} 2
 >>> toHtml
 
 // ===============================
@@ -388,6 +407,7 @@ _blocks:
 ../../block-card-3,
 ../../block-map-3,
 ../../block-background,
+../../block-noise,
 >>> split ,
 >>> map trim
 >>> map toRef
@@ -396,7 +416,8 @@ _blocks:
 _id: block-card-3
 _type: html
 _depth: scroll
-_layout: fullscreen
+_layout: left-half
+_mobileLayout: fullscreen
 _content: shared/chunks/cardTemplate
 >>> toRef
 >>> toString
@@ -413,14 +434,17 @@ _content: shared/chunks/cardTemplate
 ## block-map-3
 _id: block-map-3
 _type: html
-_depth: scroll
-_layout: fullscreen
+_depth: back
+_layout: right-half
+_mobileLayout: fullscreen
+_transitions: fade, 600
 _content: shared/chunks/mapTemplate
 >>> toRef
 >>> toString
 >>> replaceWithRef {{{CSS_CLASS_CHUNK}}} ../../page-3/cssClassChunk
 >>> replaceWithRef {{{COUNTRY_CHUNK}}} ../../page-3/countryChunk
 >>> replaceWithRef {{{URL_CHUNK}}} ../../page-3/urlChunk
+>>> replace {{{INDEX_CHUNK}}} 3
 >>> toHtml
 
 // ===============================
@@ -433,6 +457,7 @@ _blocks:
 ../../block-card-4,
 ../../block-map-4,
 ../../block-background,
+../../block-noise,
 >>> split ,
 >>> map trim
 >>> map toRef
@@ -441,7 +466,8 @@ _blocks:
 _id: block-card-4
 _type: html
 _depth: scroll
-_layout: fullscreen
+_layout: right-half
+_mobileLayout: fullscreen
 _content: shared/chunks/cardTemplate
 >>> toRef
 >>> toString
@@ -458,14 +484,17 @@ _content: shared/chunks/cardTemplate
 ## block-map-4
 _id: block-map-4
 _type: html
-_depth: scroll
-_layout: fullscreen
+_depth: back
+_layout: left-half
+_mobileLayout: fullscreen
+_transitions: fade, 600
 _content: shared/chunks/mapTemplate
 >>> toRef
 >>> toString
 >>> replaceWithRef {{{CSS_CLASS_CHUNK}}} ../../page-4/cssClassChunk
 >>> replaceWithRef {{{COUNTRY_CHUNK}}} ../../page-4/countryChunk
 >>> replaceWithRef {{{URL_CHUNK}}} ../../page-4/urlChunk
+>>> replace {{{INDEX_CHUNK}}} 4
 >>> toHtml
 
 // ===============================
@@ -478,6 +507,7 @@ _blocks:
 ../../block-card-5,
 ../../block-map-5,
 ../../block-background,
+../../block-noise,
 >>> split ,
 >>> map trim
 >>> map toRef
@@ -486,7 +516,8 @@ _blocks:
 _id: block-card-5
 _type: html
 _depth: scroll
-_layout: fullscreen
+_layout: left-half
+_mobileLayout: fullscreen
 _content: shared/chunks/cardTemplate
 >>> toRef
 >>> toString
@@ -503,14 +534,17 @@ _content: shared/chunks/cardTemplate
 ## block-map-5
 _id: block-map-5
 _type: html
-_depth: scroll
-_layout: fullscreen
+_depth: back
+_layout: right-half
+_mobileLayout: fullscreen
+_transitions: fade, 600
 _content: shared/chunks/mapTemplate
 >>> toRef
 >>> toString
 >>> replaceWithRef {{{CSS_CLASS_CHUNK}}} ../../page-5/cssClassChunk
 >>> replaceWithRef {{{COUNTRY_CHUNK}}} ../../page-5/countryChunk
 >>> replaceWithRef {{{URL_CHUNK}}} ../../page-5/urlChunk
+>>> replace {{{INDEX_CHUNK}}} 5
 >>> toHtml
 
 // ===============================
@@ -523,6 +557,7 @@ _blocks:
 ../../block-card-6,
 ../../block-map-6,
 ../../block-background,
+../../block-noise,
 >>> split ,
 >>> map trim
 >>> map toRef
@@ -531,7 +566,8 @@ _blocks:
 _id: block-card-6
 _type: html
 _depth: scroll
-_layout: fullscreen
+_layout: right-half
+_mobileLayout: fullscreen
 _content: shared/chunks/cardTemplate
 >>> toRef
 >>> toString
@@ -548,14 +584,17 @@ _content: shared/chunks/cardTemplate
 ## block-map-6
 _id: block-map-6
 _type: html
-_depth: scroll
-_layout: fullscreen
+_depth: back
+_layout: left-half
+_mobileLayout: fullscreen
+_transitions: fade, 600
 _content: shared/chunks/mapTemplate
 >>> toRef
 >>> toString
 >>> replaceWithRef {{{CSS_CLASS_CHUNK}}} ../../page-6/cssClassChunk
 >>> replaceWithRef {{{COUNTRY_CHUNK}}} ../../page-6/countryChunk
 >>> replaceWithRef {{{URL_CHUNK}}} ../../page-6/urlChunk
+>>> replace {{{INDEX_CHUNK}}} 6
 >>> toHtml
 
 // ===============================
@@ -568,6 +607,7 @@ _blocks:
 ../../block-card-7,
 ../../block-map-7,
 ../../block-background,
+../../block-noise,
 >>> split ,
 >>> map trim
 >>> map toRef
@@ -576,7 +616,8 @@ _blocks:
 _id: block-card-7
 _type: html
 _depth: scroll
-_layout: fullscreen
+_layout: left-half
+_mobileLayout: fullscreen
 _content: shared/chunks/cardTemplate
 >>> toRef
 >>> toString
@@ -593,14 +634,17 @@ _content: shared/chunks/cardTemplate
 ## block-map-7
 _id: block-map-7
 _type: html
-_depth: scroll
-_layout: fullscreen
+_depth: back
+_layout: right-half
+_mobileLayout: fullscreen
+_transitions: fade, 600
 _content: shared/chunks/mapTemplate
 >>> toRef
 >>> toString
 >>> replaceWithRef {{{CSS_CLASS_CHUNK}}} ../../page-7/cssClassChunk
 >>> replaceWithRef {{{COUNTRY_CHUNK}}} ../../page-7/countryChunk
 >>> replaceWithRef {{{URL_CHUNK}}} ../../page-7/urlChunk
+>>> replace {{{INDEX_CHUNK}}} 7
 >>> toHtml
 
 // ===============================
@@ -613,6 +657,7 @@ _blocks:
 ../../block-card-8,
 ../../block-map-8,
 ../../block-background,
+../../block-noise,
 >>> split ,
 >>> map trim
 >>> map toRef
@@ -621,7 +666,8 @@ _blocks:
 _id: block-card-8
 _type: html
 _depth: scroll
-_layout: fullscreen
+_layout: right-half
+_mobileLayout: fullscreen
 _content: shared/chunks/cardTemplate
 >>> toRef
 >>> toString
@@ -638,14 +684,17 @@ _content: shared/chunks/cardTemplate
 ## block-map-8
 _id: block-map-8
 _type: html
-_depth: scroll
-_layout: fullscreen
+_depth: back
+_layout: left-half
+_mobileLayout: fullscreen
+_transitions: fade, 600
 _content: shared/chunks/mapTemplate
 >>> toRef
 >>> toString
 >>> replaceWithRef {{{CSS_CLASS_CHUNK}}} ../../page-8/cssClassChunk
 >>> replaceWithRef {{{COUNTRY_CHUNK}}} ../../page-8/countryChunk
 >>> replaceWithRef {{{URL_CHUNK}}} ../../page-8/urlChunk
+>>> replace {{{INDEX_CHUNK}}} 8
 >>> toHtml
 
 // ===============================
@@ -655,7 +704,9 @@ _content: shared/chunks/mapTemplate
 ## page-credits
 _id: page-credits
 _blocks:
-../../block-credits
+../../block-credits,
+../../block-background,
+../../block-noise,
 >>> split ,
 >>> map trim
 >>> map toRef
@@ -666,7 +717,7 @@ _type: html
 _depth: scroll
 _layout: fullscreen
 _content:
-  <div>
+  <div class="eav-credits">
     {{{CREDITS_CHUNK}}}
   </div>
 

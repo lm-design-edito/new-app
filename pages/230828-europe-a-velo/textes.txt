@@ -1,3 +1,5 @@
+// [WIP] fix apostrophes
+
 // ===================
 // SHARED
 // ===================
@@ -176,4 +178,10 @@ _line5_titleChunk: Au pays des deux Ourthes
 
 ## block-credits
 
-_creditsChunk: Crédits
+_creditsChunk:
+<p>Coordination : Isabelle Mériel et Yoanna Sultan-R'bibo</p>
+<p>Auteurs : Thomas Doustaly et Olivier Razemon</p>
+<p>Edition : Clément Balta et Laurence Joan-Grangé</p>
+<p>Iconographie : Xxxxx</p>
+<p>Illustration et cartographie : Xxxxx</p>
+<p>Design et développement : Xxxxx</p>
