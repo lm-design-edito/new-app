@@ -1,0 +1,52 @@
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
+  <body class="lm-page">
+
+    <!-- Application -->
+    <style>.lm-page-config, .lm-app-config { display: none; }</style>
+    <script src="/shared/index.js" type="module"></script>
+
+    <!-- Darkdouille -->
+    <data class="lm-page-config">
+      <data class="item">
+        <data class="prop-1" type="number">
+          <data class="subprop-1">coucou</data>
+          <data class="subprop-2">hihih</data>
+          <data type="transformer">
+            <data>map</data>
+            <data>toNumber</data>
+          </data>
+        </data>
+        <data class="prop-2" type="lm-html">
+          écrasé plus loin
+        </data>
+        <data class="prop-3">start</data>
+        <data class="prop-4">end</data>
+        <data>
+          un élément non nommé
+        </data>
+      </data>
+      <data class="item">
+        <data class="prop-2" action="overwrite">
+          <!-- commentaire -->
+          texte brut
+          <div class="title">Un titre !</div>
+          <component type="video">
+            <data class="customClass">my-video-custom-class</data>
+            <data class="src">https://...</data>
+            <!-- commentaire -->
+            texte brut
+          </component>
+        </data>
+        <data class="prop-3" action="append"> appended</data>
+        <data class="prop-4" action="prepend">prepended </data>
+        <data action="append">
+          et du contenu ajouté à la suite
+        </data>
+      </data>
+    </data>
+  </body>
+</html>
