@@ -1,3 +1,36 @@
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+.lm-app sub,
+.lm-app sup {
+  line-height: 0;
+}
+
+.header-slot {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 2;
+  padding: var(--spacers-scale-level-10);
+}
+
+.header-slot .lm-svg .fill-1 {
+  fill: #1a171b;
+}
+
+.header-slot .lm-svg .fill-2 {
+  fill: #8f98a9;
+}
+
+.scrllgngn-slot {
+  position: relative;
+  z-index: 0;
+}
+
 .lm-page {
   --c-light: #FFF9EB;
   --c-background: #F2EFE6;
@@ -8,41 +41,45 @@
   color: var(--c-text);
 }
 
-.spain {
+.spain,
+.france {
   --c-accent: #CD7154;
   --c-accent-light: #F8F2F0;
   --c-accent-transparent: #CD71544D;
-  --cursor-url: url("https://assets-decodeurs.lemonde.fr/redacweb/230828-europe-a-velo/cursor-spain.svg");
+  --cursor-url: url("https://assets-decodeurs.lemonde.fr/redacweb/230828-europe-a-velo/cursor-CD7154.svg");
 }
 
-.germany {
+.germany,
+.netherlands {
   --c-accent: #397CA1;
   --c-accent-light: #F0F3F4;
   --c-accent-transparent: #397CA14D;
-  --cursor-url: url("https://assets-decodeurs.lemonde.fr/redacweb/230828-europe-a-velo/cursor-spain.svg");
+  --cursor-url: url("https://assets-decodeurs.lemonde.fr/redacweb/230828-europe-a-velo/cursor-397CA1.svg");
 }
 
+.uk,
 .italy {
   --c-accent: #62A59D;
   --c-accent-light: #F0F6F5;
   --c-accent-transparent: #62A59D4D;
-  --cursor-url: url("https://assets-decodeurs.lemonde.fr/redacweb/230828-europe-a-velo/cursor-spain.svg");
+  --cursor-url: url("https://assets-decodeurs.lemonde.fr/redacweb/230828-europe-a-velo/cursor-62A59D.svg");
 }
 
-.belgium {
+.belgium,
+.switzerland {
   --c-accent: #DD9736;
   --c-accent-light: #FFFAF4;
   --c-accent-transparent: #DD97364D;
-  --cursor-url: url("https://assets-decodeurs.lemonde.fr/redacweb/230828-europe-a-velo/cursor-spain.svg");
+  --cursor-url: url("https://assets-decodeurs.lemonde.fr/redacweb/230828-europe-a-velo/cursor-DD9736.svg");
 }
 
 .eav-block-noise {
+  position: absolute;
   height: 100%;
   width: 100%;
   background-image: url("https://assets-decodeurs.lemonde.fr/redacweb/230828-europe-a-velo/noise.jpg");
   background-size: 100px;
   opacity: 0.05;
-  mix-blend-mode: multiply;
 }
 
 .lm-scrllgngn__block_current .eav-block-title__container {
@@ -135,6 +172,7 @@
 .eav-block-title__background {
   height: 100%;
   width: 100%;
+  position: absolute;
   background-image: url("https://assets-decodeurs.lemonde.fr/redacweb/230828-europe-a-velo/background.jpg");
   background-position-x: 66%;
   background-size: cover;
@@ -145,6 +183,7 @@
   display: block;
   height: 100%;
   width: 100%;
+  position: absolute;
   background: linear-gradient(var(--c-light) 0%, rgba(255, 255, 255, 0) 100%);
 }
 
@@ -178,16 +217,6 @@
 @media (max-width: 1024px) {
   .lm-scrllgngn__block_current .eav-block-intro {
     opacity: 1;
-  }
-
-  .eav-block-intro {
-    padding: var(--spacers-scale-level-28) 0;
-    max-width: calc(100% - var(--spacers-scale-level-22));
-    border-radius: 3px;
-    background-color: var(--c-light);
-    opacity: 0;
-    transition: opacity 600ms;
-    box-shadow: 2px 2px 4px 0px rgba(32, 40, 65, 0.37);
   }
 }
 
@@ -263,13 +292,60 @@
 .eav-block-intro__image {
   height: 100%;
   width: 100%;
+  position: absolute;
   background-image: url("https://assets-decodeurs.lemonde.fr/redacweb/230828-europe-a-velo/intro-background.jpg");
   background-size: cover;
+  background-position: center;
+}
+
+.eav-block-intro__cache {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 0;
+  background-color: #fff;
+
+}
+
+.eav-block-intro__cache::after {
+  display: block;
+  content: '';
+  height: 100%;
+  width: 100%;
+  background-image: url("https://assets-decodeurs.lemonde.fr/redacweb/230828-europe-a-velo/noise.jpg");
+  background-size: 100px;
+  opacity: 0.05;
+}
+
+@media (max-width: 1024px) {
+  .eav-block-intro__image {
+    width: 80%;
+    height: 50%;
+    bottom: 86px;
+    left: 50%;
+    transform: translateX(-50%);
+    margin: 0 auto;
+  }
+
+  .eav-block-intro__cache {
+    height: 86px;
+  }
+}
+
+@media (max-width: 600px) {
+  .eav-block-intro__image {
+    bottom: 42px;
+  }
+
+  .eav-block-intro__cache {
+    height: 42px;
+  }
 }
 
 .eav-block-background {
   height: 100%;
   width: 100%;
+  position: absolute;
   background-color: var(--c-background);
 }
 
@@ -318,17 +394,17 @@
   padding-top: var(--spacers-scale-level-20);
   padding-bottom: 20px;
   padding-bottom: var(--spacers-scale-level-16);
+}
 
-  &::after {
-    content: '';
-    display: block;
-    height: var(--border-height);
-    width: 100%;
-    background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, var(--c-accent) 45%, var(--c-accent) 55%, rgba(255, 255, 255, 0) 100%);
-    grid-column: 1 / 3;
-    position: absolute;
-    top: 100%;
-  }
+.eav-card__element::after {
+  content: '';
+  display: block;
+  height: var(--border-height);
+  width: 100%;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, var(--c-accent) 45%, var(--c-accent) 55%, rgba(255, 255, 255, 0) 100%);
+  grid-column: 1 / 3;
+  position: absolute;
+  top: 100%;
 }
 
 .eav-card__element:nth-child(1) {
@@ -384,7 +460,10 @@
   font-style: italic;
 }
 
-.eav-button {
+.eav-button a {
+  color: #fff;
+  text-decoration: none;
+  letter-spacing: 0.05em;
   display: inline-block;
   background-color: var(--c-dark);
   border-radius: 3px;
@@ -403,12 +482,12 @@
   margin-top: 32px;
   margin-top: var(--spacers-scale-level-20);
   font-size: var(--text-scale-level-6);
+  transition: background-color 200ms, box-shadow 200ms;
 }
 
-.eav-button a {
-  color: #fff;
-  text-decoration: none;
-  letter-spacing: 0.05em;
+.eav-button a:hover {
+  background-color: rgb(72, 116, 127);
+  box-shadow: 2px 2px 8px 0px rgba(32, 40, 65, 0.37);
 }
 
 .eav-map__header {
@@ -434,10 +513,18 @@
 .eav-map__header__index::after {
   display: block;
   content: '';
-  width: 30vw;
+  width: 20vw;
   max-width: 250px;
   height: 2px;
   background-color: var(--c-accent);
+}
+
+@media (max-width: 1024px) {
+
+  .eav-map__header__index::before,
+  .eav-map__header__index::after {
+    width: 30vw;
+  }
 }
 
 .eav-map__header__index::before {
@@ -472,48 +559,49 @@
   line-height: 140%;
   padding: 40vh 0;
   max-width: calc(100% - var(--spacers-scale-level-22));
-  margin: 0 auto;
+  margin: 0 24px;
 }
-
-
-
-
-
 
 /* MAPS / ai2html */
 
 .eav-map__container {
   height: 100%;
+  width: 100%;
+  position: absolute;
   background-color: #fff;
   display: grid;
   grid-template-rows: auto 1fr;
   align-items: center;
 }
 
-#uk-map-box.eav-map__box {
-  width: 60%;
+.eav-map-box {
+  margin: 0 auto;
+  width: 100%;
+  max-height: 100%;
+  max-width: 700px;
 }
 
-@media (max-width: 767px) {
-  #uk-map-box.eav-map__box {
-    width: 90%;
+@media (max-width: 1024px) {
+  .eav-map-box {
+    width: 80%;
   }
 }
 
-.eav-map__box,
-.eav-map__box .g-artboard {
-  margin: 0 auto;
+@media (max-width: 700px) {
+  .eav-map-box {
+    width: 100%;
+  }
 }
 
-.eav-map__box p {
+.eav-map-box p {
   margin: 0;
 }
 
-.eav-map__box .g-aiAbs {
+.eav-map-box .g-aiAbs {
   position: absolute;
 }
 
-.eav-map__box .g-aiImg {
+.eav-map-box .g-aiImg {
   position: absolute;
   top: 0;
   display: block;
@@ -522,12 +610,12 @@
   object-fit: contain;
 }
 
-.eav-map__box .g-aiSymbol {
+.eav-map-box .g-aiSymbol {
   position: absolute;
   box-sizing: border-box;
 }
 
-.eav-map__box .g-aiPointText p {
+.eav-map-box .g-aiPointText p {
   white-space: nowrap;
 }
 
@@ -539,80 +627,51 @@
 .eav-map p {
   font-family: var(--ff-the-antiqua-b);
   font-weight: 700;
-  line-height: 14px;
   height: auto;
   opacity: 1;
   letter-spacing: 0em;
-  font-size: var(--text-scale-level-2);
+  font-size: var(--text-scale-level-4);
   text-align: left;
   color: var(--c-text);
   text-transform: none;
   padding-bottom: 0;
   padding-top: 0;
-  mix-blend-mode: normal;
   font-style: normal;
   position: static;
 }
 
-/* cursor */
-.eav-map .g-pstyle0 {
-  height: var(--text-scale-level-2);
-  text-align: center;
-  color: #fff;
-  position: relative;
-  top: 0;
-  z-index: 1;
+@media (max-width: 800px) {
+  .eav-map p {
+    font-size: var(--text-scale-level-1);
+  }
 }
 
-.eav-map .g-pstyle0::before {
-  /* --cursor-width: 50px; */
-  /* --cursor-width: var(--spacers-scale-level-20); */
-  --cursor-width: 2em;
-
-  content: '';
-  display: block;
-  width: var(--cursor-width);
-  height: calc(1.5 * var(--cursor-width));
-  background-image: var(--cursor-url);
-  background-repeat: no-repeat;
-  background-size: 100% auto;
-  position: absolute;
-  top: -5px;
-  z-index: -1;
-}
-
-/* text with label */
-.eav-map .g-pstyle1 {
-  /* height: var(--text-scale-level-2); */
-  text-align: right;
-  background-color: var(--c-light);
-  padding: var(--spacers-scale-level-1);
-  border-radius: 2px;
-  box-shadow: 3px 3px 8px 0px var(--c-accent-transparent);
-}
-
-.g-typovilles {
+.eav-map-text-container {
   width: unset !important
 }
 
+/* text with label */
+.eav-map .eav-map-text {
+  background-color: var(--c-light);
+  padding: var(--spacers-scale-level-2) var(--spacers-scale-level-4);
+  transform: translateY(calc(-0.5 * var(--text-scale-level-2)));
+  border-radius: 2px;
+  box-shadow: 3px 3px 8px 0px var(--c-accent-transparent);
+  display: table;
+}
+
+@media (max-width: 800px) {
+  .eav-map .eav-map-text {
+    padding: var(--spacers-scale-level-1) var(--spacers-scale-level-2);
+    transform: translateY(calc(-0.5 * var(--text-scale-level-1)));
+  }
+}
+
 /* capitales */
-.eav-map .g-pstyle2 {
+.eav-map .eav-map-text_bold {
   font-weight: 800;
-  height: var(--text-scale-level-2);
-  text-align: right;
 }
 
-.eav-map .g-pstyle3 {
-  color: transparent;
-}
-
-.eav-map .g-pstyle3::before {
-  --point-width: 10px;
-
-  content: '';
-  display: block;
-  height: var(--point-width);
-  width: var(--point-width);
-  background-color: var(--c-text);
-  border-radius: 100%;
+.eav-map-svg {
+  z-index: 1;
 }
