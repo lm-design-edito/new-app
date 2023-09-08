@@ -11,42 +11,34 @@
 
     <!-- Darkdouille -->
     <data class="lm-page-config">
-      <data class="item">
-        <data class="prop-1" type="number">
-          <data class="subprop-1">coucou</data>
-          <data class="subprop-2">hihih</data>
-          <data type="transformer">
-            <data>map</data>
-            <data>toNumber</data>
-          </data>
-        </data>
-        <data class="prop-2" type="lm-html">
-          écrasé plus loin
-        </data>
-        <data class="prop-3">start</data>
-        <data class="prop-4">end</data>
-        <data>
-          un élément non nommé
-        </data>
+      <div>
+        coucou
+        <h1>Titre</h1>
+        <p>para !!</p>
+      </div>
+      <data type="number">1</data>
+      <data class="yay">text</data>
+      <data class="yay">text 2</data>
+      <data class="yay" action="append"> suite du texte 2</data>
+      <data class="yay" action="prepend">avant le texte 2 </data>
+      <data class="0">2</data>
+      <!-- <data type="transformer">lil lal loul</data>
+      <data type="transformer">lèl lèl</data>
+      <data class="to-append">
+        lol
+        <data>AFTER</data>
+        <data class="named" type="boolean">true</data>
       </data>
-      <data class="item" action="overwrite">
-        <data class="prop-2" action="overwrite">
-          <!-- commentaire -->
-          texte brut
-          <div class="title">Un titre !</div>
-          <component type="video">
-            <data class="customClass">my-video-custom-class</data>
-            <data class="src">https://...</data>
-            <!-- commentaire -->
-            texte brut
-          </component>
-        </data>
-        <data class="prop-3" action="append"> appended</data>
-        <data class="prop-4" action="prepend">prepended </data>
-        <data action="append">
-          et du contenu ajouté à la suite
-        </data>
+      <data class="to-append" action="append">
+        <data action="prepend">BEFORE-</data>
+        <div>lol</div>
+        lol
+        <data class="named" type="boolean">false</data>
       </data>
+      <data class="to-append" action="prepend">
+        <data action="append">-END</data>
+        <div>lol</div>
+      </data> -->
     </data>
   </body>
 </html>
