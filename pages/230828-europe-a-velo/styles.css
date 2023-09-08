@@ -272,7 +272,7 @@ body {
 
 .eav-block-intro__text {
   width: 780px;
-  max-width: 80vw;
+  max-width: 75vw;
   font-family: var(--ff-the-antiqua-b);
   font-size: 24px;
   font-size: var(--text-scale-level-8);
@@ -399,7 +399,7 @@ body {
 
 @media (max-width: 1024px) {
   .eav-card__container {
-    margin: 360px 0;
+    margin: 360px 0 180px 0;
   }
 }
 

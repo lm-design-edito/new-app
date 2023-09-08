@@ -27,7 +27,7 @@ _headingChunk:
 8 pays, 40 randonnées
 
 _titleChunk:
-L’Europe à vélo
+L’Europe à&nbsp;vélo
 
 
 // ===================
