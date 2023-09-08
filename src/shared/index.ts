@@ -3,7 +3,8 @@ namespace Darkdouille {
   export enum Action {
     APPEND = 'append',
     PREPEND = 'prepend',
-    OVERWRITE = 'overwrite'
+    OVERWRITE = 'overwrite',
+    MERGE = 'merge'
   }
   export const Actions = Object.values(Action)
   export enum Type {
@@ -19,204 +20,372 @@ namespace Darkdouille {
     TRANSFORMER = 'transformer'
   }
   export const Types = Object.values(Type)
-//   export type TransformerDescriptor = { name: string, arguments: string[] }
-//   export type NodeDataNamedChild = { type: 'named', key: string, data: NodeData }
-//   export type NodeDataUnnamedChild = { type: 'unnamed', key: number, data: NodeData }
-//   export type NodeDataChild = NodeDataNamedChild | NodeDataUnnamedChild
-//   export type NodeData = {
-//     node: Node
-//     action: Darkdouille.Action | null
-//     type: Darkdouille.Type | null
-//     transformers: TransformerDescriptor[]
-//     children: Array<NodeDataChild>
-//   }
-//   export type MergedNodeData = Omit<NodeData, 'action' | 'children'> & {
-//     children: Map<string | number, MergedNodeData>
-//   }
 }
-
-// const darkdouilles = document.body.querySelectorAll('.lm-page-config')
-// const parsedList = [...darkdouilles].map(darkdouille => {
-//   return parseDarkdouille(darkdouille)
-// }).filter((e): e is DarkdouilleNodeData => e !== undefined)
-// const merged = parsedList.reduce((
-//   mergedAcc: MergedDarkdouilleNodeData | null,
-//   parsed: DarkdouilleNodeData) => {
-//   return mergeDarkdouilleData(
-//     parsed,
-//     [],
-//     mergedAcc ?? undefined
-//   )
-// }, null)
-// console.log(merged)
-
-// function parseDarkdouille (element: Element) {
-//   const result = parseDarkdouilleNode(element)
-//   return result
-// }
-
-// function parseDarkdouilleNode (node: Node): Darkdouille.NodeData | undefined {
-//   const { nodeType } = node
-  
-//   // Text node
-//   if (nodeType === Node.TEXT_NODE) return {
-//     node,
-//     action: null,
-//     type: null,
-//     transformers: [],
-//     children: []
-//   }
-  
-//   // Anything but Element node
-//   if (nodeType !== Node.ELEMENT_NODE) return undefined
-  
-//   // Element node
-//   const element = node as Element
-//   const _action = element.getAttribute('action')
-//   const action = Darkdouille.Actions.includes(_action as any) ? _action as Darkdouille.Action : null
-//   const _type = element.getAttribute('type')
-//   const type = Darkdouille.Types.includes(_type as any) ? _type as Darkdouille.Type : null
-//   const transformersNodes = element.querySelectorAll('[type="transformer"]')
-//   const transformers = parseDarkdouilleTransformers(transformersNodes)
-//   let unnamedChildrenCnt = 0
-//   const children: Array<Darkdouille.NodeDataChild> = [...element.childNodes]
-//     .filter(child => ![...transformersNodes].includes(child as Element))
-//     .map(child => {
-//       const childData = parseDarkdouilleNode(child)
-//       if (childData === undefined) return;
-//       if (childData.node.nodeType === Node.TEXT_NODE) return {
-//         type: 'unnamed',
-//         key: unnamedChildrenCnt++,
-//         data: childData
-//       }
-//       const { node } = childData
-//       if (!(node instanceof Element)) return;
-//       const key = node.getAttribute('class')
-//       if (key !== null) return {
-//         type: 'named',
-//         key,
-//         data: childData
-//       }
-//       return {
-//         type: 'unnamed',
-//         key: unnamedChildrenCnt++,
-//         data: childData
-//       }
-//     })
-//     .filter((child): child is Darkdouille.NodeDataChild => child !== undefined)
-//     return {
-//       node,
-//       action,
-//       type,
-//       transformers,
-//       children
-//   }
-// }
-
-// function parseDarkdouilleTransformers (transformersNodes: NodeListOf<Element>): Darkdouille.TransformerDescriptor[] {
-//   return [...transformersNodes].map(transformerNode => {
-//     const children = [...transformerNode.childNodes]
-//     const [name, ..._args] = children.map(child => child.textContent)
-//     const args = _args.map(arg => arg ?? '')
-//     return {
-//       name: name ?? '',
-//       arguments: args
-//     }
-//   })
-// }
-
-// function resolvePathInMergedDarkdouilleData (
-//   path: (string | number)[],
-//   mergedDarkdouilleData: ReturnType<typeof mergeDarkdouilleData>
-// ): Darkdouille.MergedNodeData | undefined
-// function resolvePathInMergedDarkdouilleData (
-//   path: (string | number)[],
-//   mergedDarkdouilleData: ReturnType<typeof mergeDarkdouilleData>,
-//   createIfMissing: false
-// ): Darkdouille.MergedNodeData | undefined
-// function resolvePathInMergedDarkdouilleData (
-//   path: (string | number)[],
-//   mergedDarkdouilleData: ReturnType<typeof mergeDarkdouilleData>,
-//   createIfMissing: true
-// ): Darkdouille.MergedNodeData
-// function resolvePathInMergedDarkdouilleData (
-//   path: (string | number)[],
-//   mergedDarkdouilleData: ReturnType<typeof mergeDarkdouilleData>,
-//   createIfMissing: boolean = false
-// ): Darkdouille.MergedNodeData | undefined {
-//     if (createIfMissing) {
-//     const created: Darkdouille.MergedNodeData = path.reduce((
-//       currentPathStep: Darkdouille.MergedNodeData,
-//       pathChunk) => {
-//       if (currentPathStep.node.nodeType === Node.TEXT_NODE) {
-        
-//       }// return undefined
-//       // if (currentPathStep.nodeType === Darkdouille.NodeType.TEXT) return undefined
-//       // const nextPathStep = currentPathStep.children.get(pathChunk)
-//       // return nextPathStep
-
-//       return currentPathStep
-//     }, mergedDarkdouilleData)
-//     return created  
-//   }
-
-//   const resolved: Darkdouille.MergedNodeData | undefined = path.reduce((
-//     currentPathStep: Darkdouille.MergedNodeData | undefined,
-//     pathChunk) => {
-//     if (currentPathStep === undefined) return undefined
-//     if (currentPathStep.node.nodeType === Node.TEXT_NODE) return undefined
-//     const nextPathStep = currentPathStep.children.get(pathChunk)
-//     return nextPathStep
-//   }, mergedDarkdouilleData)
-//   return resolved
-// }
 
 const darkdouilles = document.body.querySelectorAll('data.lm-page-config') as NodeListOf<HTMLDataElement>
 const merged = mergeDarkdouilles([...darkdouilles])
-console.log(merged.innerHTML)
-// console.log(merged.innerHTML)
-// const parsedList = [...darkdouilles].map(darkdouille => {
-//   return parseDarkdouille(darkdouille)
-// }).filter((e): e is DarkdouilleNodeData => e !== undefined)
-// const merged = parsedList.reduce((
-//   mergedAcc: MergedDarkdouilleNodeData | null,
-//   parsed: DarkdouilleNodeData) => {
-//   return mergeDarkdouilleData(
-//     parsed,
-//     [],
-//     mergedAcc ?? undefined
-//   )
-// }, null)
+
+/*
+Nœud d'entrée
+  - Pour chaque nœud enfant :
+    - si texte, on y touche pas
+    - si dom, on y touche pas
+    - si transformer : on le passe à la fin
+    - si prop
+      - on détermine son chemin local
+      - on regarde si un data element a déjà été stocké à ce niveau
+        - si oui
+          - si action === APPEND
+            - on ajoute tous ses enfants à la fin du nœud stocké
+          - si action === PREPEND
+            - on ajoute tous ses enfants au début du nœud stocké
+          - si action === MERGE
+            - ???
+          - si action === OVERWRITE ou NULL
+            - on supprime tous les enfants du nœud stocké et on les remplace par celui là
+        - si non
+          - on stocke ce data element à ce chemin
+
+  - Le nœud d'entrée a été réorganisé
+  - Pour chaque nœud enfant de type prop
+    - recurse
+
+*/
 
 function mergeDarkdouilles (darkdouilles: HTMLDataElement[]) {
-  const pathsMap = new Map<string, HTMLDataElement>()
   const rootElement = document.createElement('data')
-  rootElement.append(...darkdouilles)
-  representElement(rootElement, [], pathsMap)
-  console.log(pathsMap)
-  return rootElement
+  darkdouilles.forEach(darkdouille => {
+    const darkdouilleNodes = [...darkdouille.childNodes]
+    rootElement.append(...darkdouilleNodes)
+  })
+  magic(rootElement)
+  console.log(rootElement.innerHTML)
+  // rootElement.append(...darkdouilles)
+  // const tree = createDataTree(rootElement)
+  // const solved = solveDataTree(tree)
+  // printSolvedTree(solved)
+  // return rootElement
 }
 
-let prevWasTheOne = false
+function magic (element: HTMLDataElement): HTMLDataElement {
+  let unnamedChildrenCnt = 0
+  const childNodes = [...element.childNodes]
+  const propertiesPathsMap = new Map<string, HTMLDataElement>()
+  childNodes.forEach(childNode => {
+    if (!([Node.TEXT_NODE, Node.ELEMENT_NODE].includes(childNode.nodeType as any))) return childNode.parentNode?.removeChild(childNode)
+    if (!(childNode instanceof HTMLDataElement)) return;
+    const typeAttr = childNode.getAttribute('type')
+    if (typeAttr === Darkdouille.Type.TRANSFORMER) return element.appendChild(childNode)
+    const localPath = childNode.getAttribute('class') ?? `${unnamedChildrenCnt ++}`
+    const existingElement = propertiesPathsMap.get(localPath)
+    if (existingElement === undefined) return propertiesPathsMap.set(localPath, childNode);
+    childNode.remove()
+    if (Darkdouille.Types.includes(typeAttr as any)) existingElement.setAttribute('type', typeAttr as Darkdouille.Type)
+    const actionAttr = childNode.getAttribute('action')
+    if (actionAttr === Darkdouille.Action.APPEND) return existingElement.append(...childNode.childNodes)
+    if (actionAttr === Darkdouille.Action.PREPEND) return existingElement.prepend(...childNode.childNodes)
+    return existingElement.replaceChildren(...childNode.childNodes)
+  })
+  childNodes.forEach(childNode => {
+    if (!(childNode instanceof HTMLDataElement)) return;
+    if (childNode.getAttribute('type') === Darkdouille.Type.TRANSFORMER) return;
+    magic(childNode)
+  })
+  return element
+}
+
+
+/* function printSolvedTree (solvedTree: SolvedTree) {
+  solvedTree.forEach((value, key) => {
+    console.group(key)
+    console.log('type:', value.type)
+    console.log('transformers:', value.transformers)
+    console.log('node:', value.node.outerHTML)
+    printSolvedTree(value.subTree)
+    console.groupEnd()
+  })
+}
+
+enum TreeItemType {
+  TEXT = 'text',
+  DOM = 'dom',
+  TRANSFORMER = 'transformer',
+  PROPERTY = 'property'
+}
+type TreeTextItem = { type: TreeItemType.TEXT, node: Node }
+type TreeDomItem = { type: TreeItemType.DOM, node: Element }
+type TreeTransformerItem = { type: TreeItemType.TRANSFORMER, node: Element }
+type TreePropertyItem = {
+  type: TreeItemType.PROPERTY,
+  relPath: string | number,
+  returnType: Darkdouille.Type | null,
+  action: Darkdouille.Action | null,
+  node: Element,
+  tree: Tree
+}
+type TreeItem = TreeTextItem | TreeDomItem | TreeTransformerItem | TreePropertyItem
+type Tree = TreeItem[]
+
+function createDataTree (element: HTMLDataElement): Tree {
+  // Children
+  let unnamedChildrenCnt = 0
+  const childNodes = [...element.childNodes]  
+  const tree: Tree = childNodes.map(childNode => {
+    if (childNode.nodeType === Node.TEXT_NODE) return {
+      type: TreeItemType.TEXT,
+      node: childNode
+    } as TreeTextItem
+    else if (childNode.nodeType === Node.ELEMENT_NODE) {
+      const childElement = childNode as Element
+      if (!(childElement instanceof HTMLDataElement)) return {
+        type: TreeItemType.DOM,
+        node: childElement
+      } as TreeDomItem
+      // Type
+      const typeAttr = childElement.getAttribute('type')
+      const type = Darkdouille.Types.includes(typeAttr as any)
+        ? typeAttr as Darkdouille.Type
+        : null
+      if (type === Darkdouille.Type.TRANSFORMER) return {
+        type: TreeItemType.TRANSFORMER,
+        node: childElement
+      } as TreeTransformerItem
+      // Class & path
+      const classAttr = childElement.getAttribute('class')
+      const relPath = classAttr ?? unnamedChildrenCnt++
+      // Action
+      const actionAttr = childElement.getAttribute('action')
+      const action = Darkdouille.Actions.includes(actionAttr as any)
+        ? actionAttr as Darkdouille.Action
+        : null  
+      return {
+        type: TreeItemType.PROPERTY,
+        relPath,
+        returnType: type,
+        action,
+        node: childElement,
+        tree: createDataTree(childElement)
+      } as TreePropertyItem
+    } else return undefined
+  }).filter((item): item is TreeItem => item !== undefined)
+  return tree
+}
+
+type TransformerDescriptor = { name: string, args: string[] }
+
+type SolvedTreePathChunk = (string | number)
+type SolvedTreePath = SolvedTreePathChunk[]
+type SolvedTreeBranchValue = {
+  transformers: TransformerDescriptor[]
+  type: Darkdouille.Type | null
+  node: Element,
+  subTree: SolvedTree
+}
+type SolvedTree = Map<SolvedTreePathChunk, SolvedTreeBranchValue>
+
+function generateEmptySolvedTreeBranchValue (subTree: SolvedTree = new Map()): SolvedTreeBranchValue {
+  return {
+    transformers: [],
+    type: null,
+    node: document.createElement('data'),
+    subTree
+  }
+}
+
+function resolveInSolvedTree (
+  path: SolvedTreePath,
+  solvedTree: SolvedTree,
+  create: true): SolvedTreeBranchValue
+function resolveInSolvedTree (
+  path: SolvedTreePath,
+  solvedTree: SolvedTree,
+  create: false): SolvedTreeBranchValue | undefined
+function resolveInSolvedTree (
+  path: SolvedTreePath,
+  solvedTree: SolvedTree): SolvedTreeBranchValue | undefined
+function resolveInSolvedTree (
+  path: SolvedTreePath,
+  solvedTree: SolvedTree,
+  create: boolean = false): SolvedTreeBranchValue | undefined {
+  if (create === true) {
+    const resolved = path.reduce((branchValue, pathChunk) => {
+      const subBranch = branchValue.subTree.get(pathChunk)
+      if (subBranch === undefined) {
+        const newSubBranch = generateEmptySolvedTreeBranchValue()
+        branchValue.subTree.set(pathChunk, newSubBranch)
+        return newSubBranch
+      }
+      return subBranch
+    }, generateEmptySolvedTreeBranchValue(solvedTree) as SolvedTreeBranchValue)
+    return resolved  
+  }
+  const resolved = path.reduce((branchValue, pathChunk) => {
+    if (branchValue === undefined) return;
+    const subBranch = branchValue.subTree.get(pathChunk)
+    return subBranch
+  }, generateEmptySolvedTreeBranchValue(solvedTree) as SolvedTreeBranchValue | undefined)
+  return resolved
+}
+
+// type SolvedTreeBranchValue = {
+//   transformers: TransformerDescriptor[]
+//   type: Darkdouille.Type | null
+//   node: Element | null,
+//   subTree: SolvedTree
+// }
+
+function solveDataTree (
+  tree: Tree,
+  path: SolvedTreePath = ['ROOT'],
+  action: Darkdouille.Action | null = null,
+  solvedTree: SolvedTree = new Map([['ROOT', generateEmptySolvedTreeBranchValue()]])
+): SolvedTree {
+  const currentBranch = resolveInSolvedTree(path, solvedTree, true)
+  const { transformers, type, node, subTree } = currentBranch
+  const transformerItems = tree.filter((item): item is TreeTransformerItem => item.type === TreeItemType.TRANSFORMER)
+  const textItems = tree.filter((item): item is TreeTextItem => item.type === TreeItemType.TEXT)
+  const domItems = tree.filter((item): item is TreeDomItem => item.type === TreeItemType.DOM)
+  const propItems = tree.filter((item): item is TreePropertyItem => item.type === TreeItemType.PROPERTY)
+
+  // Transformers
+  transformerItems.forEach(item => item.node.remove())
+  const transformersDescriptors: TransformerDescriptor[] = transformerItems.map(transformerItem => {
+    const childNodes = [...transformerItem.node.childNodes]
+    const hasOnlyATextNodeChild = childNodes.length === 1 && childNodes
+      .every(({ nodeType }) => nodeType === Node.TEXT_NODE)
+    if (hasOnlyATextNodeChild) {
+      const strChildNode = childNodes[0]?.textContent ?? ''
+      const [name = '', ...args] = strChildNode.trim().replace(/\s+/igm, ' ').split(' ')
+      return { name, args } 
+    }
+    const [name = '', ...args] = childNodes.map(childNode => childNode.textContent ?? '')
+    return { name, args }
+  })
+  if (action === Darkdouille.Action.APPEND) transformers.push(...transformersDescriptors)
+  else if (action === Darkdouille.Action.MERGE) {
+    // Maybe overkill, and acts different from textItems and domItems
+    const newTransformers = [
+      ...transformersDescriptors,
+      ...transformers.slice(transformersDescriptors.length)
+    ]
+    transformers.splice(0, newTransformers.length, ...newTransformers)
+  }
+  else if (action === Darkdouille.Action.PREPEND) transformers.unshift(...transformersDescriptors)
+  else transformers.splice(0, transformers.length, ...transformersDescriptors)
+  
+  // Text
+  if (action === Darkdouille.Action.APPEND
+    || action === Darkdouille.Action.MERGE) {
+    node.append(...textItems.map(textItem => textItem.node))
+  } else if (action === Darkdouille.Action.PREPEND) {
+    node.prepend(...textItems.map(textItem => textItem.node))
+  } else {
+    node.replaceChildren(...textItems.map(textItem => textItem.node))
+  }
+
+  // Dom
+  if (action === Darkdouille.Action.APPEND
+    || action === Darkdouille.Action.MERGE) {
+    node.append(...domItems.map(domItem => domItem.node))
+  } else if (action === Darkdouille.Action.PREPEND) {
+    node.prepend(...domItems.map(domItem => domItem.node))
+  } else {
+    node.replaceChildren(...domItems.map(domItem => domItem.node))
+  }
+  
+  // Property
+  propItems.forEach(propItem => {
+    // action
+    // tree
+    propItem.node.remove()
+    const propItemPath = [...path, propItem.relPath]
+    const propItemBranch = resolveInSolvedTree(propItemPath, solvedTree, true)
+    propItemBranch.type = propItem.returnType
+    solveDataTree(propItem.tree, propItemPath, propItem.action, solvedTree)
+  })
+  // if (action === Darkdouille.Action.APPEND) {
+  //   currentBranch.node.append(...domItems.map(domItem => domItem.node))
+  // } else if (action === Darkdouille.Action.MERGE) {
+    
+  // } else if (action === Darkdouille.Action.PREPEND) {
+  //   currentBranch.node.prepend(...domItems.map(domItem => domItem.node))
+  // } else {
+  //   currentBranch.node.replaceChildren(...domItems.map(domItem => domItem.node))
+  // }
+
+  // tree.forEach(treeItem => {
+  //   if (treeItem.type === TreeItemType.TEXT) {
+  //     console.log('what to do with text ?', treeItem)
+  //   } else if (treeItem.type === TreeItemType.DOM) {
+  //     console.log('what to do with dom ?', treeItem)
+  //   } else if (treeItem.type === TreeItemType.TRANSFORMER) {
+  //     const childNodes = [...treeItem.node.childNodes]
+  //     const hasOnlyATextNodeChild = childNodes.length === 1 &&
+  //       childNodes.every(childNode => childNode.nodeType === Node.TEXT_NODE)
+  //     if (hasOnlyATextNodeChild) {
+  //       const strChildNode = childNodes[0]?.textContent ?? ''
+  //       const [name = '', ...args] = strChildNode.trim().replace(/\s+/igm, ' ').split(' ')
+        
+  //     }
+  //   } else {
+  //     // const { action, relPath, returnType, node, tree } = treeItem
+
+  //   }
+  // })
+  return solvedTree
+}
+
+// function getElementChildrenPaths (element: HTMLDataElement): {
+//   childrenPathMap: Map<string | number, HTMLDataElement>
+//   transformers: HTMLDataElement[]
+//  } {
+//   let unnamedChildrenCnt = 0
+//   const childrenPathMap = new Map<string | number, HTMLDataElement>()
+//   const transformers: HTMLDataElement[] = []
+//   const nodeChildren = [...element.childNodes]
+//   nodeChildren.forEach(childNode => {
+//     // const isDataElement = childNode instanceof HTMLDataElement
+//     // if (!isDataElement) return;
+//     // const childDataElement = childNode
+//     // // Type
+//     // const typeAttr = childDataElement.getAttribute('type')
+//     // if (typeAttr === Darkdouille.Type.TRANSFORMER) {
+//     //   // [WIP] take into account action here
+//     //   elementTransformers.push(childDataElement)
+//     //   childDataElement.remove()
+//     //   return;
+//     // }
+//     // const type = Darkdouille.Types.includes(typeAttr as any) ? typeAttr as Darkdouille.Type : null
+//     // // Class & path
+//     // const classAttr = childDataElement.getAttribute('class')
+//     // const thisNodePathChunk = classAttr ?? unnamedChildrenCnt++
+//     // const thisNodeFullPath = [...path, thisNodePathChunk]
+//     // const thisNodeStrFullPath = thisNodeFullPath.map(e => e.toString()).join('/')
+//     // const elementAtThisPath = pathsMap.get(thisNodeStrFullPath)
+//   })
+//   return { childrenPathMap, transformers }
+// }
+
 function representElement (
   element: HTMLDataElement,
   path: Array<string | number>,
   pathsMap: Map<string, HTMLDataElement>
 ) {
-  const children = [...element.childNodes]
   let unnamedChildrenCnt = 0
   const elementTransformers: HTMLDataElement[] = []
-  children.forEach(childNode => {
+  const childrenBeforeAction = [...element.childNodes]
+  // Apply action properties
+  childrenBeforeAction.forEach(childNode => {
     const isDataElement = childNode instanceof HTMLDataElement
     if (!isDataElement) return;
     const childDataElement = childNode
     // Type
     const typeAttr = childDataElement.getAttribute('type')
     if (typeAttr === Darkdouille.Type.TRANSFORMER) {
+      // [WIP] take into account action here
       elementTransformers.push(childDataElement)
       childDataElement.remove()
-      console.groupEnd()
-      return
+      return;
     }
     const type = Darkdouille.Types.includes(typeAttr as any) ? typeAttr as Darkdouille.Type : null
     // Class & path
@@ -229,79 +398,55 @@ function representElement (
     const actionAttr = childDataElement.getAttribute('action')
     const action = Darkdouille.Actions.includes(actionAttr as any) ? actionAttr as Darkdouille.Action : null
     childDataElement.removeAttribute('action')
-    if (elementAtThisPath === undefined) {
-      pathsMap.set(thisNodeStrFullPath, childDataElement)
-    } else {
-      if (type !== null) {
-        elementAtThisPath.setAttribute('type', type)
-      }
+    if (elementAtThisPath === undefined) pathsMap.set(thisNodeStrFullPath, childDataElement)
+    else {
+      if (type !== null) { elementAtThisPath.setAttribute('type', type) }
       const grandChildrenNodes = [...childDataElement.childNodes]
-      grandChildrenNodes.forEach(nd => nd.remove())
-      if (action === Darkdouille.Action.APPEND) {
-        elementAtThisPath.append(...grandChildrenNodes)
-      } else if (action === Darkdouille.Action.PREPEND) {
+      // Prepend
+      if (action === Darkdouille.Action.PREPEND) {
         elementAtThisPath.prepend(...grandChildrenNodes)
-      }
-      else {
+        childDataElement.remove()
+      // Append
+      } else if (action === Darkdouille.Action.APPEND) {
+        elementAtThisPath.append(...grandChildrenNodes)
+        childDataElement.remove()
+      // Merge
+      } else if (action === Darkdouille.Action.MERGE) {
+        console.log('gotta merge')
+        console.log('base', elementAtThisPath.innerHTML)
+        console.log('to merge', childDataElement.innerHTML)
+        
+
+        representElement(
+          childDataElement,
+          thisNodeFullPath,
+          pathsMap
+        )
+      // Overwrite
+      } else {
         elementAtThisPath.replaceChildren(...grandChildrenNodes)
-        // elementAtThisPath.append(...grandChildrenNodes)
       }
     }
-    representElement(elementAtThisPath ?? childDataElement, thisNodeFullPath, pathsMap)
   })
+  // Apply action properties
+  const childrenAfterAction = [...element.childNodes]
+  childrenAfterAction.forEach(childNode => {
+    const isDataElement = childNode instanceof HTMLDataElement
+    if (!isDataElement) return;
+    const childDataElement = childNode
+    // Class & path
+    const classAttr = childDataElement.getAttribute('class')
+    const thisNodePathChunk = classAttr ?? unnamedChildrenCnt++
+    const thisNodeFullPath = [...path, thisNodePathChunk]
+    representElement(
+      childDataElement,
+      thisNodeFullPath,
+      pathsMap
+    )
+  })
+  
+  // Re-add transformers at the end of the element
   element.append(...elementTransformers)
 }
 
-
-
-
-// function mergeDarkdouilleData (
-//   nodeData: Darkdouille.NodeData,
-//   path: (string | number)[] = [],
-//   toReturn: Darkdouille.MergedNodeData = {
-//     node: nodeData.node,
-//     type: null,
-//     transformers: [],
-//     children: new Map<string | number, Darkdouille.MergedNodeData>()
-//   }): Darkdouille.MergedNodeData {
-//   const {
-//     node,
-//     action,
-//     type,
-//     transformers,
-//     children
-//   } = nodeData
-//   let resolved = resolvePathInMergedDarkdouilleData(path, toReturn)
-//   if (action === Darkdouille.Action.APPEND) {
-    
-
-//   } else if (action === Darkdouille.Action.PREPEND) {
-
-//   } else {
-    
-//   }
-  
-  
-//   //   const lol: Array<
-//   //   [null, Darkdouille.TextNodeData]
-//   //   | [string, Darkdouille.ElementNodeData]
-//   //   | [number, Darkdouille.ElementNodeData]
-//   // > = nodeData.children.map(childItem => {
-//   //     if (childItem.type === 'text') return [null, childItem.data]
-//   //     else if (childItem.type === 'named') return [childItem.key, childItem.data]
-//   //     return [childItem.key, childItem.data]
-//   // })
-  
-  
-//   // const lol: Darkdouille.MergedElementNodeDataChildrenAsArr | undefined = nodeData.children.map(childItem => {
-//   //   if (childItem.type === 'text') return [null, childItem.data]
-//   //   else if (childItem.type === 'named') return [childItem.key, childItem.data]
-//   //   else if (childItem.type === 'unnamed') return [childItem.key, childItem.data]
-//   //   return undefined
-//   // })
-  
-
-  
-  
-//   return toReturn
-// }
+*/
