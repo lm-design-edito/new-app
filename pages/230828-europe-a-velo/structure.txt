@@ -248,8 +248,8 @@ _content:
 _id: page-intro
 _blocks: 
 ../../block-intro,
-../../block-intro-image,
-../../block-intro-cache,
+// ../../block-intro-image,
+// ../../block-intro-cache,
 ../../block-noise,
 >>> split ,
 >>> map trim
@@ -259,7 +259,7 @@ _blocks:
 _id: block-intro
 _type: html
 _depth: scroll
-_layout: left-half
+_layout: fullscreen
 _mobileLayout: fullscreen
 _content: 
   <div class="eav-block-intro__container">

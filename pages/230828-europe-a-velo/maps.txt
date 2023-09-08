@@ -196,7 +196,7 @@ _map:
     <img class="eav-map-image g-aiImg" alt="" src="https://assets-decodeurs.lemonde.fr/redacweb/230828-europe-a-velo/germany.jpg" />
     <img class="eav-map-svg g-aiImg" alt="" src="https://assets-decodeurs.lemonde.fr/redacweb/230828-europe-a-velo/germany.svg" />
     <div id="g-ai0-1" class="eav-map-text-container g-typos g-aiAbs g-aiPointText"
-      style="top:11.5718%;margin-top:-7.9px;left:53.8536%;width:89px;">
+      style="top:11.5718%;margin-top:-7.9px;right:30.1459%;width:89px;">
       <p class="eav-map-text g-pstyle0">Ile de Rügen</p>
     </div>
     <div id="g-ai0-2" class="eav-map-text-container g-typos g-aiAbs g-aiPointText"

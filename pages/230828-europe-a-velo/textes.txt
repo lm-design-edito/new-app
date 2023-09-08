@@ -36,7 +36,9 @@ L’Europe à vélo
 
 ## block-intro
 _introChunk:
-Si on partait sur les chemins (européens) à&nbsp;bicyclette&nbsp;?<br>Pays-Bas, Italie, Belgique, Espagne, Allemagne, Royaume-Uni, Suisse et&nbsp;enfin France&nbsp;: huit pays à&nbsp;traverser en petite reine, des merveilleux jardins du Kent aux montagnes magiques du&nbsp;Valais, des chemins de Santiago à l’immensité du plateau des&nbsp;Millevaches.<br>Des randonnées familiales ou urbaines, sportives ou itinérantes, pour que chacun prenne goût aux&nbsp;deux-roues.
+<span>Si on partait sur les chemins (européens) à&nbsp;bicyclette&nbsp;?</span>
+<span>Pays-Bas, Italie, Belgique, Espagne, Allemagne, Royaume-Uni, Suisse et&nbsp;enfin France&nbsp;: huit pays à&nbsp;traverser en petite reine, des merveilleux jardins du Kent aux montagnes magiques du&nbsp;Valais, des chemins de Santiago à l’immensité du plateau des&nbsp;Millevaches.</span>
+<span>Des randonnées familiales ou urbaines, sportives ou itinérantes, pour que chacun prenne goût aux&nbsp;deux-roues.</span>
 
 
 // ===================
@@ -67,7 +69,7 @@ _urlChunk: https://www.lemonde.fr/m-styles/article/2023/07/23/l-italie-a-velo-ci
 
 ## block-card-2
 _line1_titleChunk: A Parme
-_line2_titleChunk: Sur une piste de rêve au-dessus du lac de Garde
+_line2_titleChunk: Sur une piste de rêve <br>au-dessus du lac de Garde
 _line3_titleChunk: Sur la piste cyclable de la Riviera dei Fiori, à San Remo
 _line4_titleChunk: Sur le tour du Chianti, depuis Florence
 _line5_titleChunk: Dans le Gargano et ses deux sites classés
@@ -184,6 +186,6 @@ _creditsChunk:
 <p>Coordination : Isabelle Mériel et Yoanna Sultan-R’bibo</p>
 <p>Auteurs : Thomas Doustaly et Olivier Razemon</p>
 <p>Edition : Clément Balta et Laurence Joan-Grangé</p>
-<p>Iconographie : Moulaye Diara</p>
+<p>Iconographie : Moulaye Diarra</p>
 <p>Illustration et cartographie : Marianne Pasquier</p>
 <p>Design et développement : Léa Girardot et Elsa Delmas</p>

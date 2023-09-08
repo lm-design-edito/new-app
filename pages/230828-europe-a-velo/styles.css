@@ -38,6 +38,8 @@ body {
   --c-dark: #1E4751;
   --c-text: #204750;
 
+  background-color: var(--c-background);
+  min-height: 100vh;
   color: var(--c-text);
 }
 
@@ -104,17 +106,20 @@ body {
   font-size: 20px;
   font-size: var(--text-scale-level-8);
   font-weight: 500;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.25em;
   text-transform: uppercase;
-  text-shadow: 1px 1px 4px rgba(255, 255, 255, 0.70);
+  /* text-shadow: 1px 1px 4px rgba(255, 255, 255, 0.70); */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .eav-heading::after {
   content: '';
   display: block;
   height: 2px;
-  width: 100%;
-  max-width: 755px;
+  width: 150%;
+  max-width: 80vw;
   margin-top: 8px;
   margin-top: var(--spacers-scale-level-8);
   background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, var(--c-text) 45%, var(--c-text) 55%, rgba(255, 255, 255, 0) 100%);
@@ -127,7 +132,7 @@ body {
   font-weight: 800;
   line-height: 100%;
   padding: 16px;
-  padding: var(--spacers-scale-level-14);
+  padding: var(--spacers-scale-level-18);
   padding-bottom: 32px;
   padding-bottom: var(--spacers-scale-level-20);
 }
@@ -153,6 +158,8 @@ body {
   flex-direction: column;
   align-items: center;
   max-width: calc(100% - var(--spacers-scale-level-22));
+  padding-bottom: 140px;
+  animation: animateTitle 1000ms cubic-bezier(0.65, 0.05, 0.36, 1);
 }
 
 .eav-block-title::after {
@@ -169,25 +176,38 @@ body {
   margin-top: var(--spacers-scale-level-20);
 }
 
+@keyframes animateTitle {
+  0% {
+    opacity: 0;
+    transform: translateY(200px);
+  }
+
+  5% {
+    opacity: 0;
+  }
+}
+
 .eav-block-title__background {
   height: 100%;
   width: 100%;
   position: absolute;
   background-image: url("https://assets-decodeurs.lemonde.fr/redacweb/230828-europe-a-velo/background.jpg");
   background-position-x: 66%;
+  background-position-y: bottom;
   background-size: cover;
 }
 
 .eav-block-title__background::after {
   content: '';
   display: block;
-  height: 100%;
+  height: 80%;
   width: 100%;
   position: absolute;
-  background: linear-gradient(var(--c-light) 0%, rgba(255, 255, 255, 0) 100%);
+  background: linear-gradient(360deg, rgba(255, 249, 235, 0.00) 3.69%, rgba(255, 249, 235, 0.51) 29.78%, rgba(255, 249, 235, 0.77) 41.31%, rgba(255, 249, 235, 0.91) 53.35%, #FFFAEC 100%);
 }
 
 .eav-block-texture {
+  display: none;
   height: 100%;
   width: 100%;
   position: absolute;
@@ -251,18 +271,31 @@ body {
 }
 
 .eav-block-intro__text {
-  max-width: 80%;
+  width: 780px;
+  max-width: 80vw;
   font-family: var(--ff-the-antiqua-b);
   font-size: 24px;
   font-size: var(--text-scale-level-8);
-  line-height: 110%;
-  font-weight: 700;
+  line-height: 130%;
   text-align: center;
   position: relative;
   padding: 32px 0;
-  padding: var(--spacers-scale-level-20) 0;
+  padding: var(--spacers-scale-level-24) 0 var(--spacers-scale-level-32) 0;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+}
+
+.eav-block-intro__text span:first-child {
+  font-weight: 800;
+}
+
+.eav-block-intro__text span {
+  font-weight: 700;
+}
+
+.eav-block-intro__text span+span {
+  padding-top: 1em;
 }
 
 .eav-block-intro__text::before {
@@ -364,6 +397,12 @@ body {
   transition: opacity 600ms;
 }
 
+@media (max-width: 1024px) {
+  .eav-card__container {
+    margin: 360px 0;
+  }
+}
+
 .eav-card {
   display: grid;
   grid-auto-rows: 1fr;
@@ -446,7 +485,7 @@ body {
 
 .eav-card__element__title p {
   font-size: 20px;
-  font-size: var(--text-scale-level-6);
+  font-size: var(--text-scale-level-5);
   line-height: 120%;
   max-width: 66%;
 }
@@ -572,6 +611,11 @@ body {
   display: grid;
   grid-template-rows: auto 1fr;
   align-items: center;
+}
+
+.eav-map-container_spain,
+.eav-map-container_germany {
+  transform: translateX(-2%);
 }
 
 .eav-map-box {
