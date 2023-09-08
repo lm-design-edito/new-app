@@ -12,18 +12,19 @@ namespace Darkdouille {
     NUMBER = 'number',
     BOOLEAN = 'boolean',
     NULL = 'null',
-    HTML = 'html',
-    LMHTML = 'lm-html',
+    LMHTML = 'lmhtml',
     REF = 'ref',
-    ARRAY = 'list',
-    RECORD = 'record',
+    DATA = 'data',
     TRANSFORMER = 'transformer'
   }
   export const Types = Object.values(Type)
+  export function isType (tag: string): tag is Type {
+    return Types.includes(tag as any)
+  }
 }
 
 const darkdouilles = document.body.querySelectorAll('data.lm-page-config') as NodeListOf<HTMLDataElement>
-const merged = mergeDarkdouilles([...darkdouilles])
+const merged = mergeDarkdouilles(...darkdouilles)
 
 /*
 Nœud d'entrée
@@ -52,14 +53,15 @@ Nœud d'entrée
 
 */
 
-function mergeDarkdouilles (darkdouilles: HTMLDataElement[]) {
+function mergeDarkdouilles (...darkdouilles: HTMLDataElement[]) {
   const rootElement = document.createElement('data')
   darkdouilles.forEach(darkdouille => {
+    darkdouille.remove()
     const darkdouilleNodes = [...darkdouille.childNodes]
     rootElement.append(...darkdouilleNodes)
   })
   magic(rootElement)
-  console.log(rootElement.innerHTML)
+  console.log(rootElement.outerHTML)
   // rootElement.append(...darkdouilles)
   // const tree = createDataTree(rootElement)
   // const solved = solveDataTree(tree)
@@ -67,28 +69,44 @@ function mergeDarkdouilles (darkdouilles: HTMLDataElement[]) {
   // return rootElement
 }
 
-function magic (element: HTMLDataElement): HTMLDataElement {
+function magic (element: Element): Element {
   let unnamedChildrenCnt = 0
   const childNodes = [...element.childNodes]
-  const propertiesPathsMap = new Map<string, HTMLDataElement>()
+  const propertiesPathsMap = new Map<string, Element>()
   childNodes.forEach(childNode => {
-    if (!([Node.TEXT_NODE, Node.ELEMENT_NODE].includes(childNode.nodeType as any))) return childNode.parentNode?.removeChild(childNode)
-    if (!(childNode instanceof HTMLDataElement)) return;
+    const isTextOrElementNode = [Node.TEXT_NODE, Node.ELEMENT_NODE].includes(childNode.nodeType as any)
+    if (!isTextOrElementNode) return childNode.parentNode?.removeChild(childNode)
+    const isElement = childNode instanceof Element
+    if (!isElement) return;
+    const typeTag = childNode.tagName.toLowerCase()
+    if (!Darkdouille.isType(typeTag)) return;
     const typeAttr = childNode.getAttribute('type')
-    if (typeAttr === Darkdouille.Type.TRANSFORMER) return element.appendChild(childNode)
+    let type: Exclude<Darkdouille.Type, Darkdouille.Type.DATA> | null
+    if (typeAttr !== null && Darkdouille.isType(typeAttr) && typeAttr !== Darkdouille.Type.DATA) { type = typeAttr }
+    else if (Darkdouille.isType(typeTag) && typeTag !== Darkdouille.Type.DATA) { type = typeTag }
+    else { type = null }
+    if (type === Darkdouille.Type.TRANSFORMER) return element.appendChild(childNode)
     const localPath = childNode.getAttribute('class') ?? `${unnamedChildrenCnt ++}`
     const existingElement = propertiesPathsMap.get(localPath)
     if (existingElement === undefined) return propertiesPathsMap.set(localPath, childNode);
     childNode.remove()
-    if (Darkdouille.Types.includes(typeAttr as any)) existingElement.setAttribute('type', typeAttr as Darkdouille.Type)
+    if (Darkdouille.Types.includes(type as any)) existingElement.setAttribute('type', type as Darkdouille.Type)
     const actionAttr = childNode.getAttribute('action')
     if (actionAttr === Darkdouille.Action.APPEND) return existingElement.append(...childNode.childNodes)
     if (actionAttr === Darkdouille.Action.PREPEND) return existingElement.prepend(...childNode.childNodes)
     return existingElement.replaceChildren(...childNode.childNodes)
   })
   childNodes.forEach(childNode => {
-    if (!(childNode instanceof HTMLDataElement)) return;
-    if (childNode.getAttribute('type') === Darkdouille.Type.TRANSFORMER) return;
+    const isElement = childNode instanceof Element
+    if (!isElement) return;
+    const typeTag = childNode.tagName.toLowerCase()
+    if (!Darkdouille.isType(typeTag)) return;
+    const typeAttr = childNode.getAttribute('type')
+    let type: Exclude<Darkdouille.Type, Darkdouille.Type.DATA> | null
+    if (typeAttr !== null && Darkdouille.isType(typeAttr) && typeAttr !== Darkdouille.Type.DATA) { type = typeAttr }
+    else if (Darkdouille.isType(typeTag) && typeTag !== Darkdouille.Type.DATA) { type = typeTag }
+    else { type = null }
+    if (type === Darkdouille.Type.TRANSFORMER) return;
     magic(childNode)
   })
   return element
