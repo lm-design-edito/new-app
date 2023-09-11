@@ -176,7 +176,7 @@ _map:
 			<p class="eav-map-text_bold g-pstyle2">Madrid</p>
 		</div>
 		<div id="g-ai0-7" class="eav-map-text-container g-typos g-aiAbs g-aiPointText" style="top:50.4959%;margin-top:-7.9px;left:74.2223%;width:99px;">
-			<p class="eav-map-text g-pstyle1">La Vall d&rsquo;Uxio </p>
+			<p class="eav-map-text g-pstyle1">La Vall d&rsquo;Uixo </p>
 		</div>
 		<div id="g-ai0-8" class="eav-map-text-container g-typos g-aiAbs g-aiPointText" style="top:72.5066%;margin-top:-7.9px;left:37.6841%;width:57px;">
 			<p class="eav-map-text g-pstyle1">Séville</p>
@@ -342,7 +342,7 @@ _map:
       src="https://assets-decodeurs.lemonde.fr/redacweb/230828-europe-a-velo/france.svg" />
     <div id="g-ai0-1" class="eav-map-text-container g-typos g-aiAbs g-aiPointText"
       style="top:24.3149%;margin-top:-7.9px;left:52.9974%;width:62px;">
-      <p class="eav-map-text g-pstyle0">Grisors</p>
+      <p class="eav-map-text g-pstyle0">Gisors</p>
     </div>
     <div id="g-ai0-2" class="eav-map-text-container g-typos g-aiAbs g-aiPointText"
       style="top:29.6438%;margin-top:-7.9px;right:55.0662%;width:65px;">
@@ -350,7 +350,7 @@ _map:
     </div>
     <div id="g-ai0-3" class="eav-map-text-container g-typos g-aiAbs g-aiPointText"
       style="top:56.0566%;margin-top:-7.9px;right:54.324%;width:102px;">
-      <p class="eav-map-text g-pstyle1">Lac de Vassière</p>
+      <p class="eav-map-text g-pstyle1">Lac de Vassivière</p>
     </div>
     <div id="g-ai0-4" class="eav-map-text-container g-typos g-aiAbs g-aiPointText"
       style="top:59.5319%;margin-top:-7.9px;right:28.9449%;width:79px;">
