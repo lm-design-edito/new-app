@@ -1,6 +1,6 @@
 import { Darkdouille } from '../..'
 
-const toNull: Darkdouille.TransformerGenerator<null> = () => {
+const toNull: Darkdouille.TransformerFunctionGenerator<null> = () => {
   return (): null => null
 }
 

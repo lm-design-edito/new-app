@@ -1,6 +1,6 @@
 import { Darkdouille } from '../..'
 
-const toString: Darkdouille.TransformerGenerator<string> = () => {
+const toString: Darkdouille.TransformerFunctionGenerator<string> = () => {
   return (inputValue): string => {
     if (inputValue === undefined) return '' // undefined
     if (inputValue === null) return 'null' // null
