@@ -167,8 +167,8 @@ _customClass: velo-scrllgngn
 _thresholdOffset: 50%
 _forceStickBlocks: before
 _pages:
-// ../../page-title,
-// ../../page-intro,
+../../page-title,
+../../page-intro,
 
 ../../page-1,
 ../../page-2,
@@ -209,13 +209,11 @@ _content:
       <div class="eav-block-title">
         <p class="eav-heading">{{{HEADING_CHUNK}}}</p>
         <h3 class="eav-title">{{{TITLE_CHUNK}}}</h3>
-        <p class="eav-signature">{{{SIGNATURE_CHUNK}}}</p>
       </div>
   </div>
 
 >>> replaceWithRef {{{HEADING_CHUNK}}} ../headingChunk
 >>> replaceWithRef {{{TITLE_CHUNK}}} ../titleChunk
->>> replaceWithRef {{{SIGNATURE_CHUNK}}} ../signatureChunk
 >>> toHtml
 
 ## block-title-background
@@ -250,7 +248,8 @@ _content:
 _id: page-intro
 _blocks: 
 ../../block-intro,
-../../block-intro-image,
+// ../../block-intro-image,
+// ../../block-intro-cache,
 ../../block-noise,
 >>> split ,
 >>> map trim
@@ -260,7 +259,7 @@ _blocks:
 _id: block-intro
 _type: html
 _depth: scroll
-_layout: left-half
+_layout: fullscreen
 _mobileLayout: fullscreen
 _content: 
   <div class="eav-block-intro__container">
@@ -275,7 +274,7 @@ _content:
 ## block-intro-image
 _id: block-intro-image
 _type: html
-_depth: back
+_depth: front
 _layout: right-half
 _mobileLayout: fullscreen
 _transitions: fade, 600
@@ -285,8 +284,19 @@ _content:
 </div>
 >>> toHtml
 
+## block-intro-cache
+_id: block-intro-cache
+_type: html
+_depth: front
+_layout: right-half
+_mobileLayout: fullscreen
+_transitions: fade, 600
+_content: 
+<div class="eav-block-intro__cache"></div>
+>>> toHtml
+
 // ===============================
-// PAGE 1/8
+// PAGE 1/8 - NETHERLANDS
 // ===============================
 
 ## page-1
@@ -299,9 +309,6 @@ _blocks:
 >>> split ,
 >>> map trim
 >>> map toRef
-
-_map:
-<div>mappppp</div>
 
 ## block-card-1
 _id: block-card-1
@@ -325,7 +332,7 @@ _content: shared/chunks/cardTemplate
 ## block-map-1
 _id: block-map-1
 _type: html
-_depth: front
+_depth: back
 _zIndex: 1
 _layout: right-half
 _mobileLayout: fullscreen
@@ -351,7 +358,7 @@ _content:
 >>> toHtml
 
 // ===============================
-// PAGE 2/8
+// PAGE 2/8 - ITALY
 // ===============================
 
 ## page-2
@@ -402,7 +409,7 @@ _content: shared/chunks/mapTemplate
 >>> toHtml
 
 // ===============================
-// PAGE 3/8
+// PAGE 3/8 - BELGIUM
 // ===============================
 
 ## page-3
@@ -453,7 +460,7 @@ _content: shared/chunks/mapTemplate
 >>> toHtml
 
 // ===============================
-// PAGE 4/8
+// PAGE 4/8 - SPAIN
 // ===============================
 
 ## page-4
@@ -504,7 +511,7 @@ _content: shared/chunks/mapTemplate
 >>> toHtml
 
 // ===============================
-// PAGE 5/8
+// PAGE 5/8 - GERMANY
 // ===============================
 
 ## page-5
@@ -555,7 +562,7 @@ _content: shared/chunks/mapTemplate
 >>> toHtml
 
 // ===============================
-// PAGE 6/8
+// PAGE 6/8 - UK
 // ===============================
 
 ## page-6
@@ -606,7 +613,7 @@ _content: shared/chunks/mapTemplate
 >>> toHtml
 
 // ===============================
-// PAGE 7/8
+// PAGE 7/8 - SWITZERLAND
 // ===============================
 
 ## page-7
@@ -657,7 +664,7 @@ _content: shared/chunks/mapTemplate
 >>> toHtml
 
 // ===============================
-// PAGE 8/8
+// PAGE 8/8 - FRANCE
 // ===============================
 
 ## page-8
