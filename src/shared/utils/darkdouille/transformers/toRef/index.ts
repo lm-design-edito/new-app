@@ -1,6 +1,6 @@
 import { Darkdouille } from '../..'
 
-const toRef: Darkdouille.TransformerFunctionGenerator = () => {
+const toRef: Darkdouille.TransformerFunctionGenerator = (...args) => {
   return (inputValue) => {
     return inputValue
   }
