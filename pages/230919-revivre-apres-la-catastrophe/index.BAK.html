@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- Application -->
+    <style>.lm-page-config, .lm-app-config { display: none; }</style>
+    <script src="https://assets-decodeurs.lemonde.fr/design-edito/v0.1/shared/index.js" type="module"></script>
+    <link rel="stylesheet" href="https://assets-decodeurs.lemonde.fr/redacweb/editorial-design-sys/lmui-variables.css">
+    <link rel="stylesheet" href="https://assets-decodeurs.lemonde.fr/redacweb/editorial-design-sys/lmui-components.css">
+  </head>
+  <body>
+    <!-- Config -->
+    <data class="lm-page-config" value="approxPublicationDate">2023-09-25</data>
+    <data class="lm-page-config" value="id">revivre-apres-la-catastrophe-1</data>
+    <data class="lm-page-config" value="textbaseInline">
+      # PAGE_CONFIG
+
+        ## config-0
+          _addScale:
+            name: spacers-scale,
+            root: body,
+            bounds: 320 1440,
+            breakpoints: 8,
+            low: 4 4,
+            high: 96 256,
+            levels: 32;
+
+        ## config-1
+          _addScale:
+            name: text-scale,
+            root: body,
+            bounds: 320 1440,
+            breakpoints: 8,
+            low: 12 13,
+            high: 44 90,
+            levels: 32;
+          
+          _css:
+
+            /*********** Generics ***********/
+            
+            .with-background {
+              background-color: var(--bg-color, rgb(0, 0, 0, 1));
+              padding: var(--padding, var(--spacers-scale-level-16));
+              border: var(--border, 0px solid transparent);
+              border-radius: var(--radius, 0px);
+            }
+
+            .with-text-shadow {
+              text-shadow: var(--shadow-color, black) var(--shadow-x, 0px) var(--shadow-y, 0px) var(--shadow-blur, 2px);
+            }
+            
+            /*********** Specifics ***********/
+
+            /* Title block */
+
+            .title-block {
+              color: white;
+              text-align: center;
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+            }
+
+            .title-block__surtitre {
+              font-family: var(--ff-marr-sans-condensed);
+              text-transform: uppercase;
+              font-size: var(--font-size, var(--text-scale-level-8));
+              font-weight: 500;
+              letter-spacing: .05em;
+              padding-bottom: var(--spacers-scale-level-8);
+            }
+        
+            .title-block__surtitre:not(:last-child) {
+              border-bottom: 1px solid white;
+              margin-bottom: var(--spacers-scale-level-16)
+            }
+
+            .title-block__titre {
+              font-family: var(--ff-the-antiqua-b);
+              text-transform: uppercase;
+              font-size: var(--font-size, var(--text-scale-level-16));
+              font-weight: 500;
+              letter-spacing: .05em;
+            }
+
+            /* Intro paragraph */
+
+            .big-paragraph {
+              color: white;
+              text-align: center;
+              font-family: var(--ff-the-antiqua-b);
+              font-size: var(--font-size, var(--text-scale-level-12));
+            }
+
+            /* Read more */
+
+            .read-more {
+              color: white;
+              text-align: center;
+              font-family: var(--ff-marr-sans-condensed);
+              font-size: var(--text-scale-level-4);
+              font-weight: 200;
+              text-transform: uppercase;
+              letter-spacing: .05em;
+              opacity: .7;
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+            }
+
+            .read-more .read-more__image {
+              margin-top: var(--spacers-scale-level-8);
+            }
+
+            /* Wide icono */
+            
+            .wide-icono {
+              display: inline-flex;
+              flex-direction: column;
+              width: fit-content;
+              align-items: var(--align, center);
+            }
+
+            .wide-icono__image {
+              flex-grow: 0;
+              flex-shrink: 0;
+              max-width: var(--max-width, 100%);
+              height: var(--height, auto);
+            }
+
+            .wide-icono__description {
+              color: #8D98AB;
+              font-family: var(--ff-marr-sans);
+              font-size: var(--text-scale-level-4);
+              flex-grow: 0;
+              flex-shrink: 0;
+              max-width: var(--text-max-width, 630px);
+            }
+
+            .wide-icono__image + .wide-icono__description {
+              margin-top: var(--spacers-scale-level-8);
+            }
+
+            /* Scroller */
+
+            .scroller {
+              display: flex;
+              flex-direction: row;
+              justify-content: center;
+            }
+
+            .scroller__inner {
+              flex-grow: 0;
+              flex-shrink: 0;
+              display: inline-flex;
+              overflow-x: scroll;
+              max-width: 100%;
+              padding-bottom: var(--spacers-scale-level-12);
+              scrollbar-color: rgb(127, 127, 127, .3) rgb(127, 127, 127, .1);
+              scrollbar-width: var(--spacers-scale-level-8);
+            }
+
+            .scroller__inner::-webkit-scrollbar {
+              height: var(--spacers-scale-level-8);
+            }
+
+            .scroller__inner::-webkit-scrollbar-thumb {
+              background-color: rgb(127, 127, 127, .3);
+            }
+
+            .scroller__inner::-webkit-scrollbar-track {
+              background-color: rgb(127, 127, 127, .1);
+            }
+
+            .scroller__inner > * {
+              flex-shrink: 0;
+              flex-grow: 0;
+              margin: 0px var(--spacers-scale-level-8);
+            }
+
+            .scroller__inner > *:first-child {
+              margin-left: 0;
+            }
+
+            .scroller__inner > *:last-child {
+              margin-right: 0;
+            }
+
+            /* Footer */
+            .footer {
+              padding: var(--spacers-scale-level-22) 0;
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+            }
+
+            .footer .title-block {
+              margin-bottom: var(--spacers-scale-level-22);
+            }
+
+            .footer__thumbs {
+              display: flex;
+              flex-wrap: wrap;
+              justify-content: center;
+            }
+
+            .footer__thumb {
+              flex-grow: 0;
+              flex-shrink: 0;
+              width: 50%;
+              position: relative;
+              max-width: 1200px;
+              overflow: hidden;
+              pointer-events: none;
+            }
+
+            .footer__thumb.footer__thumb_published {
+              pointer-events: auto;
+            }
+
+            @media (max-width: 1024px) {
+              .footer__thumb {
+                width: 100%;
+              }
+            }
+
+            .footer__thumb > img {
+              display: block;
+              max-width: 100%;
+              transition: transform 2s;
+            }
+
+            .footer__thumb.footer__thumb_published:hover > img {
+              transform: scale(1.02);
+            }
+
+            .footer__thumb-info {
+              position: absolute;
+              top: 0;
+              left: 0;
+              width: 100%;
+              height: 100%;
+              background-image: linear-gradient(to top, rgb(0, 0, 0, .9), rgb(0, 0, 0, 0) 50%);
+              display: flex;
+              justify-content: center;
+              align-items: flex-end;
+              color: white;
+              padding: var(--spacers-scale-level-10);
+              transition: opacity 1s;
+            }
+
+            .footer__thumb.footer__thumb_published:hover > .footer__thumb-info {
+              opacity: .7;
+            }
+
+            .footer__thumb-info .title-block {
+              width: 580px;
+              max-width: 100%;
+            }
+
+            .footer__thumb-info .title-block__surtitre {
+              border-bottom: none;
+              margin-bottom: var(--spacers-scale-level-12);
+            }
+
+            .footer__thumb-info .title-block__titre {
+              font-weight: 325;
+            }
+
+            .footer__thumb-opacifier {
+              position: absolute;
+              top: 0;
+              left: 0;
+              width: 100%;
+              height: 100%;
+              background-image: linear-gradient(to top, rgb(0, 0, 0, .9), rgb(0, 0, 0, .7));
+              opacity: .75;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              color: white;
+              text-align: center;
+              font-family: var(--ff-marr-sans-condensed);
+              font-weight: 500;
+              font-size: var(--text-scale-level-12);
+            }
+
+            .footer__thumb.footer__thumb_published .footer__thumb-opacifier {
+              display: none;
+            }
+
+      # DATA
+        ## footer
+          _surtitre: Revivre après la catastrophe
+          _titre: En Australie, la lente rémission de l'«&nbsp;été noir&nbsp;» des incendies.
+
+        ## papier-indonesie
+          _publishedClass:
+          _url:
+          _footerImgUrl:
+          _footerSurtitre:
+          _footerTitre:
+          _footerPublication:
+
+        ## papier-allemagne
+          _publishedClass:
+          _url:
+          _footerImgUrl:
+          _footerSurtitre:
+          _footerTitre:
+          _footerPublication:
+
+        ## papier-sichuan
+          _publishedClass:
+          _url:
+          _footerImgUrl:
+          _footerSurtitre:
+          _footerTitre:
+          _footerPublication:
+
+        ## papier-colombie
+          _publishedClass:
+          _url:
+          _footerImgUrl:
+          _footerSurtitre:
+          _footerTitre:
+          _footerPublication:
+
+        ## papier-australie
+          _publishedClass:
+          _url:
+          _footerImgUrl:
+          _footerSurtitre:
+          _footerTitre:
+          _footerPublication:
+
+        ## papier-st-marin
+          _publishedClass:
+          _url:
+          _footerImgUrl:
+          _footerSurtitre:
+          _footerTitre:
+          _footerPublication:
+
+
+      # CHUNKS
+        ## big-paragraph
+          _content: <div class="big-paragraph">{{CONTENT}}</div>
+
+        ## title-block
+          _content: <div class="title-block">
+            <div class="title-block__surtitre">{{SURTITRE}}</div>
+            {{BIG-PARAGRAPH}}
+          </div>
+
+        ## title-block-with-bg
+          _content:
+            >>> ref CHUNKS/title-block/content
+            >>> toString
+            >>> replace class="title-block" class="title-block with-background with-text-shadow" style="{{STYLE}}"
+            >>> replace {{STYLE}} --bg-color: rgb(0, 0, 0, .8); --shadow-color: black;
+
+        ## read-more
+          _content: <div class="read-more {{CLASS}}">
+            Poursuivre la lecture
+            <img class="read-more__image lmui-icon lmui-icon_white" src="https://assets-decodeurs.lemonde.fr/redacweb/editorial-design-sys-assets/chevron-down.svg" />
+          </div>
+
+        ## wide-icono
+          _content: <div class="wide-icono {{CLASS}}">
+            <img class="wide-icono__image" src="{{URL}}" />
+            <div class="wide-icono__description">{{CONTENT}}</div>
+          </div>
+
+        ## scroller
+          _content: <div class="scroller">
+            <div class="scroller__inner">{{SLOTS}}</div>
+          </div>
+
+        ## footer-title
+          _content: <div class="title-block">
+            <div class="title-block__surtitre" style="--font-size: var(--text-scale-level-16);">{{SURTITRE}}</div>
+            <div class="big-paragraph" style="--font-size: var(--text-scale-level-10);">{{TITRE}}</div>
+          </div>
+            >>> replaceWithRef {{SURTITRE}} DATA/footer/surtitre
+            >>> replaceWithRef {{TITRE}} DATA/footer/titre
+
+        ## footer-thumb
+          _content: <a class="footer__thumb {{PUBLISHED-CLASS}}" href="{{URL}}">
+            <img src="{{IMG-URL}}" />
+            <div class="footer__thumb-info">
+              <div class="title-block">
+                <div class="title-block__surtitre">{{SURTITRE}}</div>
+                <div class="title-block__titre" style="--font-size: var(--text-scale-level-16);">{{TITRE}}</div>
+              </div>
+            </div>
+            <div class="footer__thumb-opacifier">{{PUBLICATION}}</div>
+          </a>
+
+        ## footer-thumb-indonesie
+          _content:
+            >>> ref CHUNKS/footer-thumb/content
+            >>> replaceWithRef {{PUBLISHED-CLASS}} DATA/papier-indonesie/publishedClass
+            >>> replaceWithRef {{URL}} DATA/papier-indonesie/url
+            >>> replaceWithRef {{IMG-URL}} DATA/papier-indonesie/footerImgUrl
+            >>> replaceWithRef {{SURTITRE}} DATA/papier-indonesie/footerSurtitre
+            >>> replaceWithRef {{TITRE}} DATA/papier-indonesie/footerTitre
+            >>> replaceWithRef {{PUBLICATION}} DATA/papier-indonesie/footerPublication
+            
+        ## footer-thumb-allemagne
+          _content:
+            >>> ref CHUNKS/footer-thumb/content
+            >>> replaceWithRef {{PUBLISHED-CLASS}} DATA/papier-allemagne/publishedClass
+            >>> replaceWithRef {{URL}} DATA/papier-allemagne/url
+            >>> replaceWithRef {{IMG-URL}} DATA/papier-allemagne/footerImgUrl
+            >>> replaceWithRef {{SURTITRE}} DATA/papier-allemagne/footerSurtitre
+            >>> replaceWithRef {{TITRE}} DATA/papier-allemagne/footerTitre
+            >>> replaceWithRef {{PUBLICATION}} DATA/papier-allemagne/footerPublication
+
+        ## footer-thumb-sichuan
+          _content:
+            >>> ref CHUNKS/footer-thumb/content
+            >>> replaceWithRef {{PUBLISHED-CLASS}} DATA/papier-sichuan/publishedClass
+            >>> replaceWithRef {{URL}} DATA/papier-sichuan/url
+            >>> replaceWithRef {{IMG-URL}} DATA/papier-sichuan/footerImgUrl
+            >>> replaceWithRef {{SURTITRE}} DATA/papier-sichuan/footerSurtitre
+            >>> replaceWithRef {{TITRE}} DATA/papier-sichuan/footerTitre
+            >>> replaceWithRef {{PUBLICATION}} DATA/papier-sichuan/footerPublication
+
+        ## footer-thumb-colombie
+          _content:
+            >>> ref CHUNKS/footer-thumb/content
+            >>> replaceWithRef {{PUBLISHED-CLASS}} DATA/papier-colombie/publishedClass
+            >>> replaceWithRef {{URL}} DATA/papier-colombie/url
+            >>> replaceWithRef {{IMG-URL}} DATA/papier-colombie/footerImgUrl
+            >>> replaceWithRef {{SURTITRE}} DATA/papier-colombie/footerSurtitre
+            >>> replaceWithRef {{TITRE}} DATA/papier-colombie/footerTitre
+            >>> replaceWithRef {{PUBLICATION}} DATA/papier-colombie/footerPublication
+
+        ## footer-thumb-australie
+          _content:
+            >>> ref CHUNKS/footer-thumb/content
+            >>> replaceWithRef {{PUBLISHED-CLASS}} DATA/papier-australie/publishedClass
+            >>> replaceWithRef {{URL}} DATA/papier-australie/url
+            >>> replaceWithRef {{IMG-URL}} DATA/papier-australie/footerImgUrl
+            >>> replaceWithRef {{SURTITRE}} DATA/papier-australie/footerSurtitre
+            >>> replaceWithRef {{TITRE}} DATA/papier-australie/footerTitre
+            >>> replaceWithRef {{PUBLICATION}} DATA/papier-australie/footerPublication
+
+        ## footer-thumb-st-marin
+          _content:
+            >>> ref CHUNKS/footer-thumb/content
+            >>> replaceWithRef {{PUBLISHED-CLASS}} DATA/papier-st-marin/publishedClass
+            >>> replaceWithRef {{URL}} DATA/papier-st-marin/url
+            >>> replaceWithRef {{IMG-URL}} DATA/papier-st-marin/footerImgUrl
+            >>> replaceWithRef {{SURTITRE}} DATA/papier-st-marin/footerSurtitre
+            >>> replaceWithRef {{TITRE}} DATA/papier-st-marin/footerTitre
+            >>> replaceWithRef {{PUBLICATION}} DATA/papier-st-marin/footerPublication
+        
+        ## footer
+          _content: <div class="footer with-background" style="--bg-color: rgb(0, 0, 0);">
+            {{TITLE}}
+            <div class="footer__thumbs">{{THUMBS}}</div>
+          </div>
+            >>> replaceWithRef {{TITLE}} CHUNKS/footer-title/content
+            >>> replace {{THUMBS}} {{PAPIER-1}}{{PAPIER-2}}{{PAPIER-3}}{{PAPIER-4}}{{PAPIER-5}}{{PAPIER-6}}
+            >>> replaceWithRef {{PAPIER-1}} CHUNKS/footer-thumb-indonesie/content
+            >>> replaceWithRef {{PAPIER-2}} CHUNKS/footer-thumb-allemagne/content
+            >>> replaceWithRef {{PAPIER-3}} CHUNKS/footer-thumb-sichuan/content
+            >>> replaceWithRef {{PAPIER-4}} CHUNKS/footer-thumb-colombie/content
+            >>> replaceWithRef {{PAPIER-5}} CHUNKS/footer-thumb-australie/content
+            >>> replaceWithRef {{PAPIER-6}} CHUNKS/footer-thumb-st-marin/content
+        
+    </data>
+
+    <div class="lm-app">
+      <div class="with-background" style="--bg-color: rgb(0, 0, 0, .9);">
+        <div class="title-block with-background with-text-shadow" style="--bg-color: rgb(0, 0, 0, .8); --shadow-color: black;">
+          <div class="title-block__surtitre">Revivre après la catastrophe</div>
+          <div class="big-paragraph">En Australie, la lente rémission de l'«&nbsp;été noir&nbsp;» des incendies.</div>
+        </div>
+        <div style="height: var(--spacers-scale-level-32)"></div>
+        <p class="big-paragraph with-background with-text-shadow" style="--bg-color: rgb(0, 0, 0, .8); --shadow-color: black;">
+          La nature s’est en partie régénérée, ce qui apporte de l’espoir aux habitants mais restent traumatisés et redoutent l’après. Pour mieux contrer les prochains brasiers, ils se tournent vers les techniques ancestrales aborigènes.
+        </p>
+        <div style="height: var(--spacers-scale-level-32)"></div>
+        <div class="read-more">
+          Poursuivre la lecture
+          <img class="read-more__image lmui-icon lmui-icon_white" src="https://assets-decodeurs.lemonde.fr/redacweb/editorial-design-sys-assets/chevron-down.svg" />
+        </div>
+      </div>
+      <div style="height: var(--spacers-scale-level-32)"></div>
+      <div class="wide-icono">
+        <img class="wide-icono__image" src="https://img.lemde.fr/2023/09/18/0/0/6000/4000/2800/0/75/0/e614f06_1695051006807-000-33uc2z9.jpg" />
+        <div class="wide-icono__description">La nature s’est en partie régénérée, ce qui apporte de l’espoir aux habitants mais restent traumatisés et redoutent l’après. Pour mieux contrer les prochains brasiers, ils se tournent vers les techniques ancestrales aborigènes.</div>
+      </div>
+      <div style="height: var(--spacers-scale-level-32)"></div>
+      <div class="scroller">
+        <div class="scroller__inner">
+          <div class="wide-icono" style="--align: flex-start; --height: 400px; --max-width: auto; --text-max-width: 600px;">
+            <img class="wide-icono__image" src="https://img.lemde.fr/2023/09/18/0/0/6000/4000/2800/0/75/0/e614f06_1695051006807-000-33uc2z9.jpg" />
+            <div class="wide-icono__description">La nature s’est en partie régénérée, ce qui apporte de l’espoir aux habitants mais restent traumatisés et redoutent l’après. Pour mieux contrer les prochains brasiers, ils se tournent vers les techniques ancestrales aborigènes.</div>
+          </div>
+          <div class="wide-icono" style="--align: flex-start; --height: 400px; --max-width: auto; --text-max-width: 600px;">
+            <img class="wide-icono__image" src="https://img.lemde.fr/2023/09/18/0/0/5915/3697/2800/0/75/0/12adcb6_5316362-01-06.jpg" />
+            <div class="wide-icono__description">La nature s’est en partie régénérée, ce qui apporte de l’espoir aux habitants mais restent traumatisés et redoutent l’après. Pour mieux contrer les prochains brasiers, ils se tournent vers les techniques ancestrales aborigènes.</div>
+          </div>
+        </div>
+      </div>
+      <div style="height: var(--spacers-scale-level-32)"></div>
+      <div class="footer with-background" style="--bg-color: rgb(0, 0, 0);">
+        <div class="title-block">
+          <div class="title-block__surtitre" style="--font-size: var(--text-scale-level-16);">Revivre après la catastrophe</div>
+          <div class="big-paragraph" style="--font-size: var(--text-scale-level-10);">En Australie, la lente rémission de l'«&nbsp;été noir&nbsp;» des incendies.</div>
+        </div>
+        <div class="footer__thumbs">
+          <a class="footer__thumb footer__thumb_published" href="">
+            <img src="https://img.lemde.fr/2023/09/18/0/0/6000/4000/2800/0/75/0/e614f06_1695051006807-000-33uc2z9.jpg" />
+            <div class="footer__thumb-info">
+              <div class="title-block">
+                <div class="title-block__surtitre">Épisode 1</div>
+                <div class="title-block__titre" style="--font-size: var(--text-scale-level-16);">En Australie, la lente rémission de l'«&nbsp;été noir&nbsp;» des incendies.</div>
+              </div>
+            </div>
+            <div class="footer__thumb-opacifier">
+              À paraître le 26 septembre
+            </div>
+          </a>
+          <a class="footer__thumb" href="">
+            <img src="https://img.lemde.fr/2023/09/18/0/0/5915/3697/2800/0/75/0/12adcb6_5316362-01-06.jpg" />
+            <div class="footer__thumb-info">
+              <div class="title-block">
+                <div class="title-block__surtitre">Épisode 1</div>
+                <div class="title-block__titre" style="--font-size: var(--text-scale-level-16);">En Australie, la lente rémission de l'«&nbsp;été noir&nbsp;» des incendies.</div>
+              </div>
+            </div>
+            <div class="footer__thumb-opacifier">
+              À paraître le 26 septembre
+            </div>
+          </a>
+          <a class="footer__thumb">
+            <img src="https://img.lemde.fr/2023/09/18/0/0/6000/4000/2800/0/75/0/e614f06_1695051006807-000-33uc2z9.jpg" />
+            <div class="footer__thumb-info">
+              <div class="title-block">
+                <div class="title-block__surtitre">Épisode 1</div>
+                <div class="title-block__titre" style="--font-size: var(--text-scale-level-16);">En Australie, la lente rémission de l'«&nbsp;été noir&nbsp;» des incendies.</div>
+              </div>
+            </div>
+            <div class="footer__thumb-opacifier">
+              À paraître le 26 septembre
+            </div>
+          </a>
+          <a class="footer__thumb">
+            <img src="https://img.lemde.fr/2023/09/18/0/0/5915/3697/2800/0/75/0/12adcb6_5316362-01-06.jpg" />
+            <div class="footer__thumb-info">
+              <div class="title-block">
+                <div class="title-block__surtitre">Épisode 1</div>
+                <div class="title-block__titre" style="--font-size: var(--text-scale-level-16);">En Australie, la lente rémission de l'«&nbsp;été noir&nbsp;» des incendies.</div>
+              </div>
+            </div>
+            <div class="footer__thumb-opacifier">
+              À paraître le 26 septembre
+            </div>
+          </a>
+          <a class="footer__thumb">
+            <img src="https://img.lemde.fr/2023/09/18/0/0/6000/4000/2800/0/75/0/e614f06_1695051006807-000-33uc2z9.jpg" />
+            <div class="footer__thumb-info">
+              <div class="title-block">
+                <div class="title-block__surtitre">Épisode 1</div>
+                <div class="title-block__titre" style="--font-size: var(--text-scale-level-16);">En Australie, la lente rémission de l'«&nbsp;été noir&nbsp;» des incendies.</div>
+              </div>
+            </div>
+            <div class="footer__thumb-opacifier">
+              À paraître le 26 septembre
+            </div>
+          </a>
+          <a class="footer__thumb">
+            <img src="https://img.lemde.fr/2023/09/18/0/0/5915/3697/2800/0/75/0/12adcb6_5316362-01-06.jpg" />
+            <div class="footer__thumb-info">
+              <div class="title-block">
+                <div class="title-block__surtitre">Épisode 1</div>
+                <div class="title-block__titre" style="--font-size: var(--text-scale-level-16);">En Australie, la lente rémission de l'«&nbsp;été noir&nbsp;» des incendies.</div>
+              </div>
+            </div>
+            <div class="footer__thumb-opacifier">
+              À paraître le 26 septembre
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <div class="footer with-background" style="--bg-color: rgb(0, 0, 0);">
+        <div class="title-block">
+          <div class="title-block__surtitre" style="--font-size: var(--text-scale-level-16);">Revivre après la catastrophe</div>
+          <div class="big-paragraph" style="--font-size: var(--text-scale-level-10);">En Australie, la lente rémission de l'«&nbsp;été noir&nbsp;» des incendies.</div>
+        </div>
+        <div class="footer__thumbs">
+          <a class="footer__thumb footer__thumb_published" href="">
+            <img src="https://img.lemde.fr/2023/09/18/0/0/6000/4000/2800/0/75/0/e614f06_1695051006807-000-33uc2z9.jpg" />
+            <div class="footer__thumb-info">
+              <div class="title-block">
+                <div class="title-block__surtitre">Épisode 1</div>
+                <div class="title-block__titre" style="--font-size: var(--text-scale-level-16);">En Australie, la lente rémission de l'«&nbsp;été noir&nbsp;» des incendies.</div>
+              </div>
+            </div>
+            <div class="footer__thumb-opacifier">
+              À paraître le 26 septembre
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
