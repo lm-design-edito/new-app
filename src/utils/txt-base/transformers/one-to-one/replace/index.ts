@@ -8,7 +8,8 @@ export default makeTransformer(
   TransformerType.ONE_TO_ONE,
   (value, argsStr) => {
     const argsArr = argsStrToArgsArr(argsStr)
-    const [searcher = '', replacer = ''] = argsArr as Array<string|undefined>
+    const [searcher = '', ...replacers] = argsArr as Array<string|undefined>
+    const replacer = replacers.join(' ')
     const strValue = toString(value)
     if (searcher.match(/^\//)
       && searcher.match(/\/$/)) return replaceAll(strValue, new RegExp(searcher), replacer)
