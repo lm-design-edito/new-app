@@ -1,13 +1,42 @@
+/* Cast transformers */
 import toString from './transformers/toString'
 import toNumber from './transformers/toNumber'
 import toBoolean from './transformers/toBoolean'
 import toNull from './transformers/toNull'
-import toRef from './transformers/toRef'
 import toHtml from './transformers/toHtml'
+import toRef from './transformers/toRef'
 import toArray from './transformers/toArray'
 import toRecord from './transformers/toRecord'
+/* Number transformers */
+import add from './transformers/add'
+import subtract from './transformers/subtract'
+import multiply from './transformers/multiply'
+import pow from './transformers/pow'
+import divide from './transformers/divide'
+import max from './transformers/max'
+import min from './transformers/min'
+import clamp from './transformers/clamp'
+import greater from './transformers/greater'
+import smaller from './transformers/smaller'
+import equals from './transformers/equals'
+/* String transformers */
+import append from './transformers/append'
+import prepend from './transformers/prepend'
+// import replace from './transformers/replace'
+// import replaceWithRef from './transformers/replaceWithRef'
+// import trim from './transformers/trim'
+// import split from './transformers/split'
+/* Array transformers */
+// import join from './transformers/join'
+// import at from './transformers/at'
+// import map from './transformers/map'
+// import push from './transformers/push'
+/* Utility transformers */
 import clone from './transformers/clone'
 import print from './transformers/print'
+// import variable from './transformers/variable'
+// import condition from './transformers/condition'
+// import iteration from './transformers/iteration'
 
 export namespace Darkdouille {
 
@@ -21,7 +50,7 @@ export namespace Darkdouille {
   export type TreeValue = TreePrimitiveValue | TreeValue[] | { [key: string]: TreeValue }
   export type TreeResolver = (path: string) => Tree | undefined
 
-  type Transformer<T extends TreeValue = TreeValue> = (input: TreeValue) => T
+  export type Transformer<T extends TreeValue = TreeValue> = (input: TreeValue) => T
   export type TransformerFunctionGenerator<T extends TreeValue = TreeValue> = (...args: (TreeValue | Transformer)[]) => Transformer<T>
 
 
@@ -59,6 +88,7 @@ export namespace Darkdouille {
   /* ========== FUNCTIONS ========== */
   
   enum Function {
+    /* Cast */
     TOSTRING = 'tostring',
     TONUMBER = 'tonumber',
     TOBOOLEAN = 'toboolean',
@@ -67,16 +97,37 @@ export namespace Darkdouille {
     TOREF = 'toref',
     TOARRAY = 'toarray',
     TORECORD = 'torecord',
+    /* Number */
+    ADD = 'add',
+    SUBTRACT = 'subtract',
+    MULTIPLY = 'multiply',
+    DIVIDE = 'divide',
+    POW = 'pow',
+    MAX = 'max',
+    MIN = 'min',
+    CLAMP = 'clamp',
+    GREATER = 'greater',
+    SMALLER = 'smaller',
+    EQUALS = 'equals',
+    /* String */
+    APPEND = 'append',
+    PREPEND = 'prepend',
+    REPLACE = 'replace',
+    REPLACEWITHREF = 'replacewithref',
+    TRIM = 'trim',
+    SPLIT = 'split',
+    /* Array */
+    JOIN = 'join',
+    AT = 'at',
+    MAP = 'map',
+    PUSH = 'push',
+    /* Utility */
     CLONE = 'clone',
     PRINT = 'print',
-    // VAR = 'var',
-    // MAP = 'map',
-    // ADD = 'add',
-    // MULTIPLY = 'multiply',
-    // IF = 'if',
-    // GREATERTHAN = 'greaterThan',
-    // DIVIDE = 'divide',
-    // MULTIPARAM = 'multiparam'
+    VARIABLE = 'variable',
+    CONDITION = 'condition',
+    ITERATION = 'iteration',
+    
   }
 
   const Functions = Object.values(Function)
@@ -201,7 +252,7 @@ export namespace Darkdouille {
 
     get root (): Tree {
       const { parents } = this
-      const lastParent = parents.at(-1)
+      const lastParent = parents[parents.length - 1]
       if (lastParent === undefined) return this
       return lastParent
     }
@@ -317,9 +368,40 @@ export namespace Darkdouille {
       [Function.TOREF, toRef(this.resolve.bind(this))],
       [Function.TOARRAY, toArray],
       [Function.TORECORD, toRecord],
-      /* Other functions */
+      
+      /* Numbers */
+      [Function.ADD, add],
+      [Function.SUBTRACT, subtract],
+      [Function.MULTIPLY, multiply],
+      [Function.DIVIDE, divide],
+      [Function.POW, pow],
+      [Function.MAX, max],
+      [Function.MIN, min],
+      [Function.CLAMP, clamp],
+      [Function.GREATER, greater],
+      [Function.SMALLER, smaller],
+      [Function.EQUALS, equals],
+
+      /* Strings */
+      [Function.APPEND, append],
+      [Function.PREPEND, prepend],
+      // [Function.REPLACE, replace],
+      // [Function.REPLACEWITHREF, replacewithref],
+      // [Function.TRIM, trim],
+      // [Function.SPLIT, split],
+      
+      /* Arrays */
+      // [Function.JOIN, join],
+      // [Function.AT, at],
+      // [Function.MAP, map],
+      // [Function.PUSH, push],
+
+      /* Utils */
       [Function.CLONE, clone],
-      [Function.PRINT, print]
+      [Function.PRINT, print],
+      // [Function.VARIABLE, variable],
+      // [Function.CONDITION, condition],
+      // [Function.ITERATION, iteration],
     ])
   
     typeNamesToTransformers = new Map<Type, Transformer>([
