@@ -11,20 +11,15 @@
 
     <!-- Darkdouille -->
     <data class="lm-page-config">
-      <data class="arr-target">
-        <ref>../1</ref>
-        <ref>../2</ref>
-        <ref>../0</ref>
-        <ref>../../source/field</ref>
-      </data>
-      <data class="pre-target">
-        <ref class="field">../../arr-target/0</ref>
-      </data>
-      <data class="target">
-        <ref class="field">../../pre-target/field</ref>
-      </data>
-      <data class="source">
-        <ref class="field">../../target/field</ref>
+      <data class="refvalue">texte de remplacement</data>
+      <data class="replaced">
+        To replace with {{TEXT}}
+        <transformer>
+          <replace>
+            <data>{{TEXT}}</data>
+            <ref>/refvalue</ref>
+          </replace>
+        </transformer>
       </data>
     </data>
 
@@ -67,5 +62,166 @@
         </map>
       </transformer>
     </data> -->
+
+
+
+
+    <data class="tostring">
+      <div>I was a HTML element</div>
+      <transformer>
+        <tostring></tostring>
+      </transformer>
+    </data>
+    <data class="tonumber">
+      3
+      <transformer>
+        <tonumber></tonumber>
+      </transformer>
+    </data>
+    <data class="toboolean">
+      false
+      <transformer>
+        <toboolean></toboolean>
+      </transformer>
+    </data>
+    <data class="tonull">
+      Nullified
+      <transformer>
+        <tonull></tonull>
+      </transformer>
+    </data>
+    <data class="tohtml">
+      Text htmlified
+      <transformer>
+        <tohtml></tohtml>
+      </transformer>
+    </data>
+    <data class="toref">
+      ../tostring
+      <transformer>
+        <toref></toref>
+      </transformer>
+    </data>
+    <data class="toarray">
+      texte
+      <transformer>
+        <toarray>
+          <number>3</number>
+        </toarray>
+      </transformer>
+    </data>
+    <data class="torecord">
+      <data>A</data>
+      <data>B</data>
+      <data>C</data>
+      <transformer>
+        <torecord></torecord>
+      </transformer>
+    </data>
+    <data class="add">
+      2
+      <!-- [WIP] should cast everything to number with exception if input string does not represent a number -->
+      <transformer>
+        <tonumber></tonumber>
+        <add><number>2</number></add>
+      </transformer>
+    </data>
+    <data class="subtract">
+      2
+      <transformer>
+        <subtract>2</subtract>
+      </transformer>
+    </data>
+    <data class="multiply">
+      3
+      <transformer>
+        <multiply>3</multiply>
+      </transformer>
+    </data>
+    <data class="divide">
+      22
+      <transformer>
+        <divide>7</divide>
+      </transformer>
+    </data>
+    <data class="pow">
+      2
+      <transformer>
+        <pow>4</pow>
+      </transformer>
+    </data>
+    <data class="max">
+      2
+      <transformer>
+        <max>6</max>
+      </transformer>
+    </data>
+    <data class="min">
+      2
+      <transformer>
+        <min>6</min>
+      </transformer>
+    </data>
+    <data class="clamp">
+      10
+      <transformer>
+        <clamp>
+          <number>2</number>
+          <number>6</number>
+        </clamp>
+      </transformer>
+    </data>
+    <data class="greater">
+      20
+      <transformer>
+        <greater>6</greater>
+      </transformer>
+    </data>
+    <data class="smaller">
+      20
+      <transformer>
+        <smaller>6</smaller>
+      </transformer>
+    </data>
+    <data class="equals">
+      6
+      <transformer>
+        <tonumber></tonumber>
+        <equals><number>6</number></equals>
+      </transformer>
+    </data>
+    <data class="append">
+      str
+      <transformer>
+        <append> appended</append>
+      </transformer>
+    </data>
+    <data class="prepend">
+      str
+      <transformer>
+        <prepend>prepended</prepend>
+      </transformer>
+    </data>
+    <data class="replace">
+      str {{TEMPLATE}}
+      <transformer>
+        <replace>
+          <data>{{TEMPLATE}}</data>
+          <ref>/prepend</ref>
+        </replace>
+      </transformer>
+    </data>
+    <data class="clone">
+      to clone
+      <transformer>
+        <clone></clone>
+      </transformer>
+    </data>
+    <data class="print">
+      Value ?
+      <transformer>
+        <print></print>
+      </transformer>
+    </data>
   </body>
 </html>

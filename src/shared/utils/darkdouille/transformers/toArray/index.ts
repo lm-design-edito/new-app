@@ -9,7 +9,7 @@ const toArray: Darkdouille.TransformerFunctionGenerator<Darkdouille.TreeValue[]>
     const arrayLengthArg = resolvedArgs[0]
     let targetArrayLength: number | undefined = undefined
     if (arrayLengthArg === undefined) { targetArrayLength = undefined }
-    else { targetArrayLength = toNumber()(inputValue) }
+    else { targetArrayLength = toNumber()(arrayLengthArg) }
     if (Array.isArray(inputValue)) {
       if (targetArrayLength === undefined) return inputValue
       return new Array(targetArrayLength)
