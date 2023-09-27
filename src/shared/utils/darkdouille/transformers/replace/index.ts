@@ -26,9 +26,13 @@ const replaceInNode = (
       return nodesList
     }
   } else if (node.nodeType === Node.ELEMENT_NODE) {
-    const children = node.childNodes
-    const clone = node.cloneNode()
-    return [node]
+    const element = node as Element
+    const children = element.childNodes
+    const clone = element.cloneNode() as Element
+    children.forEach(child => {
+      clone.append(...replaceInNode(child, replacer, ...toReplace))
+    })
+    return [clone]
   }
   return []
 }
@@ -39,20 +43,47 @@ const replace: Darkdouille.TransformerFunctionGenerator<string | NodeListOf<Node
     const [firstArg, ...lastArgs] = resolvedArgs
     const toReplaceArgs = [firstArg, ...lastArgs.slice(0, -1)]
     const replacerArg = lastArgs[lastArgs.length - 1]
+    const toReplaceStrArgs = toReplaceArgs.filter((elt): elt is string => typeof elt === 'string')
+    const replacer = replacerArg instanceof NodeList
+      ? replacerArg
+      : toString()(replacerArg)
+    // console.group('replace transformer')
+    // console.log('inputValue', inputValue)
+    // console.log('...args', ...args)
+    // console.log('...resolvedArgs', ...resolvedArgs)
+    // console.log('firstArg', firstArg)
+    // console.log('...lastArgs', ...lastArgs)
+    // console.log('...toReplaceArgs', ...toReplaceArgs)
+    // console.log('replacerArg', replacerArg)
+    // console.log('...toReplaceStrArgs', ...toReplaceStrArgs)
+    // console.log('replacer', replacer)
     if (inputValue instanceof NodeList) {
-      // const fakeWrapper = document.createElement('div')
-      // const nodes = [...inputValue].map(node => node.cloneNode(true))
-      // fakeWrapper.append(...nodes)
-      // resolvedArgs.forEach(arg => {
-      //   if (arg instanceof NodeList) { fakeWrapper.prepend(...arg) }
-      //   else fakeWrapper.prepend(toString()(arg))
-      // })
-      // return fakeWrapper.cloneNode(true).childNodes
+      const nodes = [...inputValue]
+      const replacedNodes = nodes.map(node => {
+        const clone = node.cloneNode(true)
+        return replaceInNode(clone, replacer, ...toReplaceStrArgs)
+      }).flat()
+      const fragment = document.createDocumentFragment()
+      fragment.append(...replacedNodes)
+      // console.groupEnd()
+      return fragment.childNodes
     }
     const strInput = toString()(inputValue)
-    return resolvedArgs.reduce<string>((prevStr, arg) => {
-      return `${toString()(arg)}${prevStr}`
-    }, strInput)
+    if (replacer instanceof NodeList) {
+      const strInputAsTextNode = document.createTextNode(strInput)
+      const replacedTextNodes = replaceInNode(strInputAsTextNode, replacer, ...toReplaceStrArgs)
+      const fragment = document.createDocumentFragment()
+      fragment.append(...replacedTextNodes)
+      // console.groupEnd()
+      return fragment.childNodes
+    }
+    const splittedStrInput = toReplaceStrArgs.reduce<string[]>((splitted, splitter) => {
+      return splitted
+        .map(chunk => chunk.split(splitter))
+        .flat()
+    }, [strInput])
+    // console.groupEnd()
+    return splittedStrInput.join(replacer)
   }
 }
 
