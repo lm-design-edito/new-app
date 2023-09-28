@@ -11,7 +11,33 @@
 
     <!-- Darkdouille -->
     <data class="lm-page-config">
-      <data class="refvalue">texte de remplacement</data>
+      <data class="referenced">REFERENCED</data>
+      <data class="replaced">
+        {{TEXT}}
+        <replace>
+          <string>{{TEXT}}</string>
+          <transformer>
+            <ref>/referenced</ref>
+            <tonumber></tonumber>
+          </transformer>
+        </replace>
+      </data>
+
+
+      <!-- 7
+      <tonumber></tonumber>
+      <if>
+        <greater>9</greater>
+        <tonull></tonull>
+        <transformer>
+          <tostring></tostring>
+          <toarray>
+            <tonumber></tonumber>
+          </toarray>
+        </transformer>
+      </if> -->
+
+      <!-- <data class="refvalue">texte de remplacement</data>
       <data class="replaced">
         To replace with {{TEXT}}
         <transformer>
@@ -20,7 +46,7 @@
             <ref>/refvalue</ref>
           </replace>
         </transformer>
-      </data>
+      </data> -->
     </data>
 
     <!-- <data class="lm-page-config">

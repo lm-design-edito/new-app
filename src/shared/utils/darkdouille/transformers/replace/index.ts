@@ -1,12 +1,8 @@
-import replaceAll from '~/utils/replace-all'
 import { Darkdouille } from '../..'
 import { resolveArgs } from '../_resolveArgs'
 import toString from '../toString'
 
-const replaceInNode = (
-  node: Node,
-  replacer: string | NodeListOf<Node>,
-  ...toReplace: string[]): Node[] => {
+const replaceInNode = (node: Node, replacer: string | NodeListOf<Node>, ...toReplace: string[]): Node[] => {
   if (node.nodeType === Node.TEXT_NODE) {
     const { textContent } = node
     if (textContent === null) return [node.cloneNode(true)]
@@ -47,16 +43,6 @@ const replace: Darkdouille.TransformerFunctionGenerator<string | NodeListOf<Node
     const replacer = replacerArg instanceof NodeList
       ? replacerArg
       : toString()(replacerArg)
-    // console.group('replace transformer')
-    // console.log('inputValue', inputValue)
-    // console.log('...args', ...args)
-    // console.log('...resolvedArgs', ...resolvedArgs)
-    // console.log('firstArg', firstArg)
-    // console.log('...lastArgs', ...lastArgs)
-    // console.log('...toReplaceArgs', ...toReplaceArgs)
-    // console.log('replacerArg', replacerArg)
-    // console.log('...toReplaceStrArgs', ...toReplaceStrArgs)
-    // console.log('replacer', replacer)
     if (inputValue instanceof NodeList) {
       const nodes = [...inputValue]
       const replacedNodes = nodes.map(node => {
@@ -65,7 +51,6 @@ const replace: Darkdouille.TransformerFunctionGenerator<string | NodeListOf<Node
       }).flat()
       const fragment = document.createDocumentFragment()
       fragment.append(...replacedNodes)
-      // console.groupEnd()
       return fragment.childNodes
     }
     const strInput = toString()(inputValue)
@@ -74,7 +59,6 @@ const replace: Darkdouille.TransformerFunctionGenerator<string | NodeListOf<Node
       const replacedTextNodes = replaceInNode(strInputAsTextNode, replacer, ...toReplaceStrArgs)
       const fragment = document.createDocumentFragment()
       fragment.append(...replacedTextNodes)
-      // console.groupEnd()
       return fragment.childNodes
     }
     const splittedStrInput = toReplaceStrArgs.reduce<string[]>((splitted, splitter) => {
@@ -82,7 +66,6 @@ const replace: Darkdouille.TransformerFunctionGenerator<string | NodeListOf<Node
         .map(chunk => chunk.split(splitter))
         .flat()
     }, [strInput])
-    // console.groupEnd()
     return splittedStrInput.join(replacer)
   }
 }
