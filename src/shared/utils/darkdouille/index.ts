@@ -45,11 +45,11 @@ export namespace Darkdouille {
   type TreeNamedChildItem = { type: 'named', element: Element }
   type TreeUnnamedChildItem = { type: 'unnamed', element: Element }
   type TreeTransformerChildItem = { type: 'transformer', element: Element }
-  type TreeChildItem = TreeTextChildItem | TreeDomChildItem | TreeNamedChildItem | TreeUnnamedChildItem | TreeTransformerChildItem
+  type TreeFunctionChildItem = { type: 'function', element: Element }
+  type TreeChildItem = TreeTextChildItem | TreeDomChildItem | TreeNamedChildItem | TreeUnnamedChildItem | TreeTransformerChildItem | TreeFunctionChildItem
   type TreePrimitiveValue = string | number | boolean | null | undefined | NodeListOf<Node>
   export type TreeValue = TreePrimitiveValue | TreeValue[] | { [key: string]: TreeValue }
   export type TreeResolver = (path: string) => Tree | undefined
-
   export type Transformer<T extends TreeValue = TreeValue> = (input: TreeValue) => T
   export type TransformerFunctionGenerator<T extends TreeValue = TreeValue> = (...args: (TreeValue | Transformer)[]) => Transformer<T>
 
@@ -86,8 +86,7 @@ export namespace Darkdouille {
   }
 
   /* ========== FUNCTIONS ========== */
-  
-  enum Function {
+  enum FunctionName {
     /* Cast */
     TOSTRING = 'tostring',
     TONUMBER = 'tonumber',
@@ -130,9 +129,9 @@ export namespace Darkdouille {
     
   }
 
-  const Functions = Object.values(Function)
+  const Functions = Object.values(FunctionName)
   
-  function isFunction (tag: string): tag is Function {
+  function isFunctionName (tag: string): tag is FunctionName {
     return Functions.includes(tag as any)
   }
 
@@ -143,7 +142,7 @@ export namespace Darkdouille {
 
   /* ========== HELPERS ========== */
 
-  function isValueNode (node: Node): node is Element {
+  function isValueElement (node: Node): node is Element {
     const isElement = node instanceof Element
     if (!isElement) return false
     const typeTag = node.tagName.toLowerCase()
@@ -151,33 +150,43 @@ export namespace Darkdouille {
     return true
   }
 
-  function isTransformerNode (node: Node): node is Element {
+  function isTransformerElement (node: Node): node is Element {
     const isElement = node instanceof Element
     if (!isElement) return false
     const typeTag = node.tagName.toLowerCase()
-    return typeTag === Type.TRANSFORMER
+    const typeAttr = node.getAttribute('type')
+    return typeTag === Type.DATA
+      && typeAttr === Type.TRANSFORMER
+      ? true
+      : typeTag === Type.TRANSFORMER
   }
 
-  function isValueOrTransformerNode (node: Node): node is Element {
-    return isValueNode(node) || isTransformerNode(node)
+  function isValueOrTransformerElement (node: Node): node is Element {
+    return isValueElement(node) || isTransformerElement(node)
   }
 
-  function isFunctionNode (node: Node): node is Element {
+  function isFunctionElement (node: Node): node is Element {
     const isElement = node instanceof Element
     if (!isElement) return false
     const functionTag = node.tagName.toLowerCase()
-    return isFunction(functionTag)
+    return isFunctionName(functionTag)
   }
 
   function getTypeFromElement (element: Element): Exclude<Type, Type.DATA> | null {
-    if (!isValueOrTransformerNode(element)) return null
-    const typeTag = element.tagName.toLowerCase() as Type // if isValueOrTransformerNode(element), then element.tagName is Type
+    if (!isValueOrTransformerElement(element)) return null
+    const typeTag = element.tagName.toLowerCase() as Type // if isValueOrTransformerElement(element), then element.tagName is Type
     const typeAttr = element.getAttribute('type')
     let type: Exclude<Type, Type.DATA> | null
     if (typeAttr !== null && isType(typeAttr) && typeAttr !== Type.DATA) { type = typeAttr }
     else if (isType(typeTag) && typeTag !== Type.DATA) { type = typeTag }
     else { type = null }
     return type
+  }
+
+  function getFunctionNameFromElement (element: Element): FunctionName | null {
+    const tag = element.tagName.toLowerCase() as FunctionName
+    if (isFunctionName(tag)) return tag
+    return null
   }
 
   function cloneNode<T extends Node> (node: T, deep?: boolean): T {
@@ -193,8 +202,8 @@ export namespace Darkdouille {
   // Pour chaque enfant
   //   si ni text ni element, il disparait
   //   si text, on ne fait rien de plus
-  //   si element mais pas transformer ou value, on ne fait rien de plus
-  //   si transformer, on déplace l'element tout en bas de son parent et on s'arrête
+  //   si element mais pas transformer, value ou function, on ne fait rien de plus
+  //   si transformer ou function, on déplace l'element tout en bas de son parent et on s'arrête
   //   sinon, c'est un élément de type value
   //     si il y a une classe sur l'élément, c'est une propriété nommée du parent
   //     sinon, c'est une propriété positionnée (numérotée)
@@ -207,7 +216,7 @@ export namespace Darkdouille {
   //       s'il n'a pas d'action ou une action de type overwrite, on remplace les enfants de l'élément enregistré par ceux de l'élément actuel
   // 
   // Pour chaque enfant à nouveau
-  //   s'il n'est pas une valeur darkdouille (uniquement valeur, pas transformeur), on ne fait rien
+  //   s'il n'est pas une valeur darkdouille (uniquement valeur, pas transformeur ni function), on ne fait rien
   //   sinon, c'est un élément valeur, on lui applique REDUCE
 
   function reduce (element: Element): Element {
@@ -215,29 +224,34 @@ export namespace Darkdouille {
     let unnamedChildrenCnt = 0
     const propertiesPathsMap = new Map<string, Element>()
     childNodes.forEach(childNode => {
-      const isTextOrElementNode = [Node.TEXT_NODE, Node.ELEMENT_NODE].includes(childNode.nodeType as any)
-      if (!isTextOrElementNode) return childNode.parentNode?.removeChild(childNode)
-      const isDarkdouilleElement = isValueOrTransformerNode(childNode)
-      if (!isDarkdouilleElement) return;
-      const type = getTypeFromElement(childNode)
-      if (type === Type.TRANSFORMER) return element.appendChild(childNode)
-      const localPath = childNode.getAttribute('class') ?? `${unnamedChildrenCnt ++}`
+      if (childNode.nodeType === Node.TEXT_NODE) return
+      if (childNode.nodeType !== Node.ELEMENT_NODE) return childNode.parentNode?.removeChild(childNode)
+      const childElement = childNode as Element
+      const isFunction = isFunctionElement(childElement)
+      const isTransformer = isTransformerElement(childElement)
+      if (isFunction || isTransformer) return element.appendChild(childElement)
+      const isValue = isValueElement(childElement)
+      if (!isValue) return
+      const valueElement: Element = childElement
+      const type = getTypeFromElement(valueElement)
+      if (type === Type.TRANSFORMER) return element.appendChild(valueElement)
+      const localPath = valueElement.getAttribute('class') ?? `${unnamedChildrenCnt ++}`
       const existingElement = propertiesPathsMap.get(localPath)
-      if (existingElement === undefined) return propertiesPathsMap.set(localPath, childNode)
-      childNode.remove()
+      if (existingElement === undefined) return propertiesPathsMap.set(localPath, valueElement)
+      valueElement.remove()
       if (type !== null) existingElement.setAttribute('type', type)
-      const actionAttr = childNode.getAttribute('action')
-      if (actionAttr === Action.APPEND) return existingElement.append(...childNode.childNodes)
-      if (actionAttr === Action.PREPEND) return existingElement.prepend(...childNode.childNodes)
-      return existingElement.replaceChildren(...childNode.childNodes)
+      const actionAttr = valueElement.getAttribute('action')
+      if (actionAttr === Action.APPEND) return existingElement.append(...valueElement.childNodes)
+      if (actionAttr === Action.PREPEND) return existingElement.prepend(...valueElement.childNodes)
+      return existingElement.replaceChildren(...valueElement.childNodes)
     })
     const reducedChildNodes = [...element.childNodes]
-    reducedChildNodes.forEach(childNode => {
-      const isDarkdouilleElement = isValueOrTransformerNode(childNode)
+    reducedChildNodes.forEach(valueElement => {
+      const isDarkdouilleElement = isValueOrTransformerElement(valueElement)
       if (!isDarkdouilleElement) return;
-      const type = getTypeFromElement(childNode)
+      const type = getTypeFromElement(valueElement)
       if (type === Type.TRANSFORMER) return;
-      reduce(childNode)
+      reduce(valueElement)
     })
     return element
   }
@@ -256,18 +270,18 @@ export namespace Darkdouille {
   export class Tree {
     element: Element
     parent: Tree | undefined
+    _pathForResolver: string | undefined
     
-    constructor (element: Element, parentTree?: Tree) {
+    constructor (element: Element, parentTree?: Tree, pathForResolver?: string) {
       this.element = element
-      this.parent = parentTree ?? undefined
+      this.parent = parentTree
+      this._pathForResolver = pathForResolver
       this.resolve = this.resolve.bind(this)
-      this.getFunctionNodeGenerator = this.getFunctionNodeGenerator.bind(this)
-      this.getFunctionNodeArguments = this.getFunctionNodeArguments.bind(this)
+      this.getGeneratorFromFunctionElement = this.getGeneratorFromFunctionElement.bind(this)
+      this.getFunctionElementRawArgs = this.getFunctionElementRawArgs.bind(this)
+      this.resolveFunctionRawArgs = this.resolveFunctionRawArgs.bind(this)
       this.getTransformerFromTypeName = this.getTransformerFromTypeName.bind(this)
       this.getGeneratorFromFunctionName = this.getGeneratorFromFunctionName.bind(this)
-      // console.group('tree.constructor', this.elementStr)
-      // console.log('parentTree\n', parentTree?.elementStr)
-      // console.groupEnd()
     }
 
     get elementStr (): string {
@@ -318,16 +332,16 @@ export namespace Darkdouille {
       return path
     }
 
+    get pathForResolver () {
+      return this._pathForResolver ?? this.path
+    }
+
     resolve: TreeResolver = function (this: Tree, path: string) {
-      // console.group('tree.resolve', this.elementStr)
       const pathChunks = path
         .split('/')
         .filter(e => e.trim() !== '')
       const startFromRoot = path[0] === '/'
       const startTree = startFromRoot ? this.root : this
-      // console.log('path', path)
-      // console.log('this', this)
-      // console.log('startTree', startTree)
       const returned = pathChunks.reduce((prevTree, pathChunk) => {
         if (prevTree === undefined) return undefined
         if (pathChunk === '.') return prevTree
@@ -337,8 +351,6 @@ export namespace Darkdouille {
         if (Array.isArray(children)) return children[parseInt(pathChunk)]
         return children[pathChunk]
       }, startTree as Tree | undefined)
-      // console.log('returned', returned)
-      // console.groupEnd()
       return returned
     }
 
@@ -347,31 +359,32 @@ export namespace Darkdouille {
     }
 
     get sortedChildren (): TreeChildItem[] {
-      // console.group('tree.sortedChildren', this.elementStr)
       const treeNodesOrNull: Array<TreeChildItem | null> = [...this.element.childNodes].map(childNode => {
         if (childNode.nodeType === Node.TEXT_NODE) return { type: 'text', node: childNode }
         if (childNode.nodeType !== Node.ELEMENT_NODE) return null
+        // Is Element
         const childElement = childNode as Element
-        if (!isValueOrTransformerNode(childElement)) return { type: 'dom', element: childElement }
-        if (getTypeFromElement(childElement) === Type.TRANSFORMER) return { type: 'transformer', element: childElement }
-        const classAttr = childElement.getAttribute('class')
+        const isFunction = isFunctionElement(childElement)
+        const isTransformer = isTransformerElement(childElement)
+        const isValue = isValueElement(childElement)
+        const isDarkdouille = isFunction || isTransformer || isValue
+        if (!isDarkdouille) return { type: 'dom', element: childElement as Element } // TS thinks childElement is of type never
+        // Is value, transformer or function  Element
+        if (isFunction) return { type: 'function', element: childElement }
+        else if (isTransformer) return { type: 'transformer', element: childElement as Element }
+        // Is value Element
+        const valueElement: Element = childElement
+        const classAttr = valueElement.getAttribute('class')
         const isUnnamed = classAttr === null
-        if (isUnnamed) return { type: 'unnamed', element: childElement }
-        return { type: 'named', element: childElement }
+        if (isUnnamed) return { type: 'unnamed', element: valueElement }
+        return { type: 'named', element: valueElement }
       })
       const treeNodes: TreeChildItem[] = treeNodesOrNull
         .filter((e): e is TreeChildItem => e !== null)
-      // console.log(treeNodes.map(node => {
-      //   if (node.type === 'text') return `text / ${node.node.textContent ?? ''}`
-      //   const clone = node.element.cloneNode() as Element
-      //   return `${node.type} / ${clone.outerHTML}`
-      // }).join('\n'))
-      // console.groupEnd()
       return treeNodes
     }
 
     get children (): NodeListOf<Node> | { [key: string]: Tree } | Tree[] {
-      // console.group('tree.children', this.elementStr)
       const { sortedChildren } = this
       const htmlChildItems = sortedChildren.filter(({ type }) => type === 'text' || type === 'dom') as Array<TreeDomChildItem | TreeTextChildItem>
       const unnamedChildItems = sortedChildren.filter(({ type }) => type === 'unnamed') as Array<TreeUnnamedChildItem>
@@ -395,109 +408,72 @@ export namespace Darkdouille {
           }, document.createDocumentFragment())
           .childNodes
       }
-      // console.log(children)
-      // console.groupEnd()
       return children
     }
 
     get untransformedValue (): TreeValue {
-      // console.group('tree.untransformedValue', this.elementStr)
       const { children } = this
       if (children instanceof NodeList) {
         const allTextNodes = [...children].every(node => node.nodeType === Node.TEXT_NODE)
-        if (allTextNodes) {
-          const returned = [...children]
-            .map(child => child.textContent ?? '')
-            .join('')
-          // console.log(returned)
-          // console.groupEnd()
-          return returned
-        }
-        // console.log(children)
-        // console.groupEnd()
+        if (allTextNodes) return [...children]
+          .map(child => child.textContent ?? '')
+          .join('')
         return children
       }
-      if (Array.isArray(children)) {
-        const returned = children.map(({ value }) => value)
-        // console.log(returned)
-        // console.groupEnd()
-        return returned
-      }
-      const returned = Object.keys(children).reduce((record, key) => ({
-        ...record,
-        [key]: children[key]?.value
-      }), {})
-      // console.log(returned)
-      // console.groupEnd()
-      return returned
+      if (Array.isArray(children)) return children.map(({ value }) => value)
+      return Object
+        .keys(children)
+        .reduce((record, key) => ({ ...record, [key]: children[key]?.value }), {})
     }
 
-    getGeneratorFromFunctionName (this: Tree, name: Function): TransformerFunctionGenerator {
+    getGeneratorFromFunctionName (this: Tree, name: FunctionName): TransformerFunctionGenerator {
       /* Cast */
-      if (name === Function.TOSTRING) return toString
-      if (name === Function.TONUMBER) return toNumber
-      if (name === Function.TOBOOLEAN) return toBoolean
-      if (name === Function.TONULL) return toNull
-      if (name === Function.TOHTML) return toHtml
-      if (name === Function.TOREF) {
-        console.log('giving to you the toRef generator', this.elementStr, this)
-        return toRef(this.resolve.bind(this))
-      }
-      if (name === Function.TOARRAY) return toArray
-      if (name === Function.TORECORD) return toRecord
+      if (name === FunctionName.TOSTRING) return toString
+      if (name === FunctionName.TONUMBER) return toNumber
+      if (name === FunctionName.TOBOOLEAN) return toBoolean
+      if (name === FunctionName.TONULL) return toNull
+      if (name === FunctionName.TOHTML) return toHtml
+      if (name === FunctionName.TOREF) return toRef(this.resolve.bind(this))
+      if (name === FunctionName.TOARRAY) return toArray
+      if (name === FunctionName.TORECORD) return toRecord
       
       /* Numbers */
-      if (name === Function.ADD) return add
-      if (name === Function.SUBTRACT) return subtract
-      if (name === Function.MULTIPLY) return multiply
-      if (name === Function.DIVIDE) return divide
-      if (name === Function.POW) return pow
-      if (name === Function.MAX) return max
-      if (name === Function.MIN) return min
-      if (name === Function.CLAMP) return clamp
-      if (name === Function.GREATER) return greater
-      if (name === Function.SMALLER) return smaller
-      if (name === Function.EQUALS) return equals
+      if (name === FunctionName.ADD) return add
+      if (name === FunctionName.SUBTRACT) return subtract
+      if (name === FunctionName.MULTIPLY) return multiply
+      if (name === FunctionName.DIVIDE) return divide
+      if (name === FunctionName.POW) return pow
+      if (name === FunctionName.MAX) return max
+      if (name === FunctionName.MIN) return min
+      if (name === FunctionName.CLAMP) return clamp
+      if (name === FunctionName.GREATER) return greater
+      if (name === FunctionName.SMALLER) return smaller
+      if (name === FunctionName.EQUALS) return equals
 
       /* Strings */
-      if (name === Function.APPEND) return append
-      if (name === Function.PREPEND) return prepend
-      if (name === Function.REPLACE) return replace
-      // if (name === Function.REPLACEWITHREF) return replacewithref
-      // if (name === Function.TRIM) return trim
-      // if (name === Function.SPLIT) return split
+      if (name === FunctionName.APPEND) return append
+      if (name === FunctionName.PREPEND) return prepend
+      if (name === FunctionName.REPLACE) return replace
+      // if (name === FunctionName.REPLACEWITHREF) return replacewithref
+      // if (name === FunctionName.TRIM) return trim
+      // if (name === FunctionName.SPLIT) return split
       
       /* Arrays */
-      // if (name === Function.JOIN) return join
-      // if (name === Function.AT) return at
-      // if (name === Function.MAP) return map
-      // if (name === Function.PUSH) return push
+      // if (name === FunctionName.JOIN) return join
+      // if (name === FunctionName.AT) return at
+      // if (name === FunctionName.MAP) return map
+      // if (name === FunctionName.PUSH) return push
 
       /* Utils */
-      if (name === Function.CLONE) return clone
-      if (name === Function.PRINT) return print
-      // if (name === Function.VARIABLE) return variable
-      // if (name === Function.CONDITION) return condition
-      // if (name === Function.ITERATION) return iteration
+      if (name === FunctionName.CLONE) return clone
+      if (name === FunctionName.PRINT) return print
+      // if (name === FunctionName.VARIABLE) return variable
+      // if (name === FunctionName.CONDITION) return condition
+      // if (name === FunctionName.ITERATION) return iteration
       return () => input => input
     }
 
-    getTransformerFromTypeName (this: Tree, type: Type): Transformer {
-      if (type === Type.STRING) return toString()
-      if (type === Type.NUMBER) return toNumber()
-      if (type === Type.BOOLEAN) return toBoolean()
-      if (type === Type.NULL) return toNull()
-      if (type === Type.HTML) return toHtml()
-      if (type === Type.REF) {
-        console.log('giving to you the toRef function', this.elementStr, this.parent)
-        return toRef(this.resolve.bind(this))()
-      }
-      if (type === Type.ARRAY) return toArray()
-      if (type === Type.RECORD) return toRecord()
-      return input => input
-    }
-
-    getFunctionNodeGenerator (
+    getGeneratorFromFunctionElement (
       this: Tree,
       element: Element
     ): TransformerFunctionGenerator | undefined {
@@ -506,86 +482,123 @@ export namespace Darkdouille {
       return generator
     }
 
-    getFunctionNodeArguments (
-      this: Tree,
-      element: Element,
-    ): (TreeValue | Transformer)[] {
-      const args = [...element.childNodes].reduce((prevArgs, childNode) => {
-        if (childNode.nodeType === Node.TEXT_NODE) {
-          const textContent = childNode.textContent?.trim() ?? ''
-          return textContent?.length > 0 ? [...prevArgs, textContent] : [...prevArgs]
-        }
-        if (childNode.nodeType !== Node.ELEMENT_NODE) return [...prevArgs]
-        if (isValueOrTransformerNode(childNode)) {
-          console.log(this.elementStr, element, childNode, 'is value or transformer node. Context', this)
-          if (childNode.tagName === 'REF') {
-            console.error('!!!!!')
+    getFunctionElementRawArgs (this: Tree, functionElement: Element): Exclude<TreeChildItem, TreeTextChildItem>[] {
+      // [WIP] Giving a pathForResoler here because tree.path
+      // doesnt work for nested functions and transformers.
+      // should find a better way to calculate tree.path later
+      const functionTree = new Tree(functionElement, this, this.path)
+      const functionSortedChildren = functionTree.sortedChildren
+      const withoutTextItems = functionSortedChildren.filter((item): item is Exclude<TreeChildItem, TreeTextChildItem> => item.type !== 'text')
+      return withoutTextItems
+    }
+
+    resolveFunctionRawArgs (this: Tree, ...rawArgs: Exclude<TreeChildItem, TreeTextChildItem>[]): (TreeValue | Transformer)[] {
+      // <function> // Works on inputValue, params inside
+      //   <value> // resolved value is first param
+      //   <function> // resolved function on current inputValue is 2nd param
+      //   <transformer> // resolved transformer on current inputValue is 3rd param
+      // </function>
+      // <transformer>
+      //   <function> // apply resolved function on inputValue
+      //   <value> // set inputValue to this resolved value
+      //   <transformer> // apply resolved transformer on inputValue
+      // </transformer>
+      return rawArgs.reduce<(TreeValue | Transformer)[]>((args, { type, element }) => {
+        const newArgs = [...args]
+        if (type === 'dom') {
+          const lastArgPos = args.length - 1
+          const lastArg = args[lastArgPos]
+          const fragment = document.createDocumentFragment()
+          if (lastArg instanceof NodeList) {
+            fragment.append(...lastArg, element)
+            newArgs[lastArgPos] = fragment.childNodes
+          } else {
+            fragment.append(element)
+            newArgs.push(fragment.childNodes)
           }
-          const treeValue = new Tree(childNode, this.parent).value
-          return [...prevArgs, treeValue]
+          return newArgs
         }
-        if (isFunctionNode(childNode)) { 
-          console.log(this.elementStr, element, childNode, 'is function node. Context:', this)
-          const generator = this.getFunctionNodeGenerator(childNode)
-          
-          if (generator === undefined) return [...prevArgs]
-          const args = this.getFunctionNodeArguments(childNode)
-          const transformer = generator(...args)
-          return [...prevArgs, transformer]
+        if (type === 'function') {
+          const generator = this.getGeneratorFromFunctionElement(element)
+          if (generator === undefined) return newArgs
+          const rawArgs = this.getFunctionElementRawArgs(element)
+          const args = this.resolveFunctionRawArgs(...rawArgs)
+          newArgs.push(generator(...args))
+          return newArgs
         }
-        const childNodeWrapper = document.createElement('data')
-        childNodeWrapper.append(cloneNode(childNode, true))
-        return [...prevArgs, childNodeWrapper.childNodes]
-      }, [] as (TreeValue | Transformer)[])
-      return args
+        if (type === 'transformer') {
+          const transformerRawItems = this.getFunctionElementRawArgs(element)
+          const transformerResolvedItems = this.resolveFunctionRawArgs(...transformerRawItems)
+          newArgs.push(...transformerResolvedItems)
+          return newArgs
+        }
+        if (type === 'named' || type === 'unnamed') {
+          const elementTree = new Tree(element, this, this.path)
+          newArgs.push(elementTree.value)
+        }
+        return newArgs
+      }, [])
+    }
+
+    getTransformerFromTypeName (this: Tree, type: Type): Transformer {
+      if (type === Type.STRING) return toString()
+      if (type === Type.NUMBER) return toNumber()
+      if (type === Type.BOOLEAN) return toBoolean()
+      if (type === Type.NULL) return toNull()
+      if (type === Type.HTML) return toHtml()
+      if (type === Type.REF) return toRef(this.resolve.bind(this))()
+      if (type === Type.ARRAY) return toArray()
+      if (type === Type.RECORD) return toRecord()
+      return input => input
     }
 
     get masterTransformer (): Transformer {
-      console.group('tree.masterTransformer - factory', this.elementStr)
-      const { element, sortedChildren } = this
-      const transformerChildItems = sortedChildren.filter(({ type }) => type === 'transformer') as Array<TreeTransformerChildItem>
-      const transformerBlock = transformerChildItems.reduce((block, { element }) => {
-        const children = cloneNode(element, true).childNodes
-        block.append(...children)
-        return block
-      }, document.createElement('transformer'))
-      const masterTransformer = (input: TreeValue) => {
-        console.group('tree.masterTransformer', this.elementStr)
-        const transformersAndValues = this.getFunctionNodeArguments(transformerBlock)
-        const transformer = (input: TreeValue) => transformersAndValues.reduce((
-          output: TreeValue,
-          transformerOrValue) => {
-          if (typeof transformerOrValue === 'function') {
-            const transformed = transformerOrValue(output)
-            console.log('input', output)
-            console.log('transformed', transformed)
-            return transformed
+      const { sortedChildren } = this
+      const transformerOrFunctionChildItems = sortedChildren.filter(({ type }) => {
+        return ['transformer', 'function'].includes(type)
+      }) as Array<TreeTransformerChildItem | TreeFunctionChildItem>
+      // Inner transformations
+      const innerTransformer = (input: TreeValue) => {
+        return transformerOrFunctionChildItems.reduce<TreeValue>((inputValue, { type, element }) => {
+          if (type === 'function') {
+            const rawArgs = this.getFunctionElementRawArgs(element)
+            const args = this.resolveFunctionRawArgs(...rawArgs)
+            const generator = this.getGeneratorFromFunctionElement(element)
+            if (generator === undefined) return inputValue
+            const transformer = generator(...args)
+            return transformer(inputValue)
           }
-          return transformerOrValue
+          const transformerRawItems = this.getFunctionElementRawArgs(element)
+          const transformerResolvedItems = this.resolveFunctionRawArgs(...transformerRawItems)
+          return transformerResolvedItems.reduce<TreeValue>((inputValue, valueOrTransformer) => {
+            if (typeof valueOrTransformer === 'function') return valueOrTransformer(inputValue)
+            return valueOrTransformer
+          }, inputValue)
         }, input)
-        const transformed = transformer(input)
+      }
+      // Type transformations
+      const typeTransformer = (input: TreeValue) => {
+        const { element } = this
         const everyChildIsText = [...element.childNodes].every(node => node.nodeType === Node.TEXT_NODE)
         let type = getTypeFromElement(element)
         if (type === null && everyChildIsText) { type = Type.STRING }
         if (type !== null) {
           const typeTransformer = this.getTransformerFromTypeName(type)
-          console.log('type transformer', this.getTransformerFromTypeName(type))
-          console.groupEnd()
-          if (typeTransformer !== undefined) return typeTransformer(transformed)
+          if (typeTransformer !== undefined) return typeTransformer(input)
         }
-        console.groupEnd()
-        return transformed
+        return input
       }
-      console.groupEnd()
-      return masterTransformer
+      // Returned master transformer
+      return (input: TreeValue): TreeValue => {
+        const innerTransformed = innerTransformer(input)
+        const typed = typeTransformer(innerTransformed)
+        return typed
+      }
     }
 
     get value (): TreeValue {
-      console.group('tree.value', this.elementStr)
       const { untransformedValue, masterTransformer } = this
       const returned = masterTransformer(untransformedValue)
-      console.log('value:', returned)
-      console.groupEnd()
       return returned
     }
   }
