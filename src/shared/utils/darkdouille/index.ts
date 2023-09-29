@@ -23,12 +23,11 @@ import equals from './transformers/equals'
 import append from './transformers/append'
 import prepend from './transformers/prepend'
 import replace from './transformers/replace'
-// import replaceWithRef from './transformers/replaceWithRef'
-// import trim from './transformers/trim'
-// import split from './transformers/split'
+import trim from './transformers/trim'
+import split from './transformers/split'
 /* Array transformers */
-// import join from './transformers/join'
-// import at from './transformers/at'
+import join from './transformers/join'
+import at from './transformers/at'
 // import map from './transformers/map'
 // import push from './transformers/push'
 /* Utility transformers */
@@ -112,7 +111,6 @@ export namespace Darkdouille {
     APPEND = 'append',
     PREPEND = 'prepend',
     REPLACE = 'replace',
-    REPLACEWITHREF = 'replacewithref',
     TRIM = 'trim',
     SPLIT = 'split',
     /* Array */
@@ -454,13 +452,12 @@ export namespace Darkdouille {
       if (name === FunctionName.APPEND) return append
       if (name === FunctionName.PREPEND) return prepend
       if (name === FunctionName.REPLACE) return replace
-      // if (name === FunctionName.REPLACEWITHREF) return replacewithref
-      // if (name === FunctionName.TRIM) return trim
-      // if (name === FunctionName.SPLIT) return split
+      if (name === FunctionName.TRIM) return trim
+      if (name === FunctionName.SPLIT) return split
       
       /* Arrays */
-      // if (name === FunctionName.JOIN) return join
-      // if (name === FunctionName.AT) return at
+      if (name === FunctionName.JOIN) return join
+      if (name === FunctionName.AT) return at
       // if (name === FunctionName.MAP) return map
       // if (name === FunctionName.PUSH) return push
 
@@ -483,15 +480,21 @@ export namespace Darkdouille {
     }
 
     getFunctionElementRawArgs (this: Tree, functionElement: Element): Exclude<TreeChildItem, TreeTextChildItem>[] {
-      // [WIP] Giving a pathForResoler here because tree.path
+      // [WIP] Giving a pathForResoler to new Tree here because tree.path
       // doesnt work for nested functions and transformers.
-      // should find a better way to calculate tree.path later
+      // Should find a better way to calculate tree.path later.
+      // Path is needed to spot circular reference patterns in 
+      // toRef transformer.
+      // Maybe if this.parent cannot find this in its children,
+      // append <transformer> in path ? /ROOT
       const functionTree = new Tree(functionElement, this, this.path)
       const functionSortedChildren = functionTree.sortedChildren
       const withoutTextItems = functionSortedChildren.filter((item): item is Exclude<TreeChildItem, TreeTextChildItem> => item.type !== 'text')
       return withoutTextItems
     }
 
+    // [WIP] Maybe this should only return TreeValue[], so that generators expect ...args: TreeValue[] as parameters ?
+    // [EDIT] probably not because map needs to resolve args on each array item and not on the array itself
     resolveFunctionRawArgs (this: Tree, ...rawArgs: Exclude<TreeChildItem, TreeTextChildItem>[]): (TreeValue | Transformer)[] {
       // <function> // Works on inputValue, params inside
       //   <value> // resolved value is first param
