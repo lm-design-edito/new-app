@@ -1,6 +1,4 @@
 import { Darkdouille } from '../..'
-import { resolveArgs } from '../_resolveArgs'
-import toNumber from '../toNumber'
 import toString from '../toString'
 
 const map: Darkdouille.TransformerFunctionGenerator<Darkdouille.TreeValue> = (...args) => {
@@ -27,40 +25,48 @@ const map: Darkdouille.TransformerFunctionGenerator<Darkdouille.TreeValue> = (..
       })
     }
     if (isNodeList) {
-      const nodes = [...inputValue].map(node => {
+      const mappedValues = [...inputValue].map(node => {
         const fragment = document.createDocumentFragment()
         fragment.appendChild(node)
+        const nodeList = fragment.childNodes
         return args.reduce<Darkdouille.TreeValue>((mapped, arg) => {
           if (typeof arg === 'function') return arg(mapped)
           return arg
-        }, fragment.childNodes)
-      }).flat()
+        }, nodeList)
+      })
+      const mappedNodes = mappedValues.map(value => {
+        if (value instanceof NodeList || Array.isArray(value)) {
+          const nodeListOrArray = value
+          const emptyTextNode = document.createTextNode('')
+          if (nodeListOrArray.length === 0) return emptyTextNode
+          else if (nodeListOrArray.length === 1) {
+            const nodeOrVal = nodeListOrArray[0]
+            if (nodeOrVal === undefined) return emptyTextNode
+            if (nodeOrVal instanceof Node) return nodeOrVal
+            const strVal = toString()(nodeOrVal)
+            const textNode = document.createTextNode(strVal)
+            return textNode
+          } else {
+            const div = document.createElement('div')
+            nodeListOrArray.forEach(elt => {
+              if (elt instanceof Node) div.append(elt)
+              else {
+                const strElt = toString()(elt)
+                const textNode = document.createTextNode(strElt)
+                div.append(textNode)
+              }
+            })
+            return div
+          }
+        }
+        const strValue = toString()(value)
+        const textNode = document.createTextNode(strValue)
+        return textNode
+      })
       const fragment = document.createDocumentFragment()
-      
+      fragment.replaceChildren(...mappedNodes)
+      return fragment.childNodes
     }
-    // return arrInput.map(toMap => {
-    //   const mapped = toMap
-    //   if (isString) return toString()(mapped)
-      
-    // })
-    // const resolvedNbrArgs = resolveArgs(inputValue, ...args)
-    //   .map(arg => toNumber()(arg))
-    // if (resolvedNbrArgs.length === 0) return inputValue
-    // const nbrArgsAsArrayPositions = resolvedNbrArgs.map(nbrArg => {
-    //   if (nbrArg < 0) return inputValue.length + nbrArg
-    //   return nbrArg
-    // })
-    // const retrieved = nbrArgsAsArrayPositions
-    //   .map(arrPosition => inputValue[arrPosition])
-    //   .map(elt => {
-    //     if (elt instanceof Node) {
-    //       const fragment = document.createDocumentFragment()
-    //       fragment.append(elt)
-    //       return fragment.childNodes
-    //     }
-    //     return elt
-    //   })
-    // return retrieved.length < 2 ? retrieved[0] : retrieved
   }
 }
 
