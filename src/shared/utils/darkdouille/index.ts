@@ -28,17 +28,17 @@ import split from './transformers/split'
 /* Array transformers */
 import join from './transformers/join'
 import at from './transformers/at'
-// import map from './transformers/map'
-// import push from './transformers/push'
+import map from './transformers/map'
+import push from './transformers/push'
 /* Utility transformers */
+import that from './transformers/this'
 import clone from './transformers/clone'
 import print from './transformers/print'
-// import variable from './transformers/variable'
-// import condition from './transformers/condition'
-// import iteration from './transformers/iteration'
+import { setVar, getVar } from './transformers/variables'
+import cond from './transformers/cond'
+import loop from './transformers/loop'
 
 export namespace Darkdouille {
-
   type TreeTextChildItem = { type: 'text', node: Node }
   type TreeDomChildItem = { type: 'dom', element: Element }
   type TreeNamedChildItem = { type: 'named', element: Element }
@@ -51,7 +51,6 @@ export namespace Darkdouille {
   export type TreeResolver = (path: string) => Tree | undefined
   export type Transformer<T extends TreeValue = TreeValue> = (input: TreeValue) => T
   export type TransformerFunctionGenerator<T extends TreeValue = TreeValue> = (...args: (TreeValue | Transformer)[]) => Transformer<T>
-
 
   /* ========== ACTIONS ========== */
 
@@ -119,12 +118,13 @@ export namespace Darkdouille {
     MAP = 'map',
     PUSH = 'push',
     /* Utility */
+    THIS = 'this',
     CLONE = 'clone',
     PRINT = 'print',
-    VARIABLE = 'variable',
-    CONDITION = 'condition',
-    ITERATION = 'iteration',
-    
+    SET = 'set',
+    GET = 'get',
+    COND = 'cond',
+    LOOP = 'loop'
   }
 
   const Functions = Object.values(FunctionName)
@@ -458,15 +458,17 @@ export namespace Darkdouille {
       /* Arrays */
       if (name === FunctionName.JOIN) return join
       if (name === FunctionName.AT) return at
-      // if (name === FunctionName.MAP) return map
-      // if (name === FunctionName.PUSH) return push
+      if (name === FunctionName.MAP) return map
+      if (name === FunctionName.PUSH) return push
 
       /* Utils */
+      if (name === FunctionName.THIS) return that
       if (name === FunctionName.CLONE) return clone
       if (name === FunctionName.PRINT) return print
-      // if (name === FunctionName.VARIABLE) return variable
-      // if (name === FunctionName.CONDITION) return condition
-      // if (name === FunctionName.ITERATION) return iteration
+      if (name === FunctionName.SET) return setVar(this.resolve.bind(this))
+      if (name === FunctionName.GET) return getVar(this.resolve.bind(this))
+      if (name === FunctionName.COND) return cond
+      if (name === FunctionName.LOOP) return loop
       return () => input => input
     }
 
@@ -489,6 +491,7 @@ export namespace Darkdouille {
       // append <transformer> in path ? /ROOT
       const functionTree = new Tree(functionElement, this, this.path)
       const functionSortedChildren = functionTree.sortedChildren
+      // [WIP] Or maybe just without empty text items ?
       const withoutTextItems = functionSortedChildren.filter((item): item is Exclude<TreeChildItem, TreeTextChildItem> => item.type !== 'text')
       return withoutTextItems
     }
