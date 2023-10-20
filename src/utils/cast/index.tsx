@@ -48,7 +48,7 @@ export function toRecord (value: unknown) {
 
 export function toVNode (value: unknown): VNode {
   if (typeof value === 'string') return <>{value}</>
-  else if (value instanceof HTMLElement) return nodesToVNodes(value)[0]
+  else if (value instanceof HTMLElement) return nodesToVNodes(value)[0] ?? <></>
   else if (isValidElement(value)) return value
   else if (Array.isArray(value)) {
     const vnodesArr = value.map(item => toVNode(item))

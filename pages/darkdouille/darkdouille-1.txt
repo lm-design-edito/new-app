@@ -1,0 +1,16 @@
+<data class="CONFIG" action="append">
+  <data>
+    <data class="name">name</data>
+    <data class="value">test</data>
+  </data>
+</data>
+<data class="SLOTS">
+  <data>
+    <string class="name">my-scrllgngn</string>
+    <string class="selector">.my-scrllgngn</string>
+    <data class="options">
+      <number class="nbr">7</number>
+      <boolean class="bln">false</boolean>
+    </data>
+  </data>
+</data>

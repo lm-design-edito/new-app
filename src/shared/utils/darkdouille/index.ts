@@ -34,7 +34,7 @@ import push from './transformers/push'
 import that from './transformers/this'
 import clone from './transformers/clone'
 import print from './transformers/print'
-import { setVar, getVar } from './transformers/variables'
+import { set, get } from './transformers/variables'
 import cond from './transformers/cond'
 import loop from './transformers/loop'
 
@@ -59,8 +59,6 @@ export namespace Darkdouille {
     PREPEND = 'prepend',
     OVERWRITE = 'overwrite'
   }
-  
-  const Actions = Object.values(Action)
   
   /* ========== TYPES ========== */
 
@@ -181,12 +179,6 @@ export namespace Darkdouille {
     return type
   }
 
-  function getFunctionNameFromElement (element: Element): FunctionName | null {
-    const tag = element.tagName.toLowerCase() as FunctionName
-    if (isFunctionName(tag)) return tag
-    return null
-  }
-
   function cloneNode<T extends Node> (node: T, deep?: boolean): T {
     return node.cloneNode(deep) as T
   }
@@ -261,6 +253,15 @@ export namespace Darkdouille {
       rootElement.append(...darkdouilleNodes)
     })
     return rootElement
+  }
+
+  /* ========== VALUE TYPE CHECKERS ========== */
+
+  export function valueIsRecord (value: TreeValue): value is { [key: string]: TreeValue } {
+    return typeof value === 'object'
+      && !Array.isArray(value)
+      && !(value instanceof NodeList)
+      && value !== null
   }
 
   /* ========== TREE ========== */
@@ -465,8 +466,8 @@ export namespace Darkdouille {
       if (name === FunctionName.THIS) return that
       if (name === FunctionName.CLONE) return clone
       if (name === FunctionName.PRINT) return print
-      if (name === FunctionName.SET) return setVar(this.resolve.bind(this))
-      if (name === FunctionName.GET) return getVar(this.resolve.bind(this))
+      if (name === FunctionName.SET) return set(this.resolve.bind(this))
+      if (name === FunctionName.GET) return get(this.resolve.bind(this))
       if (name === FunctionName.COND) return cond
       if (name === FunctionName.LOOP) return loop
       return () => input => input

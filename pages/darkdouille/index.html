@@ -6,26 +6,91 @@
   <body class="lm-page">
 
     <!-- Application -->
-    <style>.lm-page-config, .lm-app-config { display: none; }</style>
+    <style>.lm-data-source { display: none; }</style>
     <script src="/shared/index.js" type="module"></script>
 
     <!-- Darkdouille -->
-    <data class="lm-page-config">
-      4
-      <transformer>
-        <tonumber></tonumber>
-        <set>
-          <string>iterations</string>
-          <add><number>-1</number></add>
-        </set>
-        <set>
-          <string>lol</string>
-        </set>
-        <loop>
-          <get><string>iterations</string></get>
-          <add><this></this></add>
-        </loop>
-      </transformer>
+    <data class="lm-data-source">
+      <data class="CONFIG">
+        <data>
+          <data class="name">hideHeader</data>
+          <boolean class="value">true</boolean>
+        </data>
+        <data>
+          <data class="name">hideHeader</data>
+          <boolean class="value">false</boolean>
+        </data>
+        <data>
+          <data class="name">hideHeader</data>
+          <boolean class="value">true</boolean>
+        </data>
+        <data>
+          <data class="name">tracking</data>
+          <data class="value">
+            <string>start-scroll</string>
+            <string>half-reached</string>
+            <string>end-reached</string>
+          </data>
+        </data>
+        <data>
+          <data class="name">css</data>
+          <data class="value">
+            <style>
+              body { background-color: red; }
+            </style>
+          </data>
+        </data>
+        <data>
+          <data class="name">scale</data>
+          <data class="value">
+            <string class="name">my-scale</string>
+            <string class="root">:root</string>
+            <data class="bounds">
+              <number>320</number>
+              <number>1440</number>
+            </data>
+            <number class="breakpoints">8</number>
+            <data class="low">
+              <number>12</number>
+              <number>13</number>
+            </data>
+            <data class="high">
+              <number>44</number>
+              <number>96</number>
+            </data>
+            <number class="levels">32</number>
+          </data>
+        </data>
+        <data>
+          <data class="name">tracking</data>
+          <data class="value">
+            <!-- <string>start-scroll</string>
+            <string>half-reached</string>
+            <string>end-reached</string> -->
+          </data>
+        </data>
+        <data>
+          <data class="name">source</data>
+          <string class="value">http://localhost:3000/pages/darkdouille/darkdouille-1.txt</string>
+        </data>
+        <data>
+          <data class="name">source</data>
+          <string class="value">http://localhost:3000/pages/darkdouille/darkdouille-1.txtt</string>
+        </data>
+        <data>
+          <data class="name">someName</data>
+          <boolean class="value">true</boolean>
+        </data>
+        <data>
+          <data class="name">someName</data>
+          <boolean class="value">true</boolean>
+        </data>
+        <data>
+          <data class="name">publishedOn</data>
+          <string class="value">2023-10-12</string>
+        </data>
+      </data>
     </data>
+    <div style="height: 200vh;"></div>
   </body>
 </html>

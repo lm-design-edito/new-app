@@ -36,6 +36,8 @@ type ConsoleMethodsParams = {
   warn: Parameters<typeof console.warn>
 }
 
+const logsTimeOrigin = new Date()
+
 class Log<T extends ConsoleMethod = ConsoleMethod> {
   type: T
   data: ConsoleMethodsParams[T]
@@ -46,6 +48,30 @@ class Log<T extends ConsoleMethod = ConsoleMethod> {
     this.data = data
     this.time = new Date()
     this.stack = (new Error().stack ?? '')
+  }
+
+  get displayTime () {
+    return this.time.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      weekday: 'short',
+      hour: 'numeric',
+      minute: 'numeric',
+      second: 'numeric'
+    }) + `:${this.time.getMilliseconds()}`
+  }
+
+  get elapsedTimeMs () {
+    return (this.time.getTime() - logsTimeOrigin.getTime()) / 1000
+  }
+
+  get displayStack () {
+    return this.stack
+      .split('\n')
+      .map(line => line.trim())
+      .slice(4)
+      .join('\n')
   }
 }
 
@@ -71,6 +97,7 @@ export default class Logger {
     this.warn = this.warn.bind(this)
     this.setLog = this.setLog.bind(this)
     this.print = this.print.bind(this)
+    this.printThreads = this.printThreads.bind(this)
   }
 
   assert         (thread: string = '', ...args: ConsoleMethodsParams['assert'])         { this.setLog(thread, 'assert', args) }
@@ -102,25 +129,29 @@ export default class Logger {
     return this
   }
 
-  // [WIP] this is giga dirty
-  // [WIP] chronological print
-  print () {
-    this.#threads.forEach((logs, threadName) => {
-      threadName = threadName !== '' ? threadName : 'GENERAL'
-      console.log(`%c${threadName}`, 'font-weight: 800;');
-      [...logs].sort((a, b) => (a.time.getTime() - b.time.getTime())).forEach(log => {
-        const displayTime = log.time.toLocaleDateString('en-US', {
-          year: 'numeric',
-          month: 'short',
-          day: 'numeric',
-          weekday: 'short',
-          hour: 'numeric',
-          minute: 'numeric',
-          second: 'numeric'
-        }) + `:${log.time.getMilliseconds()}`
-        console.log();
-        const displayStack = log.stack.split('\n').map(line => line.trim()).slice(4).join('\n')
-        console.log(`%c${displayTime}\n%c${displayStack}`, 'color: grey; font-size: inherit', 'color: grey; font-size: inherit');
+  print (this: Logger, threadFilter?: string) {
+    const allLogs = [...this.#threads.entries()]
+      .map(([threadName, logs]) => logs.map(log => ({ threadName, log })))
+      .flat()
+      .sort((eltA, eltB) => (eltA.log.time.getTime() - eltB.log.time.getTime()))
+      .filter(({ threadName }) => {
+        if (threadFilter === undefined) return true
+        return threadName === threadFilter
+      })
+    allLogs.forEach(({ threadName, log }) => {
+      console.log(`%c${threadName}`, 'font-weight: 800; color: white; background: black; padding: 4px;', `+${log.elapsedTimeMs}s –`, log.displayTime);
+      console.log(`%c${log.displayStack}`, 'color: grey; font-size: inherit;')
+      ;(console[log.type] as any)(...log.data)
+      console.log('')
+    })
+  }
+
+  printThreads (this:Logger) {
+    [...this.#threads.entries()].forEach(([threadName, logs]) => {
+      console.log(`%c${threadName}`, 'font-weight: 800; color: white; background: black; padding: 4px;');
+      logs.forEach(log => {
+        console.log(`+${log.elapsedTimeMs}s –`, log.displayTime)
+        console.log(`%c${log.displayStack}`, 'color: grey; font-size: inherit;')
         ;(console[log.type] as any)(...log.data)
         console.log('')
       })
