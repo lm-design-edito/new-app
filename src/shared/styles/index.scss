@@ -4,8 +4,11 @@
  *
  * * * * * * * * * * * * * * */
 
+/* Legacy */
 .lm-page-config,
-.lm-app-config {
+.lm-app-config,
+/* Current */
+.lm-data-source {
   display: none;
 }
 

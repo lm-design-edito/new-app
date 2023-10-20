@@ -202,7 +202,7 @@ type RenderOptions = {
 export type Renderer = (appOptions: Omit<RenderOptions, 'name'>) => void
 
 async function loadRenderer (name: Names) {
-  const isProd = process.env.NODE_ENV !== 'production'
+  const isProd = appConfig.env !== 'production'
   let renderer: Renderer|null = null
   // Dev only
   if (name === Names.ANYCOMP_FOR_DEV_ONLY && isProd) { renderer = (await import('../../../apps/anycomp-for-dev')).default }

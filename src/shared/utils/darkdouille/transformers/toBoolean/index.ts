@@ -4,7 +4,8 @@ import { Darkdouille } from '../..'
 const toBoolean: Darkdouille.TransformerFunctionGenerator<boolean> = () => {
   return (inputValue): boolean => {
     if (inputValue === '0') return false
-    return isFalsy(inputValue)
+    if (typeof inputValue === 'string' && inputValue.trim().toLowerCase() === 'false') return false
+    return !isFalsy(inputValue)
   }
 }
 

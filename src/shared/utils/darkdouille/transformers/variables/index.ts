@@ -13,7 +13,7 @@ import { resolveArgs } from '../_resolveArgs'
 type VariablesList = Map<Darkdouille.TreeValue, Darkdouille.TreeValue>
 const registry = new Map<string, VariablesList>()
 
-const setVar = (resolve: Darkdouille.TreeResolver): Darkdouille.TransformerFunctionGenerator => (...args) => {
+const set = (resolve: Darkdouille.TreeResolver): Darkdouille.TransformerFunctionGenerator => (...args) => {
   return inputValue => {
     const path = resolve('./')?.pathForResolver
     if (path === undefined) return inputValue
@@ -27,7 +27,7 @@ const setVar = (resolve: Darkdouille.TreeResolver): Darkdouille.TransformerFunct
   }
 }
 
-const getVar = (resolve: Darkdouille.TreeResolver): Darkdouille.TransformerFunctionGenerator => (...args) => {
+const get = (resolve: Darkdouille.TreeResolver): Darkdouille.TransformerFunctionGenerator => (...args) => {
   return inputValue => {
     const path = resolve('./')?.pathForResolver
     if (path === undefined) return inputValue
@@ -40,4 +40,4 @@ const getVar = (resolve: Darkdouille.TreeResolver): Darkdouille.TransformerFunct
   }
 }
 
-export { setVar, getVar }
+export { set, get }
