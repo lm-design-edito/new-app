@@ -205,31 +205,6 @@ async function processStyles () {
   return scssFiles
 }
 
-async function listApps () {
-  const { readdir, lstat, access } = fs
-  const rawList = await readdir(config.SRC_APPS)
-  const list = (await Promise.all(rawList.map(async name => {
-    const path = join(config.SRC_APPS, name)
-    const stats = await lstat(path)
-    const isDirectory = stats.isDirectory()
-    if (!isDirectory) return false
-    try {
-      await access(join(path, 'index.tsx'))
-      return join(path, 'index.tsx')
-    } catch (err) {
-      return false
-    }
-  }))).filter((path): path is string => path !== false)
-  return list
-}
-
-async function listLibs () {
-  const { readFile } = fs
-  const packageJson = await readFile(config.PACKAGEJSON, { encoding: 'utf-8' })
-  const { dependencies } = JSON.parse(packageJson)
-  return dependencies
-}
-
 async function processTypeCheck () {
   return new Promise((resolve, reject) => {
     exec(`tsc -p ${config.SRC_TSCONFIG} --noEmit`, (err, stdout, stderr) => {
@@ -243,31 +218,8 @@ async function processTypeCheck () {
 }
 
 async function processScripts () {
-  // [WIP] removed the separate chunks for apps
-  // const appsEntryPoints: { [key: string]: string } = {}
-  // const appsList = await listApps()
-  // appsList.forEach(path => {
-  //   const appName = path.split('/').at(-2)
-  //   appsEntryPoints[`apps/${appName}/index`] = path
-  // })
-  // const libsEntryPoints: { [key: string]: string } = {}
-  // const libsObj = await listLibs()
-  // const libsList = Object.keys(libsObj)
-  // libsList.forEach(libName => {
-  //   libsEntryPoints[`lib/${libName}.[hash]`] = libName
-  // })
-  try {
-    // const built = await build(bundleOptions({
-    //   ...appsEntryPoints,
-    //   ...libsEntryPoints
-    // }))
-    const built = await build(bundleOptions({
-      // ...libsEntryPoints
-    }))
-    return built
-  } catch (err) {
-    console.log(chalk.red.bold(err))
-  }
+  try { return await build(bundleOptions({})) }
+  catch (err) { console.log(chalk.red.bold(err)) }
 }
 
 async function copyTypeCheckAndBundle (pathsToBuild: {

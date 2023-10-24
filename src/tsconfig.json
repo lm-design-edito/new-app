@@ -20,6 +20,7 @@
     ],
     "baseUrl": "./",
     "paths": {
+      "~/apps": ["apps/index.tsx"],
       "~/apps/*": ["apps/*"],
       "~/components/*": ["components/*"],
       "~/shared/*": ["shared/utils/*"],

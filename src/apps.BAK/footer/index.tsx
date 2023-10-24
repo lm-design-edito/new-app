@@ -1,6 +1,6 @@
 import { render } from 'preact'
-import { Options, Renderer } from '~/shared/lm-page-apps'
-import { optionsToProps as optionsToThumbnailProps } from '~/apps/thumbnail'
+import { Options, Renderer } from '~/shared/page-apps/index.BAK'
+import { optionsToProps as optionsToThumbnailProps } from 'apps.BAK/thumbnail'
 import { Props as ThumbnailProps } from '~/components/Thumbnail'
 import Footer, { Props } from '~/components/Footer'
 import { toNumber, toString, toVNode } from '~/utils/cast'

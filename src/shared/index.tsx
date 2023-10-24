@@ -1,10 +1,12 @@
-import { expose, GlobalKey } from '~/shared/lm-page-globals'
-import { PageConfig } from '~/shared/lm-page-config'
+import { render as preactRender } from 'preact'
+import { expose, GlobalKey } from '~/shared/page-globals'
+import { PageConfig } from '~/shared/page-config'
+import renderLmHtml from '~/shared/lm-html'
+import { Darkdouille } from '~/shared/darkdouille'
 import Logger from '~/utils/silent-log'
-import appConfig from './config'
-import { Darkdouille } from './utils/darkdouille'
-import toString from './utils/darkdouille/transformers/toString'
 import isArrayOf from '~/utils/is-array-of'
+import selectorToElement from '~/utils/selector-to-element'
+import appConfig from './config'
 
 /* * * * * * * * * * * * * * * * * * * * * *
  * SILENT LOGGER
@@ -30,7 +32,7 @@ export async function initPage () {
   document.body.append(...lmPageStylesheets.map(node => node.cloneNode()))
   lmPageStylesheets.forEach(stylesheetNode => stylesheetNode.remove())
 
-  // Load styles (dont await)
+  // Load styles (dont await) [WIP] log when loaded ?
   const makeLink = (href: string, rel: string = 'stylesheet') => {
     const link = document.createElement('link')
     link.setAttribute('rel', rel)
@@ -60,7 +62,7 @@ export async function initPage () {
     const isRecord = Darkdouille.valueIsRecord(instruction)
     if (!isRecord) return { name: '', value: undefined }
     const { name, value } = instruction
-    const strName = toString()(name)
+    const strName = Darkdouille.transformers.toString()(name)
     return Object
       .values(PageConfig.InlineOnlyInstructionName)
       .includes(strName as any)
@@ -124,55 +126,75 @@ export async function initPage () {
   PageConfig.apply(pageFullDataRawConfig, logger)
 
   /* RENDER APPS * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
-  enum AppName {
-    ANYCOMP_FOR_DEV_ONLY = 'anycomp-for-dev',
-    ARTICLE = 'article',
-    AUDIOQUOTE = 'audioquote',
-    CAROUSEL = 'carousel',
-    EVENT_DISPATCHER = 'event-dispatcher',
-    FOOTER = 'footer',
-    HEADER = 'header',
-    SCRLLGNGN = 'scrllgngn',
-    SLIDESHOW = 'slideshow',
-    THUMBNAIL = 'thumbnail'
-  }
   
   // Render in slots
-  const slotsIsArray = Array.isArray(pageFullDataSlots)
   type SlotData = {
-    app: AppName
     selector: string | [string, string, string] // [target, position, reference]
-    options: Darkdouille.TreeValue
+    content: NodeListOf<Node>
   }
-  if (slotsIsArray) {
-    const elementsRenderersAndOptions = pageFullDataSlots
-      .filter((value): value is SlotData => {
-        if (!Darkdouille.valueIsRecord(value)) return false
-        const { app, selector } = value
-        if (typeof app !== 'string') return false
-        if (!Object.values(AppName).includes(app as any)) return false
-        const selectorIsString = typeof selector === 'string'
-        const selectorIsArrayOfStrings = isArrayOf(selector, String) && selector.length === 3
-        if (!selectorIsString && !selectorIsArrayOfStrings) return false
-        return true
+  const pageSlotsIsArray = Array.isArray(pageFullDataSlots)
+  const pageSlotsRenderedMap = new Set<Element>()
+  if (pageSlotsIsArray) {
+    // Validate data
+    const validSlots = pageFullDataSlots.filter((value): value is SlotData => {
+      if (!Darkdouille.valueIsRecord(value)) return false
+      const { selector, content } = value
+      const selectorIsString = typeof selector === 'string'
+      const selectorIsArrayOfStrings = isArrayOf(selector, String) && selector.length === 3
+      if (!selectorIsString && !selectorIsArrayOfStrings) return false
+      const contentIsNodeList = content instanceof NodeList
+      const contentIsNodeListOfNodes = contentIsNodeList && isArrayOf([...content], Node)
+      if (!contentIsNodeListOfNodes) return false
+      return true
+    })
+    // Select/create render targets
+    const withTargets = validSlots.map(slotData => {
+      const { selector } = slotData
+      if (typeof selector === 'string') {
+        const targets = document.querySelectorAll(selector)
+        return { ...slotData, targets: [...targets] }
+      }
+      const [actualSelector, position, reference] = selector
+      const actualReferences = document.querySelectorAll(reference)
+      const targets = [...actualReferences].map(actualRef => {
+        const target = selectorToElement(actualSelector)
+        if (position === 'after') {
+          if (actualRef.nextSibling !== null) actualRef.parentNode?.insertBefore(target, target.nextSibling)
+          else actualRef.parentNode?.appendChild(target)
+        } else if (position === 'before') {
+          actualRef.parentNode?.insertBefore(actualRef, target)
+        } else if (position.replace(/(-|\s)/igm, '') === 'startof') {
+          if (actualRef.firstChild !== null) actualRef.insertBefore(target, actualRef.firstChild)
+          else actualRef.appendChild(target)
+        } else if (position.replace(/(-|\s)/igm, 'endof')) {
+          actualRef.appendChild(target)
+        }
+        return target
       })
-      .map(({ app, selector, options }) => {
-        
-        /* {
-          elements: HTMLElement[]
-          renderer: Renderer
-          options: Darkdouille.TreeValue
-        } */
+      return { ...slotData, targets }
+    })
+    // Render in targets
+    const renderedPromises = withTargets
+      .map(async slotData => {
+        return await Promise.all(slotData.targets.map(async target => {
+          if (pageSlotsRenderedMap.has(target)) return {
+            ...slotData,
+            error: 'Something has already been rendered here.' as string,
+          }
+          const clonedContent = [...slotData.content].map(node => node.cloneNode(true))
+          const renderedContent = await Promise.all(clonedContent.map(node => renderLmHtml(node, logger)))
+          target.innerHTML = ''
+          preactRender(<>{renderedContent}</>, target)
+          pageSlotsRenderedMap.add(target)
+          return {
+            ...slotData,
+            content: clonedContent,
+            rendered: renderedContent
+          }
+        }))
       })
-    console.log(pageFullDataSlots)
+      .flat()
+    const rendered = await Promise.all(renderedPromises)
+    logger.log('Render', rendered)
   }
-
-  // logger.log('page-config/inline-instructions', inlineConfigInstructions.getAll().map(ins => `${ins.name}: ${ins.value}`).join('\n'))
-  // logger.log('page-config/inline-config', inlinePageConfig)
-
-  // Read inline config
-  // const inlineConfigInstructions = getInlineConfigInstructrions()
-  // const inlinePageConfig = inlineConfigInstructions.toConfig()
-  
 }

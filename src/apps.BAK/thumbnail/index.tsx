@@ -1,5 +1,5 @@
 import { render } from 'preact'
-import { Options, Renderer } from '~/shared/lm-page-apps'
+import { Options, Renderer } from '~/shared/page-apps/index.BAK'
 import Thumbnail, { Props } from '~/components/Thumbnail'
 import { toString, toVNode } from '~/utils/cast'
 

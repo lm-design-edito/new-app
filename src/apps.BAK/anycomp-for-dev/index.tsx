@@ -1,5 +1,5 @@
 import { render } from 'preact'
-import { Renderer } from 'shared/utils/lm-page-apps'
+import { Renderer } from '~/shared/page-apps/index.BAK'
 import flattenGetters from '~/utils/flatten-getters'
 import Thumbnail from '~/components/Thumbnail'
 import Article from '~/components/Article'

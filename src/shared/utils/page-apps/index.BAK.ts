@@ -1,4 +1,4 @@
-import { Config } from '~/shared/lm-page-config'
+import { Config } from '~/shared/page-config'
 import Logger from '~/utils/silent-log'
 import strToNodes from '~/utils/str-to-nodes'
 import { Collection } from '~/utils/txt-base'
@@ -101,7 +101,6 @@ export function readOptionNode (optionNode: HTMLElement): InlineOption {
  * * * * * * * * * * * * * * * * * * */
 export enum Names {
   ANYCOMP_FOR_DEV_ONLY = 'anycomp-for-dev',
-
   ARTICLE = 'article',
   AUDIOQUOTE = 'audioquote',
   CAROUSEL = 'carousel',
@@ -205,17 +204,17 @@ async function loadRenderer (name: Names) {
   const isProd = appConfig.env !== 'production'
   let renderer: Renderer|null = null
   // Dev only
-  if (name === Names.ANYCOMP_FOR_DEV_ONLY && isProd) { renderer = (await import('../../../apps/anycomp-for-dev')).default }
+  if (name === Names.ANYCOMP_FOR_DEV_ONLY && isProd) { renderer = (await import('../../../apps.BAK/anycomp-for-dev')).default }
   // Production
-  if (name === Names.ARTICLE) { renderer = (await import('../../../apps/article')).default }
-  if (name === Names.AUDIOQUOTE) { renderer = (await import('../../../apps/audioquote')).default }
-  if (name === Names.CAROUSEL) { renderer = (await import('../../../apps/carousel')).default }
-  if (name === Names.HEADER) { renderer = (await import('../../../apps/header')).default }
-  if (name === Names.EVENT_DISPATCHER) { renderer = (await import('../../../apps/event-dispatcher')).default }
-  if (name === Names.FOOTER) { renderer = (await import('../../../apps/footer')).default }
-  if (name === Names.SCRLLGNGN) { renderer = (await import('../../../apps/scrllgngn')).default }
-  if (name === Names.SLIDESHOW) { renderer = (await import('../../../apps/slideshow')).default }
-  if (name === Names.THUMBNAIL) { renderer = (await import('../../../apps/thumbnail')).default }
+  if (name === Names.ARTICLE) { renderer = (await import('../../../apps.BAK/article')).default }
+  if (name === Names.AUDIOQUOTE) { renderer = (await import('../../../apps.BAK/audioquote')).default }
+  if (name === Names.CAROUSEL) { renderer = (await import('../../../apps.BAK/carousel')).default }
+  if (name === Names.HEADER) { renderer = (await import('../../../apps.BAK/header')).default }
+  if (name === Names.EVENT_DISPATCHER) { renderer = (await import('../../../apps.BAK/event-dispatcher')).default }
+  if (name === Names.FOOTER) { renderer = (await import('../../../apps.BAK/footer')).default }
+  if (name === Names.SCRLLGNGN) { renderer = (await import('../../../apps.BAK/scrllgngn')).default }
+  if (name === Names.SLIDESHOW) { renderer = (await import('../../../apps.BAK/slideshow')).default }
+  if (name === Names.THUMBNAIL) { renderer = (await import('../../../apps.BAK/thumbnail')).default }
   // Unknown app type
   if (renderer === null) throw new Error(`Could not find a renderer for an app named ${name}`)
   return renderer

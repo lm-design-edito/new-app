@@ -1,5 +1,5 @@
 import { render } from 'preact'
-import { Options, Renderer } from 'shared/utils/lm-page-apps'
+import { Options, Renderer } from '~/shared/page-apps/index.BAK'
 import Slideshow, { Media, Props } from '~/components/Slideshow'
 import { toBoolean, toNumber, toString, toVNode } from '~/utils/cast'
 

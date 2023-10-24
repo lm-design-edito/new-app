@@ -1,5 +1,5 @@
 import { render } from 'preact'
-import { Options, Renderer } from '~/shared/lm-page-apps'
+import { Options, Renderer } from '~/shared/page-apps/index.BAK'
 import AudioQuote, { Props } from '~/components/AudioQuote'
 import { toBoolean, toNumber, toString, toVNode } from '~/utils/cast'
 
