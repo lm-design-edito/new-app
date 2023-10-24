@@ -1,7 +1,7 @@
 import { render } from 'preact'
 import Article, { Props as ArticleProps, ArticleElementProps } from '~/components/Article'
 import { ElementType as BasicElementType } from '~/components/Article/BasicTextElement'
-import { Options, Renderer } from '~/shared/lm-page-apps'
+import { Options, Renderer } from '~/shared/page-apps/index.BAK'
 import { toBoolean, toString, toVNode } from '~/utils/cast'
 
 /* * * * * * * * * * * * * * * * * * *

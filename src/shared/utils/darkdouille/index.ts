@@ -39,6 +39,14 @@ import cond from './transformers/cond'
 import loop from './transformers/loop'
 
 export namespace Darkdouille {
+  export const transformers = {
+    /* Cast    */ toString, toNumber, toBoolean, toNull, toHtml, toRef, toArray, toRecord,
+    /* Number  */ add, subtract, multiply, pow, divide, max, min, clamp, greater, smaller, equals,
+    /* String  */ append, prepend, replace, trim, split,
+    /* Array   */ join, at, map, push,
+    /* Utility */ that, clone, print, set, get, cond, loop
+  }
+
   type TreeTextChildItem = { type: 'text', node: Node }
   type TreeDomChildItem = { type: 'dom', element: Element }
   type TreeNamedChildItem = { type: 'named', element: Element }

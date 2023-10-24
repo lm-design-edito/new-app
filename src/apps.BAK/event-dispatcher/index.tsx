@@ -1,7 +1,7 @@
 import { render } from 'preact'
-import { Options, Renderer } from '~/shared/lm-page-apps'
+import { Options, Renderer } from '~/shared/page-apps/index.BAK'
 import EventDispatcher, { Props, Instruction, Trigger } from '~/components/EventDispatcher'
-import { optionsToProps as optionsToHeaderProps } from '~/apps/header'
+import { optionsToProps as optionsToHeaderProps } from 'apps.BAK/header'
 import { toString, toVNode } from '~/utils/cast'
 
 /* * * * * * * * * * * * * * * * * * *

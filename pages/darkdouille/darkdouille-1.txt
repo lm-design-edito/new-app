@@ -5,12 +5,33 @@
   </data>
 </data>
 <data class="SLOTS">
+  
+  <!-- SCRLLGNGN 1 -->
   <data>
-    <string class="name">my-scrllgngn</string>
-    <string class="selector">.my-scrllgngn</string>
-    <data class="options">
-      <number class="nbr">7</number>
-      <boolean class="bln">false</boolean>
+    <data class="selector">
+      <string>.my-scrllgngn</string>
+      <string>endof</string>
+      <string>body</string>
+    </data>
+    <data class="content">
+      <div>Content !!</div>
+    </data>
+  </data>
+  
+  <!-- SCRLLGNGN 2 -->
+  <data>
+    <data class="selector">
+      <string>.my-other-scrllgngn</string>
+      <string>endof</string>
+      <string>body</string>
+    </data>
+    <data class="content">
+      <div class="intermediate">
+        <comp type="scrllgngn">
+          <string class="prop-1">Un texte</string>
+          <string class="prop-2">Un autre texte</string>
+        </comp>
+      </div>
     </data>
   </data>
 </data>

@@ -23,6 +23,9 @@ export default function selectorToElement (selector: string) {
   const element = document.createElement(tag)
   if (id !== null) { element.id = id }
   element.classList.add(...classes)
-  attributes.forEach(([name, value = '']) => { element.setAttribute(name, value) })
+  attributes.forEach(([name, value = '']) => {
+    if (name === undefined) return;
+    element.setAttribute(name, value)
+  })
   return element
 }
