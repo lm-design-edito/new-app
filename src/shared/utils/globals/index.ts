@@ -5,6 +5,7 @@ type LmPage = {
   [Globals.GlobalKey.VERSION]?: string // those are injected from /scripts/deploy
   [Globals.GlobalKey.TARGET]?: string // those are injected from /scripts/deploy
   [Globals.GlobalKey.BUILD_TIME]?: string // those are injected from /scripts/deploy
+  [Globals.GlobalKey.ROOT_URL]?: string // those are injected from /scripts/deploy
   [Globals.GlobalKey.SILENT_LOGGER]?: Logger
   [Globals.GlobalKey.DATA_TREE]?: Darkdouille.Tree
 }
@@ -20,6 +21,7 @@ export namespace Globals {
     VERSION = 'version',
     TARGET = 'target',
     BUILD_TIME = 'buildTime',
+    ROOT_URL = 'rootUrl',
     SILENT_LOGGER = 'silentLogger',
     DATA_TREE = 'dataTree'
   }
