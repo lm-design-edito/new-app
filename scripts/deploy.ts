@@ -155,6 +155,11 @@ async function main () {
     V0 = 'gs://decodeurs/design-edito/v0',
     V01 = 'gs://decodeurs/design-edito/v0.1'
   }
+  const targetToRootUrlMap = new Map<Targets, string>([
+    [Targets.FOR_TESTS_ONLY, 'https://assets-decodeurs.lemonde.fr/design-edito/_FOR_TESTS_ONLY'],
+    [Targets.V0, 'https://assets-decodeurs.lemonde.fr/design-edito/v0'],
+    [Targets.V01, 'https://assets-decodeurs.lemonde.fr/design-edito/v0.1']
+  ])
   console.log(styles.title('Select a target destination'))
   const { targetDestinationName } = await prompts({
     name: 'targetDestinationName',
@@ -361,6 +366,7 @@ async function main () {
     if (window.LM_PAGE === undefined) { window.LM_PAGE = {} };
     window.LM_PAGE.version = '${targetVersionStr}';
     window.LM_PAGE.target = '${targetDestinationName.split('/').at(-1)}';
+    window.LM_PAGE.rootUrl = '${targetToRootUrlMap.get(targetDestinationName)}';
     window.LM_PAGE.buildTime = '${new Date().toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
@@ -487,23 +493,6 @@ async function main () {
     }
   ))
   console.log('')
-
-  /* * * * * * * * * * * * * * * * * * * * *
-  * Setting cache to 60s
-  * * * * * * * * ** * * * * * * * * * * * */
-  // console.log(styles.title(`Setting cache to 60s`))
-  // await new Promise(resolve => exec(
-  //   `gsutil -m setmeta -rh "Cache-Control:public, max-age=60" ${targetDestinationName}`,
-  //   (err, stdout, stderr) => {
-  //     if (err !== null) console.error(styles.error(err.message))
-  //     if (stderr !== '' && err === null) console.log(styles.regular(stderr))
-  //     if (stdout !== '') console.log(styles.regular(stdout))
-  //     if (err === null) versionsJsonExists = true
-  //     resolve(true)
-  //   }
-  // ))
-  // console.log('')
-  
   console.log(styles.important('That\'s all good my friend. 🍸\n\n'))
 }
 

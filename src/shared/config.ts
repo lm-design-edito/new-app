@@ -4,10 +4,10 @@ const env = process.env.NODE_ENV === 'production'
   : 'developpment'
 
 // PATHS
-const SCRIPTS_INDEX_URL = env === 'production' // shared/index.js
-  ? new URL('https://assets-decodeurs.lemonde.fr/design-edito/v0.1/shared/index.js')
-  : new URL('http://localhost:3000/shared/index.js')
-const ROOT_URL = new URL('../', SCRIPTS_INDEX_URL)             // ROOT
+const ROOT_URL = env === 'production'
+  ? new URL(window.LM_PAGE?.rootUrl ?? '')
+  : new URL('http://localhost:3000')
+const SCRIPTS_INDEX_URL = new URL('shared/index.js', ROOT_URL)
 const SHARED_URL = new URL('shared/', ROOT_URL)                // shared/
 const STYLES_URL = new URL('styles/', SHARED_URL)              // shared/styles/
 const STYLES_INDEX_URL = new URL('index.css', STYLES_URL)      // shared/styles/index.css
