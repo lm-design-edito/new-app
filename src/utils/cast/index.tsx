@@ -1,6 +1,4 @@
-import { isValidElement, VNode } from 'preact'
 import isFalsy from '~/utils/is-falsy'
-import nodesToVNodes from '../nodes-to-vnodes'
 
 export function toBoolean (value: unknown) {
   if (typeof value === 'boolean') return value
@@ -44,15 +42,4 @@ export function toRecord (value: unknown) {
     return record
   }
   return record
-}
-
-export function toVNode (value: unknown): VNode {
-  if (typeof value === 'string') return <>{value}</>
-  else if (value instanceof HTMLElement) return nodesToVNodes(value)[0] ?? <></>
-  else if (isValidElement(value)) return value
-  else if (Array.isArray(value)) {
-    const vnodesArr = value.map(item => toVNode(item))
-    return <>{...vnodesArr}</>
-  }
-  else return <></>
 }

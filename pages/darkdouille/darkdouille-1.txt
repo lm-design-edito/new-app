@@ -5,33 +5,48 @@
   </data>
 </data>
 <data class="SLOTS">
-  
-  <!-- SCRLLGNGN 1 -->
+  <!-- EVERYTHING -->
   <data>
-    <data class="selector">
-      <string>.my-scrllgngn</string>
-      <string>endof</string>
-      <string>body</string>
+    <data class="destination">
+      <string class="selector">.everything</string>
+      <string class="position">endof</string>
+      <string class="reference">body</string>
     </data>
     <data class="content">
-      <div>Content !!</div>
+      <comp type="everything"></comp>
     </data>
   </data>
-  
-  <!-- SCRLLGNGN 2 -->
+  <!-- HEADER -->
   <data>
-    <data class="selector">
-      <string>.my-other-scrllgngn</string>
-      <string>endof</string>
-      <string>body</string>
+    <data class="destination">
+      <string class="selector">.header</string>
+      <string class="position">endof</string>
+      <string class="reference">body</string>
     </data>
     <data class="content">
-      <div class="intermediate">
-        <comp type="scrllgngn">
-          <string class="prop-1">Un texte</string>
-          <string class="prop-2">Un autre texte</string>
-        </comp>
-      </div>
+      <comp type="header"></comp>
+    </data>
+  </data>
+  <!-- AUDIOQUOTE -->
+  <data>
+    <data class="destination">
+      <string class="selector">.audioquote</string>
+      <string class="position">endof</string>
+      <string class="reference">body</string>
+    </data>
+    <data class="content">
+      <comp type="audioquote"></comp>
+    </data>
+  </data>
+  <!-- SCRLLGNGN -->
+  <data>
+    <data class="destination">
+      <string class="selector">.scrllgngn</string>
+      <string class="position">endof</string>
+      <string class="reference">body</string>
+    </data>
+    <data class="content">
+      <comp type="scrllgngn"></comp>
     </data>
   </data>
 </data>

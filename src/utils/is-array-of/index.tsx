@@ -2,7 +2,7 @@ import isConstructorFunction, { ConstructorFunction } from '~/utils/is-construct
 type TypeCheckerFunction = (input: unknown) => boolean
 type TypeChecker = ConstructorFunction | TypeCheckerFunction
 
-export default function isArrayOf (input: unknown, _types: TypeChecker | TypeChecker[] = []): input is unknown[] {
+export default function isArrayOf<T extends unknown = unknown> (input: unknown, _types: TypeChecker | TypeChecker[] = []): input is T[] {
   if (!Array.isArray(input)) return false;
   const types = Array.isArray(_types) ? _types : [_types]
   if (types.length === 0) return true

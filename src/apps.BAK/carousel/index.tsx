@@ -1,5 +1,5 @@
 import { render } from 'preact'
-import { Options, Renderer } from '~/shared/page-apps/index.BAK'
+import { Options, Renderer } from '~/shared/apps/index.BAK'
 import Carousel, { Media, Props } from '~/components/Carousel'
 import { toBoolean, toNumber, toString, toVNode } from '~/utils/cast'
 
