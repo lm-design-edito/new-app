@@ -2,10 +2,11 @@ import { Darkdouille } from '~/shared/darkdouille'
 import Logger from '~/utils/silent-log'
 
 type LmPage = {
-  [Globals.GlobalKey.VERSION]?: string // those are injected from /scripts/deploy
-  [Globals.GlobalKey.TARGET]?: string // those are injected from /scripts/deploy
-  [Globals.GlobalKey.BUILD_TIME]?: string // those are injected from /scripts/deploy
-  [Globals.GlobalKey.ROOT_URL]?: string // those are injected from /scripts/deploy
+  [Globals.GlobalKey.ENV]?: string         // those are injected from /scripts/deploy
+  [Globals.GlobalKey.VERSION]?: string     // those are injected from /scripts/deploy
+  [Globals.GlobalKey.TARGET]?: string      // those are injected from /scripts/deploy
+  [Globals.GlobalKey.BUILD_TIME]?: string  // those are injected from /scripts/deploy
+  [Globals.GlobalKey.ROOT_URL]?: string    // those are injected from /scripts/deploy
   [Globals.GlobalKey.SILENT_LOGGER]?: Logger
   [Globals.GlobalKey.DATA_TREE]?: Darkdouille.Tree
 }
@@ -18,6 +19,7 @@ declare global {
 
 export namespace Globals {
   export enum GlobalKey {
+    ENV = 'env',
     VERSION = 'version',
     TARGET = 'target',
     BUILD_TIME = 'buildTime',
