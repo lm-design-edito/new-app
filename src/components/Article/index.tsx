@@ -1,5 +1,4 @@
 import { Component, VNode } from 'preact'
-import StrToVNode from '../StrToVNodes'
 import BasicTextElement, { ElementType } from './BasicTextElement'
 import Image, { Props as ImageProps } from './Image'
 import ReadAlso, { Props as ReadAlsoProps } from './ReadAlso'
@@ -138,8 +137,9 @@ export default class Article extends Component<Props> {
         else if (elementData.type === 'html') {
           const { content } = elementData
           if (content === undefined) return <></>
-          if (typeof content === 'string') return <StrToVNode content={content} />
           return content
+          // if (typeof content === 'string') return <StrToVNode content={content} />
+          // return content
         }
         // Unknown
         else return <></>

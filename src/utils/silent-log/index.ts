@@ -148,13 +148,14 @@ export default class Logger {
 
   printThreads (this:Logger) {
     [...this.#threads.entries()].forEach(([threadName, logs]) => {
-      console.log(`%c${threadName}`, 'font-weight: 800; color: white; background: black; padding: 4px;');
+      console.group(`%c${threadName}`, 'font-weight: 800; color: white; background: black; padding: 4px;')
       logs.forEach(log => {
         console.log(`+${log.elapsedTimeMs}s –`, log.displayTime)
         console.log(`%c${log.displayStack}`, 'color: grey; font-size: inherit;')
         ;(console[log.type] as any)(...log.data)
         console.log('')
       })
+      console.groupEnd()
     })
   }
 }

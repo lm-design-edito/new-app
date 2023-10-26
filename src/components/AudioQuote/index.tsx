@@ -1,7 +1,6 @@
 import { Component, JSX, createRef, RefObject, VNode } from 'preact'
 import IntersectionObserverComponent from '~/components/IntersectionObserver'
 import bem from '~/utils/bem'
-import { toVNode } from '~/utils/cast'
 import styles from './styles.module.scss'
 
 interface SubGroupBoundaries {
@@ -430,28 +429,28 @@ class AudioQuote extends Component<Props, State> {
         {props.title !== undefined
           && <div
           className={titleClasses.join(' ')}>
-          {toVNode(props.title)}
+          {props.title}
         </div>}
         <button
           onClick={this.handlePlayClick}
           className={playButtonClasses.join(' ')}>
-          {toVNode(props.playButton ?? 'Lancer la lecture')}
+          {props.playButton ?? 'Lancer la lecture'}
         </button>
         {props.hidePauseButton !== true
           && <button
           onClick={this.handlePauseClick}
           className={pauseButtonClasses.join(' ')}>
-          {toVNode(props.pauseButton ?? 'Mettre en pause')}
+          {props.pauseButton ?? 'Mettre en pause'}
         </button>}
         <button
           onClick={this.handleLoudClick}
           className={loudButtonClasses.join(' ')}>
-          {toVNode(props.loudButton ?? 'Activer le son')}
+          {props.loudButton ?? 'Activer le son'}
         </button>
         <button
           onClick={this.handleMuteClick}
           className={muteButtonClasses.join(' ')}>
-          {toVNode(props.muteButton ?? 'Couper le son')}
+          {props.muteButton ?? 'Couper le son'}
         </button>
         <video
           src={props.audioSrc}

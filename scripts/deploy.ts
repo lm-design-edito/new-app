@@ -361,6 +361,15 @@ async function main () {
     if (window.LM_PAGE === undefined) { window.LM_PAGE = {} };
     window.LM_PAGE.version = '${targetVersionStr}';
     window.LM_PAGE.target = '${targetDestinationName.split('/').at(-1)}';
+    window.LM_PAGE.buildTime = '${new Date().toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      weekday: 'short',
+      hour: 'numeric',
+      minute: 'numeric',
+      second: 'numeric'
+    })}';
   `.trim().split('\n').map(line => line.trim()).join(' ')
   await fs.writeFile(DST_PROD_SHARED_INDEX, `${dstProdSharedAppendedContent} ${dstProdSharedContent}`)
   const DST_PROD_SHARED_INDEX_VERSIONNED = join(config.DST_PROD, 'shared', `index.v${targetVersionArr.join('.')}.js`)

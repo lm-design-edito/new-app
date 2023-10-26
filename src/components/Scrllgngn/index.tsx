@@ -46,6 +46,9 @@ export type TransitionName =
   |'slide-up'
   |'right-open'
   |'left-open'
+export function isTransitionName (input: string): input is TransitionName {
+  return ['fade', 'grow', 'whirl', 'slide-up', 'right-open', 'left-open'].includes(input)
+}
 export type TransitionDuration = string|number
 export type TransitionDescriptor = [TransitionName]|[TransitionName, TransitionDuration]
 
