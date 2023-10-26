@@ -9,17 +9,17 @@ import isRecord from '~/utils/is-record'
 import selectorToElement from '~/utils/selector-to-element'
 import appConfig from './config'
 
+/* * * * * * * * * * * * * * * * * * * * * *
+ * SILENT LOGGER & GLOBALS
+ * * * * * * * * * * * * * * * * * * * * * */
+const logger = new Logger()
+Globals.expose(Globals.GlobalKey.SILENT_LOGGER, logger)
+Globals.expose(Globals.GlobalKey.ENV, appConfig.env)
 if (appConfig.env === 'developpment') {
   Globals.expose(Globals.GlobalKey.VERSION, 'dev')
   Globals.expose(Globals.GlobalKey.TARGET, 'localhost')
   Globals.expose(Globals.GlobalKey.BUILD_TIME, undefined)
 }
-
-/* * * * * * * * * * * * * * * * * * * * * *
- * SILENT LOGGER
- * * * * * * * * * * * * * * * * * * * * * */
-const logger = new Logger()
-Globals.expose(Globals.GlobalKey.SILENT_LOGGER, logger)
 
 /* * * * * * * * * * * * * * * * * * * * * *
  * INIT
@@ -56,6 +56,7 @@ export async function initPage () {
   const devStyles = appConfig.paths.STYLES_DEV_URL.toString()
   const { head } = document
   head.appendChild(makeLink(mainStyles))
+  console.log(appConfig.env)
   if (appConfig.env === 'developpment') head.appendChild(makeLink(devStyles))
 
   /* INLINE CONFIG * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
