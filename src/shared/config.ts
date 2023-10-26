@@ -14,6 +14,7 @@ const STYLES_ARTICLE_URL = new URL(`${STYLES_URL.href.replace(/\/$/, '')}/articl
 // Exports
 export default {
   env,
+  port,
   paths: {
     ROOT_URL,
     SHARED_URL,
