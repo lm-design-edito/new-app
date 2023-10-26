@@ -1,13 +1,10 @@
 // ENV
-const env = process.env.NODE_ENV === 'production'
-  ? 'production'
-  : 'developpment'
+const env = process.env.NODE_ENV === 'production' ? 'production' : 'developpment'
+const port = process.env.PORT ?? '3000'
 
 // PATHS
-const ROOT_URL = env === 'production'
-  ? new URL(window.LM_PAGE?.rootUrl ?? '')
-  : new URL('http://localhost:3000')
-const SCRIPTS_INDEX_URL = new URL('shared/index.js', ROOT_URL)
+const ROOT_URL = new URL(env === 'production' ? (window.LM_PAGE?.rootUrl ?? '') : `http://localhost:${port}`)
+const SCRIPTS_INDEX_URL = new URL(`${ROOT_URL.href.replace(/\/$/, '')}/shared/index.js`)
 const SHARED_URL = new URL('shared/', ROOT_URL)                // shared/
 const STYLES_URL = new URL('styles/', SHARED_URL)              // shared/styles/
 const STYLES_INDEX_URL = new URL('index.css', STYLES_URL)      // shared/styles/index.css
