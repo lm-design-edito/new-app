@@ -31,6 +31,7 @@ if (!shouldntInit) initPage()
 export async function initPage () {
   logger.log('Page initialization',
     '%cStart init', 'font-weight: 800;',
+    '\nenv:', Globals.retrieve(Globals.GlobalKey.ENV),
     '\nversion:', Globals.retrieve(Globals.GlobalKey.VERSION),
     '\ntarget:', Globals.retrieve(Globals.GlobalKey.TARGET),
     '\nbuild time:', Globals.retrieve(Globals.GlobalKey.BUILD_TIME),
@@ -56,7 +57,6 @@ export async function initPage () {
   const devStyles = appConfig.paths.STYLES_DEV_URL.toString()
   const { head } = document
   head.appendChild(makeLink(mainStyles))
-  console.log(appConfig.env)
   if (appConfig.env === 'developpment') head.appendChild(makeLink(devStyles))
 
   /* INLINE CONFIG * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
