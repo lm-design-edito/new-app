@@ -4,12 +4,12 @@ const port = process.env.PORT ?? '3000'
 
 // PATHS
 const ROOT_URL = new URL(env === 'production' ? (window.LM_PAGE?.rootUrl ?? '') : `http://localhost:${port}`)
-const SCRIPTS_INDEX_URL = new URL(`${ROOT_URL.href.replace(/\/$/, '')}/shared/index.js`)
-const SHARED_URL = new URL('shared/', ROOT_URL)                // shared/
-const STYLES_URL = new URL('styles/', SHARED_URL)              // shared/styles/
-const STYLES_INDEX_URL = new URL('index.css', STYLES_URL)      // shared/styles/index.css
-const STYLES_DEV_URL = new URL('developpment.css', STYLES_URL) // shared/styles/developpment.css
-const STYLES_ARTICLE_URL = new URL('article.css', STYLES_URL)  // shared/styles/article.css
+const SHARED_URL = new URL(`${ROOT_URL.href.replace(/\/$/, '')}/shared`)                 // shared/
+const SCRIPTS_INDEX_URL = new URL(`${SHARED_URL.href.replace(/\/$/, '')}/index.js`)
+const STYLES_URL = new URL(`${SHARED_URL.href.replace(/\/$/, '')}/styles`)               // shared/styles/
+const STYLES_INDEX_URL = new URL(`${STYLES_URL.href.replace(/\/$/, '')}/index.css`)      // shared/styles/index.css
+const STYLES_DEV_URL = new URL(`${STYLES_URL.href.replace(/\/$/, '')}/developpment.css`) // shared/styles/developpment.css
+const STYLES_ARTICLE_URL = new URL(`${STYLES_URL.href.replace(/\/$/, '')}/article.css`)  // shared/styles/article.css
 
 // Exports
 export default {
