@@ -56,6 +56,7 @@ const bundleOptions = (otherEntries: BuildOptions['entryPoints'] = {}): BuildOpt
     '.scss': 'file'
   },
   define: {
+    'process.env.PORT': process.env.PORT ?? '3000',
     'process.env.NODE_ENV': `"${process.env.NODE_ENV ?? 'developpment'}"`
   }
 })
