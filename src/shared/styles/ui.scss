@@ -1,0 +1,1341 @@
+@import './ui-variables.scss';
+
+
+// --------------- Pour annuler des overrides du site + AEC ----------------
+
+// Chart link
+[class^="lmui-"] a {
+  -webkit-text-decoration: underline !important;
+  text-decoration: underline !important;
+  text-underline-offset: 0.28em !important;
+  color: inherit !important;
+  text-decoration-color: var(--lmui-c-chart-link-underline) !important;
+  text-decoration-thickness: 0.5px !important;
+  transition: 0.7s var(--ease-out-quint) !important;
+}
+
+[class^="lmui-"] a:hover {
+  color: var(--lmui-c-chart-link-text-hover) !important;
+  text-decoration-color: var(--lmui-c-chart-link-underline) !important;
+}
+
+// Timeline
+[class^="lmui-chart"] ul {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+[class^="lmui-chart"] ul li {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+// Search-engine autocompletion
+.article_content {
+  ul, ol {
+    li.lmui-search__suggestion:not(:first-child) {
+      margin-top: 0;
+    }
+  }
+}
+
+// ---------------Boutons----------------
+
+// Main-button
+.lmui-button {
+  border: none;
+  border-radius: 40px;
+  height: 42px;
+  width: fit-content;
+  padding: 0 20px;
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--lmui-c-main-button-bg);
+  transition: 0.45s var(--ease-out-quint);
+  font-family: var(--lmui-ff-marr-sans);
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--lmui-c-white);
+  cursor: pointer;
+}
+
+@media (max-width:1000px) {
+  .lmui-button {
+    height: 32px;
+    padding: 0 16px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width:600px) {
+  .lmui-button {
+    height: 26px;
+    padding: 0px 12px;
+    font-size: 13px;
+  }
+}
+
+// Size modifiers
+// [WIP] Max : Me semble plus pertinent d'avoir la version M par défaut
+// puis des modifieurs "L" et "S". Généralisable à tous les composants
+// qui héritent de cette logique L/M/S s'il y en a
+.lmui-button.lmui-button_m {
+  height: 32px;
+  padding: 0 16px;
+  font-size: 14px;
+}
+
+@media (max-width:600px) {
+  .lmui-button.lmui-button_m {
+    height: 26px;
+    padding: 0px 12px;
+    font-size: 13px;
+  }
+}
+
+.lmui-button.lmui-button_s {
+  height: 26px;
+  padding: 0px 12px;
+  font-size: 13px;
+}
+
+// Content modifiers
+.lmui-button.lmui-button_with-icon {
+  padding: 0 14px 0 20px;
+}
+
+@media (max-width:1000px) {
+  .lmui-button.lmui-button_with-icon {
+    gap: 6px;
+    padding: 0 10px 0 12px;
+  }
+}
+
+.lmui-button.lmui-button_s.lmui-button_with-icon,
+.lmui-button.lmui-button_m.lmui-button_with-icon {
+  gap: 6px;
+  padding: 0 10px 0 12px;
+}
+
+// [WIP] Max : gestion des couleurs à ajuster maintenant qu'on peut
+// charger les icones en inline et pas uniquement via <svg />
+.lmui-button.lmui-button_with-icon .lmui-button__icon .lmui-icon {
+  filter: var(--lmui-ic-white);
+}
+
+.lmui-button:disabled.lmui-button_with-icon .lmui-button__icon .lmui-icon {
+  filter: var(--lmui-ic-default);
+  opacity: var(--lmui-o-quaternary);
+}
+
+.lmui-button.lmui-button_with-icon.lmui-button_secondary .lmui-button__icon .lmui-icon {
+  filter: var(--lmui-ic-default);
+}
+
+.lmui-button:disabled.lmui-button_with-icon.lmui-button_secondary .lmui-button__icon .lmui-icon {
+  filter: var(--lmui-ic-default);
+  opacity: var(--lmui-o-quaternary);
+}
+
+// Content alignment modifier
+// [WIP] Max : Pas convaincu par la nécessité de lmui-row-reverse (1 classe = 1 nom de prop css qui porte le même nom)
+// plus, a probablement plus sa place dans un autre espace genre lmlayouts par ex, dans lequel on systématiserait
+// des dispositions d'éléments entre eux
+.lmui-button.lmui-row-reverse {
+  flex-direction: row-reverse;
+}
+
+// Button's icon
+.lmui-button .lmui-button__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 20px;
+  width: 20px;
+}
+
+@media (max-width: 1000px) {
+  .lmui-button .lmui-button__icon img {
+    transform: var(--lmui-ic-small);
+  }
+}
+
+.lmui-button.lmui-button_m .lmui-button__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 16px;
+  width: 16px;
+}
+
+.lmui-button.lmui-button_s .lmui-button__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 16px;
+  width: 16px;
+}
+
+.lmui-button.lmui-button_s .lmui-button__icon img,
+.lmui-button.lmui-button_m .lmui-button__icon img {
+  transform: var(--lmui-ic-small);
+}
+
+// Squared button
+.lmui-button.lmui-button_squared {
+  border-radius: 3px;
+}
+
+.lmui-button:hover {
+  background-color: var(--lmui-c-main-button-bg-hover);
+  box-shadow: 0px 4px 6px 2px rgba(0, 0, 0, 0.1);
+}
+
+.lmui-button:active {
+  background-color: var(--lmui-c-main-button-bg-active);
+  transition: 0.12s ease-in;
+}
+
+.lmui-button:disabled {
+  color: var(--lmui-c-main-button-label-disabled);
+  background-color: var(--lmui-c-main-button-bg-disabled);
+  pointer-events: none;
+}
+
+
+// Secondary-button
+.lmui-button.lmui-button_secondary {
+  background-color: unset;
+  color: var(--lmui-c-secondary-button-label);
+  border: 1px solid var(--lmui-c-secondary-button-border);
+}
+
+.lmui-button.lmui-button_secondary:hover {
+  background-color: var(--lmui-c-secondary-button-bg-hover);
+  color: var(--lmui-c-secondary-button-label);
+  box-shadow: unset;
+}
+
+.lmui-button.lmui-button_secondary:active {
+  background-color: var(--lmui-c-secondary-button-bg-active);
+}
+
+.lmui-button.lmui-button_secondary:disabled {
+  color: var(--lmui-c-secondary-button-label-disabled);
+  border: 1px solid var(--lmui-c-secondary-button-border-disabled);
+  pointer-events: none;
+}
+
+
+// ---------------Tabs----------------
+
+// Main-tabs
+.lmui-tabs {
+  overflow: hidden;
+  box-sizing: border-box;
+  border-radius: 40px;
+  height: var(--lmui-tab-size-large);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: calc(var(--lmui-tab-padding-large) / 2);
+  padding: 0 calc(var(--lmui-tab-padding-large) / 2);
+  background: var(--lmui-c-main-tab-bg);
+  border: 1px solid var(--lmui-c-main-tab-border);
+  box-shadow: var(--lmui-c-main-tab-box-shadow);
+}
+
+.lmui-tabs .lmui-tab:last-child {
+  border-right: unset;
+}
+
+// ---------------Tab----------------
+
+.lmui-tab {
+  border: none;
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+  align-items: center;
+  justify-content: center;
+  padding: 0px 14px;
+  width: 100%;
+  height: calc(var(--lmui-tab-size-large) - var(--lmui-tab-padding-large));
+  font-family: var(--lmui-ff-marr-sans);
+  font-weight: 500;
+  font-size: 13px;
+  color: var(--lmui-c-main-tab-label);
+  cursor: pointer;
+  transition: 0.45s var(--ease-out-quint);
+  border-radius: 100px;
+  background: var(--lmui-c-main-tab-bg);
+}
+
+@media (max-width:600px) {
+  .lmui-tab {
+    height: 26px;
+    font-size: 12px;
+  }
+}
+
+.lmui-tab:hover {
+  color: var(--lmui-c-main-tab-label-hover);
+  background: var(--lmui-c-main-tab-bg-hover);
+}
+
+.lmui-tab:active {
+  color: var(--lmui-c-main-tab-label-active);
+  background: var(--lmui-c-main-tab-bg-active);
+  transition: 0.12s ease-in;
+}
+
+.lmui-tab:disabled {
+  color: var(--lmui-c-main-tab-label-disabled);
+  background: var(--lmui-c-main-tab-bg-disabled);
+  pointer-events: none;
+}
+
+.lmui-tab.lmui-tab_with-icon {
+  padding: 0px 10px 0 14px;
+}
+
+.lmui-tab.lmui-tab_enabled {
+  color: var(--lmui-c-main-tab-label-enabled);
+  background: var(--lmui-c-main-tab-bg-enabled);
+  box-shadow: var(--lmui-c-main-tab-enabled-box-shadow);
+  border-radius: 100px;
+  transition: 0.12s ease-in;
+}
+
+// Tab's icon
+.lmui-tab .lmui-tab__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 20px;
+  width: 20px;
+  transform: scale(0.85);
+}
+
+.lmui-tab.lmui-tab_enabled .lmui-tab__icon .lmui-icon {
+  filter: var(--lmui-ic-black);
+}
+
+// Content alignment modifier
+.lmui-tab.lmui-row-reverse {
+  flex-direction: row-reverse;
+}
+
+// ---------------Toggle----------------
+
+// Main-toggle
+.lmui-toggle {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+}
+
+.lmui-toggle__input {
+  display: none;
+}
+
+.lmui-toggle__label {
+  display: none;
+  font-family: var(--lmui-ff-marr-sans);
+  font-weight: 500;
+  font-size: 13px;
+  color: var(--lmui-c-main-toggle-label);
+}
+
+.lmui-toggle.lmui-toggle-with-label .lmui-toggle__label {
+  display: inherit;
+}
+
+.lmui-toggle__fake {
+  position: relative;
+  display: block;
+  width: 52px;
+  height: 26px;
+  color: transparent;
+  user-select: none;
+}
+
+.lmui-toggle__fake::before,
+.lmui-toggle__fake::after {
+  content: "";
+  display: block;
+  position: absolute;
+  cursor: pointer;
+}
+
+.lmui-toggle__fake::before {
+  width: 100%;
+  height: 100%;
+  background-color: var(--lmui-c-main-toggle-bg);
+  border-radius: 40px;
+  transition: background-color 0.25s ease-in;
+}
+
+.lmui-toggle__fake::after {
+  top: 1px;
+  left: 1px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: var(--lmui-c-main-toggle-switch);
+  -webkit-transition: left 0.25s ease-in;
+  transition: left 0.25s ease-in;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.16);
+}
+
+// Hover State
+.lmui-toggle__fake:hover::before {
+  background-color: var(--lmui-c-main-toggle-bg-hover);
+}
+
+// Checked State
+.lmui-toggle__input:checked+.lmui-toggle__fake::before {
+  background-color: var(--lmui-c-main-toggle-bg-enabled);
+}
+
+.lmui-toggle__input:checked+.lmui-toggle__fake:hover::before {
+  background-color: var(--lmui-c-main-toggle-bg-enabled-hover);
+}
+
+.lmui-toggle__input:checked+.lmui-toggle__fake::after {
+  left: 27px;
+}
+
+// Size S
+.lmui-toggle.lmui-toggle_s .lmui-toggle__fake {
+  width: 36px;
+  height: 18px;
+}
+
+.lmui-toggle.lmui-toggle_s .lmui-toggle__fake::after {
+  width: 16px;
+  height: 16px;
+}
+
+.lmui-toggle.lmui-toggle_s .lmui-toggle__input:checked+.lmui-toggle__fake::after {
+  left: 19px;
+}
+
+
+// Responsive
+@media (max-width:600px) {
+  .lmui-toggle__fake {
+    width: 36px;
+    height: 18px;
+  }
+
+  .lmui-toggle__fake::after {
+    width: 16px;
+    height: 16px;
+  }
+
+  .lmui-toggle__input:checked+.lmui-toggle__fake::after {
+    left: 19px;
+  }
+}
+
+// ---------------Checkboxes----------------
+
+// Main-checkbox
+.lmui-checkbox {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+}
+
+.lmui-checkbox__input {
+  display: none;
+}
+
+.lmui-checkbox__input+.lmui-checkbox__fake {
+  position: relative;
+  padding-left: 30px;
+  font-family: var(--lmui-ff-marr-sans);
+  font-weight: 500;
+  font-size: 13px;
+  color: var(--lmui-c-main-toggle-label);
+  cursor: pointer;
+}
+
+.lmui-checkbox__input+.lmui-checkbox__fake::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 18px;
+  height: 18px;
+  border-radius: 2px;
+  border: 1px solid var(--lmui-c-main-checkbox-border);
+  background: transparent;
+  transition: background-color 0.25s ease-in;
+}
+
+// Hover State
+.lmui-checkbox__input+.lmui-checkbox__fake:hover::before {
+  background: var(--lmui-c-main-checkbox-bg-hover);
+}
+
+// Disabled State
+.lmui-checkbox__input:disabled+.lmui-checkbox__fake::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 18px;
+  height: 18px;
+  border-radius: 2px;
+  border: 1px solid var(--lmui-c-main-checkbox-border-disabled);
+  background: var(--lmui-c-main-checkbox-bg-disabled);
+  pointer-events: none;
+}
+
+// Checked State
+.lmui-checkbox__input:checked+.lmui-checkbox__fake::before {
+  background: var(--lmui-c-main-checkbox-bg);
+  transition: background-color 0.25s ease-in;
+}
+
+.lmui-checkbox__input:checked+.lmui-checkbox__fake::after {
+  content: "";
+  position: absolute;
+  background-color: var(--lmui-c-main-checkbox-tick-fill);
+  -webkit-mask-image: url("https://assets-decodeurs.lemonde.fr/redacweb/editorial-design-sys-assets/tick.svg");
+  mask-image: url("https://assets-decodeurs.lemonde.fr/redacweb/editorial-design-sys-assets/tick.svg");
+  left: 2px;
+  top: 4px;
+  width: 15px;
+  height: 12px;
+}
+
+// Error State
+.lmui-checkbox.lmui-checkbox_error .lmui-checkbox__input+.lmui-checkbox__fake::before {
+  border: 1px solid var(--lmui-c-main-checkbox-border-error);
+}
+
+.lmui-checkbox.lmui-checkbox_error .lmui-checkbox__input:checked+.lmui-checkbox__fake::before {
+  border: 1px solid var(--lmui-c-main-checkbox-border);
+}
+
+// ---------------Radio----------------
+
+// Main-radio
+.lmui-radio {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+}
+
+.lmui-radio__input {
+  display: none;
+}
+
+.lmui-radio__input+.lmui-radio__fake {
+  position: relative;
+  padding-left: 30px;
+  cursor: pointer;
+  font-family: var(--lmui-ff-marr-sans);
+  font-weight: 500;
+  font-size: 13px;
+  color: var(--lmui-c-main-toggle-label);
+}
+
+.lmui-radio__input+.lmui-radio__fake::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1px solid var(--lmui-c-main-radio-border);
+  background: transparent;
+  transition: background-color 0.25s ease-in;
+}
+
+// Hover State
+.lmui-radio__input+.lmui-radio__fake:hover::before {
+  background: var(--lmui-c-main-radio-bg-hover);
+}
+
+// Disabled State
+.lmui-radio__input:disabled+.lmui-radio__fake::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1px solid var(--lmui-c-main-radio-border-disabled);
+  background: var(--lmui-c-main-radio-bg-disabled);
+  pointer-events: none;
+}
+
+// Checked State
+.lmui-radio__input:checked+.lmui-radio__fake::before {
+  transition: background-color 0.25s ease-in, border 0.25s ease-in;
+  border: 1px solid var(--lmui-c-main-radio-border-enabled);
+}
+
+.lmui-radio__input:checked+.lmui-radio__fake::after {
+  content: "";
+  position: absolute;
+  background-color: var(--lmui-c-main-radio-bullet-fill);
+  border-radius: 50%;
+  left: 6px;
+  top: 6px;
+  width: 8px;
+  height: 8px;
+}
+
+// Error State
+.lmui-radio.lmui-radio_error .lmui-radio__input+.lmui-radio__fake::before {
+  border: 1px solid var(--lmui-c-main-radio-border-error);
+}
+
+.lmui-radio.lmui-radio_error .lmui-radio__input:checked+.lmui-radio__fake::before {
+  border: 1px solid var(--lmui-c-main-radio-border);
+}
+
+
+// ---------------Search-engine----------------
+
+// Main-search-engine
+.lmui-search {
+  display: flex;
+  flex-direction: column;
+}
+
+.lmui-search__bar {
+  position: relative;
+}
+
+input.lmui-search__field {
+  box-sizing: border-box;
+  height: var(--height-autocomplete);
+  width: 100%;
+  padding: 0 0 0 16px;
+  border-radius: var(--lmui-c-rounded-search-radius);
+  border: 1px solid var(--lmui-c-main-search-border);
+  font-family: var(--lmui-ff-marr-sans);
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: -0.015em;
+  color: var(--lmui-c-main-search-type);
+  background: transparent;
+  box-shadow: var(--lmui-c-search-box-shadow);
+  transition: box-shadow 0.3s ease-in;
+}
+
+input.lmui-search__field::placeholder {
+  font-family: var(--lmui-ff-marr-sans);
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--lmui-c-main-search-placeholder);
+}
+
+// Hover State
+input.lmui-search__field:hover {
+  border: 1px solid var(--lmui-c-main-search-border-hover);
+  box-shadow: var(--lmui-c-search-box-shadow-hover);
+}
+
+// Focus State
+input.lmui-search__field:focus {
+  outline: 0.5px solid var(--lmui-c-main-search-outline-focus);
+  box-shadow: var(--lmui-c-search-box-shadow-hover);
+}
+
+// Disabled State
+input.lmui-search__field:disabled {
+  background-color: var(--lmui-c-main-search-bg-disabled);
+  box-shadow: unset;
+  pointer-events: none;
+}
+
+input.lmui-search__field:disabled::placeholder,
+input.lmui-search__field:disabled+.lmui-search__button {
+  opacity: 50%;
+}
+
+.lmui-search__button {
+  position: absolute;
+  right: calc((var(--height-autocomplete) - var(--lmui-search__button)) / 2);
+  top: calc((var(--height-autocomplete) - var(--lmui-search__button)) / 2);
+  height: var(--lmui-search__button);
+  width: var(--lmui-search__button);
+  border-radius: 100%;
+  background-color: var(--lmui-c-main-search-icon);
+  mask-image: url("https://assets-decodeurs.lemonde.fr/redacweb/editorial-design-sys-assets/search.svg");
+  mask-repeat: no-repeat;
+  mask-position: center;
+  -webkit-mask-image: url("https://assets-decodeurs.lemonde.fr/redacweb/editorial-design-sys-assets/search.svg");
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  cursor: pointer;
+  transform: var(--lmui-search__button-scale);
+}
+
+// Button Hover State
+.lmui-search__button:hover {
+  background-color: var(--lmui-c-main-search-icon-hover);
+}
+
+// Size S
+.lmui-search.lmui-search_s .lmui-search__bar .lmui-search__field {
+  padding: 0 0 0 10px;
+  height: 36px;
+  font-size: 13px;
+}
+
+.lmui-search.lmui-search_s .lmui-search__bar .lmui-search__button {
+  transform: scale(0.8);
+}
+
+// Main search-engine secondary
+.lmui-search.lmui-search-secondary .lmui-search__bar input.lmui-search__field {
+  border-radius: 2px;
+}
+
+.lmui-search.lmui-search-secondary .lmui-search-autocomplete-results {
+  border-radius: 2px;
+}
+
+// Main search-engine with autocomplete
+
+// Rounded
+
+.lmui-search ul, .lmui-search li {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.lmui-search.lmui-search_autocomplete .lmui-search__bar .lmui-search__field {
+  border-radius: var(--half-radius);
+  border: unset;
+  border-style: solid;
+  border-width: 1px 1px 1px 1px;
+  border-color: var(--lmui-c-main-search-border);
+}
+
+.lmui-search.lmui-search_autocomplete .lmui-search__bar input.lmui-search__field:hover {
+  box-shadow: initial;
+}
+
+.lmui-search.lmui-search_autocomplete .lmui-search__bar input.lmui-search__field:focus {
+  outline: unset;
+  box-shadow: initial;
+}
+
+// Les résultats
+.lmui-search-autocomplete-results {
+  box-sizing: border-box;
+  background-color: var(--lmui-c-main-search-autocomplete-bg);
+  border-style: solid;
+  border-width: 0px 1px 1px 1px;
+  border-color: var(--lmui-c-main-search-border);
+  border-radius: 0 0 calc(var(--half-radius)) var(--half-radius);
+  overflow: auto;
+  border-width: 0;
+  z-index: 3;
+}
+
+.lmui-search.lmui-search_autocomplete {
+  height: var(--height-autocomplete);
+  overflow-y: visible;
+}
+
+.lmui-search__suggestion {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  font-family: var(--lmui-ff-marr-sans);
+  font-size: 16px;
+  line-height: 1.2;
+  font-weight: 400;
+  color: var(--lmui-c-main-search-autocomplete-label);
+  border-bottom: 1px solid var(--lmui-c-main-search-autocomplete-border);
+  padding: 0 12px;
+  transition: background-color 0.18s ease-in;
+  height: var(--height-autocomplete);
+  margin-top: unset;
+  // Keep this otherwise the website's css will add a margin (:
+}
+
+.lmui-search.lmui-search_s.lmui-search_autocomplete .lmui-search-autocomplete-results .lmui-search__suggestion {
+  font-size: 13px;
+  font-weight: 400;
+  height: var(--height-autocomplete);
+}
+
+.lmui-search-autocomplete-results li:last-child {
+  border-bottom: unset;
+}
+
+.lmui-search__suggestion:hover {
+  background-color: var(--lmui-c-main-search-autocomplete-bg-hover);
+  cursor: pointer;
+}
+
+.lmui-search.lmui-search_autocomplete.lmui-active-search .lmui-search__bar .lmui-search__field {
+  border-radius: var(--half-radius) var(--half-radius) 0 0;
+}
+
+.lmui-search_autocomplete.lmui-active-search .lmui-search-autocomplete-results {
+  border-width: 0 1px 1px 1px;
+}
+
+// Modification du border-radius pour l'expand rounded
+.lmui-search.lmui-search_autocomplete:not(.lmui-search-secondary).lmui-active-search .lmui-search__bar .lmui-search__field {
+  border-radius: calc(var(--height-autocomplete) / 2) calc(var(--height-autocomplete) / 2) 0 0;
+}
+
+// Modification du border-radius pour l'expand secondary
+.lmui-search.lmui-search_autocomplete.lmui-search-secondary.lmui-active-search .lmui-search__bar .lmui-search__field {
+  border-radius: 2px 2px 0 0;
+}
+
+// Pas de résultat
+.lmui-search-autocomplete-results li.no-results {
+  cursor: default;
+}
+
+.lmui-search-autocomplete-results li.no-results:hover {
+  background-color: inherit;
+}
+
+.lmui-search-autocomplete-results li:not(.no-results).pre-selected {
+  background-color: var(--lmui-c-snow-light);
+}
+
+// Reset button
+.lmui-search__reset-button {
+  position: absolute;
+  right: calc((var(--height-autocomplete) - var(--lmui-search__button)) / 2);
+  top: calc((var(--height-autocomplete) - var(--lmui-search__button)) / 2);
+  height: var(--lmui-search__button);
+  width: var(--lmui-search__button);
+  transform: scale(0.8);
+  border-radius: 100%;
+  background-color: var(--lmui-c-main-search-icon);
+  mask-image: url("https://assets-decodeurs.lemonde.fr/redacweb/editorial-design-sys-assets/close.svg");
+  mask-repeat: no-repeat;
+  mask-position: center;
+  -webkit-mask-image: url("https://assets-decodeurs.lemonde.fr/redacweb/editorial-design-sys-assets/close.svg");
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  cursor: pointer;
+  visibility: hidden;
+  transition: background-color 0.3s ease-in;
+}
+
+.lmui-search__reset-button:hover {
+  background-color: var(--lmui-c-red-medium);
+}
+
+// Reset button - Size S
+.lmui-search.lmui-search_s.lmui-search_autocomplete .lmui-search__bar .lmui-search__reset-button {
+  transform: scale(0.6);
+}
+
+
+// ---------------Charts----------------
+
+// Style commun à tous les charts
+.lmui-chart strong {
+  font-weight: 500;
+  color: var(--lmui-c-chart-description-text-strong);
+}
+
+// --------------- Chart structure----------------
+
+.lmui-chart {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background-color: var(--lmui-c-block-bg);
+  box-shadow: var(--lmui-c-block-box-shadow);
+  padding: 22px 24px 22px 24px;
+  border: 1px solid var(--lmui-c-block-border);
+  border-radius: 6px;
+}
+
+@media (max-width:600px) {
+  .lmui-chart {
+    padding: 20px 16px 20px 16px;
+    gap: 8px;
+  }
+}
+
+// Meta-data
+.lmui-chart__update {
+  margin: 0;
+  font-family: var(--lmui-ff-marr-sans);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.2;
+  color: var(--lmui-c-chart-update);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+@media (max-width:600px) {
+  .lmui-chart__update {
+    font-size: 11px;
+  }
+}
+
+// Title
+h2.lmui-chart__title {
+  margin: 0;
+  font-family: var(--lmui-ff-marr-sans);
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: var(--lmui-c-chart-title);
+}
+
+@media (max-width:600px) {
+  h2.lmui-chart__title {
+    font-size: 18px;
+  }
+}
+
+// Description
+.lmui-chart__description {
+  margin: 0 0 4px 0;
+  font-family: var(--lmui-ff-marr-sans);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.4;
+  color: var(--lmui-c-chart-description-text);
+}
+
+@media (max-width:600px) {
+  .lmui-chart__description {
+    font-size: 14px;
+  }
+}
+
+// Legend
+.lmui-chart__legend {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  font-family: var(--lmui-ff-marr-sans);
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.4;
+  color: var(--lmui-c-chart-legend);
+}
+
+.lmui-chart__legend-item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
+}
+
+.lmui-chart__legend-bullet {
+  height: 10px;
+  width: 10px;
+  border-radius: 100%;
+  background-color: black;
+}
+
+.lmui-chart__legend-line {
+  height: 10px;
+  width: 10px;
+  border-radius: 100%;
+  background-color: black;
+}
+
+// Instructions
+.lmui-chart__instructions {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  gap: 10px;
+  border-radius: 5px;
+  font-family: var(--lmui-ff-marr-sans);
+  font-size: 15px;
+  line-height: 1.3;
+  font-weight: 400;
+  color: var(--lmui-c-chart-instructions-text);
+  padding: 15px;
+  background-color: var(--lmui-c-chart-instructions-bg);
+  margin: 8px 0;
+}
+
+@media (max-width:600px) {
+  .lmui-chart__instructions {
+    font-size: 13px;
+  }
+}
+
+.lmui-chart__instructions p {
+  margin: auto 0;
+}
+
+.lmui-chart__instructions .lmui-chart__instructions-icon-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  height: 100%;
+  padding: 3px;
+}
+
+// Source
+.lmui-chart__source {
+  margin: 4px 0 0 0;
+  font-family: var(--lmui-ff-marr-sans);
+  font-size: 13px;
+  line-height: 1.3;
+  font-weight: 400;
+  color: var(--lmui-c-chart-source-text);
+}
+
+@media (max-width:600px) {
+  .lmui-chart__source {
+    font-size: 11px;
+  }
+}
+
+// ---------------Chart Timeline----------------
+.lmui-chart__timeline {
+  padding: 20px 0 0 0;
+}
+
+.lmui-chart__timeline ul {
+  list-style-type: none;
+  position: relative;
+}
+
+.lmui-chart__timeline ul li {
+  display: flex;
+  align-items: baseline;
+}
+
+
+.lmui-chart__timeline .lmui-chart__timeline-event {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  width: 100%;
+}
+
+// Style de la timeline
+.lmui-chart__timeline .lmui-chart__timeline-event::after {
+  content: '';
+  position: absolute;
+  top: 8px;
+  left: 4px;
+  width: 1px;
+  height: 100%;
+  background: var(--lmui-c-main-divider);
+  z-index: 1;
+}
+
+.lmui-chart__timeline li:last-child .lmui-chart__timeline-event::after {
+  display: none;
+}
+
+// Style du point
+.lmui-chart__timeline .lmui-chart__timeline-point {
+  position: absolute;
+  content: '';
+  box-sizing: content-box;
+  border-radius: 100%;
+  top: 6px;
+  width: 8px;
+  height: 8px;
+  border: 2px solid var(--lmui-c-chart-timeline-point-outlined-border);
+  background: var(--lmui-c-chart-timeline-point-outlined-bg);
+  transform: translate(-2px);
+  z-index: 10;
+  aspect-ratio: 1;
+}
+
+@media (max-width:600px) {
+  .lmui-chart__timeline .lmui-chart__timeline-point {
+    top: 5px;
+  }
+}
+
+.lmui-chart__timeline .lmui-chart__timeline-point.lmui-chart__timeline-point-filled {
+  background: var(--lmui-c-chart-timeline-point-filled-bg);
+}
+
+// Timeline date style
+.lmui-chart__timeline .lmui-chart__timeline-date {
+  font-family: var(--lmui-ff-marr-sans);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--lmui-c-chart-timeline-date);
+  width: 70px;
+  margin-right: 20px;
+  text-align: right;
+  transition: 0.7s var(--ease-out-quint);
+}
+
+@media (max-width:600px) {
+  .lmui-chart__timeline .lmui-chart__timeline-date {
+    font-size: 11px;
+    width: 40px;
+  }
+}
+
+.lmui-chart__timeline .lmui-chart__timeline-date.lmui-chart__timeline-date_underline {
+  -webkit-text-decoration: underline;
+  text-decoration: underline;
+  text-underline-offset: 0.28em;
+  text-decoration-thickness: 0.2em;
+  text-decoration-color: red;
+  // Mettez la couleur que vous voulez
+}
+
+// Timeline tag style
+.lmui-chart__timeline-text-tag {
+  font-family: var(--lmui-ff-marr-sans-condensed);
+  font-size: 11px;
+  color: var(--lmui-c-chart-timeline-date);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 2px 5px;
+  border-radius: 60px;
+  margin-right: 6px;
+  border: 1px solid black;
+}
+
+// Timeline text
+.lmui-chart__timeline .lmui-chart__timeline-text {
+  font-family: var(--lmui-ff-marr-sans);
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--lmui-c-chart-timeline-event-text);
+  width: 100%;
+  padding-bottom: 36px;
+  padding-left: 30px;
+  margin: 0;
+}
+
+@media (max-width:600px) {
+  .lmui-chart__timeline .lmui-chart__timeline-text {
+    font-size: 14px;
+    padding-bottom: 24px;
+  }
+}
+
+.lmui-chart__timeline li:last-child .lmui-chart__timeline-text {
+  padding-bottom: 15px;
+}
+
+// --------------- Chart Table ----------------
+
+.lmui-chart-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--lmui-ff-marr-sans);
+}
+
+@media (max-width:600px) {
+  .lmui-chart-table {
+    position: relative;
+  }
+}
+
+.lmui-chart-table .lmui-chart-table__cell {
+  position: relative;
+  padding: 10px 14px;
+  border: 1px solid var(--lmui-c-block-border);
+  font-size: 14px;
+  color: var(--lmui-c-chart-table-cell-text);
+}
+
+@media (max-width:600px) {
+  .lmui-chart-table .lmui-chart-table__cell {
+    font-size: 12px;
+  }
+}
+
+.lmui-chart-table th {
+  font-family: var(--lmui-ff-marr-sans);
+  font-weight: 500;
+  font-size: 14px;
+  color: var(--lmui-c-chart-table-cell-text);
+  border: 1px solid var(--lmui-c-block-border);
+}
+
+@media (max-width:600px) {
+  .lmui-chart-table th {
+    font-size: 12px;
+  }
+}
+
+.lmui-chart-table th {
+  padding: 10px 14px;
+  border: 1px solid var(--lmui-c-block-border);
+}
+
+@media (max-width:600px) {
+  .lmui-chart-table td:first-child,
+  .lmui-chart-table th:first-child {
+    position: sticky;
+    background-color: inherit;
+    left: 0;
+    z-index: 1;
+    box-shadow: 5px 5px 5px 5px black;
+    overflow: visible;
+  }
+}
+
+.lmui-chart tr {
+  background-color: var(--lmui-c-block-bg);
+}
+
+.lmui-chart-table tr:nth-child(even) {
+  background-color: var(--lmui-c-chart-table-cell-bg);
+}
+
+.lmui-chart__scroller {
+  overflow-x: scroll;
+  overflow-y: hidden;
+  max-width: 100%;
+}
+
+// Table with line label
+.lmui-chart-table.lmui-chart-table_with-line-label .lmui-chart-table__cell:first-child {
+  border: none;
+  width: fit-content;
+  padding-left: 0;
+  text-align: right;
+  background-color: var(--lmui-c-block-bg);
+}
+
+@media (max-width:600px) {
+  .lmui-chart-table.lmui-chart-table_with-line-label .lmui-chart-table__cell:first-child {
+    width: fit-content;
+  }
+}
+
+.lmui-chart-table.lmui-chart-table_with-line-label .lmui-chart-table__cell:first-child::after {
+  content: "";
+  position: absolute;
+  display: inline-block;
+  box-sizing: content-box;
+  border-radius: 100%;
+  right: -1px;
+  top: 50%;
+  width: 8px;
+  height: 8px;
+  border: 2px solid var(--lmui-c-chart-timeline-point-outlined-border);
+  background: var(--lmui-c-chart-timeline-point-outlined-bg);
+  transform: translate(50%, -50%);
+}
+
+.lmui-chart-table.lmui-chart-table_with-line-label th:first-child {
+  border: none;
+}
+
+.lmui-chart-table .lmui-chart__timeline-date_underline {
+  -webkit-text-decoration: underline;
+  text-decoration: underline;
+  text-underline-offset: 0.28em;
+  text-decoration-thickness: 0.2em;
+  text-decoration-color: red;
+  // Mettez la couleur que vous voulez
+}
+
+// --------------- Dialog box ----------------
+
+.lmui-dialog-box {
+  max-width: 600px;
+  padding: 30px;
+  border-radius: 5px;
+  font-family: var(--lmui-ff-marr-sans);
+  font-weight: 400;
+  font-size: 19px;
+  line-height: 1.4;
+  letter-spacing: -0.02em;
+  color: #2A303C;
+  background-color: rgba(255, 255, 255, 0.82);
+  box-shadow: 0px 12px 26px 0px rgba(1, 17, 59, 0.09), 0 1px 3px 0px rgba(1, 17, 59, 0.08);
+  backdrop-filter: blur(13px);
+  -webkit-backdrop-filter: blur(13px);
+}
+
+[data-color-mode="dark"] .lmui-dialog-box {
+  max-width: 600px;
+  padding: 30px;
+  border-radius: 5px;
+  font-family: var(--lmui-ff-marr-sans);
+  font-weight: 400;
+  font-size: 19px;
+  line-height: 1.4;
+  letter-spacing: -0.02em;
+  color: rgba(255, 255, 255, 0.85);
+  background-color: rgba(0, 0, 0, 0.7);
+  box-shadow: 0px 0px 26px 0px rgba(65, 189, 238, 0.05), 0 1px 3px 0px rgba(65, 189, 238, 0.03);
+  backdrop-filter: blur(13px);
+  -webkit-backdrop-filter: blur(13px);
+}
+
+@media (max-width: 600px) {
+  .lmui-dialog-box {
+    max-width: 90%;
+    padding: 20px;
+    font-size: 14px;
+    line-height: 1.4;
+  }
+}
+
+// ---------------Icons----------------
+
+// [WIP] Max : ajouter les classes fill-1 (et éventuellement fill-2 et fill-3)
+// sur les éléments à coloriser des svg pour pouvoir les styliser en css
+// quand importés en inline dans la page
+
+// Icons grayscale
+.lmui-icon {
+  filter: var(--lmui-ic-default);
+  opacity: var(--lmui-o-primary);
+}
+
+// Opacity range
+.lmui-icon.lmui-icon_secondary {
+  opacity: var(--lmui-o-secondary);
+}
+
+.lmui-icon.lmui-icon_tertiary {
+  opacity: var(--lmui-o-tertiary);
+}
+
+.lmui-icon.lmui-icon_quaternary {
+  opacity: var(--lmui-o-quaternary);
+}
+
+// Colors
+.lmui-icon.lmui-icon_red {
+  filter: var(--lmui-ic-red);
+}
+
+.lmui-icon.lmui-icon_green {
+  filter: var(--lmui-ic-green);
+}
+
+.lmui-icon.lmui-icon_white {
+  filter: var(--lmui-ic-white);
+  // Will stay white in darkmode
+}

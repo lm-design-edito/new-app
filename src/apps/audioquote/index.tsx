@@ -30,7 +30,7 @@ async function toProps (input: unknown, logger?: Logger): Promise<Props> {
     pauseButton,
     loudButton,
     muteButton,
-    hidePauseButton,
+    hidePauseButton
   } = input
   if (customClass !== undefined) { props.customClass = toString(customClass) }
   if (audioSrc !== undefined) { props.audioSrc = toString(audioSrc) }

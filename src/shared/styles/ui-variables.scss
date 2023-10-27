@@ -1,0 +1,329 @@
+/* Couleurs lm-site */
+:root {
+
+  --lmui-c-white: white;
+  --lmui-c-snow-lighter: #FCFCFD;
+  --lmui-c-snow-light: #F5F6F8;
+  --lmui-c-snow-medium: #EFF0F3;
+  --lmui-c-snow-dark: #E8EAEE;
+  --lmui-c-snow-darker: #E2E4E9;
+  --lmui-c-smoke-lighter: #D5D8DC;
+  --lmui-c-smoke-light: #BDC1C8;
+  --lmui-c-smoke-medium: #A4A9B4;
+  --lmui-c-smoke-dark: #8B92A1;
+  --lmui-c-smoke-darker: #717B8E;
+  --lmui-c-slate-lighter: #666E80;
+  --lmui-c-slate-light: #565E70;
+  --lmui-c-slate-medium: #464F5F;
+  --lmui-c-slate-dark: #383F4E;
+  --lmui-c-slate-darker: #2A303C;
+  --lmui-c-sea-lighter: #EBF9FF;
+  --lmui-c-sea-light: #82C8E8;
+  --lmui-c-sea-medium: #026B9C;
+  --lmui-c-sea-dark: #005B85;
+  --lmui-c-sea-darker: #01364F;
+  --lmui-c-red-light: #FAB4B4;
+  --lmui-c-red-medium: #F62120;
+
+  /* Darkmode elevations */
+  --lmui-c-charcoal-light: #313439;
+  --lmui-c-charcoal-medium: #212327;
+  --lmui-c-charcoal-dark: #181A1E;
+  --lmui-c-fuel-lighter: #424957;
+  --lmui-c-surface-500: #2F3135;
+  --lmui-c-surface-900: #46484B;
+  --name-it-4: #5C5E61;
+
+  /* Border-radius */
+  --lmui-c-rounded-search-radius: 60px;
+  --half-radius: calc(var(--lmui-c-rounded-search-radius) / 2);
+
+ /* Tabs size */
+  --lmui-tab-size-large: 40px;
+  --lmui-tab-padding-large: 8px;
+
+  /* Box shadows */
+  --lmui-c-block-box-shadow-light: 0px 8px 14px rgba(14, 39, 87, 0.06);
+  --lmui-c-block-box-shadow-dark: 0px 8px 14px rgba(0, 0, 0, 0.10);
+  --lmui-c-search-box-shadow-light: inset 0px 1px 1px 1px rgba(0,0,0,0.09), 0px 4px 6px 2px rgba(0,0,0,0);
+  --lmui-c-search-box-shadow-dark: inset 0px 1px 1px 1px rgba(0,0,0,0.09), 0px 4px 6px 2px rgba(0,0,0,0);
+  --lmui-c-search-box-shadow-hover-light: inset 0px 1px 1px 1px rgba(0,0,0,0), 0px 4px 6px 2px rgba(0,0,0,0.1);
+  --lmui-c-search-box-shadow-hover-dark: inset 0px 1px 1px 1px rgba(0,0,0,0), 0px 4px 6px 2px rgba(0,0,0,0.1);
+  --lmui-c-tab-box-shadow-light: 0px 1px 4px 0px rgba(24, 26, 30, 0);
+  --lmui-c-tab-box-shadow-dark: 0px 1px 4px 0px rgba(24, 26, 30, 0.50);
+  --lmui-c-tab-enabled-box-shadow-light: 0px 1px 2px 0px rgba(24, 26, 30, 0.13);
+  --lmui-c-tab-enabled-box-shadow-dark: 0px 1px 3px 0px rgba(24, 26, 30, 0.58);
+  
+  /* Search-engine autocomplete */
+  --height-autocomplete: 48px;
+
+  /* Motion */
+  --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out-quint: cubic-bezier(0.86, 0, 0.07, 1);
+
+  /* Icons opacity grayscale */
+  --lmui-o-primary: 100%;
+  --lmui-o-secondary: 75%;
+  --lmui-o-tertiary: 50%;
+  --lmui-o-quaternary: 25%;
+
+  /* Icons colors */
+  --lmui-ic-default-light: brightness(0%);
+  --lmui-ic-default-dark: brightness(0%) grayscale(100%) invert(1);
+  --lmui-ic-red-light: hue-rotate(180deg) brightness(110%) saturate(180%) contrast(160%);
+  --lmui-ic-red-dark: hue-rotate(180deg) brightness(110%) saturate(180%) contrast(160%) grayscale(20%);
+  --lmui-ic-green-light: hue-rotate(-80deg) brightness(130%);
+  --lmui-ic-green-dark: hue-rotate(-80deg) brightness(130%);
+  --lmui-ic-white-light: brightness(10%) invert(1);
+  --lmui-ic-white-dark: brightness(10%) invert(1);
+
+  /* Button icon size */
+  --lmui-ic-small: scale(0.8);
+
+  /* Search icon size */
+  --lmui-search__button: 28px;
+  --lmui-search__button-scale: scale(0.95);
+}
+
+/* Re-dÃ©finition des variables fonction du contexte */
+:root .lmui-search_s {
+  --height-autocomplete: 36px;
+}
+
+/* Re-dÃ©finition des variables fonction du viewport */
+@media (max-width: 600px) {
+  :root {
+  --height-autocomplete: 36px;
+  --lmui-tab-size-large: 32px;
+  --lmui-tab-padding-large: 4px;
+  --lmui-search__button-scale: scale(0.7);
+  }
+}
+
+
+/* couleurs lightmode fonctionnelles lmui */
+:root,
+:root[data-color-mode="dark"] .lmui-no-dark-mode {
+
+  /* Backgrounds, containers */
+  --lmui-c-article-bg: var(--lmui-c-white);
+  --lmui-c-block-bg: var(--lmui-c-white);
+  --lmui-c-block-box-shadow: var(--lmui-c-block-box-shadow-light);
+  --lmui-c-block-border: var(--lmui-c-snow-darker);
+  --lmui-c-main-divider: var(--lmui-c-snow-darker);
+
+  /* Boutons */
+  --lmui-c-main-button-label: var(--lmui-c-white);
+  --lmui-c-main-button-bg: var(--lmui-c-sea-medium);
+  --lmui-c-main-button-bg-hover: var(--lmui-c-sea-dark);
+  --lmui-c-main-button-bg-active: var(--lmui-c-sea-darker);
+  --lmui-c-main-button-label-disabled: var(--lmui-c-smoke-light);
+  --lmui-c-main-button-bg-disabled: var(--lmui-c-snow-light);
+  --lmui-c-secondary-button-border: var(--lmui-c-slate-darker);
+  --lmui-c-secondary-button-label: var(--lmui-c-slate-darker);
+  --lmui-c-secondary-button-bg-hover: var(--lmui-c-snow-medium);
+  --lmui-c-secondary-button-bg-active: var(--lmui-c-smoke-lighter);
+  --lmui-c-secondary-button-label-disabled: var(--lmui-c-smoke-lighter);   
+  --lmui-c-secondary-button-border-disabled: var(--lmui-c-snow-darker);
+
+  /* Tabs */
+  --lmui-c-main-tab-bg: var(--lmui-c-snow-medium);
+  --lmui-c-main-tab-label: var(--lmui-c-slate-darker);
+  --lmui-c-main-tab-border: var(--lmui-c-snow-darker);
+  --lmui-c-main-tab-bg-hover: var(--lmui-c-snow-darker);
+  --lmui-c-main-tab-label-hover: var(--lmui-c-slate-darker);
+  --lmui-c-main-tab-bg-active: var(--lmui-c-smoke-lighter);
+  --lmui-c-main-tab-label-active: var(--lmui-slate-darker);
+  --lmui-c-main-tab-bg-disabled: var(--lmui-c-snow-medium);
+  --lmui-c-main-tab-label-disabled: var(--lmui-c-smoke-light);
+  --lmui-c-main-tab-bg-enabled: var(--lmui-c-white);
+  --lmui-c-main-tab-enabled-box-shadow: var(--lmui-c-tab-enabled-box-shadow-light);
+  --lmui-c-main-tab-label-enabled: var(--lmui-c-slate-darker);
+  --lmui-c-secondary-tab-border: var(--lmui-c-smoke-light);
+  --lmui-c-main-tab-box-shadow: var(--lmui-c-tab-box-shadow-light);
+
+  /* Toggle */
+  --lmui-c-main-toggle-bg: var(--lmui-c-smoke-lighter);
+  --lmui-c-main-toggle-switch: var(--lmui-c-white);
+  --lmui-c-main-toggle-bg-hover: var(--lmui-c-smoke-light);
+  --lmui-c-main-toggle-bg-enabled: var(--lmui-c-slate-darker);
+  --lmui-c-main-toggle-bg-enabled-hover: var(--lmui-c-slate-medium);
+  --lmui-c-main-toggle-label: var(--lmui-c-slate-darker);
+
+  /* Checkbox */
+  --lmui-c-main-checkbox-border: var(--lmui-c-smoke-dark);
+  --lmui-c-main-checkbox-bg: var(--lmui-c-slate-darker);
+  --lmui-c-main-checkbox-tick-fill: var(--lmui-c-white);
+  --lmui-c-main-checkbox-bg-hover: var(--lmui-c-snow-dark);
+  --lmui-c-main-checkbox-bg-disabled: var(--lmui-c-snow-darker);
+  --lmui-c-main-checkbox-border-disabled: var(--lmui-c-smoke-medium);
+  --lmui-c-main-checkbox-border-error: var(--lmui-c-red-medium);
+
+  /* Radio */
+  --lmui-c-main-radio-border: var(--lmui-c-smoke-dark);
+  --lmui-c-main-radio-bg-hover: var(--lmui-c-snow-dark);
+  --lmui-c-main-radio-bullet-fill: var(--lmui-c-slate-darker);
+  --lmui-c-main-radio-border-enabled: var(--lmui-c-slate-darker);
+  --lmui-c-main-radio-bg-disabled: var(--lmui-c-snow-darker);
+  --lmui-c-main-radio-border-disabled: var(--lmui-c-smoke-medium);
+  --lmui-c-main-radio-border-error: var(--lmui-c-red-medium);
+
+  /* Search */
+  --lmui-c-main-search-border: var(--lmui-c-smoke-medium);
+  --lmui-c-main-search-border-hover: var(--lmui-c-sea-medium);
+  --lmui-c-search-box-shadow: var(--lmui-c-search-box-shadow-light);
+  --lmui-c-search-box-shadow-hover: var(--lmui-c-search-box-shadow-hover-light);
+  --lmui-c-main-search-placeholder: var(--lmui-c-slate-lighter);
+  --lmui-c-main-search-outline-focus: var(--lmui-c-snow-darker);
+  --lmui-c-main-search-type: var(--lmui-c-slate-darker);
+  --lmui-c-main-search-icon: var(--lmui-c-slate-dark);
+  --lmui-c-main-search-icon-hover: var(--lmui-c-sea-medium);
+  --lmui-c-main-search-bg-disabled: var(--lmui-c-snow-light);
+  --lmui-c-main-search-autocomplete-bg: var(--lmui-c-white);
+  --lmui-c-main-search-autocomplete-border: var(--lmui-c-smoke-lighter);
+  --lmui-c-main-search-autocomplete-label: var(--lmui-c-slate-darker);
+  --lmui-c-main-search-autocomplete-bg-hover: var(--lmui-c-snow-medium);
+
+  /* Chart */
+  --lmui-c-chart-title: var(--lmui-c-slate-medium);
+  --lmui-c-chart-description-text: var(--lmui-c-slate-medium);
+  --lmui-c-chart-description-text-strong: var(--lmui-c-slate-medium);
+  --lmui-c-chart-instructions-bg: var(--lmui-c-snow-light);
+  --lmui-c-chart-instructions-text: var(--lmui-c-smoke-darker);
+  --lmui-c-chart-source-text: var(--lmui-c-slate-light);
+  --lmui-c-chart-link-underline: var(--lmui-c-sea-dark);
+  --lmui-c-chart-link-text-hover: var(--lmui-c-sea-dark);
+  --lmui-c-chart-update: var(--lmui-c-sea-medium);
+  --lmui-c-chart-legend: var(--lmui-c-slate-medium);
+
+  /* Chart timeline */
+  --lmui-c-chart-timeline-date: var(--lmui-c-slate-medium);
+  --lmui-c-chart-timeline-point-filled-bg: var(--lmui-c-slate-darker);
+  --lmui-c-chart-timeline-point-outlined-bg: var(--lmui-c-block-bg);
+  --lmui-c-chart-timeline-point-outlined-border: var(--lmui-c-slate-darker);
+  --lmui-c-chart-timeline-event-text: var(--lmui-c-slate-darker);
+
+  /* Chart table */
+  --lmui-c-chart-table-cell-bg: var(--lmui-c-snow-medium);
+  --lmui-c-chart-table-cell-text: var(--lmui-c-slate-darker);
+
+  /* Icons colors */
+  --lmui-ic-default: var(--lmui-ic-default-light); /* Black in lightmode, white in darkmode */
+  --lmui-ic-red: var(--lmui-ic-red-light); /* Red */
+  --lmui-ic-green: var(--lmui-ic-green-light); /* Green */
+  --lmui-ic-white: var(--lmui-ic-white-light); /* White in lightmode, white in darkmode */
+  --lmui-ic-black: var(--lmui-ic-default-light); /* Black in lightmode, black in darkmode */
+}
+
+/* couleurs darkmode fonctionnelles lmui*/
+:root[data-color-mode="dark"], :root .lmui-no-light-mode {
+
+  /* Backgrounds, containers */
+  --lmui-c-article-bg: var(--lmui-c-charcoal-dark);
+  --lmui-c-block-bg: var(--lmui-c-charcoal-medium);
+  --lmui-c-block-box-shadow: var(--lmui-c-block-box-shadow-dark);
+  --lmui-c-block-border: var(--lmui-c-slate-dark);
+  --lmui-c-main-divider: var(--lmui-c-slate-light);
+
+  /* Boutons */
+  --lmui-c-main-button-label: var(--lmui-c-snow-lighter);
+  --lmui-c-main-button-bg: var(--lmui-c-sea-medium); 
+  --lmui-c-main-button-bg-hover: var(--lmui-c-sea-dark);
+  --lmui-c-main-button-bg-active: var(--lmui-c-sea-darker);
+  --lmui-c-main-button-label-disabled: var(--lmui-c-smoke-medium);
+  --lmui-c-main-button-bg-disabled: var(--lmui-c-slate-dark);
+  --lmui-c-secondary-button-border: var(--lmui-c-smoke-darker);
+  --lmui-c-secondary-button-label: var(--lmui-c-snow-darker);   
+  --lmui-c-secondary-button-bg-hover: var(--lmui-c-slate-dark);
+  --lmui-c-secondary-button-bg-active: var(--lmui-c-slate-medium);
+  --lmui-c-secondary-button-label-disabled: var(--lmui-c-smoke-dark);   
+  --lmui-c-secondary-button-border-disabled: var(--lmui-c-smoke-darker);  
+
+  /* Tabs */ 
+  --lmui-c-main-tab-bg: var(--lmui-c-surface-500);
+  --lmui-c-main-tab-label: var(--lmui-c-smoke-light);
+  --lmui-c-main-tab-border: var(--lmui-c-surface-900);
+  --lmui-c-main-tab-bg-hover: var(--lmui-c-surface-900);
+  --lmui-c-main-tab-label-hover: var(--lmui-c-smoke-lighter);
+  --lmui-c-main-tab-bg-active: var(--lmui-c-smoke-lighter);
+  --lmui-c-main-tab-label-active: var(--lmui-c-slate-darker);
+  --lmui-c-main-tab-bg-disabled: var(--name-it-1);
+  --lmui-c-main-tab-enabled-box-shadow: var(--lmui-c-tab-enabled-box-shadow-dark);
+  --lmui-c-main-tab-label-disabled: var(--name-it-4);
+  --lmui-c-main-tab-bg-enabled: var(--lmui-c-snow-darker);
+  --lmui-c-main-tab-label-enabled: var(--lmui-c-slate-dark);
+  --lmui-c-secondary-tab-border: var(--lmui-c-slate-lighter);
+  --lmui-c-main-tab-box-shadow: var(--lmui-c-tab-box-shadow-dark);
+
+  /* Toggle */ 
+  --lmui-c-main-toggle-bg: var(--lmui-c-smoke-dark);
+  --lmui-c-main-toggle-switch: var(--lmui-c-white);
+  --lmui-c-main-toggle-bg-hover: var(--lmui-c-smoke-medium);
+  --lmui-c-main-toggle-bg-enabled: var(--lmui-c-sea-light);
+  --lmui-c-main-toggle-bg-enabled-hover: var(--lmui-c-sea-medium);
+  --lmui-c-main-toggle-label: var(--lmui-c-snow-lighter);
+
+  /* Checkbox */ 
+  --lmui-c-main-checkbox-border: var(--lmui-c-smoke-medium);
+  --lmui-c-main-checkbox-bg: var(--lmui-c-slate-darker);
+  --lmui-c-main-checkbox-tick-fill: var(--lmui-c-white);
+  --lmui-c-main-checkbox-bg-hover: var(--lmui-c-slate-medium);
+  --lmui-c-main-checkbox-bg-disabled: var(--lmui-c-slate-medium);
+  --lmui-c-main-checkbox-border-disabled: var(--lmui-c-smoke-medium);
+  --lmui-c-main-checkbox-border-error: var(--lmui-c-red-light);
+
+  /* Radio */ 
+  --lmui-c-main-radio-border: var(--lmui-c-smoke-medium);
+  --lmui-c-main-radio-bg-hover: var(--lmui-c-slate-medium);
+  --lmui-c-main-radio-bullet-fill: var(--lmui-c-white);
+  --lmui-c-main-radio-border-enabled: var(--lmui-c-white);
+  --lmui-c-main-radio-bg-disabled: var(--lmui-c-slate-medium);
+  --lmui-c-main-radio-border-disabled: var(--lmui-c-smoke-medium);
+  --lmui-c-main-radio-border-error: var(--lmui-c-red-light);
+
+  /* Search */ 
+  --lmui-c-main-search-border: var(--lmui-c-slate-light);
+  --lmui-c-main-search-border-hover: var(--lmui-c-sea-light);
+  --lmui-c-search-box-shadow: var(--lmui-c-search-box-shadow-dark);
+  --lmui-c-search-box-shadow-hover: var(--lmui-c-search-box-shadow-hover-dark);
+  --lmui-c-main-search-placeholder: var(--lmui-c-smoke-medium);
+  --lmui-c-main-search-outline-focus: var(--lmui-c-snow-darker);
+  --lmui-c-main-search-type: var(--lmui-c-white);
+  --lmui-c-main-search-icon: var(--lmui-c-white);
+  --lmui-c-main-search-icon-hover: var(--lmui-c-sea-light);
+  --lmui-c-main-search-bg-disabled: var(--lmui-c-slate-darker);
+  --lmui-c-main-search-autocomplete-bg: var(--lmui-c-charcoal-medium);
+  --lmui-c-main-search-autocomplete-border: var(--lmui-c-slate-light);
+  --lmui-c-main-search-autocomplete-label: var(--lmui-c-white);
+  --lmui-c-main-search-autocomplete-bg-hover: var(--lmui-c-slate-darker);
+
+  /* Chart */ 
+  --lmui-c-chart-title: var(--lmui-c-snow-light);
+  --lmui-c-chart-description-text: var(--lmui-c-smoke-medium);
+  --lmui-c-chart-description-text-strong: var(--lmui-c-snow-light);
+  --lmui-c-chart-instructions-bg: var(--lmui-c-slate-darker);
+  --lmui-c-chart-instructions-text: var(--lmui-c-smoke-medium);
+  --lmui-c-chart-source-text: var(--lmui-c-smoke-medium);
+  --lmui-c-chart-link-text-hover: var(--lmui-c-sea-light);
+  --lmui-c-chart-link-underline: var(--lmui-c-sea-light);
+  --lmui-c-chart-update: var(--lmui-c-sea-light);
+  --lmui-c-chart-legend: var(--lmui-c-smoke-light);
+
+  /* Chart timeline */
+  --lmui-c-chart-timeline-date: var(--lmui-c-smoke-light);
+  --lmui-c-chart-timeline-point-filled-bg: var(--lmui-c-white);
+  --lmui-c-chart-timeline-point-outlined-bg: var(--lmui-c-block-bg);
+  --lmui-c-chart-timeline-point-outlined-border: var(--lmui-c-white);
+  --lmui-c-chart-timeline-event-text: var(--lmui-c-smoke-lighter);
+
+  /* Chart table */
+  --lmui-c-chart-table-cell-bg: var(--lmui-c-charcoal-light);
+  --lmui-c-chart-table-cell-text: var(--lmui-c-smoke-lighter);
+
+  /* Icons colors */
+  --lmui-ic-default: var(--lmui-ic-default-dark); /* White in darkmode, black in lightmode */
+  --lmui-ic-red: var(--lmui-ic-red-dark); /* Red */
+  --lmui-ic-green: var(--lmui-ic-green-dark); /* Green */
+  --lmui-ic-white: var(--lmui-ic-white-dark); /* White in darkmode, white in lightmode */
+  --lmui-ic-black: var(--lmui-ic-default-light); /* Black in darkmode, black in lightmode */
+}

@@ -821,23 +821,18 @@
  *
  * * * * * * * * * * * * * * */
 
-.lm-page,
-.lm-app,
-.lm-with-variables {
+:root {
   /* Fonts */
-  --ff-the-antiqua-b:               "The-Antiqua-B-Variable", Garamond, Times, serif;
-  --ff-the-antiqua-b-non-variable:  "The-Antiqua-B", Garamond, Times, serif;
-  --ff-marr-sans:                   "Marr-Sans", Helvetica, Arial, Roboto, sans-serif;
-  --ff-marr-sans-condensed:         "Marr-Sans-Condensed", Helvetica, Arial, Roboto, sans-serif;
-  --ff-euclid-flex:                 "Euclid-Flex", Helvetica, Arial, Roboto, sans-serif;
-  --ff-sang-bleu-og-sans:           "Sang-Bleu-OG-Sans", Garamond, Times, serif;
-  --ff-sang-bleu-og-serif:          "Sang-Bleu-OG-Serif", Garamond, Times, serif;
-  --ff-sang-bleu-og-condensed:      "Sang-Bleu-OG-Condensed", Garamond, Times, serif;
-  --ff-pixeloid-sans:               "Pixeloid-Sans", Helvetica, Arial, Roboto, sans-serif;;
-  --ff-pixeloid-mono:               "Pixeloid-Mono", monospace;
-  --ff-giorgio-sans:                "Giorgio-Sans", Helvetica, Arial, Roboto, sans-serif;
-}
-
-.lm-app.lm-app_euclid-flex-xl {
-  --ff-euclid-flex-xl:              "Euclid-Flex-XL", "Euclid-Flex", Helvetica, Arial, Roboto, sans-serif;
+  --lmui-ff-the-antiqua-b:               "The-Antiqua-B-Variable", Garamond, Times, serif;
+  --lmui-ff-the-antiqua-b-non-variable:  "The-Antiqua-B", Garamond, Times, serif;
+  --lmui-ff-marr-sans:                   "Marr-Sans", Helvetica, Arial, Roboto, sans-serif;
+  --lmui-ff-marr-sans-condensed:         "Marr-Sans-Condensed", Helvetica, Arial, Roboto, sans-serif;
+  --lmui-ff-euclid-flex:                 "Euclid-Flex", Helvetica, Arial, Roboto, sans-serif;
+  --lmui-ff-sang-bleu-og-sans:           "Sang-Bleu-OG-Sans", Garamond, Times, serif;
+  --lmui-ff-sang-bleu-og-serif:          "Sang-Bleu-OG-Serif", Garamond, Times, serif;
+  --lmui-ff-sang-bleu-og-condensed:      "Sang-Bleu-OG-Condensed", Garamond, Times, serif;
+  --lmui-ff-pixeloid-sans:               "Pixeloid-Sans", Helvetica, Arial, Roboto, sans-serif;;
+  --lmui-ff-pixeloid-mono:               "Pixeloid-Mono", monospace;
+  --lmui-ff-giorgio-sans:                "Giorgio-Sans", Helvetica, Arial, Roboto, sans-serif;
+  --lmui-ff-euclid-flex-xl:              "Euclid-Flex-XL", "Euclid-Flex", Helvetica, Arial, Roboto, sans-serif;
 }

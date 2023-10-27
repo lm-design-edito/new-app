@@ -5,17 +5,62 @@
   </data>
 </data>
 <data class="SLOTS">
-  <!-- EVERYTHING -->
+
+  <!-- UI -->
   <data>
     <data class="destination">
-      <string class="selector">.everything</string>
+      <string class="selector">.ui</string>
       <string class="position">endof</string>
       <string class="reference">body</string>
     </data>
     <data class="content">
-      <comp type="everything"></comp>
+      <comp type="ui">
+        <string class="component">tabs</string>
+        <string class="customClass">my-tabs</string>
+        <data class="tabs">
+          <lm-html>
+            <comp type="ui">
+              <string class="component">tab</string>
+              <boolean class="enabled">true</boolean>
+              <lm-html class="content">Tab 1</lm-html>
+            </comp>
+          </lm-html>
+          <data>
+            <lm-html class="content">Tab 2</lm-html>
+          </data>
+        </data>
+      </comp>
     </data>
   </data>
+
+  <!-- DRAWER -->
+  <data>
+    <data class="destination">
+      <string class="selector">.drawer</string>
+      <string class="position">endof</string>
+      <string class="reference">body</string>
+    </data>
+    <data class="content">
+      <comp type="drawer">
+        <string class="customClass">my-drawer</string>
+        <string class="defaultState">opened</string>
+        <lm-html class="content">
+          <comp type="drawer">
+            <string class="customClass">my-drawer</string>
+            <string class="defaultState">closed</string>
+            <lm-html class="content">
+              <comp type="drawer">
+                <string class="customClass">my-drawer</string>
+                <string class="defaultState">closed</string>
+                <lm-html class="content"><h2>Coucou !</h2></lm-html>
+              </comp>
+            </lm-html>
+          </comp>
+        </lm-html>
+      </comp>
+    </data>
+  </data>
+
   <!-- HEADER -->
   <data>
     <data class="destination">
@@ -27,6 +72,7 @@
       <comp type="header"></comp>
     </data>
   </data>
+
   <!-- AUDIOQUOTE -->
   <data>
     <data class="destination">
@@ -38,6 +84,7 @@
       <comp type="audioquote"></comp>
     </data>
   </data>
+
   <!-- SCRLLGNGN -->
   <data>
     <data class="destination">

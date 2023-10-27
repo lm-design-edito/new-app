@@ -18,28 +18,6 @@ export function removeCssRule (name: string) {
   if (deleted) updateStyleElements()
 }
 
-export async function injectStylesheet (url: string|URL, force?: boolean): Promise<string|Error>
-export async function injectStylesheet (url: string|URL, name: string, force?: boolean): Promise<string|Error>
-export async function injectStylesheet (
-  url: string|URL,
-  _forceOrName?: boolean|string,
-  _force?: boolean): Promise<string|Error> {
-  try {
-    const urlStr = url instanceof URL ? url.toString() : url
-    const response = await window.fetch(urlStr)
-    if (!response.ok) throw new Error(`Error fetching ${urlStr}: ${response.statusText}`)
-    const data = await response.text()
-    const name = typeof _forceOrName === 'string' ? _forceOrName : undefined
-    const force = _forceOrName === true || _force === true
-    if (name !== undefined) injectCssRule(data.trim(), name, force)
-    else injectCssRule(data.trim(), force)
-    return data
-  } catch (err) {
-    if (err instanceof Error) return err
-    return new Error('Unknown error')
-  }
-}
-
 function updateStyleElements () {
   // Remove unused style tags
   const styleTagsClass = '__dynamic-styles'
@@ -66,4 +44,16 @@ function updateStyleElements () {
       document.head.append(targetTag)
     }
   })
+}
+
+export function injectStylesheet (href: string, onLoad?: (event?: Event) => void, targetSelector?: string) {
+  const target = targetSelector !== undefined
+    ? (document.querySelector(targetSelector) ?? document.head)
+    : document.head
+  const link = document.createElement('link')
+  link.setAttribute('rel', 'stylesheet')
+  link.setAttribute('href', href)
+  if (onLoad !== undefined) link.addEventListener('load', onLoad)
+  target.appendChild(link)
+  return link
 }

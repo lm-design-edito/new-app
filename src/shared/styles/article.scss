@@ -1,7 +1,7 @@
 .lm-article-editorial-nature,
 .lm-article-heading {
   color: rgb(113, 123, 142);
-  font-family: var(--ff-marr-sans-condensed);
+  font-family: var(--lmui-ff-marr-sans-condensed);
   font-size: 16px;
   font-weight: 500;
   letter-spacing: .5px;
@@ -14,7 +14,7 @@
 }
 
 .lm-article-intertitle {
-  font-family: var(--ff-marr-sans);
+  font-family: var(--lmui-ff-marr-sans);
   color: #2a303b;
   font-size: 26px;
   font-weight: 600;
@@ -24,7 +24,7 @@
 }
 
 .lm-article-kicker {
-  font-family: var(--ff-marr-sans);
+  font-family: var(--lmui-ff-marr-sans);
   font-size: 18px;
   line-height: 1.44;
   letter-spacing: 0.09px;
@@ -57,14 +57,14 @@
 }
 
 .lm-article-media-description {
-  font-family: var(--ff-marr-sans);
+  font-family: var(--lmui-ff-marr-sans);
   color: #717b8e;
   font-size: 14px;
   line-height: 1.42;
 }
 
 .lm-article-media-credits {
-  font-family: var(--ff-marr-sans);
+  font-family: var(--lmui-ff-marr-sans);
   font-size: 12px;
   color: #a2a9ae;
   line-height: 1.65;
@@ -72,7 +72,7 @@
 }
 
 .lm-article-paragraph {
-  font-family: var(--ff-the-antiqua-b);
+  font-family: var(--lmui-ff-the-antiqua-b);
   color: #383f4e;
   font-size: 18px;
   line-height: 1.55;
@@ -99,7 +99,7 @@
 }
 
 .lm-article-publication {
-  font-family: var(--ff-marr-sans);
+  font-family: var(--lmui-ff-marr-sans);
   color: #717b8e;
   font-size: 14px;
   letter-spacing: .2px;
@@ -107,7 +107,7 @@
 }
 
 .lm-article-signature {
-  font-family: var(--ff-marr-sans);
+  font-family: var(--lmui-ff-marr-sans);
   color: #2A303C;
   font-size: 14px;
   letter-spacing: .2px;
@@ -132,7 +132,7 @@
 
 .lm-article-sub-marker {
   position: relative;
-  font-family: var(--ff-marr-sans);
+  font-family: var(--lmui-ff-marr-sans);
   color: #717b8e;
   font-size: 14px;
   letter-spacing: .2px;
@@ -141,7 +141,7 @@
 }
 
 .lm-article-title {
-  font-family: var(--ff-marr-sans);
+  font-family: var(--lmui-ff-marr-sans);
   font-size: 60px;
   letter-spacing: .5px;
   line-height: 66px;
@@ -157,7 +157,7 @@
 }
 
 .lm-article-read-also {
-  font-family: var(--ff-the-antiqua-b);
+  font-family: var(--lmui-ff-the-antiqua-b);
   font-size: 18px;
   line-height: 25.38px;
   color: rgb(2, 107, 156);
@@ -208,7 +208,7 @@ a.lm-article-read-also .lm-article-read-also__title {
 }
 
 .lm-article-read-in-english {
-  font-family: var(--ff-marr-sans);
+  font-family: var(--lmui-ff-marr-sans);
   color: #666E80;
   font-size: 14px;
   letter-spacing: .2px;
@@ -233,7 +233,7 @@ a.lm-article-read-also .lm-article-read-also__title {
 }
 
 .lm-article-image .lm-toggle-button {
-  font-family: var(--ff-marr-sans);
+  font-family: var(--lmui-ff-marr-sans);
   color: #A4A9B4;
   cursor: pointer;
   display: flex;
