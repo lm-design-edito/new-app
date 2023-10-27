@@ -1,9 +1,24 @@
-.wrapper {
+.panel {
   height: 0;
-  transition: 200ms height;
+  transition:
+    height
+    var(--transition-duration, 200ms)
+    var(--transition-ease, ease);
   overflow: hidden;
 }
 
-.wrapper.wrapper_is-opened {
+.wrapper.wrapper_is-opened > .panel {
   height: var(--content-height);
+}
+
+.toggler {
+  cursor: pointer;
+}
+
+.boundary {
+  height: 0;
+  pointer-events: none;
+  user-select: none;
+  overflow: hidden;
+  visibility: hidden;
 }

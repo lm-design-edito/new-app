@@ -1,4 +1,5 @@
 import { render as preactRender } from 'preact'
+import appConfig from '~/config'
 import { Globals } from '~/shared/globals'
 import { Config } from '~/shared/config'
 import { LmHtml } from '~/shared/lm-html'
@@ -7,7 +8,7 @@ import Logger from '~/utils/silent-log'
 import isArrayOf from '~/utils/is-array-of'
 import isRecord from '~/utils/is-record'
 import selectorToElement from '~/utils/selector-to-element'
-import appConfig from './config'
+import { injectStylesheet } from '~/utils/dynamic-css'
 
 /* * * * * * * * * * * * * * * * * * * * * *
  * SILENT LOGGER & GLOBALS
@@ -45,19 +46,11 @@ export async function initPage () {
   document.body.append(...lmPageStylesheets.map(node => node.cloneNode()))
   lmPageStylesheets.forEach(stylesheetNode => stylesheetNode.remove())
 
-  // Load styles (dont await) [WIP] log when loaded ?
-  const makeLink = (href: string, rel: string = 'stylesheet') => {
-    const link = document.createElement('link')
-    link.setAttribute('rel', rel)
-    link.setAttribute('href', href)
-    link.addEventListener('load', () => logger.log('Styles', '%cStylesheet loaded', 'font-weight: 800;', href))
-    return link
-  }
+  // Load styles
   const mainStyles = appConfig.paths.STYLES_INDEX_URL.toString()
   const devStyles = appConfig.paths.STYLES_DEV_URL.toString()
-  const { head } = document
-  head.appendChild(makeLink(mainStyles))
-  if (appConfig.env === 'developpment') head.appendChild(makeLink(devStyles))
+  injectStylesheet(mainStyles, () => logger.log('Styles', '%cStylesheet loaded', 'font-weight: 800;', mainStyles))
+  if (appConfig.env === 'developpment') injectStylesheet(devStyles, () => logger.log('Styles', '%cStylesheet loaded', 'font-weight: 800;', devStyles))
 
   /* INLINE CONFIG * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 

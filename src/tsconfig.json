@@ -23,7 +23,9 @@
       "~/apps": ["apps/index.tsx"],
       "~/apps/*": ["apps/*"],
       "~/components/*": ["components/*"],
+      "~/config": ["shared/config.ts"],
       "~/shared/*": ["shared/utils/*"],
+      "~/theme/*": ["theme/*"],
       "~/utils/*": ["utils/*"],
     }
   }

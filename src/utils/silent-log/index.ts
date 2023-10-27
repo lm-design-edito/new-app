@@ -129,7 +129,7 @@ export default class Logger {
     return this
   }
 
-  print (this: Logger, threadFilter?: string) {
+  print (this: Logger, threadFilter?: string, withStack?: boolean) {
     const allLogs = [...this.#threads.entries()]
       .map(([threadName, logs]) => logs.map(log => ({ threadName, log })))
       .flat()
@@ -140,18 +140,18 @@ export default class Logger {
       })
     allLogs.forEach(({ threadName, log }) => {
       console.log(`%c${threadName}`, 'font-weight: 800; color: white; background: black; padding: 4px;', `+${log.elapsedTimeMs}s –`, log.displayTime);
-      console.log(`%c${log.displayStack}`, 'color: grey; font-size: inherit;')
+      if (withStack === true) console.log(`%c${log.displayStack}`, 'color: grey; font-size: inherit;')
       ;(console[log.type] as any)(...log.data)
       console.log('')
     })
   }
 
-  printThreads (this:Logger) {
+  printThreads (this:Logger, withStack?: boolean) {
     [...this.#threads.entries()].forEach(([threadName, logs]) => {
       console.group(`%c${threadName}`, 'font-weight: 800; color: white; background: black; padding: 4px;')
       logs.forEach(log => {
         console.log(`+${log.elapsedTimeMs}s –`, log.displayTime)
-        console.log(`%c${log.displayStack}`, 'color: grey; font-size: inherit;')
+        if (withStack === true) console.log(`%c${log.displayStack}`, 'color: grey; font-size: inherit;')
         ;(console[log.type] as any)(...log.data)
         console.log('')
       })
