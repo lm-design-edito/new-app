@@ -14,6 +14,20 @@
       <string class="reference">body</string>
     </data>
     <data class="content">
+      <!-- toggle -->
+      <comp type="ui">
+        <string class="component">toggle</string>
+        <lm-html class="labelContent"><div>Content</div></lm-html>
+        <string class="size">small</string>
+      </comp>
+      <!-- button -->
+      <comp type="ui">
+        <string class="component">button</string>
+        <lm-html class="content">Content</lm-html>
+        <string class="iconName">archives</string>
+        <boolean class="iconFirst">true</boolean>
+      </comp>
+      <!-- tabs -->
       <comp type="ui">
         <string class="component">tabs</string>
         <string class="customClass">my-tabs</string>
@@ -23,10 +37,14 @@
               <string class="component">tab</string>
               <boolean class="enabled">true</boolean>
               <lm-html class="content">Tab 1</lm-html>
+              <string class="iconName">archives</string>
+              <boolean class="iconFirst">true</boolean>
             </comp>
           </lm-html>
           <data>
             <lm-html class="content">Tab 2</lm-html>
+            <string class="iconName">archives</string>
+            <boolean class="iconFirst">true</boolean>
           </data>
         </data>
       </comp>

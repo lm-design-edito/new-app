@@ -1,4 +1,4 @@
-import { VNode } from 'preact'
+import { VNode, FunctionalComponent } from 'preact'
 import bem from '~/utils/bem'
 
 export type Props = {
@@ -9,21 +9,22 @@ export type Props = {
   squared?: boolean
   secondary?: boolean
   icon?: VNode
+  iconFirst?: boolean
 }
 
-export default function Button (props: Props) {
+const Button: FunctionalComponent<Props> = (props: Props) => {
   const rootClass = 'lmui-button'
   const bemClss = bem(rootClass).mod({
     m: props.size === 'medium',
     s: props.size === 'small',
     squared: props.squared,
     secondary: props.secondary,
-    'with-icon': props.icon !== undefined
+    'with-icon': props.icon !== undefined,
+    'icon-first': props.iconFirst === true
   })
   const wrapperClasses = [bemClss.value]
   if (props.customClass !== undefined) wrapperClasses.push(props.customClass)
   const iconWrapperClass = bem(rootClass).elt('icon')
-  console.log(props.icon)
   return <button
     class={wrapperClasses.join(' ')}
     disabled={props.disabled}>
@@ -33,3 +34,5 @@ export default function Button (props: Props) {
     </div>}
   </button>
 }
+
+export default Button

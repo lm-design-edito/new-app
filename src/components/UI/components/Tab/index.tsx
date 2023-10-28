@@ -1,4 +1,4 @@
-import { VNode } from 'preact'
+import { VNode, FunctionalComponent } from 'preact'
 import bem from '~/utils/bem'
 
 export type Props = {
@@ -6,11 +6,15 @@ export type Props = {
   enabled?: boolean
   content?: string | VNode
   icon?: VNode
+  iconFirst?: boolean
 }
 
-export default function Tab (props: Props) {
+const Tab: FunctionalComponent<Props> = (props: Props) => {
   const rootClass = 'lmui-tab'
-  const bemClss = bem(rootClass).mod({ enabled: props.enabled })
+  const bemClss = bem(rootClass).mod({
+    enabled: props.enabled,
+    'icon-first': props.iconFirst === true
+  })
   const wrapperClasses = [bemClss.value]
   if (props.customClass !== undefined) wrapperClasses.push(props.customClass)
   const iconClss = bem(rootClass).elt('icon')
@@ -21,3 +25,5 @@ export default function Tab (props: Props) {
     </div>}
   </button>
 }
+
+export default Tab
