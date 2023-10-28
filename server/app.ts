@@ -1,4 +1,4 @@
-import fs, { lstatSync } from 'node:fs'
+import fs from 'node:fs'
 import { join, extname } from 'node:path'
 import express from 'express'
 import cookieParser from 'cookie-parser'
@@ -7,6 +7,7 @@ import Debug from 'debug'
 import http from 'http'
 import { glob } from 'glob'
 import cors from 'cors'
+import { lookup } from 'mime-types'
 
 const { readFile, readdir } = fs.promises
 
@@ -101,7 +102,7 @@ const generateHomePage = async () => `<html class="lm-page">
     <div style="margin-left: 96px;">
       <h2>Pages</h2><br />
       ${(await listPages()).sort().reverse().map(name => (
-        `<a href="/pages/${name}">/pages/${name}</a>`
+        `<a href="/pages/${name}/">/pages/${name}/</a>`
       )).join('<br /><br />')}
       <br /><br /><br />
       <h2>Public</h2><br />
@@ -129,11 +130,13 @@ app.use('/pages', async (req, res, next) => {
   const TARGET = join(PAGES, req.path)
   try {
     const fileContent = await readFile(HTML_TARGET, { encoding: 'utf-8' })
+    if (!req.originalUrl.match(/\/$/)) return res.redirect(`${req.originalUrl}/`)
     return res.type('text/html').send(fileContent)
   } catch (err) {
     try {
       const fileContent = await readFile(TARGET, { encoding: 'utf-8' })
-      return res.type('text/plain').send(fileContent)
+      const mime = lookup(TARGET) || 'text/plain'
+      return res.type(mime).send(fileContent)
     } catch (err) {
       return res.type('text/html').status(404).send('404')
     }
@@ -171,4 +174,3 @@ function onListening () {
   debug('Listening on ' + bind)
   console.log('Listening on ' + bind)
 }
-
