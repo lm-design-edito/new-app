@@ -1329,11 +1329,11 @@ h2.lmui-chart__title {
 
 /* * * * * * * * * * * * * * * * * * * * * * * *
  *
- * DIALOG-BOX
+ * TEXT-BOX
  *
  * * * * * * * * * * * * * * * * * * * * * * * */
-
-.lmui-dialog-box {
+// [WIP] Max : j'ai renommé dialog-bbox en text-box, is oké ?
+.lmui-text-box {
   max-width: 600px;
   padding: 30px;
   border-radius: 5px;
@@ -1349,7 +1349,7 @@ h2.lmui-chart__title {
   -webkit-backdrop-filter: blur(13px);
 }
 
-[data-color-mode="dark"] .lmui-dialog-box {
+[data-color-mode="dark"] .lmui-text-box {
   max-width: 600px;
   padding: 30px;
   border-radius: 5px;
@@ -1366,7 +1366,7 @@ h2.lmui-chart__title {
 }
 
 @media (max-width: 600px) {
-  .lmui-dialog-box {
+  .lmui-text-box {
     max-width: 90%;
     padding: 20px;
     font-size: 14px;

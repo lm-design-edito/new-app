@@ -29,10 +29,11 @@ export namespace LmHtml {
     // If tagname is comp
     const isCustomComp = tagName === 'comp'
     if (isCustomComp) {
-      const appName = element.getAttribute('type') ?? ''
+      const appName = element.getAttribute('name') ?? ''
+      const appId = element.getAttribute('compid')
       const typeIsValidAppName = isInEnum(Apps.Name, appName)
       const unknownProps = Darkdouille.tree(element).value
-      if (typeIsValidAppName) return await Apps.render(appName, unknownProps, logger)
+      if (typeIsValidAppName) return await Apps.render(appName, appId, unknownProps, logger)
       logger?.warn('Render', '%cInvalid app name', 'font-weight: 800;', 'at', element)
       return <></>
     }
