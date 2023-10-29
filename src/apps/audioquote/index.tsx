@@ -11,7 +11,7 @@ export default async function renderer (
   const props = await toProps(unknownProps, logger)
   return { props, Component: AudioQuote }
 }
-
+ 
 async function toProps (input: unknown, logger?: Logger): Promise<Props> {
   if (!isRecord(input)) return {}
   const props: Props = {}
