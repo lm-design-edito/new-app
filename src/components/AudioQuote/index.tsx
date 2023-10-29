@@ -3,19 +3,19 @@ import IntersectionObserverComponent from '~/components/IntersectionObserver'
 import bem from '~/utils/bem'
 import styles from './styles.module.scss'
 
-interface SubGroupBoundaries {
+type SubGroupBoundaries = {
   startId: number
   endId: number
 }
 
-interface SubData {
+type SubData = {
   id: number
   start: number
   end: number
   content: string
 }
 
-interface Props {
+type Props = {
   customClass?: string
   audioSrc?: string
   subsSrc?: string
@@ -32,7 +32,7 @@ interface Props {
   hidePauseButton?: boolean
 }
 
-interface State {
+type State = {
   timecodeInMs: number
   subsContent?: SubData[]
   isPlaying?: boolean

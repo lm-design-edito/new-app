@@ -6,9 +6,11 @@ import isRecord from '~/utils/is-record'
 import { toBoolean, toString } from '~/utils/cast'
 import UI, { Component, Props } from '~/components/UI'
 import { Props as ButtonProps } from '~/components/UI/components/Button'
+import { Props as CheckboxOrRadioProps } from '~/components/UI/components/CheckboxOrRadio'
 import { Props as IconProps } from '~/components/UI/components/Icon'
 import { Props as TabProps } from '~/components/UI/components/Tab'
 import { Props as TabsProps } from '~/components/UI/components/Tabs'
+import { Props as TextBoxProps } from '~/components/UI/components/TextBox'
 import { Props as ToggleProps } from '~/components/UI/components/Toggle'
 
 export default async function renderer (
@@ -16,8 +18,7 @@ export default async function renderer (
   logger?: Logger
 ): ReturnType<Apps.AsyncRendererModule<Props>> {
   const props = await toProps(unknownProps, logger)
-  const component = <UI {...props} />
-  return { props, component }
+  return { props, Component: UI }
 }
 
 async function toProps (input: unknown, logger?: Logger): Promise<Props> {
@@ -46,6 +47,16 @@ async function toProps (input: unknown, logger?: Logger): Promise<Props> {
       } as IconProps, logger)).component
     }
     if (iconFirst !== undefined) { props.iconFirst = toBoolean(iconFirst) }
+    return { component, ...props }
+
+  // Checkbox or radio
+  } else if (component === Component.CHECKBOX || component === Component.RADIO) {
+    const props: CheckboxOrRadioProps = { type: component === Component.RADIO ? 'radio' : 'checkbox' }
+    const { customClass, labelContent, disabled, error } = input
+    if (customClass !== undefined) { props.customClass = toString(customClass) }
+    if (labelContent !== undefined) { props.labelContent = await Apps.toStringOrVNodeHelper(labelContent, logger) }
+    if (disabled !== undefined) { props.disabled = toBoolean(disabled) }
+    if (error !== undefined) { props.error = toBoolean(error) }
     return { component, ...props }
 
   // Icon
@@ -92,6 +103,14 @@ async function toProps (input: unknown, logger?: Logger): Promise<Props> {
       }).filter((elt): elt is Promise<VNode> => elt !== undefined)
       props.tabs = await Promise.all(tabsPromise)
     }
+    return { component, ...props }
+
+  // Text box
+  } else if (component === Component.TEXT_BOX) {
+    const props: TextBoxProps = {}
+    const { customClass, content } = input
+    if (customClass !== undefined) { props.customClass = toString(customClass) }
+    if (content !== undefined) { props.content = await Apps.toStringOrVNodeHelper(content, logger) }
     return { component, ...props }
 
   // Toggle
