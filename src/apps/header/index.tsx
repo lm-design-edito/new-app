@@ -10,8 +10,7 @@ export default async function renderer (
   logger?: Logger
 ): ReturnType<Apps.AsyncRendererModule<Props>> {
   const props = await toProps(unknownProps, logger)
-  const component = <Header {...props} />
-  return { props, component }
+  return { props, Component: Header }
 }
 
 async function toProps (input: unknown, logger?: Logger): Promise<Props> {

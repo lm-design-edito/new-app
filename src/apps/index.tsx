@@ -1,4 +1,4 @@
-import { VNode } from 'preact'
+import { Component, ComponentClass, VNode } from 'preact'
 import appConfig from '~/config'
 import { LmHtml } from '~/shared/lm-html'
 import { toString } from '~/utils/cast'
@@ -25,10 +25,10 @@ export namespace Apps {
     return toString(input)
   }
 
-  type RendererModuleResult<T extends unknown = unknown> = { props: T, component: VNode }
-  export type SyncRendererModule<T extends unknown = unknown> = (unknownProps: unknown, logger?: Logger) => RendererModuleResult<T>
-  export type AsyncRendererModule<T extends unknown = unknown> = (unknownProps: unknown, logger?: Logger) => Promise<RendererModuleResult<T>>
-  export type RendererModule<T extends unknown = unknown> = SyncRendererModule<T> | AsyncRendererModule<T>
+  type RendererModuleResult<T extends Record<string, unknown> = {}> = { props: T, Component: ComponentClass }
+  export type SyncRendererModule<T extends Record<string, unknown> = {}> = (unknownProps: unknown, logger?: Logger) => RendererModuleResult<T>
+  export type AsyncRendererModule<T extends Record<string, unknown> = {}> = (unknownProps: unknown, logger?: Logger) => Promise<RendererModuleResult<T>>
+  export type RendererModule<T extends Record<string, unknown> = {}> = SyncRendererModule<T> | AsyncRendererModule<T>
 
   export async function load (name: Name, logger?: Logger): Promise<RendererModule | undefined> {
     try {
@@ -49,14 +49,50 @@ export namespace Apps {
     }
   }
 
-  export async function render (name: Name, unknownProps: unknown, logger?: Logger): Promise<VNode> {
+  export const rendered: Array<{
+    id: string | null,
+    props: unknown,
+    component: VNode
+  }> = []
+
+  export type AppProps = {
+    component: ComponentClass
+    props: Record<string, unknown>
+    identifier: string | null
+  }
+
+  export type AppState = AppProps['props']
+
+  export class App extends Component<AppProps, AppState> {
+    identifier: string | null = null
+    constructor (props: AppProps) {
+      super(props)
+      this.state = props.props ?? {}
+      this.identifier = props.identifier
+    }
+
+    render () {
+      return <this.props.component {...this.state} />
+    }
+  }
+
+  export async function render (
+    name: Name,
+    id: string | null,
+    unknownProps: unknown,
+    logger?: Logger): Promise<VNode> {
     const appRenderer = await load(name, logger)
     if (appRenderer === undefined) {
       logger?.error('Render', '%cRenderer load error', 'font-weight: 800;', `\nNo renderer found for app '${name}'. Props:`, unknownProps)
       return <></>
     }
-    const { props, component } = await appRenderer(unknownProps, logger)
+    const { props, Component } = await appRenderer(unknownProps, logger)
+    const appComponent = <App
+      component={Component}
+      props={props}
+      identifier={id} />
+    rendered.push({ id, props, component: appComponent })
     logger?.log('Render', '%cRendered app', 'font-weight: 800', `'${name}', with props`, props)
-    return component
+    return appComponent
   }
 }
