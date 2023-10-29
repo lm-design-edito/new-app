@@ -14,26 +14,50 @@
       <string class="reference">body</string>
     </data>
     <data class="content">
+      <!-- checkbox -->
+      <comp name="ui" compid="mon-super-id">
+        <string class="component">checkbox</string>
+        <lm-html class="labelContent">
+          <comp name="ui" compid="mon-super-id">
+            <string class="component">text-box</string>
+            <lm-html class="content">
+              <comp name="ui">
+                <string class="component">toggle</string>
+              </comp>
+            </lm-html>
+          </comp>
+        </lm-html>
+      </comp>
+      <!-- radio -->
+      <!-- <comp name="ui">
+        <string class="component">radio</string>
+        <lm-html class="labelContent"><div>Content</div></lm-html>
+      </comp> -->
+      <!-- text-box -->
+      <!-- <comp name="ui">
+        <string class="component">text-box</string>
+        <lm-html class="content"><div>Content</div></lm-html>
+      </comp> -->
       <!-- toggle -->
-      <comp type="ui">
+      <!-- <comp name="ui">
         <string class="component">toggle</string>
         <lm-html class="labelContent"><div>Content</div></lm-html>
         <string class="size">small</string>
-      </comp>
+      </comp> -->
       <!-- button -->
-      <comp type="ui">
+      <!-- <comp name="ui">
         <string class="component">button</string>
         <lm-html class="content">Content</lm-html>
         <string class="iconName">archives</string>
         <boolean class="iconFirst">true</boolean>
-      </comp>
+      </comp> -->
       <!-- tabs -->
-      <comp type="ui">
+      <!-- <comp name="ui">
         <string class="component">tabs</string>
         <string class="customClass">my-tabs</string>
         <data class="tabs">
           <lm-html>
-            <comp type="ui">
+            <comp name="ui">
               <string class="component">tab</string>
               <boolean class="enabled">true</boolean>
               <lm-html class="content">Tab 1</lm-html>
@@ -47,27 +71,27 @@
             <boolean class="iconFirst">true</boolean>
           </data>
         </data>
-      </comp>
+      </comp> -->
     </data>
   </data>
 
   <!-- DRAWER -->
-  <data>
+  <!-- <data>
     <data class="destination">
       <string class="selector">.drawer</string>
       <string class="position">endof</string>
       <string class="reference">body</string>
     </data>
     <data class="content">
-      <comp type="drawer">
+      <comp name="drawer">
         <string class="customClass">my-drawer</string>
         <string class="defaultState">opened</string>
         <lm-html class="content">
-          <comp type="drawer">
+          <comp name="drawer">
             <string class="customClass">my-drawer</string>
             <string class="defaultState">closed</string>
             <lm-html class="content">
-              <comp type="drawer">
+              <comp name="drawer">
                 <string class="customClass">my-drawer</string>
                 <string class="defaultState">closed</string>
                 <lm-html class="content"><h2>Coucou !</h2></lm-html>
@@ -77,41 +101,41 @@
         </lm-html>
       </comp>
     </data>
-  </data>
+  </data> -->
 
   <!-- HEADER -->
-  <data>
+  <!-- <data>
     <data class="destination">
       <string class="selector">.header</string>
       <string class="position">endof</string>
       <string class="reference">body</string>
     </data>
     <data class="content">
-      <comp type="header"></comp>
+      <comp name="header"></comp>
     </data>
-  </data>
+  </data> -->
 
   <!-- AUDIOQUOTE -->
-  <data>
+  <!-- <data>
     <data class="destination">
       <string class="selector">.audioquote</string>
       <string class="position">endof</string>
       <string class="reference">body</string>
     </data>
     <data class="content">
-      <comp type="audioquote"></comp>
+      <comp name="audioquote"></comp>
     </data>
-  </data>
+  </data> -->
 
   <!-- SCRLLGNGN -->
-  <data>
+  <!-- <data>
     <data class="destination">
       <string class="selector">.scrllgngn</string>
       <string class="position">endof</string>
       <string class="reference">body</string>
     </data>
     <data class="content">
-      <comp type="scrllgngn"></comp>
+      <comp name="scrllgngn"></comp>
     </data>
-  </data>
+  </data> -->
 </data>

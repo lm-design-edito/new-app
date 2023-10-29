@@ -1,5 +1,6 @@
 import { render as preactRender } from 'preact'
 import appConfig from '~/config'
+import { Apps } from '~/apps'
 import { Globals } from '~/shared/globals'
 import { Config } from '~/shared/config'
 import { LmHtml } from '~/shared/lm-html'
@@ -212,6 +213,6 @@ export async function initPage () {
         }
       }))
     })
-  const rendered = (await Promise.all(renderedPromises)).flat()
-  logger.log('Slots', '%cRendered content in slots:', 'font-weight: 800;', rendered)
+  await Promise.all(renderedPromises)
+  logger.log('Slots', '%cRendered content in slots:', 'font-weight: 800;', Apps.rendered)
 }
