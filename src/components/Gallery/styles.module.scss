@@ -1,0 +1,43 @@
+.inner {
+  overflow: scroll;
+  overflow-y: hidden;
+  scroll-behavior: smooth;
+  display: flex;
+  flex-direction: row;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  scrollbar-color: transparent transparent;
+}
+
+.wrapper.wrapper_snap .inner {
+  scroll-snap-type: x mandatory;
+}
+
+.inner::-webkit-scrollbar {
+  display: none;
+  height: 0;
+}
+
+.inner::-webkit-scrollbar-track,
+.inner::-webkit-scrollbar-thumb {
+  background: transparent;
+}
+
+.inner::before,
+.inner::after {
+  content: "";
+  display: block;
+  flex-grow: 0;
+  flex-shrink: 0;
+  width: calc((100% - var(--inner-width, 100%)) / 2);
+}
+
+.slot {
+  flex-grow: 0;
+  flex-shrink: 0;
+}
+
+.wrapper.wrapper_snap .slot {
+  scroll-snap-type: x mandatory;
+  scroll-snap-align: center;
+}
