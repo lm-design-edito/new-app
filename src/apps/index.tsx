@@ -10,6 +10,7 @@ export namespace Apps {
   export enum Name {
     AUDIOQUOTE = 'audioquote',
     DRAWER = 'drawer',
+    GALLERY = 'gallery',
     HEADER = 'header',
     SCRLLGNGN = 'scrllgngn',
     UI = 'ui'
@@ -35,6 +36,7 @@ export namespace Apps {
       let loaded: RendererModule | null = null
       if (name === Name.AUDIOQUOTE) { loaded = (await import('~/apps/audioquote')).default }
       if (name === Name.DRAWER) { loaded = (await import('~/apps/drawer')).default }
+      if (name === Name.GALLERY) { loaded = (await import('~/apps/gallery')).default }
       if (name === Name.HEADER) { loaded = (await import('~/apps/header')).default }
       if (name === Name.SCRLLGNGN) { loaded = (await import('~/apps/scrllgngn')).default }
       if (name === Name.UI) {
