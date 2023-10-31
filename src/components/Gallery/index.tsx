@@ -9,7 +9,7 @@ export type Props = {
   prevButtonContent?: string | VNode
   nextButtonContent?: string | VNode
   snapScroll?: boolean
-  innerWidth?: string
+  scrollerWidth?: string
 }
 
 type State = {
@@ -20,7 +20,7 @@ type State = {
 }
 
 export default class Gallery extends Component<Props, State> {
-  $inner: HTMLDivElement | null = null
+  $scroller: HTMLDivElement | null = null
   $slots: Array<HTMLDivElement | null> = []
   state: State = {
     currentSlotPos: -1,
@@ -51,11 +51,11 @@ export default class Gallery extends Component<Props, State> {
   throttledHandleScroll = throttle(() => this.updateState(), 200).throttled
 
   getSlotsPositionData () {
-    const { $inner } = this
-    if ($inner === null) return;
-    const innerWidth = $inner.clientWidth
-    const maxScrollValue = $inner.scrollWidth - innerWidth
-    const currentScrollValue = $inner.scrollLeft
+    const { $scroller } = this
+    if ($scroller === null) return;
+    const scrollerWidth = $scroller.clientWidth
+    const maxScrollValue = $scroller.scrollWidth - scrollerWidth
+    const currentScrollValue = $scroller.scrollLeft
     const scrolledRatio = currentScrollValue / maxScrollValue
     const slotsPositionData = this.$slots
       .map($slot => {
@@ -79,7 +79,7 @@ export default class Gallery extends Component<Props, State> {
         const targetForCurrent = totalSlotsWidth * scrolledRatio
         const isCurrent = (slotData.left <= targetForCurrent)
           && (slotData.right >= targetForCurrent)
-        const targetForSnapped = innerWidth / 2
+        const targetForSnapped = scrollerWidth / 2
         const { clientRect } = slotData
         const isSnapped = (clientRect.left <= targetForSnapped) && (clientRect.right >= targetForSnapped)
         return { ...slotData, isCurrent, isSnapped }
@@ -91,13 +91,13 @@ export default class Gallery extends Component<Props, State> {
     const slotsPositionData = this.getSlotsPositionData() ?? []
     const indexOfCurrent = slotsPositionData.findIndex(slotPosData => slotPosData.isCurrent === true)
     const indexOfSnapped = slotsPositionData.findIndex(slotPosData => slotPosData.isSnapped === true)
-    const { $inner } = this
-    const innerScrolled = $inner?.scrollLeft ?? 0
-    const innerScrollWidth = $inner?.scrollWidth ?? 0
-    const innerWidth = $inner?.clientWidth ?? 0
-    const innerScrollMax = innerScrollWidth - innerWidth ?? 0
-    const isAtStart = innerScrolled <= 2
-    const isAtEnd = (innerScrollMax - innerScrolled) <= 2
+    const { $scroller } = this
+    const scrollerScrolled = $scroller?.scrollLeft ?? 0
+    const scrollerScrollWidth = $scroller?.scrollWidth ?? 0
+    const scrollerWidth = $scroller?.clientWidth ?? 0
+    const scrollerScrollMax = scrollerScrollWidth - scrollerWidth ?? 0
+    const isAtStart = scrollerScrolled <= 2
+    const isAtEnd = (scrollerScrollMax - scrollerScrolled) <= 2
     this.setState(curr => {
       if (curr.currentSlotPos === indexOfCurrent
         && curr.snappedSlotPos === indexOfSnapped
@@ -114,16 +114,16 @@ export default class Gallery extends Component<Props, State> {
   }
 
   resetScroll () {
-    const { $inner } = this
-    if ($inner === null) return;
-    $inner.scrollLeft = 0
+    const { $scroller } = this
+    if ($scroller === null) return;
+    $scroller.scrollLeft = 0
   }
 
   handleButtonClick (goForward: boolean = true) {
-    const { $inner } = this
-    if ($inner === null) return;
-    const innerWidth = $inner.clientWidth
-    const targetForSnap = innerWidth / 2
+    const { $scroller } = this
+    if ($scroller === null) return;
+    const scrollerWidth = $scroller.clientWidth
+    const targetForSnap = scrollerWidth / 2
     const slotsPositionData = this.getSlotsPositionData()
     if (slotsPositionData === undefined) return;
     const snappedPos = slotsPositionData.findIndex(slot => slot.isSnapped === true)
@@ -143,7 +143,7 @@ export default class Gallery extends Component<Props, State> {
       if (diff > 0 === goForward && Math.abs(diff) > 5) { toScroll = diff }
       else { toScroll = targetCenter - targetForSnap }
     } else { toScroll = targetCenter - targetForSnap }
-    $inner.scrollLeft += toScroll
+    $scroller.scrollLeft += toScroll
   }
 
   render () {
@@ -157,19 +157,19 @@ export default class Gallery extends Component<Props, State> {
     const wrapperClasses = [wrapperBemClass.value, styles['wrapper']]
     if (props.snapScroll) wrapperClasses.push(styles['wrapper_snap'])
     if (props.customClass !== undefined) wrapperClasses.push(props.customClass)
-    const wrapperStyle = { '--inner-width': props.innerWidth }
-    const innerBemClass = bem(rootClass).elt('inner')
-    const innerClasses = [innerBemClass.value, styles['inner']]
+    const wrapperStyle = { '--scroller-width': props.scrollerWidth }
+    const scrollerBemClass = bem(rootClass).elt('scroller')
+    const scrollerClasses = [scrollerBemClass.value, styles['scroller']]
     const buttonBemClass = bem(rootClass).elt('button')
-    const buttonClasses = [buttonBemClass.value, styles['button']]
-    const prevButtonClasses = [buttonBemClass.mod('prev').value, ...buttonClasses, styles['prev-button']]
-    const nextButtonClasses = [buttonBemClass.mod('next').value, ...buttonClasses, styles['next-button']]
+    const buttonClasses = [buttonBemClass.value]
+    const prevButtonClasses = [buttonBemClass.mod('prev').value, ...buttonClasses]
+    const nextButtonClasses = [buttonBemClass.mod('next').value, ...buttonClasses]
     return <div
       style={wrapperStyle}
       className={wrapperClasses.join(' ')}>
       <div
-        ref={n => { this.$inner = n }}
-        className={innerClasses.join(' ')}
+        ref={n => { this.$scroller = n }}
+        className={scrollerClasses.join(' ')}
         onScroll={this.handleScroll}>
         {props.itemsContent?.map((itemContent, itemPos) => {
           const slotBemClass = bem(rootClass).elt('slot').mod({

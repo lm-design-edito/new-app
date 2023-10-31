@@ -21,7 +21,7 @@ async function toProps (input: unknown, logger?: Logger): Promise<Props> {
     prevButtonContent,
     nextButtonContent,
     snapScroll,
-    innerWidth
+    scrollerWidth
   } = input
   if (customClass !== undefined) { props.customClass = toString(customClass) }
   if (Array.isArray(itemsContent)) {
@@ -31,6 +31,6 @@ async function toProps (input: unknown, logger?: Logger): Promise<Props> {
   if (prevButtonContent !== undefined) { props.prevButtonContent = await Apps.toStringOrVNodeHelper(prevButtonContent, logger) }
   if (nextButtonContent !== undefined) { props.nextButtonContent = await Apps.toStringOrVNodeHelper(nextButtonContent, logger) }
   if (snapScroll !== undefined) { props.snapScroll = toBoolean(snapScroll) }
-  if (innerWidth !== undefined) { props.innerWidth = toString(innerWidth) }
+  if (scrollerWidth !== undefined) { props.scrollerWidth = toString(scrollerWidth) }
   return props
 }

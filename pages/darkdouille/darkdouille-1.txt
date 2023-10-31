@@ -4,7 +4,40 @@
     <data class="value">test</data>
   </data>
 </data>
+
 <data class="SLOTS">
+
+  <!-- GALLERY -->
+  <data>
+    <data class="destination">
+      <string class="selector">.gallery</string>
+      <string class="position">endof</string>
+      <string class="reference">body</string>
+    </data>
+    <data class="content">
+      <comp name="gallery">
+        <string class="customClass">my-gallery</string>
+        <boolean class="snapScroll">false</boolean>
+        <lm-html class="prevButtonContent">Prev</lm-html>
+        <lm-html class="nextButtonContent">Next</lm-html>
+        <string class="scrollerWidth">1200px</string>
+        <data class="itemsContent">
+          <lm-html><div style="width: 134px; height: 400px; margin: 10px; border-radius: 8px; box-shadow: 0 0 10px 0 #00000040; background-color: coral;">Item</div></lm-html>
+          <lm-html><div style="width: 162px; height: 400px; margin: 10px; border-radius: 8px; box-shadow: 0 0 10px 0 #00000040; background-color: coral;">Item</div></lm-html>
+          <lm-html><div style="width: 696px; height: 400px; margin: 10px; border-radius: 8px; box-shadow: 0 0 10px 0 #00000040; background-color: coral;">Item</div></lm-html>
+          <lm-html><div style="width: 562px; height: 400px; margin: 10px; border-radius: 8px; box-shadow: 0 0 10px 0 #00000040; background-color: coral;">Item</div></lm-html>
+          <lm-html><div style="width: 97px; height: 400px; margin: 10px; border-radius: 8px; box-shadow: 0 0 10px 0 #00000040; background-color: coral;">Item</div></lm-html>
+          <lm-html><div style="width: 283px;  height: 400px; margin: 10px; border-radius: 8px; box-shadow: 0 0 10px 0 #00000040; background-color: coral;">Item</div></lm-html>
+          <lm-html><div style="width: 422px; height: 400px; margin: 10px; border-radius: 8px; box-shadow: 0 0 10px 0 #00000040; background-color: coral;">Item</div></lm-html>
+          <lm-html><div style="width: 259px; height: 400px; margin: 10px; border-radius: 8px; box-shadow: 0 0 10px 0 #00000040; background-color: coral;">Item</div></lm-html>
+          <lm-html><div style="width: 354px; height: 400px; margin: 10px; border-radius: 8px; box-shadow: 0 0 10px 0 #00000040; background-color: coral;">Item</div></lm-html>
+          <lm-html><div style="width: 90px; height: 400px; margin: 10px; border-radius: 8px; box-shadow: 0 0 10px 0 #00000040; background-color: coral;">Item</div></lm-html>
+          <lm-html><div style="width: 199px; height: 400px; margin: 10px; border-radius: 8px; box-shadow: 0 0 10px 0 #00000040; background-color: coral;">Item</div></lm-html>
+          <lm-html><div style="width: 388px; height: 400px; margin: 10px; border-radius: 8px; box-shadow: 0 0 10px 0 #00000040; background-color: coral;">Item</div></lm-html>
+        </data>
+      </comp>
+    </data>
+  </data>
 
   <!-- UI -->
   <data>
@@ -29,30 +62,30 @@
         </lm-html>
       </comp>
       <!-- radio -->
-      <!-- <comp name="ui">
+      <comp name="ui">
         <string class="component">radio</string>
         <lm-html class="labelContent"><div>Content</div></lm-html>
-      </comp> -->
+      </comp>
       <!-- text-box -->
-      <!-- <comp name="ui">
+      <comp name="ui">
         <string class="component">text-box</string>
         <lm-html class="content"><div>Content</div></lm-html>
-      </comp> -->
+      </comp>
       <!-- toggle -->
-      <!-- <comp name="ui">
+      <comp name="ui">
         <string class="component">toggle</string>
         <lm-html class="labelContent"><div>Content</div></lm-html>
         <string class="size">small</string>
-      </comp> -->
+      </comp>
       <!-- button -->
-      <!-- <comp name="ui">
+      <comp name="ui">
         <string class="component">button</string>
         <lm-html class="content">Content</lm-html>
         <string class="iconName">archives</string>
         <boolean class="iconFirst">true</boolean>
-      </comp> -->
+      </comp>
       <!-- tabs -->
-      <!-- <comp name="ui">
+      <comp name="ui">
         <string class="component">tabs</string>
         <string class="customClass">my-tabs</string>
         <data class="tabs">
@@ -71,12 +104,12 @@
             <boolean class="iconFirst">true</boolean>
           </data>
         </data>
-      </comp> -->
+      </comp>
     </data>
   </data>
 
   <!-- DRAWER -->
-  <!-- <data>
+  <data>
     <data class="destination">
       <string class="selector">.drawer</string>
       <string class="position">endof</string>
@@ -101,10 +134,10 @@
         </lm-html>
       </comp>
     </data>
-  </data> -->
+  </data>
 
   <!-- HEADER -->
-  <!-- <data>
+  <data>
     <data class="destination">
       <string class="selector">.header</string>
       <string class="position">endof</string>
@@ -113,10 +146,10 @@
     <data class="content">
       <comp name="header"></comp>
     </data>
-  </data> -->
+  </data>
 
   <!-- AUDIOQUOTE -->
-  <!-- <data>
+  <data>
     <data class="destination">
       <string class="selector">.audioquote</string>
       <string class="position">endof</string>
@@ -125,17 +158,42 @@
     <data class="content">
       <comp name="audioquote"></comp>
     </data>
-  </data> -->
+  </data>
 
   <!-- SCRLLGNGN -->
-  <!-- <data>
+  <data>
     <data class="destination">
       <string class="selector">.scrllgngn</string>
       <string class="position">endof</string>
       <string class="reference">body</string>
     </data>
     <data class="content">
-      <comp name="scrllgngn"></comp>
+      <comp name="scrllgngn">
+        <data class="onPageChange">
+          <string class="action">alert</string>
+          <string class="handler">mySuperHandler</string>
+        </data>
+        <data class="pages">
+          <data>
+            <data class="blocks">
+              <data>
+                <lm-html class="content">
+                  <div style="height: 120vh">page 1</div>
+                </lm-html>
+              </data>
+            </data>
+          </data>
+          <data>
+            <data class="blocks">
+              <data>
+                <lm-html class="content">
+                  <div style="height: 120vh">page 2</div>
+                </lm-html>
+              </data>
+            </data>
+          </data>
+        </data>
+      </comp>
     </data>
-  </data> -->
+  </data>
 </data>

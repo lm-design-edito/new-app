@@ -1,4 +1,4 @@
-.inner {
+.scroller {
   overflow: scroll;
   overflow-y: hidden;
   scroll-behavior: smooth;
@@ -9,27 +9,27 @@
   scrollbar-color: transparent transparent;
 }
 
-.wrapper.wrapper_snap .inner {
+.wrapper.wrapper_snap .scroller {
   scroll-snap-type: x mandatory;
 }
 
-.inner::-webkit-scrollbar {
+.scroller::-webkit-scrollbar {
   display: none;
   height: 0;
 }
 
-.inner::-webkit-scrollbar-track,
-.inner::-webkit-scrollbar-thumb {
+.scroller::-webkit-scrollbar-track,
+.scroller::-webkit-scrollbar-thumb {
   background: transparent;
 }
 
-.inner::before,
-.inner::after {
+.scroller::before,
+.scroller::after {
   content: "";
   display: block;
   flex-grow: 0;
   flex-shrink: 0;
-  width: calc((100% - var(--inner-width, 100%)) / 2);
+  width: calc((100% - var(--scroller-width, 100%)) / 2);
 }
 
 .slot {

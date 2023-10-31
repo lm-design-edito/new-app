@@ -8,7 +8,7 @@ export type Props = {
   disabled?: boolean
   squared?: boolean
   secondary?: boolean
-  icon?: VNode
+  iconContent?: VNode | string
   iconFirst?: boolean
 }
 
@@ -19,7 +19,7 @@ const Button: FunctionalComponent<Props> = (props: Props) => {
     s: props.size === 'small',
     squared: props.squared,
     secondary: props.secondary,
-    'with-icon': props.icon !== undefined,
+    'with-icon': props.iconContent !== undefined,
     'icon-first': props.iconFirst === true
   })
   const wrapperClasses = [bemClss.value]
@@ -29,8 +29,8 @@ const Button: FunctionalComponent<Props> = (props: Props) => {
     class={wrapperClasses.join(' ')}
     disabled={props.disabled}>
     {props.content}
-    {props.icon !== undefined && <div className={iconWrapperClass.value}>
-      {props.icon}
+    {props.iconContent !== undefined && <div className={iconWrapperClass.value}>
+      {props.iconContent}
     </div>}
   </button>
 }
