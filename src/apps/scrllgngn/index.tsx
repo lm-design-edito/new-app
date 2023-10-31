@@ -10,8 +10,11 @@ import Scrollgneugneu, {
   PropsStickyBlockData,
   LayoutName,
   TransitionDescriptor,
-  isTransitionName
+  isTransitionName,
+  State
 } from '~/components/Scrllgngn'
+import isInEnum from '~/utils/is-in-enum'
+import { Events } from '~/shared/events'
 
 export default async function renderer (
   unknownProps: unknown,
@@ -35,7 +38,8 @@ async function toProps (
     forceStickBlocks,
     thresholdOffset,
     bgColorTransitionDuration,
-    pages
+    pages,
+    onPageChange
   } = input
   if (customClass !== undefined) { props.customClass = toString(customClass) }
   if (stickyBlocksLazyLoadDistance !== undefined) { props.stickyBlocksLazyLoadDistance = toNumber(stickyBlocksLazyLoadDistance) }
@@ -53,6 +57,19 @@ async function toProps (
   if (typeof bgColorTransitionDuration === 'string') { props.bgColorTransitionDuration = bgColorTransitionDuration }
   else if (bgColorTransitionDuration !== undefined) { props.bgColorTransitionDuration = toNumber(bgColorTransitionDuration) }
   if (Array.isArray(pages)) { props.pages = await arrayToPages(pages, logger) }
+  if (isRecord(onPageChange)) {
+    const { action, payload, handler } = onPageChange
+    if (isInEnum(Events.Name, action)) {
+      if (handler !== undefined) {
+        const strHandlerName = toString(handler)
+        const foundHandler = Events.getRegisteredHandler(strHandlerName)
+        props.onPageChange = (state?: State) => {
+          if (foundHandler !== undefined) foundHandler(state, Events.Source.SCRLLGNGN_ON_PAGE_CHANGE, Apps.rendered)
+          else () => { console.error(`No handler found with name`, strHandlerName) }
+        }
+      }
+    }
+  }
   return props
 }
 

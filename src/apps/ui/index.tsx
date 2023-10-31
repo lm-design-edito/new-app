@@ -28,7 +28,7 @@ async function toProps (input: unknown, logger?: Logger): Promise<Props> {
   // Button
   if (component === Component.BUTTON) {
     const props: ButtonProps = {}
-    const { customClass, content, size, disabled, squared, secondary, iconName, inlineIcon, iconFirst } = input
+    const { customClass, content, size, disabled, squared, secondary, iconContent, iconFirst } = input
     if (customClass !== undefined) { props.customClass = toString(customClass) }
     if (content !== undefined) { props.content = await Apps.toStringOrVNodeHelper(content, logger) }
     if (size !== undefined) {
@@ -38,14 +38,7 @@ async function toProps (input: unknown, logger?: Logger): Promise<Props> {
     if (disabled !== undefined) { props.disabled = toBoolean(disabled) }
     if (squared !== undefined) { props.squared = toBoolean(squared) }
     if (secondary !== undefined) { props.secondary = toBoolean(secondary) }
-    if (iconName !== undefined) {
-      props.icon = (await renderer({
-        component: Component.ICON,
-        registry: iconsData,
-        name: toString(iconName),
-        inline: inlineIcon !== undefined ? toBoolean(inlineIcon) : false
-      } as IconProps, logger)).component
-    }
+    if (iconContent !== undefined) { props.iconContent = await Apps.toStringOrVNodeHelper(iconContent, logger) }
     if (iconFirst !== undefined) { props.iconFirst = toBoolean(iconFirst) }
     return { component, ...props }
 
@@ -71,18 +64,11 @@ async function toProps (input: unknown, logger?: Logger): Promise<Props> {
   // Tab
   } else if (component === Component.TAB) {
     const props: TabProps = {}
-    const { customClass, enabled, content, iconName, inlineIcon, iconFirst } = input
+    const { customClass, enabled, content, iconContent, iconFirst } = input
     if (customClass !== undefined) { props.customClass = toString(customClass) }
     if (content !== undefined) { props.content = await Apps.toStringOrVNodeHelper(content, logger) }
     if (enabled !== undefined) { props.enabled = toBoolean(enabled) }
-    if (iconName !== undefined) {
-      props.icon = (await renderer({
-        component: Component.ICON,
-        registry: iconsData,
-        name: toString(iconName),
-        inline: inlineIcon !== undefined ? toBoolean(inlineIcon) : false
-      } as IconProps, logger)).component
-    }
+    if (iconContent !== undefined) { props.iconContent = await Apps.toStringOrVNodeHelper(iconContent, logger) }
     if (iconFirst !== undefined) { props.iconFirst = toBoolean(iconFirst) }
     return { component, ...props }
 
@@ -95,10 +81,6 @@ async function toProps (input: unknown, logger?: Logger): Promise<Props> {
       const tabsPromise = tabs.map(async tab => {
         if (isValidElement(tab)) return tab
         if (tab instanceof NodeList) return await Apps.toStringOrVNodeHelper(tab, logger)
-        if (isRecord(tab)) return (await renderer({
-          component: Component.TAB,
-          ...tab
-        } as TabProps, logger)).component
         return undefined
       }).filter((elt): elt is Promise<VNode> => elt !== undefined)
       props.tabs = await Promise.all(tabsPromise)

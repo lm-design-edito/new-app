@@ -5,7 +5,7 @@ export type Props = {
   customClass?: string
   enabled?: boolean
   content?: string | VNode
-  icon?: VNode
+  iconContent?: VNode | string
   iconFirst?: boolean
 }
 
@@ -20,8 +20,8 @@ const Tab: FunctionalComponent<Props> = (props: Props) => {
   const iconClss = bem(rootClass).elt('icon')
   return <button className={wrapperClasses.join(' ')}>
     {props.content}
-    {props.icon !== undefined && <div class={iconClss.value}>
-      {props.icon}
+    {props.iconContent !== undefined && <div class={iconClss.value}>
+      {props.iconContent}
     </div>}
   </button>
 }

@@ -91,6 +91,7 @@ export type Props = {
   thresholdOffset?: string
   bgColorTransitionDuration?: string|number
   pages?: PropsPageData[]
+  onPageChange?: (state?: State) => void
 }
 
 /* Context stuff */
@@ -201,7 +202,7 @@ type StatePageData = PropsPageData & {
   _trackScroll: boolean
 }
 
-type State = {
+export type State = {
   pages: Map<number, StatePageData>,
   blocks: Map<BlockIdentifier, StateBlockData>,
   cssUrlDataMap: Map<string, string>
@@ -896,13 +897,16 @@ export default class Scrollgneugneu extends Component<Props, State> {
         })
       }
     }
-    return this.setState(curr => {
+    this.setState(curr => {
       return {
         ...curr,
         currPagePos: newCurrentPagePos,
         prevPagePos: curr.currPagePos,
         blocks: newBlocks
       }
+    }, () => {
+      const { onPageChange } = this.props
+      if (onPageChange !== undefined) onPageChange(this.state)
     })
   }
 
