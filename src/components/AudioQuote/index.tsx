@@ -127,8 +127,8 @@ class AudioQuote extends Component<Props, State> {
   }
 
   timecodeToMs(timecode: string): number {
-    const [hours, minutes, secondsAndMs] = timecode.split(':')
-    const [seconds, milliseconds] = secondsAndMs.split(',')
+    const [hours = '0', minutes = '0', secondsAndMs = '0,0'] = timecode.split(':')
+    const [seconds = '0', milliseconds = '0'] = secondsAndMs.split(',')
     let result = parseInt(hours) * 60 * 60 * 1000
     result += parseInt(minutes) * 60 * 1000
     result += parseInt(seconds) * 1000
@@ -156,7 +156,7 @@ class AudioQuote extends Component<Props, State> {
       if (looksLikeTimecode) {
         if (lastAddedElement !== undefined
           && lastAddedElement.id !== undefined) {
-          const [rawStart, rawEnd] = line.split('-->')
+          const [rawStart = '', rawEnd = ''] = line.split('-->')
           const startTime = rawStart.trim()
           const endTime = rawEnd.trim()
           lastAddedElement.start = this.timecodeToMs(startTime)

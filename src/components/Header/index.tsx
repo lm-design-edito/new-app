@@ -170,6 +170,7 @@ export default class Header extends Component<Props, State> {
         <Logo href={props.logoHref} />
       </div>
       {/* Nav */}
+      {/* [WIP] rewrite using gallery */}
       {hasNavItems && <div className={navClasses.join(' ')}>
         <div className={navLeftSpacerClasses.join(' ')} />
         {props.navItems?.map(navItem => {
@@ -198,12 +199,13 @@ export default class Header extends Component<Props, State> {
         {props.subnavContent}
       </div>
       {/* PANEL */}
-      {props.panelContent !== undefined
+      {/* [WIP] Drawer is now self controlling, cannot be controlled via props. */}
+      {/* props.panelContent !== undefined
         && <div className={panelClasses.join(' ')}>
         <Drawer opened={state.panelIsOpened}>
           {props.panelContent}
         </Drawer>
-      </div>}
+      </div> */}
     </div>
   }
 }
