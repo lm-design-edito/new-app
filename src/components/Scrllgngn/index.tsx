@@ -8,8 +8,6 @@ import { injectCssRule } from '~/utils/dynamic-css' // [WIP] use injectCssRule e
 import IntersectionObserverComponent from '~/components/IntersectionObserver'
 import ResizeObserverComponent from '~/components/ResizeObserver'
 import Paginator, { State as PaginatorState } from '~/components/Paginator'
-import { Props as HeaderProps } from '~/components/Header'
-import { Instruction, dispatchEvent } from '~/components/EventDispatcher'
 
 import TransitionsWrapper from './TransitionsWrapper'
 import BlockRenderer from './BlockRenderer'
@@ -78,8 +76,6 @@ export type PropsPageData = {
   id?: string
   bgColor?: JSX.CSSProperties['backgroundColor']
   blocks?: PropsBlockData[]
-  dispatchOnEnter?: [Instruction, any][]
-  dispatchOnLeave?: [Instruction, any][]
 }
 
 export type Props = {
@@ -863,7 +859,7 @@ export default class Scrollgneugneu extends Component<Props, State> {
       currBlocksContext,
       blocksContextPage,
       blocksContextSize)
-    const { blocks, pages } = state
+    const { blocks } = state
     const newBlocks = new Map(blocks)
     newBlocksContexts.forEach((blockContext, blockId) => {
       const blockData = newBlocks.get(blockId)
@@ -873,30 +869,6 @@ export default class Scrollgneugneu extends Component<Props, State> {
         _context: blockContext
       })
     })
-
-    const pageHasReallyChanged = state.currPagePos !== newCurrentPagePos
-    // Dispatch on leave
-    const prevPageData = state.currPagePos !== undefined ? pages.get(state.currPagePos) : undefined
-    if (pageHasReallyChanged && prevPageData !== undefined) {
-      const toDispatch = prevPageData.dispatchOnLeave
-      if (toDispatch !== undefined
-        && toDispatch.length !== 0) {
-        toDispatch.forEach(([instruction, payload]) => {
-          dispatchEvent(instruction, payload)
-        })
-      }
-    }
-    // Dispatch on enter
-    const newPageData = newCurrentPagePos !== undefined ? pages.get(newCurrentPagePos) : undefined
-    if (pageHasReallyChanged && newPageData !== undefined) {
-      const toDispatch = newPageData.dispatchOnEnter
-      if (toDispatch !== undefined
-        && toDispatch.length !== 0) {
-        toDispatch.forEach(([instruction, payload]) => {
-          dispatchEvent(instruction, payload)
-        })
-      }
-    }
     this.setState(curr => {
       return {
         ...curr,

@@ -170,8 +170,7 @@
     <data class="content">
       <comp name="scrllgngn">
         <data class="onPageChange">
-          <string class="action">alert</string>
-          <string class="handler">mySuperHandler</string>
+          <string>myHandler</string>
         </data>
         <data class="pages">
           <data>

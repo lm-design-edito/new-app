@@ -31,7 +31,7 @@ const bundleOptions = (otherEntries: BuildOptions['entryPoints'] = {}): BuildOpt
   logLevel: 'info',
   target: [
     'es2020',
-    'chrome63',
+    'chrome64',
     'edge79',
     'firefox67',
     'safari12'

@@ -1,11 +1,14 @@
+import appConfig from '~/config'
 import getHeaderElements from '~/shared/get-header-element'
 import { Darkdouille } from '~/shared/darkdouille'
 import { Analytics } from '~/shared/analytics'
-import * as Cast from '~/utils/cast'
+import { toString, toNumber, toBoolean } from '~/utils/cast'
 import { injectCssRule } from '~/utils/dynamic-css'
 import interpolate, { ratio } from '~/utils/interpolate'
 import roundNumbers from '~/utils/round-numbers'
 import Logger from '~/utils/silent-log'
+import isRecord from '~/utils/is-record'
+import { Events } from '../events'
 
 export namespace Config {
   export enum InlineOnlyInstructionName {
@@ -19,8 +22,7 @@ export namespace Config {
     TRACKING = 'tracking',
     CSS = 'css',
     SCALE = 'scale',
-    ADD_SLOTS = 'addSlot', // [WIP] remove from config, move in SLOTS
-    CUSTOM_FONTS = 'customFonts' // [WIP] remove this too
+    HANDLERS_FILE = 'handlersFile'
   }
 
   export type ConfigInstruction = {
@@ -32,11 +34,11 @@ export namespace Config {
     logger?.log('Apply config', '%cInput', 'font-weight: 800;', instructions)
     instructions.forEach(({ name, value }) => {
       // ID
-      if (name === InlineOnlyInstructionName.ID) return document.body.classList.add(Cast.toString(value))
+      if (name === InlineOnlyInstructionName.ID) return document.body.classList.add(toString(value))
       // HIDE_HEADER
       if (name === RemoteInstructionName.HIDE_HEADER) {
         const headerElements = getHeaderElements() ?? []
-        const shouldHide = Cast.toBoolean(value)
+        const shouldHide = toBoolean(value)
         headerElements.forEach(elt => {
           const element = elt as HTMLElement
           if (!shouldHide) {
@@ -69,7 +71,7 @@ export namespace Config {
           END_REACHED = 'end-reached'
         }
         const validValues = value
-          .map(item => Cast.toString(item).trim())
+          .map(item => toString(item).trim())
           .filter(item => Object.values(TrackingOptions).includes(item as any))
         let hasStarted = false
         let hasReachedHalf = false
@@ -130,19 +132,19 @@ export namespace Config {
       if (name === RemoteInstructionName.SCALE) {
         const valueIsRecord = Darkdouille.valueIsRecord(value)
         if (!valueIsRecord) return
-        const name = Cast.toString(value.name)
-        const root = value.root !== undefined ? Cast.toString(value.root) : ':root'
+        const name = toString(value.name)
+        const root = value.root !== undefined ? toString(value.root) : ':root'
         const bounds = Array.isArray(value.bounds)
-          ? value.bounds.map(val => Cast.toNumber(val))
+          ? value.bounds.map(val => toNumber(val))
           : undefined
-        const breakpoints = Cast.toNumber(value.breakpoints)
+        const breakpoints = toNumber(value.breakpoints)
         const low = Array.isArray(value.low)
-          ? value.low.map(val => Cast.toNumber(val))
+          ? value.low.map(val => toNumber(val))
           : undefined
         const high = Array.isArray(value.high)
-          ? value.high.map(val => Cast.toNumber(val))
+          ? value.high.map(val => toNumber(val))
           : undefined
-        const levels = Cast.toNumber(value.levels)
+        const levels = toNumber(value.levels)
         const nameRegexp = /^[a-z]([a-z0-9\-\_]*[a-z0-9])?$/
         const isValid = nameRegexp.test(name)
           && bounds !== undefined
@@ -193,6 +195,41 @@ export namespace Config {
           }).join('')
           injectCssRule(scaleCss, 'lm-page-scale')
           logger?.log('Apply config', `%cScale created – ${name}\n`, 'font-weight: 800;', `\n${scaleCss.trim()}`)
+      }
+      // HANDLERS_FILE
+      if (name === RemoteInstructionName.HANDLERS_FILE) {
+        try {
+          const fileUrl = new URL(toString(value))
+          const urlSchemeMatches = appConfig.eventHandlersAllowedUrlSchemes.some(scheme => {
+            const schemeKeys = Object.keys(scheme) as Array<keyof URL>
+            return schemeKeys.every(key => scheme[key] === fileUrl[key])
+          })
+          if (!urlSchemeMatches) throw false;
+          const modulePromise: Promise<unknown> = import(fileUrl.toString())
+          modulePromise.then(val => {
+            if (!isRecord(val)) return;
+            Object.entries(val).forEach(([name, handler]) => {
+              if (typeof handler === 'function') {
+                Events.registerHandler(name, handler as any)
+                logger?.log(
+                  'Apply config',
+                  `%cRegistered handler - ${name}`,
+                  'font-weight: 800;',
+                  `from ${fileUrl.toString()}`,
+                  `\n\n${handler.toString().trim()}`,
+                )
+              }
+            })
+          })
+        } catch (err) {
+          logger?.error(
+            'Apply config',
+            `%cHandlers file not loaded - ${value}`,
+            'font-weight: 800;',
+            'File url must be a string and match one of these URL schemes:',
+            appConfig.eventHandlersAllowedUrlSchemes
+          )
+        }
       }
     })
   }

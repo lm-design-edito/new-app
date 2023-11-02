@@ -1,6 +1,6 @@
 import { VNode, createElement } from 'preact'
 import { Darkdouille } from '~/shared/darkdouille'
-import { Apps } from '~/apps'
+import { Apps } from 'apps'
 import Logger from '~/utils/silent-log'
 import isInEnum from '~/utils/is-in-enum'
 import MutedVideo from './MutedVideo'

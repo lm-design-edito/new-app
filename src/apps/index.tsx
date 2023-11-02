@@ -27,8 +27,8 @@ export namespace Apps {
   }
 
   type RendererModuleResult<T extends Record<string, unknown> = {}> = { props: T, Component: ComponentClass }
-  export type SyncRendererModule<T extends Record<string, unknown> = {}> = (unknownProps: unknown, logger?: Logger) => RendererModuleResult<T>
-  export type AsyncRendererModule<T extends Record<string, unknown> = {}> = (unknownProps: unknown, logger?: Logger) => Promise<RendererModuleResult<T>>
+  export type SyncRendererModule<T extends Record<string, unknown> = {}> = (unknownProps: unknown, id: string, logger?: Logger) => RendererModuleResult<T>
+  export type AsyncRendererModule<T extends Record<string, unknown> = {}> = (unknownProps: unknown, id: string, logger?: Logger) => Promise<RendererModuleResult<T>>
   export type RendererModule<T extends Record<string, unknown> = {}> = SyncRendererModule<T> | AsyncRendererModule<T>
 
   export async function load (name: Name, logger?: Logger): Promise<RendererModule | undefined> {
@@ -74,13 +74,19 @@ export namespace Apps {
     }
 
     render () {
-      return <this.props.component {...this.state} />
+      const { props, state } = this
+      const ChildComp = props.component
+      const customClass = typeof state.customClass === 'string'
+        ? `${state.customClass} lm-app`
+        : 'lm-app'
+      const childProps = { ...this.state, customClass } as typeof state
+      return <ChildComp {...childProps} />
     }
   }
 
   export async function render (
     name: Name,
-    id: string | null,
+    _id: string | null,
     unknownProps: unknown,
     logger?: Logger): Promise<VNode> {
     const appRenderer = await load(name, logger)
@@ -88,13 +94,14 @@ export namespace Apps {
       logger?.error('Render', '%cRenderer load error', 'font-weight: 800;', `\nNo renderer found for app '${name}'. Props:`, unknownProps)
       return <></>
     }
-    const { props, Component } = await appRenderer(unknownProps, logger)
+    const id = _id ?? window.crypto.randomUUID().split('-')[0] ?? ''
+    const { props, Component } = await appRenderer(unknownProps, id, logger)
     const appComponent = <App
       component={Component}
       props={props}
       identifier={id} />
     rendered.push({ id, props, component: appComponent })
-    logger?.log('Render', '%cRendered app', 'font-weight: 800', `'${name}', with props`, props)
+    logger?.log('Render', '%cRendered app', 'font-weight: 800', `'${name}', with id '${id}' and props`, props)
     return appComponent
   }
 }

@@ -1,9 +1,9 @@
 import { Component, JSX, VNode } from 'preact'
 import bem from '~/utils/bem'
 import Logo from '~/components/Logo'
-import styles from './styles.module.scss'
-import Drawer from '../Drawer'
+import Drawer from '~/components/Drawer'
 import smoothScrollTo from '~/utils/smooth-scroll-to'
+import styles from './styles.module.scss'
 
 export type NavItem = {
   value?: string

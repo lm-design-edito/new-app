@@ -1,4 +1,4 @@
-import { Apps } from '~/apps'
+import { Apps } from 'apps'
 import Logger from '~/utils/silent-log'
 import { toString, toBoolean } from '~/utils/cast'
 import isRecord from '~/utils/is-record'
@@ -7,13 +7,14 @@ import Header, { Props, CtaActionType } from '~/components/Header'
 
 export default async function renderer (
   unknownProps: unknown,
+  id: string,
   logger?: Logger
 ): ReturnType<Apps.AsyncRendererModule<Props>> {
-  const props = await toProps(unknownProps, logger)
+  const props = await toProps(unknownProps, id, logger)
   return { props, Component: Header }
 }
 
-async function toProps (input: unknown, logger?: Logger): Promise<Props> {
+async function toProps (input: unknown, id: string, logger?: Logger): Promise<Props> {
   if (!isRecord(input)) return {}
   const {
     customClass,

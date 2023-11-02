@@ -1,4 +1,6 @@
-import { Apps } from '~/apps'
+import { Apps } from 'apps'
+import { Events } from '~/shared/events'
+import { Globals } from '~/shared/globals'
 import Logger from '~/utils/silent-log'
 import { toString, toNumber, toBoolean } from '~/utils/cast'
 import isRecord from '~/utils/is-record'
@@ -13,19 +15,19 @@ import Scrollgneugneu, {
   isTransitionName,
   State
 } from '~/components/Scrllgngn'
-import isInEnum from '~/utils/is-in-enum'
-import { Events } from '~/shared/events'
 
 export default async function renderer (
   unknownProps: unknown,
+  id: string,
   logger?: Logger
 ): ReturnType<Apps.AsyncRendererModule<Props>> {
-  const props = await toProps(unknownProps, logger)
+  const props = await toProps(unknownProps, id, logger)
   return { props, Component: Scrollgneugneu }
 }
 
 async function toProps (
   input: unknown,
+  id: string,
   logger?: Logger
 ): Promise<Props> {
   if (!isRecord(input)) return {}
@@ -57,16 +59,18 @@ async function toProps (
   if (typeof bgColorTransitionDuration === 'string') { props.bgColorTransitionDuration = bgColorTransitionDuration }
   else if (bgColorTransitionDuration !== undefined) { props.bgColorTransitionDuration = toNumber(bgColorTransitionDuration) }
   if (Array.isArray(pages)) { props.pages = await arrayToPages(pages, logger) }
-  if (isRecord(onPageChange)) {
-    const { action, payload, handler } = onPageChange
-    if (isInEnum(Events.Name, action)) {
-      if (handler !== undefined) {
+  if (Array.isArray(onPageChange)) {
+    props.onPageChange = async (state?: State) => {
+      for (const handler of onPageChange) {
         const strHandlerName = toString(handler)
         const foundHandler = Events.getRegisteredHandler(strHandlerName)
-        props.onPageChange = (state?: State) => {
-          if (foundHandler !== undefined) foundHandler(state, Events.Source.SCRLLGNGN_ON_PAGE_CHANGE, Apps.rendered)
-          else () => { console.error(`No handler found with name`, strHandlerName) }
-        }
+        if (foundHandler !== undefined) await foundHandler({
+          details: state,
+          type: Events.Type.SCRLLGNGN_ON_PAGE_CHANGE,
+          initiatorId: id,
+          globals: Globals.globalObj
+        })
+        else () => { console.error(`No handler found with name`, strHandlerName) }
       }
     }
   }

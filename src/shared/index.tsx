@@ -1,8 +1,11 @@
 import { render as preactRender } from 'preact'
 import appConfig from '~/config'
-import { Apps } from '~/apps'
-import { Globals } from '~/shared/globals'
+import { Apps } from 'apps'
+import { Analytics } from '~/shared/analytics'
 import { Config } from '~/shared/config'
+import { Events } from '~/shared/events'
+import getHeaderElements from '~/shared/get-header-element'
+import { Globals } from '~/shared/globals'
 import { LmHtml } from '~/shared/lm-html'
 import { Darkdouille } from '~/shared/darkdouille'
 import Logger from '~/utils/silent-log'
@@ -14,23 +17,31 @@ import { injectStylesheet } from '~/utils/dynamic-css'
 /* * * * * * * * * * * * * * * * * * * * * *
  * SILENT LOGGER & GLOBALS
  * * * * * * * * * * * * * * * * * * * * * */
+if (appConfig.env === 'developpment') {
+  Globals.expose(Globals.GlobalKey.BUILD_TIME, undefined)
+  Globals.expose(Globals.GlobalKey.VERSION, 'dev')
+  Globals.expose(Globals.GlobalKey.ROOT_URL, undefined)
+  Globals.expose(Globals.GlobalKey.TARGET, 'localhost')
+}
+Globals.expose(Globals.GlobalKey.ENV, appConfig.env)
+Globals.expose(Globals.GlobalKey.PATHS, appConfig.paths)
+Globals.expose(Globals.GlobalKey.ANALYTICS, Analytics)
+Globals.expose(Globals.GlobalKey.APPS, Apps)
+Globals.expose(Globals.GlobalKey.EVENTS, Events)
+Globals.expose(Globals.GlobalKey.GET_HEADER, getHeaderElements)
+Globals.expose(Globals.GlobalKey.LM_HTML, LmHtml)
 const logger = new Logger()
 Globals.expose(Globals.GlobalKey.SILENT_LOGGER, logger)
-Globals.expose(Globals.GlobalKey.ENV, appConfig.env)
-if (appConfig.env === 'developpment') {
-  Globals.expose(Globals.GlobalKey.VERSION, 'dev')
-  Globals.expose(Globals.GlobalKey.TARGET, 'localhost')
-  Globals.expose(Globals.GlobalKey.BUILD_TIME, undefined)
-}
+Globals.expose(Globals.GlobalKey.INIT, init)
 
 /* * * * * * * * * * * * * * * * * * * * * *
  * INIT
  * * * * * * * * * * * * * * * * * * * * * */
-const searchParams = new URLSearchParams(appConfig.paths.SCRIPTS_INDEX_URL.search)
-const shouldntInit = searchParams.has('noInit')
-if (!shouldntInit) initPage()
+const importUrl = new URL(import.meta.url)
+const shouldntInit = importUrl.searchParams.has('idle');
+if (!shouldntInit) init()
 
-export async function initPage () {
+export async function init () {
   logger.log('Page initialization',
     '%cStart init', 'font-weight: 800;',
     '\nenv:', Globals.retrieve(Globals.GlobalKey.ENV),
