@@ -20,6 +20,7 @@ type LmPage = {
   [Globals.GlobalKey.EVENTS]?: typeof Events
   [Globals.GlobalKey.GET_HEADER]?: typeof getHeaderElements
   [Globals.GlobalKey.LM_HTML]?: typeof LmHtml
+  [Globals.GlobalKey.UTILS]?: Record<string, any>
   [Globals.GlobalKey.SILENT_LOGGER]?: Logger
   [Globals.GlobalKey.INIT]?: typeof init
   [Globals.GlobalKey.DATA_TREE]?: Darkdouille.Tree
@@ -44,6 +45,7 @@ export namespace Globals {
     EVENTS = 'Events',
     GET_HEADER = 'getHeaderElements',
     LM_HTML = 'LmHtml',
+    UTILS = 'utils',
     SILENT_LOGGER = 'silentLogger',
     INIT = 'init',
     DATA_TREE = 'dataTree'

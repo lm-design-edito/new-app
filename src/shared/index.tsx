@@ -14,6 +14,25 @@ import isRecord from '~/utils/is-record'
 import selectorToElement from '~/utils/selector-to-element'
 import { injectStylesheet } from '~/utils/dynamic-css'
 
+import absoluteModulo from '~/utils/absolute-modulo'
+import arrayRandomPick from '~/utils/array-random-pick'
+import bem from '~/utils/bem'
+import * as Cast from '~/utils/cast'
+import clamp from '~/utils/clamp'
+import generateNiceColor from '~/utils/generate-nice-color'
+import getCurrentDownlink from '~/utils/get-current-downlink'
+import interpolate from '~/utils/interpolate'
+import isConstructorFunction from '~/utils/is-constructor-function'
+import isFalsy from '~/utils/is-falsy'
+import isInEnum from '~/utils/is-in-enum'
+import isNullish from '~/utils/is-nullish'
+import isValidClassName from '~/utils/is-valid-css-class-name'
+import memoize from '~/utils/memoize'
+import replaceAll from '~/utils/replace-all'
+import roundNumbers from '~/utils/round-numbers'
+import { debounce, throttle } from '~/utils/throttle-debounce'
+import transition from '~/utils/transition'
+
 /* * * * * * * * * * * * * * * * * * * * * *
  * SILENT LOGGER & GLOBALS
  * * * * * * * * * * * * * * * * * * * * * */
@@ -33,6 +52,8 @@ Globals.expose(Globals.GlobalKey.LM_HTML, LmHtml)
 const logger = new Logger()
 Globals.expose(Globals.GlobalKey.SILENT_LOGGER, logger)
 Globals.expose(Globals.GlobalKey.INIT, init)
+const utils = { absoluteModulo, arrayRandomPick, bem, Cast, clamp, generateNiceColor, getCurrentDownlink, interpolate, isArrayOf, isConstructorFunction, isFalsy, isInEnum, isNullish, isRecord, isValidClassName, memoize, replaceAll, roundNumbers, selectorToElement, throttle, debounce, transition }
+Globals.expose(Globals.GlobalKey.UTILS, utils)
 
 /* * * * * * * * * * * * * * * * * * * * * *
  * INIT
@@ -41,7 +62,7 @@ const importUrl = new URL(import.meta.url)
 const shouldntInit = importUrl.searchParams.has('idle');
 if (!shouldntInit) init()
 
-export async function init () {
+async function init () {
   logger.log('Page initialization',
     '%cStart init', 'font-weight: 800;',
     '\nenv:', Globals.retrieve(Globals.GlobalKey.ENV),
@@ -227,3 +248,6 @@ export async function init () {
   await Promise.all(renderedPromises)
   logger.log('Slots', '%cRendered content in slots:', 'font-weight: 800;', Apps.rendered)
 }
+
+const { globalObj } = Globals
+export default globalObj
