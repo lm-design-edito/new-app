@@ -1,5 +1,5 @@
 import { VNode, isValidElement } from 'preact'
-import { Apps } from '~/apps'
+import { Apps } from 'apps'
 import iconsData from '~/theme/icons'
 import Logger from '~/utils/silent-log'
 import isRecord from '~/utils/is-record'
@@ -15,13 +15,14 @@ import { Props as ToggleProps } from '~/components/UI/components/Toggle'
 
 export default async function renderer (
   unknownProps: unknown,
+  id: string,
   logger?: Logger
 ): ReturnType<Apps.AsyncRendererModule<Props>> {
-  const props = await toProps(unknownProps, logger)
+  const props = await toProps(unknownProps, id, logger)
   return { props, Component: UI }
 }
 
-async function toProps (input: unknown, logger?: Logger): Promise<Props> {
+async function toProps (input: unknown, id: string, logger?: Logger): Promise<Props> {
   if (!isRecord(input)) return {}
   const { component } = input
   

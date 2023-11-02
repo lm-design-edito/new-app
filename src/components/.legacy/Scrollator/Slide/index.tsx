@@ -1,7 +1,7 @@
 import { Component, JSX } from 'preact'
-import SimpleStylableTextCard from '~/components/SimpleStylableTextCard'
+import SimpleStylableTextCard from '~/components/.legacy/SimpleStylableTextCard'
 import bem from '~/utils/bem'
-import { ScrollatorPageData } from '../'
+import { ScrollatorPageData } from '..'
 import './styles.scss'
 
 export interface Props {
