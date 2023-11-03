@@ -1,6 +1,7 @@
 import { render as preactRender } from 'preact'
 import appConfig from '~/config'
-import { Apps } from 'apps'
+import { Apps } from '~/apps'
+
 import { Analytics } from '~/shared/analytics'
 import { Config } from '~/shared/config'
 import { Events } from '~/shared/events'
@@ -8,52 +9,76 @@ import getHeaderElements from '~/shared/get-header-element'
 import { Globals } from '~/shared/globals'
 import { LmHtml } from '~/shared/lm-html'
 import { Darkdouille } from '~/shared/darkdouille'
-import Logger from '~/utils/silent-log'
-import isArrayOf from '~/utils/is-array-of'
-import isRecord from '~/utils/is-record'
-import selectorToElement from '~/utils/selector-to-element'
-import { injectStylesheet } from '~/utils/dynamic-css'
 
 import absoluteModulo from '~/utils/absolute-modulo'
 import arrayRandomPick from '~/utils/array-random-pick'
 import bem from '~/utils/bem'
 import * as Cast from '~/utils/cast'
 import clamp from '~/utils/clamp'
+import { injectStylesheet } from '~/utils/dynamic-css'
 import generateNiceColor from '~/utils/generate-nice-color'
 import getCurrentDownlink from '~/utils/get-current-downlink'
 import interpolate from '~/utils/interpolate'
+import isArrayOf from '~/utils/is-array-of'
 import isConstructorFunction from '~/utils/is-constructor-function'
 import isFalsy from '~/utils/is-falsy'
 import isInEnum from '~/utils/is-in-enum'
 import isNullish from '~/utils/is-nullish'
+import isRecord from '~/utils/is-record'
 import isValidClassName from '~/utils/is-valid-css-class-name'
 import memoize from '~/utils/memoize'
+import recordFormat from '~/utils/record-format'
 import replaceAll from '~/utils/replace-all'
 import roundNumbers from '~/utils/round-numbers'
+import selectorToElement from '~/utils/selector-to-element'
+import Logger from '~/utils/silent-log'
 import { debounce, throttle } from '~/utils/throttle-debounce'
 import transition from '~/utils/transition'
 
 /* * * * * * * * * * * * * * * * * * * * * *
- * SILENT LOGGER & GLOBALS
+ * EXPORT & GLOBALS
  * * * * * * * * * * * * * * * * * * * * * */
-if (appConfig.env === 'developpment') {
-  Globals.expose(Globals.GlobalKey.BUILD_TIME, undefined)
-  Globals.expose(Globals.GlobalKey.VERSION, 'dev')
-  Globals.expose(Globals.GlobalKey.ROOT_URL, undefined)
-  Globals.expose(Globals.GlobalKey.TARGET, 'localhost')
+const devMeta = {
+  buildTime: undefined,
+  version: 'dev',
+  rootUrl: undefined,
+  target: 'localhost',
+  env: appConfig.env,
+  paths: appConfig.paths
 }
-Globals.expose(Globals.GlobalKey.ENV, appConfig.env)
-Globals.expose(Globals.GlobalKey.PATHS, appConfig.paths)
+const prodMeta = {
+  ...(Globals.globalObj[Globals.GlobalKey.META] ?? {}),
+  env: appConfig.env,
+  paths: appConfig.paths
+}
+const meta = appConfig.env === 'developpment' ? devMeta : prodMeta
+const logger = new Logger()
+const utils = {
+  absoluteModulo,         arrayRandomPick,          bem,                    Cast,
+  clamp,                  generateNiceColor,        getCurrentDownlink,     getHeaderElements,
+  interpolate,            isArrayOf,                isConstructorFunction,  isFalsy,
+  isInEnum,               isNullish,                isRecord,               isValidClassName,
+  memoize,                recordFormat,             replaceAll,             roundNumbers,
+  selectorToElement,      throttle,                 debounce,               transition
+}
+Globals.expose(Globals.GlobalKey.META, meta)
 Globals.expose(Globals.GlobalKey.ANALYTICS, Analytics)
 Globals.expose(Globals.GlobalKey.APPS, Apps)
+Globals.expose(Globals.GlobalKey.DARKDOUILLE, Darkdouille)
 Globals.expose(Globals.GlobalKey.EVENTS, Events)
-Globals.expose(Globals.GlobalKey.GET_HEADER, getHeaderElements)
 Globals.expose(Globals.GlobalKey.LM_HTML, LmHtml)
-const logger = new Logger()
-Globals.expose(Globals.GlobalKey.SILENT_LOGGER, logger)
+Globals.expose(Globals.GlobalKey.LOGGER, logger)
 Globals.expose(Globals.GlobalKey.INIT, init)
-const utils = { absoluteModulo, arrayRandomPick, bem, Cast, clamp, generateNiceColor, getCurrentDownlink, interpolate, isArrayOf, isConstructorFunction, isFalsy, isInEnum, isNullish, isRecord, isValidClassName, memoize, replaceAll, roundNumbers, selectorToElement, throttle, debounce, transition }
 Globals.expose(Globals.GlobalKey.UTILS, utils)
+export { meta }
+export { Analytics }
+export { Darkdouille }
+export { Apps }
+export { Events }
+export { LmHtml }
+export { Logger }
+export { utils }
+export { init }
 
 /* * * * * * * * * * * * * * * * * * * * * *
  * INIT
@@ -65,10 +90,10 @@ if (!shouldntInit) init()
 async function init () {
   logger.log('Page initialization',
     '%cStart init', 'font-weight: 800;',
-    '\nenv:', Globals.retrieve(Globals.GlobalKey.ENV),
-    '\nversion:', Globals.retrieve(Globals.GlobalKey.VERSION),
-    '\ntarget:', Globals.retrieve(Globals.GlobalKey.TARGET),
-    '\nbuild time:', Globals.retrieve(Globals.GlobalKey.BUILD_TIME),
+    '\nenv:', Globals.retrieve(Globals.GlobalKey.META)?.env,
+    '\nversion:', Globals.retrieve(Globals.GlobalKey.META)?.version,
+    '\ntarget:', Globals.retrieve(Globals.GlobalKey.META)?.target,
+    '\nbuild time:', Globals.retrieve(Globals.GlobalKey.META)?.buildTime,
     '\nscript url:', appConfig.paths.SCRIPTS_INDEX_URL.toString())
 
   /* STYLES * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -144,7 +169,7 @@ async function init () {
       return wrapper
     })
   const pageFullDataTree = Darkdouille.tree(...pageInlineDataNodesCopy, ...pageRemoteDataNodes)
-  Globals.expose(Globals.GlobalKey.DATA_TREE, pageFullDataTree)
+  Globals.expose(Globals.GlobalKey.TREE, pageFullDataTree)
   const pageFullDataValue = pageFullDataTree.value
   logger.log('Full data', pageFullDataValue)
   const pageFullDataValueIsRecord = Darkdouille.valueIsRecord(pageFullDataValue)
@@ -248,6 +273,3 @@ async function init () {
   await Promise.all(renderedPromises)
   logger.log('Slots', '%cRendered content in slots:', 'font-weight: 800;', Apps.rendered)
 }
-
-const { globalObj } = Globals
-export default globalObj

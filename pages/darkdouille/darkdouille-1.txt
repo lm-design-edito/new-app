@@ -6,7 +6,6 @@
 </data>
 
 <data class="SLOTS">
-
   <!-- GALLERY -->
   <data>
     <data class="destination">
@@ -156,7 +155,13 @@
       <string class="reference">body</string>
     </data>
     <data class="content">
-      <comp name="audioquote"></comp>
+      <comp name="audioquote" >
+        <string class="customClass">my-audioquote</string>
+        <lm-html class="title"><h1>tut tut</h1></lm-html>
+        <data class="onPlayClick">
+          <string>onAudioquotePlayClick</string>
+        </data>
+      </comp>
     </data>
   </data>
 

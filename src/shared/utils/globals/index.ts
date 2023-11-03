@@ -4,26 +4,28 @@ import { Apps } from 'apps'
 import { Analytics } from '~/shared/analytics'
 import { Darkdouille } from '~/shared/darkdouille'
 import { Events } from '~/shared/events'
-import getHeaderElements from '~/shared/get-header-element'
 import { LmHtml } from '~/shared/lm-html'
 import Logger from '~/utils/silent-log'
+import isInEnum from '~/utils/is-in-enum'
 
 type LmPage = {
-  [Globals.GlobalKey.BUILD_TIME]?: string  // those are injected from /scripts/deploy
-  [Globals.GlobalKey.ROOT_URL]?: string    // those are injected from /scripts/deploy
-  [Globals.GlobalKey.TARGET]?: string      // those are injected from /scripts/deploy
-  [Globals.GlobalKey.VERSION]?: string     // those are injected from /scripts/deploy
-  [Globals.GlobalKey.ENV]?: string
-  [Globals.GlobalKey.PATHS]?: typeof appConfig.paths
   [Globals.GlobalKey.ANALYTICS]?: typeof Analytics
   [Globals.GlobalKey.APPS]?: typeof Apps
+  [Globals.GlobalKey.DARKDOUILLE]?: typeof Darkdouille
   [Globals.GlobalKey.EVENTS]?: typeof Events
-  [Globals.GlobalKey.GET_HEADER]?: typeof getHeaderElements
   [Globals.GlobalKey.LM_HTML]?: typeof LmHtml
-  [Globals.GlobalKey.UTILS]?: Record<string, any>
-  [Globals.GlobalKey.SILENT_LOGGER]?: Logger
   [Globals.GlobalKey.INIT]?: typeof init
-  [Globals.GlobalKey.DATA_TREE]?: Darkdouille.Tree
+  [Globals.GlobalKey.LOGGER]?: Logger
+  [Globals.GlobalKey.META]?: {
+    buildTime?: string // injected from /scripts/deploy
+    rootUrl?: string   // injected from /scripts/deploy
+    target?: string    // injected from /scripts/deploy
+    version?: string   // injected from /scripts/deploy
+    env?: string,
+    paths?: typeof appConfig.paths
+  }
+  [Globals.GlobalKey.TREE]?: Darkdouille.Tree
+  [Globals.GlobalKey.UTILS]?: Record<string, any>
 }
 
 declare global {
@@ -34,24 +36,19 @@ declare global {
 
 export namespace Globals {
   export enum GlobalKey {
-    BUILD_TIME = 'buildTime',
-    ROOT_URL = 'rootUrl',
-    TARGET = 'target',
-    VERSION = 'version',
-    ENV = 'env',
-    PATHS = 'paths',
     ANALYTICS = 'Analytics',
     APPS = 'Apps',
+    DARKDOUILLE = 'Darkdouille',
     EVENTS = 'Events',
-    GET_HEADER = 'getHeaderElements',
     LM_HTML = 'LmHtml',
-    UTILS = 'utils',
-    SILENT_LOGGER = 'silentLogger',
     INIT = 'init',
-    DATA_TREE = 'dataTree'
+    LOGGER = 'logger',
+    META = 'meta',
+    TREE = 'tree',
+    UTILS = 'utils',
   }
   
-  function getOrCreateGlobalObj () {
+  export function getOrCreateGlobalObj () {
     if (window.LM_PAGE !== undefined) return window.LM_PAGE
     const lmPage: LmPage = {}
     window.LM_PAGE = lmPage
@@ -60,7 +57,7 @@ export namespace Globals {
 
   export function expose<T extends GlobalKey> (key: T, value: LmPage[T]): LmPage {
     const lmPage = getOrCreateGlobalObj()
-    lmPage[key] = value
+    if (isInEnum(GlobalKey, key)) { lmPage[key as T] = value }
     return lmPage
   }
 

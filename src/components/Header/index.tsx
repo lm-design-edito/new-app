@@ -2,7 +2,6 @@ import { Component, JSX, VNode } from 'preact'
 import bem from '~/utils/bem'
 import Logo from '~/components/Logo'
 import Drawer from '~/components/Drawer'
-import smoothScrollTo from '~/utils/smooth-scroll-to'
 import styles from './styles.module.scss'
 
 export type NavItem = {
@@ -105,7 +104,7 @@ export default class Header extends Component<Props, State> {
     const { value, clickAction, onClick } = navItem
     if (clickAction === 'scroll-to-chapter') {
       const targetNode = document.querySelector(`#${value}`)
-      if (targetNode !== null) smoothScrollTo(targetNode)
+      if (targetNode !== null) targetNode.scrollIntoView({ behavior: 'smooth' })
     }
     if (onClick !== undefined) onClick(event)
   }

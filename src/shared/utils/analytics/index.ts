@@ -10,6 +10,7 @@ export namespace Analytics {
       payload?: { [key: string]: any }
     ) => void
   }
+
   type AtInternetPayload = {
     name: string
     type: string
@@ -18,6 +19,7 @@ export namespace Analytics {
     chapter2: string
     chapter3: string
   }
+
   type AtInternetSdk = {
     Utils?: {}
     Tracker?: {
@@ -34,12 +36,12 @@ export namespace Analytics {
   * GET TRACKERS
   * 
   * * * * * * * * * * * * * * * * * * * * * * */
-  function getAmplitudeSdk () {
+  export function getAmplitudeSdk () {
     const amplitudeSdk = (window as any).amplitude as AmplitudeSdk|undefined
     return amplitudeSdk ?? null
   }
 
-  function getAtInternetTrackerInstance () {
+  export function getAtInternetTrackerInstance () {
     const atInternet = (window as any).ATInternet as AtInternetSdk|undefined
     const tracker = atInternet?.Tracker
     const instances = tracker?.instances
@@ -75,7 +77,7 @@ export namespace Analytics {
   }
 
   /* AT INTERNET */
-  const defaultAtInternetPayload: Omit<AtInternetPayload, 'name'> = {
+  export const defaultAtInternetPayload: Omit<AtInternetPayload, 'name'> = {
     type: 'action',
     level2: 22,
     chapter1: '',
@@ -83,7 +85,7 @@ export namespace Analytics {
     chapter3: ''
   }
 
-  function makeAtInternetPayload (
+  export function makeAtInternetPayload (
     partialPayload: Partial<AtInternetPayload> & { name: string }
   ): AtInternetPayload {
     return {

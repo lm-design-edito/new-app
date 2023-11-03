@@ -52,25 +52,52 @@ export namespace Apps {
   }
 
   export const rendered: Array<{
-    id: string | null,
-    props: unknown,
-    component: VNode
+    id: string | null
+    name: string | null
+    props: unknown
+    app: App
   }> = []
 
   export type AppProps = {
     component: ComponentClass
     props: Record<string, unknown>
     identifier: string | null
+    name: string | null
   }
 
   export type AppState = AppProps['props']
 
+  export type AppObjPropsSetter = Partial<AppState>
+  export type AppFuncPropsSetter = (curr: AppState) => AppState | null
+  export type AppPropsSetter = AppObjPropsSetter | AppFuncPropsSetter
+
   export class App extends Component<AppProps, AppState> {
     identifier: string | null = null
+    name: string | null = null
     constructor (props: AppProps) {
       super(props)
       this.state = props.props ?? {}
       this.identifier = props.identifier
+      this.name = props.name
+      this.updateProps = this.updateProps.bind(this)
+      rendered.push({
+        id: this.identifier,
+        name: this.name,
+        props,
+        app: this
+      })
+    }
+
+    updateProps (propsSetter: AppPropsSetter) {
+      if (typeof propsSetter === 'function') {
+        this.setState(propsSetter)
+      } else {
+        const newState: AppState = {
+          ...this.state, 
+          ...propsSetter
+        }
+        this.setState(() => ({ ...newState }))
+      }
     }
 
     render () {
@@ -94,14 +121,24 @@ export namespace Apps {
       logger?.error('Render', '%cRenderer load error', 'font-weight: 800;', `\nNo renderer found for app '${name}'. Props:`, unknownProps)
       return <></>
     }
-    const id = _id ?? window.crypto.randomUUID().split('-')[0] ?? ''
-    const { props, Component } = await appRenderer(unknownProps, id, logger)
+    const privateId = window.crypto.randomUUID().split('-')[0] ?? ''
+    const publicName = _id ?? window.crypto.randomUUID().split('-')[0] ?? null
+    const { props, Component } = await appRenderer(unknownProps, privateId, logger)
     const appComponent = <App
       component={Component}
       props={props}
-      identifier={id} />
-    rendered.push({ id, props, component: appComponent })
-    logger?.log('Render', '%cRendered app', 'font-weight: 800', `'${name}', with id '${id}' and props`, props)
+      identifier={privateId}
+      name={publicName} />
+    logger?.log('Render', '%cRendered app', 'font-weight: 800', `'${name}', with public id '${publicName}' and props`, props)
     return appComponent
+  }
+
+  export function updatePropsOf (names: string[], updater: AppPropsSetter) {
+    const foundAppsDetails = rendered.filter(appDetails => {
+      const isInFilter = names.includes(appDetails.name as string)
+      return isInFilter
+    })
+    const apps = foundAppsDetails.map(details => details.app)
+    apps.forEach(app => app.updateProps(updater))
   }
 }
