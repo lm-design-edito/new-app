@@ -32,6 +32,11 @@ export function toArray (value: unknown) {
   return [value]
 }
 
+export function toNumberArr (value: unknown) {
+  const arrValue = toArray(value)
+  return arrValue.map(val => toNumber(val))
+}
+
 export function toRecord (value: unknown) {
   const record: Record<string, unknown> = {}
   try {

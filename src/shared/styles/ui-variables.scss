@@ -51,8 +51,9 @@
   --lmui-c-search-box-shadow-hover-dark: inset 0px 1px 1px 1px rgba(0,0,0,0), 0px 4px 6px 2px rgba(0,0,0,0.1);
   --lmui-c-tab-box-shadow-light: 0px 1px 4px 0px rgba(24, 26, 30, 0);
   --lmui-c-tab-box-shadow-dark: 0px 1px 4px 0px rgba(24, 26, 30, 0.50);
-  --lmui-c-tab-enabled-box-shadow-light: 0px 1px 2px 0px rgba(24, 26, 30, 0.13);
-  --lmui-c-tab-enabled-box-shadow-dark: 0px 1px 3px 0px rgba(24, 26, 30, 0.58);
+  // [WIP]: Max : j'ai renommé enabled en active, pour pas qu'il y ait de conflit avec l'idée de 'disabled' sur les boutons
+  --lmui-c-tab-active-box-shadow-light: 0px 1px 2px 0px rgba(24, 26, 30, 0.13);
+  --lmui-c-tab-active-box-shadow-dark: 0px 1px 3px 0px rgba(24, 26, 30, 0.58);
   
   /* Search-engine autocomplete */
   --height-autocomplete: 48px;
@@ -136,9 +137,9 @@
   --lmui-c-main-tab-label-active: var(--lmui-slate-darker);
   --lmui-c-main-tab-bg-disabled: var(--lmui-c-snow-medium);
   --lmui-c-main-tab-label-disabled: var(--lmui-c-smoke-light);
-  --lmui-c-main-tab-bg-enabled: var(--lmui-c-white);
-  --lmui-c-main-tab-enabled-box-shadow: var(--lmui-c-tab-enabled-box-shadow-light);
-  --lmui-c-main-tab-label-enabled: var(--lmui-c-slate-darker);
+  --lmui-c-main-tab-bg-active: var(--lmui-c-white);
+  --lmui-c-main-tab-active-box-shadow: var(--lmui-c-tab-active-box-shadow-light);
+  --lmui-c-main-tab-label-active: var(--lmui-c-slate-darker);
   --lmui-c-secondary-tab-border: var(--lmui-c-smoke-light);
   --lmui-c-main-tab-box-shadow: var(--lmui-c-tab-box-shadow-light);
 
@@ -146,8 +147,9 @@
   --lmui-c-main-toggle-bg: var(--lmui-c-smoke-lighter);
   --lmui-c-main-toggle-switch: var(--lmui-c-white);
   --lmui-c-main-toggle-bg-hover: var(--lmui-c-smoke-light);
-  --lmui-c-main-toggle-bg-enabled: var(--lmui-c-slate-darker);
-  --lmui-c-main-toggle-bg-enabled-hover: var(--lmui-c-slate-medium);
+  // [WIP] Max : ici à la différence de tab, j'ai remplacé 'enabled' par 'checked', pour se rapprocher de la logique des checkboxes
+  --lmui-c-main-toggle-bg-checked: var(--lmui-c-slate-darker);
+  --lmui-c-main-toggle-bg-checked-hover: var(--lmui-c-slate-medium);
   --lmui-c-main-toggle-label: var(--lmui-c-slate-darker);
 
   /* Checkbox */
@@ -163,7 +165,7 @@
   --lmui-c-main-radio-border: var(--lmui-c-smoke-dark);
   --lmui-c-main-radio-bg-hover: var(--lmui-c-snow-dark);
   --lmui-c-main-radio-bullet-fill: var(--lmui-c-slate-darker);
-  --lmui-c-main-radio-border-enabled: var(--lmui-c-slate-darker);
+  --lmui-c-main-radio-border-checked: var(--lmui-c-slate-darker);
   --lmui-c-main-radio-bg-disabled: var(--lmui-c-snow-darker);
   --lmui-c-main-radio-border-disabled: var(--lmui-c-smoke-medium);
   --lmui-c-main-radio-border-error: var(--lmui-c-red-medium);
@@ -248,10 +250,10 @@
   --lmui-c-main-tab-bg-active: var(--lmui-c-smoke-lighter);
   --lmui-c-main-tab-label-active: var(--lmui-c-slate-darker);
   --lmui-c-main-tab-bg-disabled: var(--name-it-1);
-  --lmui-c-main-tab-enabled-box-shadow: var(--lmui-c-tab-enabled-box-shadow-dark);
+  --lmui-c-main-tab-active-box-shadow: var(--lmui-c-tab-active-box-shadow-dark);
   --lmui-c-main-tab-label-disabled: var(--name-it-4);
-  --lmui-c-main-tab-bg-enabled: var(--lmui-c-snow-darker);
-  --lmui-c-main-tab-label-enabled: var(--lmui-c-slate-dark);
+  --lmui-c-main-tab-bg-active: var(--lmui-c-snow-darker);
+  --lmui-c-main-tab-label-active: var(--lmui-c-slate-dark);
   --lmui-c-secondary-tab-border: var(--lmui-c-slate-lighter);
   --lmui-c-main-tab-box-shadow: var(--lmui-c-tab-box-shadow-dark);
 
@@ -259,8 +261,8 @@
   --lmui-c-main-toggle-bg: var(--lmui-c-smoke-dark);
   --lmui-c-main-toggle-switch: var(--lmui-c-white);
   --lmui-c-main-toggle-bg-hover: var(--lmui-c-smoke-medium);
-  --lmui-c-main-toggle-bg-enabled: var(--lmui-c-sea-light);
-  --lmui-c-main-toggle-bg-enabled-hover: var(--lmui-c-sea-medium);
+  --lmui-c-main-toggle-bg-checked: var(--lmui-c-sea-light);
+  --lmui-c-main-toggle-bg-checked-hover: var(--lmui-c-sea-medium);
   --lmui-c-main-toggle-label: var(--lmui-c-snow-lighter);
 
   /* Checkbox */ 
@@ -276,7 +278,7 @@
   --lmui-c-main-radio-border: var(--lmui-c-smoke-medium);
   --lmui-c-main-radio-bg-hover: var(--lmui-c-slate-medium);
   --lmui-c-main-radio-bullet-fill: var(--lmui-c-white);
-  --lmui-c-main-radio-border-enabled: var(--lmui-c-white);
+  --lmui-c-main-radio-border-checked: var(--lmui-c-white);
   --lmui-c-main-radio-bg-disabled: var(--lmui-c-slate-medium);
   --lmui-c-main-radio-border-disabled: var(--lmui-c-smoke-medium);
   --lmui-c-main-radio-border-error: var(--lmui-c-red-light);

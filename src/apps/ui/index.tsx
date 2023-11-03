@@ -1,5 +1,5 @@
 import { VNode, isValidElement } from 'preact'
-import { Apps } from 'apps'
+import { Apps } from '~/apps'
 import iconsData from '~/theme/icons'
 import Logger from '~/utils/silent-log'
 import isRecord from '~/utils/is-record'
@@ -12,12 +12,9 @@ import { Props as TabProps } from '~/components/UI/components/Tab'
 import { Props as TabsProps } from '~/components/UI/components/Tabs'
 import { Props as TextBoxProps } from '~/components/UI/components/TextBox'
 import { Props as ToggleProps } from '~/components/UI/components/Toggle'
+import recordFormat from '~/utils/record-format'
 
-export default async function renderer (
-  unknownProps: unknown,
-  id: string,
-  logger?: Logger
-): ReturnType<Apps.AsyncRendererModule<Props>> {
+export default async function renderer (unknownProps: unknown, id: string, logger?: Logger): ReturnType<Apps.AsyncRendererModule<Props>> {
   const props = await toProps(unknownProps, id, logger)
   return { props, Component: UI }
 }
@@ -28,84 +25,93 @@ async function toProps (input: unknown, id: string, logger?: Logger): Promise<Pr
   
   // Button
   if (component === Component.BUTTON) {
-    const props: ButtonProps = {}
-    const { customClass, content, size, disabled, squared, secondary, iconContent, iconFirst } = input
-    if (customClass !== undefined) { props.customClass = toString(customClass) }
-    if (content !== undefined) { props.content = await Apps.toStringOrVNodeHelper(content, logger) }
-    if (size !== undefined) {
-      const strSize = toString(size)
-      if (strSize === 'large' || strSize === 'medium' || strSize === 'small') { props.size = strSize }
-    }
-    if (disabled !== undefined) { props.disabled = toBoolean(disabled) }
-    if (squared !== undefined) { props.squared = toBoolean(squared) }
-    if (secondary !== undefined) { props.secondary = toBoolean(secondary) }
-    if (iconContent !== undefined) { props.iconContent = await Apps.toStringOrVNodeHelper(iconContent, logger) }
-    if (iconFirst !== undefined) { props.iconFirst = toBoolean(iconFirst) }
+    const props: ButtonProps = await recordFormat(input, {
+      customClass: (i: unknown) => i !== undefined ? toString(i) : undefined,
+      content: async (i: unknown) => i !== undefined ? await Apps.toStringOrVNodeHelper(i, logger) : undefined,
+      size: (i: unknown) => {
+        if (i === undefined) return undefined
+        const strI = toString(i)
+        if (strI === 'large'
+          || strI === 'medium'
+          || strI === 'small') return strI
+        return undefined
+      },
+      disabled: (i: unknown) => i !== undefined ? toBoolean(i) : undefined,
+      squared: (i: unknown) => i !== undefined ? toBoolean(i) : undefined,
+      secondary: (i: unknown) => i !== undefined ? toBoolean(i) : undefined,
+      iconContent: (i: unknown) => i !== undefined ? Apps.toStringOrVNodeHelper(i, logger) : undefined,
+      iconFirst: (i: unknown) => i !== undefined ? toBoolean(i) : undefined
+    })
     return { component, ...props }
 
   // Checkbox or radio
   } else if (component === Component.CHECKBOX || component === Component.RADIO) {
-    const props: CheckboxOrRadioProps = { type: component === Component.RADIO ? 'radio' : 'checkbox' }
-    const { customClass, labelContent, disabled, error } = input
-    if (customClass !== undefined) { props.customClass = toString(customClass) }
-    if (labelContent !== undefined) { props.labelContent = await Apps.toStringOrVNodeHelper(labelContent, logger) }
-    if (disabled !== undefined) { props.disabled = toBoolean(disabled) }
-    if (error !== undefined) { props.error = toBoolean(error) }
+    const props: CheckboxOrRadioProps = await recordFormat(input, {
+      type: () => component === Component.RADIO ? 'radio' : 'checkbox',
+      customClass: (i: unknown) => i !== undefined ? toString(i) : undefined,
+      labelContent: (i: unknown) => i !== undefined ? Apps.toStringOrVNodeHelper(i, logger) : undefined,
+      disabled: (i: unknown) => i !== undefined ? toBoolean(i) : undefined,
+      error: (i: unknown) => i !== undefined ? toBoolean(i) : undefined,
+    })
     return { component, ...props }
 
   // Icon
   } else if (component === Component.ICON) {
-    const props: IconProps = { registry: iconsData }
-    const { customClass, name, inline } = input
-    if (customClass !== undefined) { props.customClass = toString(customClass) }
-    if (name !== undefined) { props.name = toString(name) }
-    if (inline !== undefined) { props.inline = toBoolean(inline) }
+    const props: IconProps = await recordFormat(input, {
+      registry: () => iconsData,
+      customClass: (i: unknown) => i !== undefined ? toString(i) : undefined,
+      name: (i: unknown) => i !== undefined ? toString(i) : undefined,
+      boolean: (i: unknown) => i !== undefined ? toBoolean(i) : undefined,
+    })
     return { component, ...props }
 
   // Tab
   } else if (component === Component.TAB) {
-    const props: TabProps = {}
-    const { customClass, enabled, content, iconContent, iconFirst } = input
-    if (customClass !== undefined) { props.customClass = toString(customClass) }
-    if (content !== undefined) { props.content = await Apps.toStringOrVNodeHelper(content, logger) }
-    if (enabled !== undefined) { props.enabled = toBoolean(enabled) }
-    if (iconContent !== undefined) { props.iconContent = await Apps.toStringOrVNodeHelper(iconContent, logger) }
-    if (iconFirst !== undefined) { props.iconFirst = toBoolean(iconFirst) }
+    const props: TabProps = await recordFormat(input, {
+      customClass: (i: unknown) => i !== undefined ? toString(i) : undefined,
+      content: (i: unknown) => i !== undefined ? Apps.toStringOrVNodeHelper(i, logger) : undefined,
+      active: (i: unknown) => i !== undefined ? toBoolean(i) : undefined,
+      iconContent: (i: unknown) => i !== undefined ? Apps.toStringOrVNodeHelper(i, logger) : undefined,
+      iconFirst: (i: unknown) => i !== undefined ? toBoolean(i) : undefined
+    })
     return { component, ...props }
 
   // Tabs
   } else if (component === Component.TABS) {
-    const props: TabsProps = {}
-    const { customClass, tabs } = input
-    if (customClass !== undefined) { props.customClass = toString(customClass) }
-    if (Array.isArray(tabs)) {
-      const tabsPromise = tabs.map(async tab => {
-        if (isValidElement(tab)) return tab
-        if (tab instanceof NodeList) return await Apps.toStringOrVNodeHelper(tab, logger)
-        return undefined
-      }).filter((elt): elt is Promise<VNode> => elt !== undefined)
-      props.tabs = await Promise.all(tabsPromise)
-    }
+    const props: TabsProps = await recordFormat(input, {
+      customClass: (i: unknown) => i !== undefined ? toString(i) : undefined,
+      tabs: async (i: unknown) => {
+        if (!Array.isArray(i)) return undefined
+        const tabsPromise = i.map(async tab => {
+          if (isValidElement(tab)) return tab
+          if (tab instanceof NodeList) return await Apps.toStringOrVNodeHelper(tab, logger)
+          return undefined
+        }).filter((elt): elt is Promise<VNode> => elt !== undefined)
+        return await Promise.all(tabsPromise)
+      }
+    })
     return { component, ...props }
 
   // Text box
   } else if (component === Component.TEXT_BOX) {
-    const props: TextBoxProps = {}
-    const { customClass, content } = input
-    if (customClass !== undefined) { props.customClass = toString(customClass) }
-    if (content !== undefined) { props.content = await Apps.toStringOrVNodeHelper(content, logger) }
+    const props: TextBoxProps = await recordFormat(input, {
+      customClass: (i: unknown) => i !== undefined ? toString(i) : undefined,
+      content: (i: unknown) => i !== undefined ? Apps.toStringOrVNodeHelper(i, logger) : undefined
+    })
     return { component, ...props }
 
   // Toggle
   } else if (component === Component.TOGGLE) {
-    const props: ToggleProps = {}
-    const { customClass, labelContent, size } = input
-    if (customClass !== undefined) { props.customClass = toString(customClass) }
-    if (labelContent !== undefined) { props.labelContent = await Apps.toStringOrVNodeHelper(labelContent, logger) }
-    if (size !== undefined) {
-      const strSize = toString(size)
-      if (strSize === 'large' || strSize === 'small') { props.size = strSize }
-    }
+    const props: ToggleProps = await recordFormat(input, {
+      customClass: (i: unknown) => i !== undefined ? toString(i) : undefined,
+      labelContent: (i: unknown) => i !== undefined ? Apps.toStringOrVNodeHelper(i, logger) : undefined,
+      size: (i: unknown) => {
+        if (i === undefined) return undefined
+        const strI = toString(i)
+        if (strI === 'large' || strI === 'small') return strI
+        return undefined
+      }
+    })
     return { component, ...props }
 
   // Default

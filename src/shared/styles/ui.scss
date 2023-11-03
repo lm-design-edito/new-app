@@ -319,10 +319,10 @@
   padding: 0px 10px 0 14px;
 }
 
-.lmui-tab.lmui-tab_enabled {
-  color: var(--lmui-c-main-tab-label-enabled);
-  background: var(--lmui-c-main-tab-bg-enabled);
-  box-shadow: var(--lmui-c-main-tab-enabled-box-shadow);
+.lmui-tab.lmui-tab_active {
+  color: var(--lmui-c-main-tab-label-active);
+  background: var(--lmui-c-main-tab-bg-active);
+  box-shadow: var(--lmui-c-main-tab-active-box-shadow);
   border-radius: 100px;
   transition: 0.12s ease-in;
 }
@@ -337,7 +337,7 @@
   transform: scale(0.85);
 }
 
-.lmui-tab.lmui-tab_enabled .lmui-tab__icon .lmui-icon {
+.lmui-tab.lmui-tab_active .lmui-tab__icon .lmui-icon {
   filter: var(--lmui-ic-black);
 }
 
@@ -427,12 +427,12 @@
 // Checked State
 .lmui-toggle__input:checked
 + .lmui-toggle__fake::before {
-  background-color: var(--lmui-c-main-toggle-bg-enabled);
+  background-color: var(--lmui-c-main-toggle-bg-checked);
 }
 
 .lmui-toggle__input:checked
 + .lmui-toggle__fake:hover::before {
-  background-color: var(--lmui-c-main-toggle-bg-enabled-hover);
+  background-color: var(--lmui-c-main-toggle-bg-checked-hover);
 }
 
 .lmui-toggle__input:checked
@@ -637,7 +637,7 @@
 .lmui-radio__input:checked
 + .lmui-radio__fake::before {
   transition: background-color 0.25s ease-in, border 0.25s ease-in;
-  border: 1px solid var(--lmui-c-main-radio-border-enabled);
+  border: 1px solid var(--lmui-c-main-radio-border-checked);
 }
 
 .lmui-radio__input:checked

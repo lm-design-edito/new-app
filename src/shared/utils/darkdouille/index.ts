@@ -62,7 +62,7 @@ export namespace Darkdouille {
 
   /* ========== ACTIONS ========== */
 
-  enum Action {
+  export enum Action {
     APPEND = 'append',
     PREPEND = 'prepend',
     OVERWRITE = 'overwrite'
@@ -70,7 +70,7 @@ export namespace Darkdouille {
   
   /* ========== TYPES ========== */
 
-  enum Type {
+  export enum Type {
     STRING = 'string',
     NUMBER = 'number',
     BOOLEAN = 'boolean',
@@ -83,14 +83,14 @@ export namespace Darkdouille {
     TRANSFORMER = 'transformer'
   }
   
-  const Types = Object.values(Type)
+  export const Types = Object.values(Type)
   
-  function isType (tag: string): tag is Type {
+  export function isType (tag: string): tag is Type {
     return Types.includes(tag as any)
   }
 
   /* ========== FUNCTIONS ========== */
-  enum FunctionName {
+  export enum FunctionName {
     /* Cast */
     TOSTRING = 'tostring',
     TONUMBER = 'tonumber',
@@ -133,9 +133,9 @@ export namespace Darkdouille {
     LOOP = 'loop'
   }
 
-  const Functions = Object.values(FunctionName)
+  export const Functions = Object.values(FunctionName)
   
-  function isFunctionName (tag: string): tag is FunctionName {
+  export function isFunctionName (tag: string): tag is FunctionName {
     return Functions.includes(tag as any)
   }
 
@@ -146,7 +146,7 @@ export namespace Darkdouille {
 
   /* ========== HELPERS ========== */
 
-  function isValueElement (node: Node): node is Element {
+  export function isValueElement (node: Node): node is Element {
     const isElement = node instanceof Element
     if (!isElement) return false
     const typeTag = node.tagName.toLowerCase()
@@ -154,7 +154,7 @@ export namespace Darkdouille {
     return true
   }
 
-  function isTransformerElement (node: Node): node is Element {
+  export function isTransformerElement (node: Node): node is Element {
     const isElement = node instanceof Element
     if (!isElement) return false
     const typeTag = node.tagName.toLowerCase()
@@ -165,18 +165,18 @@ export namespace Darkdouille {
       : typeTag === Type.TRANSFORMER
   }
 
-  function isValueOrTransformerElement (node: Node): node is Element {
+  export function isValueOrTransformerElement (node: Node): node is Element {
     return isValueElement(node) || isTransformerElement(node)
   }
 
-  function isFunctionElement (node: Node): node is Element {
+  export function isFunctionElement (node: Node): node is Element {
     const isElement = node instanceof Element
     if (!isElement) return false
     const functionTag = node.tagName.toLowerCase()
     return isFunctionName(functionTag)
   }
 
-  function getTypeFromElement (element: Element): Exclude<Type, Type.DATA> | null {
+  export function getTypeFromElement (element: Element): Exclude<Type, Type.DATA> | null {
     if (!isValueOrTransformerElement(element)) return null
     const typeTag = element.tagName.toLowerCase() as Type // if isValueOrTransformerElement(element), then element.tagName is Type
     const typeAttr = element.getAttribute('type')
@@ -187,7 +187,7 @@ export namespace Darkdouille {
     return type
   }
 
-  function cloneNode<T extends Node> (node: T, deep?: boolean): T {
+  export function cloneNode<T extends Node> (node: T, deep?: boolean): T {
     return node.cloneNode(deep) as T
   }
 
@@ -217,7 +217,7 @@ export namespace Darkdouille {
   //   s'il n'est pas une valeur darkdouille (uniquement valeur, pas transformeur ni function), on ne fait rien
   //   sinon, c'est un élément valeur, on lui applique REDUCE
 
-  function reduce (element: Element): Element {
+  export function reduce (element: Element): Element {
     const childNodes = [...element.childNodes]
     let unnamedChildrenCnt = 0
     const propertiesPathsMap = new Map<string, Element>()
@@ -254,7 +254,7 @@ export namespace Darkdouille {
     return element
   }
 
-  function merge (...darkdouilleElements: Element[]) {
+  export function merge (...darkdouilleElements: Element[]) {
     const rootElement = document.createElement('data')
     darkdouilleElements.forEach(darkdouille => {
       const darkdouilleNodes = [...(cloneNode(darkdouille, true)).childNodes]

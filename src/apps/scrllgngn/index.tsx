@@ -1,6 +1,5 @@
-import { Apps } from 'apps'
+import { Apps } from '~/apps'
 import { Events } from '~/shared/events'
-import { Globals } from '~/shared/globals'
 import Logger from '~/utils/silent-log'
 import { toString, toNumber, toBoolean } from '~/utils/cast'
 import isRecord from '~/utils/is-record'
@@ -15,83 +14,60 @@ import Scrollgneugneu, {
   isTransitionName,
   State
 } from '~/components/Scrllgngn'
+import recordFormat from '~/utils/record-format'
 
-export default async function renderer (
-  unknownProps: unknown,
-  id: string,
-  logger?: Logger
-): ReturnType<Apps.AsyncRendererModule<Props>> {
+export default async function renderer (unknownProps: unknown, id: string, logger?: Logger): ReturnType<Apps.AsyncRendererModule<Props>> {
   const props = await toProps(unknownProps, id, logger)
   return { props, Component: Scrollgneugneu }
 }
 
-async function toProps (
-  input: unknown,
-  id: string,
-  logger?: Logger
-): Promise<Props> {
+async function toProps (input: unknown, id: string, logger?: Logger): Promise<Props> {
   if (!isRecord(input)) return {}
-  const props: Props = {}
-  const {
-    customClass,
-    stickyBlocksLazyLoadDistance,
-    stickyBlocksViewportHeight,
-    stickyBlocksOffsetTop,
-    forceStickBlocks,
-    thresholdOffset,
-    bgColorTransitionDuration,
-    pages,
-    onPageChange
-  } = input
-  if (customClass !== undefined) { props.customClass = toString(customClass) }
-  if (stickyBlocksLazyLoadDistance !== undefined) { props.stickyBlocksLazyLoadDistance = toNumber(stickyBlocksLazyLoadDistance) }
-  if (stickyBlocksViewportHeight !== undefined) { props.stickyBlocksViewportHeight = toString(stickyBlocksViewportHeight) }
-  if (forceStickBlocks !== undefined) {
-    const strForceStickBlocks = toString(forceStickBlocks)
-    if (strForceStickBlocks === 'before'
-      || strForceStickBlocks === 'after'
-      || strForceStickBlocks === 'both') {
-      props.forceStickBlocks = strForceStickBlocks
-    }
-  }
-  if (stickyBlocksOffsetTop !== undefined) { props.stickyBlocksOffsetTop = toNumber(stickyBlocksOffsetTop) }
-  if (thresholdOffset !== undefined) { props.thresholdOffset = toString(thresholdOffset) }
-  if (typeof bgColorTransitionDuration === 'string') { props.bgColorTransitionDuration = bgColorTransitionDuration }
-  else if (bgColorTransitionDuration !== undefined) { props.bgColorTransitionDuration = toNumber(bgColorTransitionDuration) }
-  if (Array.isArray(pages)) { props.pages = await arrayToPages(pages, logger) }
-  if (Array.isArray(onPageChange)) {
-    props.onPageChange = async (state?: State) => {
-      for (const handler of onPageChange) {
-        const strHandlerName = toString(handler)
-        const foundHandler = Events.getRegisteredHandler(strHandlerName)
-        if (foundHandler !== undefined) await foundHandler({
-          details: state,
+  const props: Props = await recordFormat(input, {
+    customClass: (i: unknown) => i !== undefined ? toString(i) : undefined,
+    stickyBlocksLazyLoadDistance: (i: unknown) => i !== undefined ? toNumber(i) : undefined,
+    stickyBlocksViewportHeight: (i: unknown) => i !== undefined ? toString(i) : undefined,
+    stickyBlocksOffsetTop: (i: unknown) => i !== undefined ? toNumber(i) : undefined,
+    forceStickBlocks: (i: unknown) => {
+      if (i === undefined) return undefined
+      const strI = toString(i)
+      if (strI === 'before') return 'before'
+      if (strI === 'after') return 'after'
+      if (strI === 'both') return 'both'
+      return undefined
+    },
+    thresholdOffset: (i: unknown) => i !== undefined ? toString(i) : undefined,
+    bgColorTransitionDuration: (i: unknown) => i !== undefined ? toNumber(i) : undefined,
+    pages: async (i: unknown) => Array.isArray(i) ? await arrayToPages(i, id, logger) : undefined,
+    onPageChange: (i: unknown) => {
+      if (!Array.isArray(i)) return undefined
+      const handlers = i
+        .map(e => Events.getRegisteredHandler(toString(e)))
+        .filter((handler): handler is Events.HandlerFunc => handler !== undefined)
+      return async (state?: State) => {
+        Events.syncCallHandlers(handlers, {
+          details: { state },
           type: Events.Type.SCRLLGNGN_ON_PAGE_CHANGE,
-          initiatorId: id,
-          globals: Globals.globalObj
+          appId: id
         })
-        else () => { console.error(`No handler found with name`, strHandlerName) }
       }
     }
-  }
+  })
   return props
 }
 
 /* * * * * * * * * * * * * * * * * * *
  * ARRAY TO PAGES
  * * * * * * * * * * * * * * * * * * */
-async function arrayToPages (
-  array: unknown[],
-  logger?: Logger
-): Promise<PropsPageData[]> {
+async function arrayToPages (array: unknown[], id: string, logger?: Logger): Promise<PropsPageData[]> {
   const extractedPages: PropsPageData[] = []
   for (const pageData of array) {
     if (!isRecord(pageData)) continue
-    const extractedPage: PropsPageData = {}
-    const { id, bgColor, blocks } = pageData
-    if (id !== undefined) { extractedPage.id = toString(id) }
-    if (bgColor !== undefined) { extractedPage.bgColor = toString(bgColor) }
-    if (Array.isArray(blocks)) { extractedPage.blocks = await arrayToBlocks(blocks, logger) }
+    const extractedPage: PropsPageData = await recordFormat(pageData, {
+      id: (i: unknown) => i !== undefined ? toString(i) : undefined,
+      bgColor: (i: unknown) => i !== undefined ? toString(i) : undefined,
+      blocks: async (i: unknown) => Array.isArray(i) ? await arrayToBlocks(i, id, logger) : undefined
+    })
     extractedPages.push(extractedPage)
   }
   return extractedPages
@@ -100,72 +76,76 @@ async function arrayToPages (
 /* * * * * * * * * * * * * * * * * * *
  * ARRAY TO BLOCKS
  * * * * * * * * * * * * * * * * * * */
-async function arrayToBlocks (
-  array: unknown[],
-  logger?: Logger
-): Promise<PropsBlockData[]> {
+async function arrayToBlocks (array: unknown[], id: string, logger?: Logger): Promise<PropsBlockData[]> {
   const extractedBlocks: PropsBlockData[] = []
   for (const blockData of array) {
     if (!isRecord(blockData)) continue
-    const {
-      id, zIndex, type, content, trackScroll, depth, layout,
-      mobileLayout, transitions, mobileTransitions
-    } = blockData
+    const strDepth = blockData.depth !== undefined ? toString(blockData.depth) : undefined
     
     // depth?: 'scroll'
-    if (depth === 'scroll' || depth === undefined) {
-      const extractedScrollBlock: PropsScrollBlockData = {}
-      extractedScrollBlock.depth = depth
-      if (id !== undefined) { extractedScrollBlock.id = toString(id) }
-      if (zIndex !== undefined) { extractedScrollBlock.zIndex = toNumber(zIndex) }
-      if (type === 'html' || type === 'module') { extractedScrollBlock.type = type }
-      if (content !== undefined) {
-        if (type === 'module') { extractedScrollBlock.content = toString(content) }
-        else { extractedScrollBlock.content = await Apps.toStringOrVNodeHelper(content, logger) }
-      }
-      if (trackScroll !== undefined) { extractedScrollBlock.trackScroll = toBoolean(trackScroll) }
-      if (layout !== undefined) { extractedScrollBlock.layout = toString(layout) as LayoutName }
-      if (mobileLayout !== undefined) { extractedScrollBlock.mobileLayout = toString(mobileLayout) as LayoutName }
+    if (strDepth === 'scroll' || strDepth === undefined) {
+      const extractedScrollBlock: PropsScrollBlockData = await recordFormat(blockData, {
+        depth: () => strDepth,
+        id: (i: unknown) => i !== undefined ? toString(i) : undefined,
+        zIndex: (i: unknown) => i !== undefined ? toNumber(i) : undefined,
+        type: (i: unknown) => {
+          if (i === undefined) return undefined
+          const strI = toString(i)
+          if (strI === 'html') return 'html'
+          if (strI === 'module') return 'module'
+          return undefined
+        },
+        content: (i: unknown) => i !== undefined ? Apps.toStringOrVNodeHelper(i, logger) : undefined, // [WIP] should be possible to have VNode if type === 'module'
+        trackScroll: (i: unknown) => i !== undefined ? toBoolean(i) : undefined,
+        layout: (i: unknown) => i !== undefined ? toString(i) as LayoutName : undefined,
+        mobileLayout: (i: unknown) => i !== undefined ? toString(i) as LayoutName : undefined
+      })
       extractedBlocks.push(extractedScrollBlock)
     
     // depth: 'front'|'back'
-    } else if (depth === 'front' || depth === 'back') {
-      const extractedStickyBlock: PropsStickyBlockData = { depth: 'back' }
-      extractedStickyBlock.depth = depth
-      if (id !== undefined) { extractedStickyBlock.id = toString(id) }
-      if (zIndex !== undefined) { extractedStickyBlock.zIndex = toNumber(zIndex) }
-      if (type === 'html' || type === 'module') { extractedStickyBlock.type = type }
-      if (content !== undefined) {
-        if (type === 'module') { extractedStickyBlock.content = toString(content) }
-        else { extractedStickyBlock.content = await Apps.toStringOrVNodeHelper(content, logger) }
-      }
-      if (trackScroll !== undefined) { extractedStickyBlock.trackScroll = toBoolean(trackScroll) }
-      if (layout !== undefined) { extractedStickyBlock.layout = toString(layout) as LayoutName }
-      if (mobileLayout !== undefined) { extractedStickyBlock.mobileLayout = toString(mobileLayout) as LayoutName }
-      if (Array.isArray(transitions)) {
-        const transitionsArr: TransitionDescriptor[] = []
-        transitions.forEach((transitionObj: unknown) => {
-          if (!Array.isArray(transitionObj)) return;
-          const [name, duration] = transitionObj
-          const strName = toString(name)
-          if (!isTransitionName(strName)) return;
-          if (typeof duration === 'string' || typeof duration === 'number') transitionsArr.push([name, duration])
-          else transitionsArr.push([name])
-        })
-        extractedStickyBlock.transitions = transitionsArr
-      }
-      if (Array.isArray(mobileTransitions)) {
-        const mobileTransitionsArr: TransitionDescriptor[] = []
-        mobileTransitions.forEach((transitionObj: unknown) => {
-          if (!Array.isArray(transitionObj)) return;
-          const [name, duration] = transitionObj
-          const strName = toString(name)
-          if (!isTransitionName(strName)) return;
-          if (typeof duration === 'string' || typeof duration === 'number') mobileTransitionsArr.push([name, duration])
-          else mobileTransitionsArr.push([name])
-        })
-        extractedStickyBlock.mobileTransitions = mobileTransitionsArr
-      }
+    } else if (strDepth === 'front' || strDepth === 'back') {
+      const extractedStickyBlock: PropsStickyBlockData = await recordFormat(blockData, {
+        depth: () => strDepth,
+        id: (i: unknown) => i !== undefined ? toString(i) : undefined,
+        zIndex: (i: unknown) => i !== undefined ? toNumber(i) : undefined,
+        type: (i: unknown) => {
+          if (i === undefined) return undefined
+          const strI = toString(i)
+          if (strI === 'html') return 'html'
+          if (strI === 'module') return 'module'
+          return undefined
+        },
+        content: (i: unknown) => i !== undefined ? Apps.toStringOrVNodeHelper(i, logger) : undefined, // [WIP] should be possible to have VNode if type === 'module'
+        trackScroll: (i: unknown) => i !== undefined ? toBoolean(i) : undefined,
+        layout: (i: unknown) => i !== undefined ? toString(i) as LayoutName : undefined,
+        mobileLayout: (i: unknown) => i !== undefined ? toString(i) as LayoutName : undefined,
+        transitions: (i: unknown) => {
+          if (!Array.isArray(i)) return undefined
+          const transitionsArr: TransitionDescriptor[] = []
+          i.forEach((transitionObj: unknown) => {
+            if (!Array.isArray(transitionObj)) return;
+            const [name, duration] = transitionObj
+            const strName = toString(name)
+            if (!isTransitionName(strName)) return;
+            if (typeof duration === 'string' || typeof duration === 'number') transitionsArr.push([name, duration])
+            else transitionsArr.push([name])
+          })
+          return transitionsArr
+        },
+        mobileTransitions: (i: unknown) => {
+          if (!Array.isArray(i)) return undefined
+          const mobileTransitionsArr: TransitionDescriptor[] = []
+          i.forEach((transitionObj: unknown) => {
+            if (!Array.isArray(transitionObj)) return;
+            const [name, duration] = transitionObj
+            const strName = toString(name)
+            if (!isTransitionName(strName)) return;
+            if (typeof duration === 'string' || typeof duration === 'number') mobileTransitionsArr.push([name, duration])
+            else mobileTransitionsArr.push([name])
+          })
+          return mobileTransitionsArr
+        }
+      })
       extractedBlocks.push(extractedStickyBlock)
     }
   }
