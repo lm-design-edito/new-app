@@ -3,7 +3,7 @@ const env = process.env.NODE_ENV === 'production' ? 'production' : 'developpment
 const port = process.env.PORT ?? '3000'
 
 // PATHS
-const ROOT_URL = new URL(env === 'production' ? (window.LM_PAGE?.rootUrl ?? '') : `http://localhost:${port}`)
+const ROOT_URL = new URL(env === 'production' ? (window.LM_PAGE?.meta?.rootUrl ?? '') : `http://localhost:${port}`)
 const SHARED_URL = new URL(`${ROOT_URL.href.replace(/\/$/, '')}/shared`)                                // shared/
 const SCRIPTS_INDEX_URL = new URL(`${SHARED_URL.href.replace(/\/$/, '')}/index.js`)                     // shared/index.js
 const SHARED_ASSETS_URL = new URL(`${SHARED_URL.href.replace(/\/$/, '')}/assets`)                       // shared/assets/
