@@ -13,8 +13,9 @@ export type LmPage = {
   [Globals.GlobalKey.APPS]?: typeof Apps
   [Globals.GlobalKey.DARKDOUILLE]?: typeof Darkdouille
   [Globals.GlobalKey.EVENTS]?: typeof Events
-  [Globals.GlobalKey.LM_HTML]?: typeof LmHtml
+  [Globals.GlobalKey.HAS_AUTO_INIT]?: boolean
   [Globals.GlobalKey.INIT]?: typeof init
+  [Globals.GlobalKey.LM_HTML]?: typeof LmHtml
   [Globals.GlobalKey.LOGGER]?: Logger
   [Globals.GlobalKey.META]?: {
     env?: string
@@ -41,8 +42,9 @@ export namespace Globals {
     APPS = 'Apps',
     DARKDOUILLE = 'Darkdouille',
     EVENTS = 'Events',
-    LM_HTML = 'LmHtml',
+    HAS_AUTO_INIT = 'hasAutoInit',
     INIT = 'init',
+    LM_HTML = 'LmHtml',
     LOGGER = 'logger',
     META = 'meta',
     TREE = 'tree',

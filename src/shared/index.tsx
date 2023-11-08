@@ -76,12 +76,22 @@ export { utils }
 export { init }
 
 /* * * * * * * * * * * * * * * * * * * * * *
- * INIT
+ * INIT ON LOAD
  * * * * * * * * * * * * * * * * * * * * * */
 const importUrl = new URL(import.meta.url)
-const shouldntInit = importUrl.searchParams.has('idle');
-if (!shouldntInit) init()
+const hasIdleParam = importUrl.searchParams.has('idle');
+if (!hasIdleParam) autoInit()
+async function autoInit () {
+  const key = Globals.GlobalKey.HAS_AUTO_INIT
+  const hasAlreadyAutoInit = Globals.retrieve(key) === true
+  if (hasAlreadyAutoInit) return;
+  Globals.expose(key, true)
+  await init()
+}
 
+/* * * * * * * * * * * * * * * * * * * * * *
+ * INIT
+ * * * * * * * * * * * * * * * * * * * * * */
 async function init () {
   logger.log('Page initialization',
     '%cStart init', 'font-weight: 800;',
