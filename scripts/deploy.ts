@@ -2,12 +2,11 @@ import { join } from 'node:path'
 import { promises as fs } from 'node:fs'
 import { exec } from 'node:child_process'
 import { randomUUID } from 'node:crypto'
-import { glob } from 'glob'
-import chalk from 'chalk'
 import prompts from 'prompts'
 import semver from 'semver'
 import tree from 'tree-cli'
 import * as config from './config.js'
+import { styles } from './_logging.js'
 
 const STATE = {
   git_status_seems_clean: false,
@@ -25,52 +24,24 @@ const STATE = {
   latest_version_number: null as null | string,
   target_version_number: null as null | string,
   target_version_description: null as null | string,
+  deployed_on: null as null | Date,
   deploy_mixed_versions_in_target: false
 }
 
 deploy ()
 
 async function deploy () {
-  await removeDsStores()
   await checkGitStatus()
   await selectTarget()
   await retreiveVersions()
   await selectVersionNumber()
-  await writeBuildInfoInBundle()
+  await buildSource()
+  await writeVersionCommentInBundle()
   await checkDistDirTree()
   await dryRunRsync()
   await actualRsync()
-  // await createMilestoneCommit()
+  await createMilestoneCommit()
   await makeFilesPublic()
-}
-
-/* * * * * * * * * * * * * * * * * * * * *
- * Styles for logging
- * * * * * * * * * * * * * * * * * * * * */
-function makeTextBlock (text: string, vPadding: number = 1, hPadding: number = vPadding) {
-  const lines = text.split('\n')
-  const longestLine = Math.max(...lines.map(line => line.length))
-  const textBlockArr = new Array(lines.length + 2 * vPadding)
-    .fill(null)
-    .map(() => new Array(longestLine + (hPadding * 2)).fill(' '))
-  lines.forEach((line, linePos) => {
-    const chars = line.split('')
-    textBlockArr[linePos + vPadding]?.splice(hPadding, chars.length, ...chars)
-  })
-  return textBlockArr
-  .map(lineArr => lineArr.join(''))
-  .join('\n')
-}
-
-const styles = {
-  regular: (text: string) => text,
-  light: (text: string) => chalk.grey(text),
-  danger: (text: string) => chalk.bold.bgRed.whiteBright(makeTextBlock(`/!\\\n\n${text}\n`, 2, 6)),
-  important: (text: string) => chalk.bold(text),
-  title: (text: string) => `# ${chalk.bold.underline(`${text}\n`)}`,
-  info: (text: string) => chalk.blueBright(text),
-  error: (text: string) => chalk.red(text),
-  warning: (text: string) => chalk.yellow(text)
 }
 
 /* * * * * * * * * * * * * * * * * * * * *
@@ -80,18 +51,6 @@ function abort () {
   console.log('')
   console.log(styles.important('Deployment aborted.'))
   return process.exit(0)
-}
-
-/* * * * * * * * * * * * * * * * * * * * *
- * Remove all .DS_Store and unwanted files
- * * * * * * * * * * * * * * * * * * * * */
-async function removeDsStores () {
-  const dsStores = await glob(join(config.DST_PROD, '**/.DS_Store'))
-  await Promise.all(dsStores.map(dsStore => fs.rm(dsStore)))
-  console.log(styles.title('Deleting .DS_Store files in dist/prod'))
-  if (dsStores.length > 0) dsStores.forEach(dsStore => console.log(styles.regular(`deleted: ${dsStore}`)))
-  else console.log(styles.regular('No .DS_Store file found'))
-  console.log('')
 }
 
 /* * * * * * * * * * * * * * * * * * * * *
@@ -211,16 +170,18 @@ async function checkGitStatus () {
  * * * * * * * * * * * * * * * * * * * * */
 async function selectTarget () {
   enum Targets {
-    FOR_TESTS_ONLY = 'gs://decodeurs/design-edito/_FOR_TESTS_ONLY',
-    TEST = 'gs://decodeurs/design-edito/_TEST',
-    V0 = 'gs://decodeurs/design-edito/v0',
-    V01 = 'gs://decodeurs/design-edito/v0.1'
+    // FOR_TESTS_ONLY = 'gs://decodeurs/design-edito/_FOR_TESTS_ONLY',
+    // TEST = 'gs://decodeurs/design-edito/_TEST',
+    // V0 = 'gs://decodeurs/design-edito/v0',
+    // V01 = 'gs://decodeurs/design-edito/v0.1',
+    V1_ALPHA = 'gs://decodeurs/design-edito/v1.alpha'
   }
   const targetToRootUrlMap = new Map<Targets, string>([
-    [Targets.FOR_TESTS_ONLY, 'https://assets-decodeurs.lemonde.fr/design-edito/_FOR_TESTS_ONLY'],
-    [Targets.TEST, 'https://assets-decodeurs.lemonde.fr/design-edito/_TEST'],
-    [Targets.V0, 'https://assets-decodeurs.lemonde.fr/design-edito/v0'],
-    [Targets.V01, 'https://assets-decodeurs.lemonde.fr/design-edito/v0.1']
+    // [Targets.FOR_TESTS_ONLY, 'https://assets-decodeurs.lemonde.fr/design-edito/_FOR_TESTS_ONLY'],
+    // [Targets.TEST, 'https://assets-decodeurs.lemonde.fr/design-edito/_TEST'],
+    // [Targets.V0, 'https://assets-decodeurs.lemonde.fr/design-edito/v0'],
+    // [Targets.V01, 'https://assets-decodeurs.lemonde.fr/design-edito/v0.1']
+    [Targets.V1_ALPHA, 'https://assets-decodeurs.lemonde.fr/design-edito/v1.alpha']
   ])
   console.log(styles.title('Select a target destination'))
   STATE.target_name = (await prompts({
@@ -319,6 +280,7 @@ async function selectVersionNumber () {
       && typeof latestVerPrereleaseNbr === 'number'
     const newPrereleaseNbr = isPrerelease ? semver.inc(STATE.latest_version_number, 'prerelease') : null
     const newPrereleaseFlag = isPrerelease ? (riseFlagOnVersionNumber(STATE.latest_version_number) ?? null) : null
+    // [WIP] should be possible to jump from alpha to rc here
     const newPatchVersionNbr = semver.inc(STATE.latest_version_number, 'patch')
     const newMinorVersionNbr = semver.inc(STATE.latest_version_number, 'minor')
     const newMajorVersionNbr = semver.inc(STATE.latest_version_number, 'major')
@@ -413,17 +375,39 @@ async function selectVersionNumber () {
     name: 'versionDescription',
     message: 'Description for this version:'
   })).versionDescription
+  console.log('')
+}
+
+async function buildSource () {
+  console.log(styles.title(`Building source`))
+  try {
+    STATE.deployed_on = new Date()
+    const deployedOnReadable = STATE.deployed_on.toUTCString()
+    await new Promise(resolve => exec(
+      `NODE_ENV=production VERSION="${STATE.target_version_number}" ROOT="${STATE.target_url}" DEPLOYED_ON="${STATE.deployed_on}" DEPLOYED_ON_READABLE="${deployedOnReadable}" npm run build-source:prod`,
+      (err, stdout, stderr) => {
+        if (err !== null) console.error(styles.error(err.message))
+        if (stderr !== '' && err === null) console.log(styles.regular(stderr))
+        if (stdout !== '') console.log(styles.regular(stdout))
+        resolve(true)
+      }
+    ))
+  } catch (err) {
+    return abort()
+  }
+  console.log('')
 }
 
 /* * * * * * * * * * * * * * * * * * * * *
- * Write version related stuff
+ * Write version comment in bundle
  * * * * * * * * * * * * * * * * * * * * */
-async function writeBuildInfoInBundle () {
-  const buildDate = new Date()
+async function writeVersionCommentInBundle () {
+  const deployedOn = STATE.deployed_on ?? new Date()
+  const deployedOnReadable = deployedOn.toUTCString()
   const thisVersionJsonData = {
     description: (STATE.target_version_description ?? '') as string,
-    build: buildDate.valueOf(),
-    buildReadable: buildDate.toUTCString(),
+    deployedOn: deployedOn.valueOf(),
+    deployedOnReadable: deployedOnReadable,
     commit: STATE.git_status_seems_clean
       ? STATE.latest_commit_number
       : `${STATE.latest_commit_number} (with uncommited changes)`
@@ -443,22 +427,7 @@ async function writeBuildInfoInBundle () {
   )
   const DST_PROD_SHARED_INDEX = join(config.DST_PROD, 'shared', 'index.js')
   const dstProdSharedContent = await fs.readFile(DST_PROD_SHARED_INDEX, { encoding: 'utf-8' })
-  const dstProdSharedAppendedContent = `
-    /* v.${STATE.target_version_number} */
-    if (window.LM_PAGE === undefined) { window.LM_PAGE = { meta: {} } };
-    window.LM_PAGE.meta.buildTime = '${buildDate.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      weekday: 'short',
-      hour: 'numeric',
-      minute: 'numeric',
-      second: 'numeric'
-    })}';
-    window.LM_PAGE.meta.rootUrl = '${STATE.target_url}';
-    window.LM_PAGE.meta.target = '${(STATE.target_name ?? '').split('/').at(-1)}';
-    window.LM_PAGE.meta.version = '${STATE.target_version_number}';
-  `.trim().split('\n').map(line => line.trim()).join(' ')
+  const dstProdSharedAppendedContent = `/* v.${STATE.target_version_number} */`
   await fs.writeFile(DST_PROD_SHARED_INDEX, `${dstProdSharedAppendedContent} ${dstProdSharedContent}`)
   const DST_PROD_SHARED_INDEX_VERSIONNED = join(config.DST_PROD, 'shared', `index.v${STATE.target_version_number}.js`)
   await fs.copyFile(DST_PROD_SHARED_INDEX, DST_PROD_SHARED_INDEX_VERSIONNED)

@@ -6,7 +6,7 @@ import { Analytics } from '~/shared/analytics'
 import { Config } from '~/shared/config'
 import { Events } from '~/shared/events'
 import getHeaderElements from '~/shared/get-header-element'
-import { Globals } from '~/shared/globals'
+import { Globals, LmPage } from '~/shared/globals'
 import { LmHtml } from '~/shared/lm-html'
 import { Darkdouille } from '~/shared/darkdouille'
 
@@ -38,20 +38,15 @@ import transition from '~/utils/transition'
 /* * * * * * * * * * * * * * * * * * * * * *
  * EXPORT & GLOBALS
  * * * * * * * * * * * * * * * * * * * * * */
-const devMeta = {
-  buildTime: undefined,
-  version: 'dev',
-  rootUrl: undefined,
-  target: 'localhost',
+const meta: LmPage[Globals.GlobalKey.META] = {
   env: appConfig.env,
+  built_on: appConfig.builtOn,
+  built_on_readable: appConfig.builtOnReadable,
+  version: appConfig.version,
+  deployed_on: appConfig.deployedOn,
+  deployed_on_readable: appConfig.deployedOnReadable,
   paths: appConfig.paths
 }
-const prodMeta = {
-  ...(Globals.globalObj[Globals.GlobalKey.META] ?? {}),
-  env: appConfig.env,
-  paths: appConfig.paths
-}
-const meta = appConfig.env === 'developpment' ? devMeta : prodMeta
 const logger = new Logger()
 const utils = {
   absoluteModulo,         arrayRandomPick,          bem,                    Cast,
@@ -90,10 +85,14 @@ if (!shouldntInit) init()
 async function init () {
   logger.log('Page initialization',
     '%cStart init', 'font-weight: 800;',
-    '\nenv:', Globals.retrieve(Globals.GlobalKey.META)?.env,
-    '\nversion:', Globals.retrieve(Globals.GlobalKey.META)?.version,
-    '\ntarget:', Globals.retrieve(Globals.GlobalKey.META)?.target,
-    '\nbuild time:', Globals.retrieve(Globals.GlobalKey.META)?.buildTime,
+    '\nenv:', appConfig.env,
+    '\nport:', appConfig.port,
+    '\nbuiltOn:', appConfig.builtOn,
+    '\nbuiltOnReadable:', appConfig.builtOnReadable,
+    '\nversion:', appConfig.version,
+    '\ndeployedOn:', appConfig.deployedOn,
+    '\ndeployedOnReadable:', appConfig.deployedOnReadable,
+    '\npaths:', appConfig.paths,
     '\nscript url:', appConfig.paths.SCRIPTS_INDEX_URL.toString())
 
   /* STYLES * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

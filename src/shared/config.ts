@@ -1,9 +1,15 @@
-// ENV
+// ENVIRONMENT VARIABLES
 const env = process.env.NODE_ENV === 'production' ? 'production' : 'developpment'
 const port = process.env.PORT ?? '3000'
+const builtOn = process.env.BUILT_ON ?? ''
+const builtOnReadable = process.env.BUILT_ON_READABLE ?? ''
+const version = process.env.VERSION ?? ''
+const rootUrl = process.env.ROOT ?? `http://localhost:${port}`
+const deployedOn = process.env.DEPLOYED_ON ?? ''
+const deployedOnReadable = process.env.DEPLOYED_ON_READABLE ?? ''
 
 // PATHS
-const ROOT_URL = new URL(env === 'production' ? (window.LM_PAGE?.meta?.rootUrl ?? '') : `http://localhost:${port}`)
+const ROOT_URL = new URL(env === 'production' ? rootUrl : `http://localhost:${port}`)
 const SHARED_URL = new URL(`${ROOT_URL.href.replace(/\/$/, '')}/shared`)                                // shared/
 const SCRIPTS_INDEX_URL = new URL(`${SHARED_URL.href.replace(/\/$/, '')}/index.js`)                     // shared/index.js
 const SHARED_ASSETS_URL = new URL(`${SHARED_URL.href.replace(/\/$/, '')}/assets`)                       // shared/assets/
@@ -25,6 +31,11 @@ const eventHandlersAllowedUrlSchemes: Array<Partial<URL>> = [
 export default {
   env,
   port,
+  builtOn,
+  builtOnReadable,
+  version,
+  deployedOn,
+  deployedOnReadable,
   paths: {
     ROOT_URL,
     SHARED_URL,
