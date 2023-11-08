@@ -8,11 +8,13 @@
 <data class="SLOTS">
   <!-- GALLERY -->
   <data>
+    
     <data class="destination">
       <string class="selector">.gallery</string>
       <string class="position">endof</string>
       <string class="reference">body</string>
     </data>
+
     <data class="content">
       <comp name="gallery">
         <string class="customClass">my-gallery</string>

@@ -61,7 +61,7 @@ async function toProps (input: unknown, id: string, logger?: Logger): Promise<Pr
       registry: () => iconsData,
       customClass: (i: unknown) => i !== undefined ? toString(i) : undefined,
       name: (i: unknown) => i !== undefined ? toString(i) : undefined,
-      boolean: (i: unknown) => i !== undefined ? toBoolean(i) : undefined,
+      inline: (i: unknown) => i !== undefined ? toBoolean(i) : undefined,
     })
     return { component, ...props }
 
