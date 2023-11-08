@@ -8,7 +8,7 @@ import { LmHtml } from '~/shared/lm-html'
 import Logger from '~/utils/silent-log'
 import isInEnum from '~/utils/is-in-enum'
 
-type LmPage = {
+export type LmPage = {
   [Globals.GlobalKey.ANALYTICS]?: typeof Analytics
   [Globals.GlobalKey.APPS]?: typeof Apps
   [Globals.GlobalKey.DARKDOUILLE]?: typeof Darkdouille
@@ -17,11 +17,12 @@ type LmPage = {
   [Globals.GlobalKey.INIT]?: typeof init
   [Globals.GlobalKey.LOGGER]?: Logger
   [Globals.GlobalKey.META]?: {
-    buildTime?: string // injected from /scripts/deploy
-    rootUrl?: string   // injected from /scripts/deploy
-    target?: string    // injected from /scripts/deploy
-    version?: string   // injected from /scripts/deploy
-    env?: string,
+    env?: string
+    built_on?: string
+    built_on_readable?: string
+    version?: string
+    deployed_on?: string
+    deployed_on_readable?: string
     paths?: typeof appConfig.paths
   }
   [Globals.GlobalKey.TREE]?: Darkdouille.Tree

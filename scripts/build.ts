@@ -6,13 +6,15 @@ import chalk from 'chalk'
 import { glob } from 'glob'
 import * as sass from 'sass'
 import { debounce } from 'throttle-debounce'
-import { build, BuildOptions } from 'esbuild'
+import { build as esbuild, BuildOptions } from 'esbuild'
 import { sassPlugin, postcssModules } from 'esbuild-sass-plugin'
 import inlineImageModule from 'esbuild-plugin-inline-image'
 import * as config from './config.js'
 
 // This in order to handle wrong typings from the lib i guess
 const inlineImagePulgin = inlineImageModule as unknown as typeof inlineImageModule.default
+
+const builtOn = new Date()
 
 /* BUNDLE OPTIONS * * * * * * * * * * * * */
 const bundleOptions = (otherEntries: BuildOptions['entryPoints'] = {}): BuildOptions => ({
@@ -56,14 +58,20 @@ const bundleOptions = (otherEntries: BuildOptions['entryPoints'] = {}): BuildOpt
     '.scss': 'file'
   },
   define: {
-    'process.env.PORT': process.env.PORT ?? '3000',
-    'process.env.NODE_ENV': `"${process.env.NODE_ENV ?? 'developpment'}"`
+    'process.env.PORT': process.env.PORT ?? '"3000"',
+    'process.env.NODE_ENV': `"${process.env.NODE_ENV ?? 'developpment'}"`,
+    'process.env.BUILT_ON': `"${builtOn.valueOf()}"`,
+    'process.env.BUILT_ON_READABLE': `"${builtOn.toUTCString()}"`,
+    'process.env.VERSION': `"${process.env.VERSION ?? ''}"`,
+    'process.env.ROOT': `"${process.env.ROOT ?? ''}"`,
+    'process.env.DEPLOYED_ON': `"${process.env.DEPLOYED_ON ?? ''}"`,
+    'process.env.DEPLOYED_ON_READABLE': `"${process.env.DEPLOYED_ON_READABLE ?? ''}"`
   }
-})
+})  
 
 /* MAIN * * * * * * * * * * * * */
-main()
-async function main () {
+build ()
+export async function build () {
   await rmDist()
   await makeDist()
   // Prod
@@ -219,7 +227,7 @@ async function processTypeCheck () {
 }
 
 async function processScripts () {
-  try { return await build(bundleOptions({})) }
+  try { return await esbuild(bundleOptions({})) }
   catch (err) { console.log(chalk.red.bold(err)) }
 }
 
