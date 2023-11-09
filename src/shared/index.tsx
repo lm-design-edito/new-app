@@ -124,7 +124,7 @@ async function init () {
   // Find, merge and evaluate inline page data
   const pageInlineDataNodes = document.body.querySelectorAll(appConfig.dataSourceSelector)
   const pageInlineDataNodesCopy = [...pageInlineDataNodes].map(e => e.cloneNode(true)) as Element[]
-  const pageInlineDataValue = Darkdouille.tree(...pageInlineDataNodes).value
+  const pageInlineDataValue = Darkdouille.tree([...pageInlineDataNodes]).value
   logger.log('Inline data', pageInlineDataValue)
   const pageInlineDataValueIsRecord = Darkdouille.valueIsRecord(pageInlineDataValue)
   const pageDataConfigCollectionName = appConfig.dataSourcesReservedNames.config
@@ -177,7 +177,7 @@ async function init () {
       wrapper.innerHTML += data
       return wrapper
     })
-  const pageFullDataTree = Darkdouille.tree(...pageInlineDataNodesCopy, ...pageRemoteDataNodes)
+  const pageFullDataTree = Darkdouille.tree([...pageInlineDataNodesCopy, ...pageRemoteDataNodes])
   Globals.expose(Globals.GlobalKey.TREE, pageFullDataTree)
   const pageFullDataValue = pageFullDataTree.value
   logger.log('Full data', pageFullDataValue)

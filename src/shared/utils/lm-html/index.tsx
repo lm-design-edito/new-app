@@ -1,6 +1,7 @@
 import { VNode, createElement } from 'preact'
 import { Darkdouille } from '~/shared/darkdouille'
-import { Apps } from 'apps'
+import { Globals } from '~/shared/globals'
+import { Apps } from '~/apps'
 import Logger from '~/utils/silent-log'
 import isInEnum from '~/utils/is-in-enum'
 import MutedVideo from './MutedVideo'
@@ -32,7 +33,13 @@ export namespace LmHtml {
       const appName = element.getAttribute('name') ?? ''
       const appId = element.getAttribute('compid')
       const typeIsValidAppName = isInEnum(Apps.Name, appName)
-      const unknownProps = Darkdouille.tree(element).value
+      const pageTree = Globals.retrieve(Globals.GlobalKey.TREE)
+      // [WIP] [DIRTY]: I retrieve the global tree here in order to be able to resolve refs in comps props.
+      // After that, i give the pageTree as a parent of the new tree, and a pathForResolver which also seems
+      // to be a poorly concieved logic. There probably is a better way.
+      const pageTreePath = (pageTree as Darkdouille.Tree).path
+      const unknownPropsTree = Darkdouille.tree([element], pageTree, pageTreePath)
+      const unknownProps = unknownPropsTree.value
       if (typeIsValidAppName) return await Apps.render(appName, appId, unknownProps, logger)
       logger?.warn('Render', '%cInvalid app name', 'font-weight: 800;', 'at', element)
       return <></>

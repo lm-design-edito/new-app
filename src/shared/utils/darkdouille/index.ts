@@ -401,11 +401,11 @@ export namespace Darkdouille {
         children = namedChildItems.reduce((record, childItem) => {
           const classAttr = childItem.element.getAttribute('class')
           if (classAttr === null) return record
-          return { ...record, [classAttr]: new Tree(childItem.element, this) }
+          return { ...record, [classAttr]: new Tree(childItem.element, this, `${(this.path ?? '')}/${classAttr}`) }
         }, {} as { [key: string]: Tree })
       } else if (unnamedChildItems.length > 0) {
         children = unnamedChildItems
-          .map(childItem => new Tree(childItem.element, this))
+          .map((childItem, pos) => new Tree(childItem.element, this, `${(this.path ?? '')}/${pos}`))
       } else  {
         children = htmlChildItems
           .map((childItem) => childItem.type === 'text' ? childItem.node : childItem.element)
@@ -491,7 +491,7 @@ export namespace Darkdouille {
     }
 
     getFunctionElementRawArgs (this: Tree, functionElement: Element): Exclude<TreeChildItem, TreeTextChildItem>[] {
-      // [WIP] Giving a pathForResoler to new Tree here because tree.path
+      // [WIP] Giving a pathForResolver to new Tree here because tree.path
       // doesnt work for nested functions and transformers.
       // Should find a better way to calculate tree.path later.
       // Path is needed to spot circular reference patterns in 
@@ -618,10 +618,13 @@ export namespace Darkdouille {
     }
   }
 
-  export function tree (...darkdouilleElements: Element[]) {
+  export function tree (
+    darkdouilleElements: Element[],
+    parentTree?: Tree,
+    pathForResolver?: string) {
     const merged = merge(...darkdouilleElements)
     const reduced = reduce(merged)
-    const tree = new Tree(reduced)
+    const tree = new Tree(reduced, parentTree, pathForResolver)
     return tree
   }
 }
