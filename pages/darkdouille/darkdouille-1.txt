@@ -3,9 +3,13 @@
     <data class="name">name</data>
     <data class="value">test</data>
   </data>
+  <data>
+    <string class='name'>css</string>
+    <string class='value'>/* CSS injecté */ body { background-color: red; }</string>
+  </data>
 </data>
 
-<data class="SLOTS">
+<data class="SLOTS" action="append">
   <!-- GALLERY -->
   <data>
     
@@ -15,7 +19,7 @@
       <string class="reference">body</string>
     </data>
 
-    <data class="content">
+    <lm-html class="content">
       <comp name="gallery">
         <string class="customClass">my-gallery</string>
         <boolean class="snapScroll">false</boolean>
@@ -37,7 +41,7 @@
           <lm-html><div style="width: 388px; height: 400px; margin: 10px; border-radius: 8px; box-shadow: 0 0 10px 0 #00000040; background-color: coral;">Item</div></lm-html>
         </data>
       </comp>
-    </data>
+    </lm-html>
   </data>
 
   <!-- UI -->

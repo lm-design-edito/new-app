@@ -124,8 +124,10 @@ export namespace Config {
             .map(elt => elt.textContent?.trim())
             .join('\n')
           injected += styleStr
+        } else {
+          injected += toString(value)
         }
-        injectCssRule(injected, 'lm-page-config-css')
+        injectCssRule(injected, `lm-page-config-css-${window.crypto.randomUUID()}`)
         logger?.log('Apply config', '%cCSS injected\n', 'font-weight: 800;', injected)
       }
       // SCALE

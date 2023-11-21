@@ -11,7 +11,7 @@ import { sassPlugin, postcssModules } from 'esbuild-sass-plugin'
 import inlineImageModule from 'esbuild-plugin-inline-image'
 import * as config from './config.js'
 
-// This in order to handle wrong typings from the lib i guess
+// This in order to handle wrong typings from the lib I guess
 const inlineImagePulgin = inlineImageModule as unknown as typeof inlineImageModule.default
 
 const builtOn = new Date()
