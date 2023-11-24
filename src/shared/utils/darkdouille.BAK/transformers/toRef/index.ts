@@ -8,7 +8,7 @@ const toRef = (resolve: Darkdouille.TreeResolver): Darkdouille.TransformerFuncti
     const strValue = toString()(inputValue).trim()
     const resolved = resolve(strValue)
     /* Circular reference pattern detection */
-    const thisPath = resolve('.')?.path
+    const thisPath = resolve('.')?.pathForResolver
     const resolvedPath = resolved?.path
     if (resolved === undefined
       || thisPath === undefined

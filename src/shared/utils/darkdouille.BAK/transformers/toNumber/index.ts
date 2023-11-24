@@ -9,8 +9,8 @@ const toNumber: Darkdouille.TransformerFunctionGenerator<number> = () => {
       tempWrapper.append(...[...inputValue].map(node => node.cloneNode(true)))
       return parseFloat(tempWrapper.innerHTML)
     }
-    if (Array.isArray(inputValue)) return NaN // Array
-    if (typeof inputValue === 'object') return NaN // Record
+    if (Array.isArray(inputValue)) return inputValue.length // Array
+    if (typeof inputValue === 'object') return Object.keys(inputValue).length // Record
     if (typeof inputValue === 'boolean') return inputValue ? 1 : 0 // boolean
     if (typeof inputValue === 'string') return parseFloat(inputValue) // string
     return inputValue

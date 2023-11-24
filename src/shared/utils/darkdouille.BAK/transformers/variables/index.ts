@@ -15,7 +15,7 @@ const registry = new Map<string, VariablesList>()
 
 const set = (resolve: Darkdouille.TreeResolver): Darkdouille.TransformerFunctionGenerator => (...args) => {
   return inputValue => {
-    const path = resolve('./')?.path
+    const path = resolve('./')?.pathForResolver
     if (path === undefined) return inputValue
     const resolvedArgs = resolveArgs(inputValue, ...args)
     const [name, rawValue] = resolvedArgs
@@ -29,7 +29,7 @@ const set = (resolve: Darkdouille.TreeResolver): Darkdouille.TransformerFunction
 
 const get = (resolve: Darkdouille.TreeResolver): Darkdouille.TransformerFunctionGenerator => (...args) => {
   return inputValue => {
-    const path = resolve('./')?.path
+    const path = resolve('./')?.pathForResolver
     if (path === undefined) return inputValue
     const resolvedArgs = resolveArgs(inputValue, ...args)
     const [name] = resolvedArgs
