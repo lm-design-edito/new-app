@@ -4,11 +4,7 @@ const toNumber: Darkdouille.TransformerFunctionGenerator<number> = () => {
   return (inputValue): number => {
     if (inputValue === undefined) return NaN // undefined
     if (inputValue === null) return NaN // null
-    if (inputValue instanceof NodeList) { // NodeList
-      const tempWrapper = document.createElement('data')
-      tempWrapper.append(...[...inputValue].map(node => node.cloneNode(true)))
-      return parseFloat(tempWrapper.innerHTML)
-    }
+    if (inputValue instanceof NodeList) return NaN // NodeList
     if (Array.isArray(inputValue)) return NaN // Array
     if (typeof inputValue === 'object') return NaN // Record
     if (typeof inputValue === 'boolean') return inputValue ? 1 : 0 // boolean
