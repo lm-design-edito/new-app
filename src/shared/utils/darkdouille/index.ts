@@ -1,3 +1,5 @@
+import isRecord from '~/utils/is-record'
+
 /* Cast transformers */
 import toString from './transformers/toString'
 import toNumber from './transformers/toNumber'
@@ -37,7 +39,6 @@ import print from './transformers/print'
 import { set, get } from './transformers/variables'
 import cond from './transformers/cond'
 import loop from './transformers/loop'
-import isRecord from '~/utils/is-record'
 
 export namespace Darkdouille {
   export type TreeConstructorOptions = { node: Node, parent: Tree | undefined }
@@ -53,8 +54,7 @@ export namespace Darkdouille {
     constructor (options: TreeConstructorOptions) {
       this.node = options.node
       this.parent = options.parent
-      this.getNodeKind = this.getNodeKind.bind(this)
-      this.getLocalPathOf = this.getLocalPathOf.bind(this)
+      this.getNodeLocalPath = this.getNodeLocalPath.bind(this)
       this.getFunctionElementRawArgs = this.getFunctionElementRawArgs.bind(this)
       this.resolve = this.resolve.bind(this)
       this.getGeneratorFromFunctionName = this.getGeneratorFromFunctionName.bind(this)
@@ -71,24 +71,24 @@ export namespace Darkdouille {
       return clone.outerHTML
     }
 
-    getNodeKind (this: Tree, node: Node) {
-      if (node instanceof Text) return 'text'
-      if (!(node instanceof Element)) return undefined
-      const isValue = isValueElement(node)
-      const isTransformer = isTransformerElement(node)
-      const isFunction = isFunctionElement(node)
-      if (isTransformer) return 'transformer'
-      if (isFunction) return 'function'
-      if (isValue) {
-        const classAttr = node.getAttribute('class')
-        if (classAttr === null || classAttr === '') return 'positionned'
-        return 'named'
-      }
-      return 'element'
+    get kind () {
+      return getNodeKind(this.node)
     }
 
-    get kind () {
-      return this.getNodeKind(this.node)
+    get forceSelfWrap () {
+      const { node } = this
+      if (!(node instanceof Element)) return false
+      const wrappAttr = node.getAttribute('wrap')
+      if (wrappAttr === null) return false
+      return true
+    }
+
+    get forceSelfNowrap () {
+      const { node } = this
+      if (!(node instanceof Element)) return false
+      const wrappAttr = node.getAttribute('nowrap')
+      if (wrappAttr === null) return false
+      return true
     }
 
     get children () {
@@ -107,17 +107,17 @@ export namespace Darkdouille {
     }
 
     get form () {
-      const { children: { values } } = this
+      const { children: { values }, kind } = this
       let hasNamed = false
       let hasPositionned = false
       let hasElements = false
       let hasText = false
       values.forEach(node => {
-        const kind = this.getNodeKind(node)
-        if (kind === 'named') hasNamed = true
-        if (kind === 'positionned') hasPositionned = true
-        if (kind === 'element') hasElements = true
-        if (kind === 'text') hasText = true
+        const kind = getNodeKind(node)
+        if (kind === 'named') { hasNamed = true }
+        if (kind === 'positionned') { hasPositionned = true }
+        if (kind === 'element') { hasElements = true }
+        if (kind === 'text') { hasText = true }
       })
       return { hasNamed, hasPositionned, hasElements, hasText }
     }
@@ -125,40 +125,41 @@ export namespace Darkdouille {
     get raw (): { [key: string]: Node } | Node[] | string | undefined {
       const { node, kind, form, children: { values } } = this
       if (kind === 'text') return node.textContent ?? undefined
-      if (kind === 'positionned' || kind === 'named') {
-        // Value element has named children
-        if (form.hasNamed) {
-          const filtered = values.filter(node => this.getNodeKind(node) === 'named')
-          return filtered.reduce((reduced, node) => {
-            if (!(node instanceof Element)) return reduced
+      if (kind === 'positionned' || kind === 'named' || kind === 'element') {
+        // Value is named or positionned and has named children
+        if (kind !== 'element' && form.hasNamed) {
+          let positionnedCnt = 0
+          return values.reduce((reduced, node) => {
+            const isNotElement = !(node instanceof Element)
+            const isText = node instanceof Text
+            if (isText && (node.textContent ?? '').trim() === '') return reduced
+            positionnedCnt ++
+            if (isText) return { ...reduced, [`${positionnedCnt - 1}`]: node }
+            if (isNotElement) return reduced
             const classAttr = node.getAttribute('class')
-            if (classAttr === null || classAttr === '') return reduced
+            if (classAttr === null || classAttr === '') return { ...reduced, [`${positionnedCnt - 1}`]: node }
             return { ...reduced, [classAttr]: node }
           }, {} as { [key: string]: Node })
 
-        // Value element has no named children
+        // Value has no named children
         } else {
+          // If it contains positionned or element children, empty text elements are ignored
+          const hasOnlyText = !form.hasPositionned && !form.hasElements
           return values.map(node => {
-            const nodeKind = this.getNodeKind(node)
+            const nodeKind = getNodeKind(node)
+            if (!hasOnlyText && nodeKind === 'text' && (node.textContent ?? '').trim() === '') return undefined
             if (nodeKind === 'element'
+              || nodeKind === 'named'
               || nodeKind === 'positionned'
               || nodeKind === 'text') return node
             return undefined
           }).filter((e): e is Node => e instanceof Node)
         }
-      } else if (kind === 'element') {
-        return values.map(node => {
-          const nodeKind = this.getNodeKind(node)
-          if (nodeKind === 'positionned' || nodeKind === 'named') return node
-          else if (nodeKind === 'element') return node
-          else if (nodeKind === 'text') return node
-          return undefined
-        }).filter((e): e is Node => e instanceof Node)
       }
       return undefined
     }
 
-    getLocalPathOf (this: Tree, node: Node) {
+    getNodeLocalPath (this: Tree, node: Node) {
       const { raw } = this
       if (raw === undefined) return undefined
       if (typeof raw === 'string') return undefined
@@ -182,74 +183,137 @@ export namespace Darkdouille {
       }, {} as { [key: string]: Tree })
     }
 
-    get subvalues (): { [key: string]: TreeValue } | TreeValue[] | string | undefined {
-      const { subtrees } = this
-      if (subtrees === undefined) return undefined
-      if (typeof subtrees === 'string') return subtrees
-      if (Array.isArray(subtrees)) return subtrees.map(subtree => subtree.value)
-      return Object.keys(subtrees).reduce((reduced, key) => {
-        const subtree = subtrees[key]
-        if (subtree === undefined) return reduced
-        return { ...reduced, [key]: subtree.value }
-      }, {} as { [key: string]: TreeValue })
-    }
-
     get pretransformed (): TreeValue {
       const { kind, form, subtrees } = this
       if (subtrees === undefined) return undefined
       if (typeof subtrees === 'string') return subtrees
-      // Node is an element, not a value, we need a NodeListOf<Node> output
+      
+      // Element Tree
       if (kind === 'element') {
+        // element + has named       => chaque item devient text ou NodeList, et poussés dans le NodeList de value. Named et Positionned peuvent-être wrapped, elements MUST be wrapped
+        // element + has elements    => chaque item devient text ou NodeList, et poussés dans le NodeList de value. Named et Positionned peuvent-être wrapped, elements MUST be wrapped
+        // element + has positionned => chaque item devient text ou NodeList, et poussés dans le NodeList de value. Named et Positionned peuvent-être wrapped, elements MUST be wrapped
+        // element + has text        => chaque item devient text ou NodeList, et poussés dans le NodeList de value. Named et Positionned peuvent-être wrapped, elements MUST be wrapped
         const fragment = document.createDocumentFragment()
-        if (!Array.isArray(subtrees)) return fragment.childNodes
-        subtrees.forEach(subtree => {
-          const isValue = subtree.kind === 'named' || subtree.kind === 'positionned'
-          if (isValue) fragment.append(...toHtml()(subtree.value))
-          else if (subtree.kind === 'element') {
-            const wrapper = subtree.node.cloneNode()
-            if (wrapper instanceof Element) {
+        if (Array.isArray(subtrees)) {
+          subtrees.forEach(subtree => {
+            if (subtree.kind === 'element') {
+              const wrapper = subtree.node.cloneNode()
+              if (!(wrapper instanceof Element)) return;
               wrapper.append(...toHtml()(subtree.value))
               fragment.append(wrapper)
-            }
-          } else if (subtree.kind === 'text') {
-            const textNode = document.createTextNode(toString()(subtree.value))
-            fragment.append(textNode)
-          }
-        })
-        return fragment.childNodes
-      }
-      // Node is a value
-      if (kind === 'positionned' || kind === 'named') {
-        // it has a named value, we need { [key: string]: TreeValue } output
-        if (form.hasNamed && isRecord(subtrees)) return Object.keys(subtrees).reduce((reduced, key) => {
-          const subtree = subtrees[key]
-          if (subtree === undefined) return reduced
-          return { ...reduced, [key]: subtree.value }
-        }, {} as { [key: string]: TreeValue })
-        // it has no named value but an element, we need a NodeListOf<Node> output
-        if (form.hasElements && Array.isArray(subtrees)) {
-          const fragment = document.createDocumentFragment()
-          subtrees.forEach(subtree => {
-            const isValue = subtree.kind === 'named' || subtree.kind === 'positionned'
-            if (isValue) fragment.append(...toHtml()(subtree.value))
-            else if (subtree.kind === 'element') {
-              const wrapper = subtree.node.cloneNode()
-              if (wrapper instanceof Element) {
-                wrapper.append(...toHtml()(subtree.value))
-                fragment.append(wrapper)
+            } else if (subtree.kind === 'named' || subtree.kind === 'positionned') {
+              let shouldWrap = true
+              if (subtree.forceSelfNowrap === true) shouldWrap = false
+              if (shouldWrap) {
+                const { wrapped } = subtree
+                if (wrapped !== undefined) fragment.append(wrapped)
+              } else {
+                fragment.append(...toHtml()(subtree.value))
               }
             } else if (subtree.kind === 'text') {
-              const textNode = document.createTextNode(toString()(subtree.value))
-              fragment.append(textNode)
+              fragment.append(document.createTextNode(toString()(subtree.value)))
             }
           })
-          return fragment.childNodes
         }
-        // it has no named nor element but a positionned value, we need a TreeValue[] output
-        if (form.hasPositionned && Array.isArray(subtrees)) return subtrees.map(subtree => subtree.value)
-        // it only has text children, we output a string
-        if (form.hasText && Array.isArray(subtrees)) return subtrees.map(s => toString()(s.value)).join('')
+        return fragment.childNodes
+      
+      // Value Tree
+      } else if (kind === 'named' || kind === 'positionned') {
+        // value   + has named       => chaque item est poussé dans un {}, elements MUST be wrapped, pas named & positionned
+        // value   + has elements    => chaque item devient text ou NodeList, et poussés dans le NodeList de value. Named et Positionned peuvent-être wrapped, elements MUST be wrapped
+        // value   + has positionned => chaque item est poussé dans un [], elements MUST be wrapped, pas named & positionned
+        // value   + has text        => toutes les valeurs sont textifiées et jointes dans une seule valeur
+        if (form.hasNamed) {
+          if (Array.isArray(subtrees)) return {}
+          return Object.keys(subtrees).reduce((reduced, key) => {
+            const subtree = subtrees[key]
+            if (subtree === undefined) return reduced
+            if (subtree.kind === 'element') {
+              const fragment = document.createDocumentFragment()
+              const wrapper = subtree.node.cloneNode()
+              if (!(wrapper instanceof Element)) return reduced
+              wrapper.append(...toHtml()(subtree.value))
+              fragment.append(wrapper)
+              return { ...reduced, [key]: fragment.childNodes }
+            }
+            if (subtree.kind === 'named' || subtree.kind === 'positionned') {
+              const shouldWrap = subtree.forceSelfWrap && !subtree.forceSelfNowrap
+              if (shouldWrap) {
+                const fragment = document.createDocumentFragment()
+                const { wrapped } = subtree
+                if (wrapped !== undefined) fragment.append(wrapped)
+              } else {
+                return { ...reduced, [key]: subtree.value }
+              }
+            }
+            if (subtree.kind === 'text') return { ...reduced, [key]: subtree.value }
+            return reduced
+          }, {} as { [key: string]: TreeValue })
+        
+        } else if (form.hasElements) {
+          const fragment = document.createDocumentFragment()
+          if (Array.isArray(subtrees)) {
+            subtrees.forEach(subtree => {
+              if (subtree.kind === 'element') {
+                const wrapper = subtree.node.cloneNode()
+                if (!(wrapper instanceof Element)) return;
+                wrapper.append(...toHtml()(subtree.value))
+                fragment.append(wrapper)
+              } else if (subtree.kind === 'named' || subtree.kind === 'positionned') {
+                let shouldWrap = true
+                if (subtree.forceSelfNowrap === true) shouldWrap = false
+                if (shouldWrap) {
+                  const { wrapped } = subtree
+                  if (wrapped !== undefined) fragment.append(wrapped)
+                } else {
+                  fragment.append(...toHtml()(subtree.value)) // [WIP] or wrapped
+                }
+              } else if (subtree.kind === 'text') {
+                fragment.append(document.createTextNode(toString()(subtree.value)))
+              }
+            })
+          }
+          return fragment.childNodes
+
+        } else if (form.hasPositionned) {
+          if (!Array.isArray(subtrees)) return []
+          return subtrees.map(subtree => {
+            if (subtree.kind === 'element') {
+              const wrapper = subtree.node.cloneNode()
+              if (!(wrapper instanceof Element)) return new Error();
+              wrapper.append(...toHtml()(subtree.value))
+              const fragment = document.createDocumentFragment()
+              fragment.append(wrapper)
+              return fragment.childNodes
+            } else if (subtree.kind === 'named' || subtree.kind === 'positionned') {
+              const shouldWrap = subtree.forceSelfWrap && !subtree.forceSelfNowrap
+              if (shouldWrap) {
+                const fragment = document.createDocumentFragment()
+                const { wrapped } = subtree
+                if (wrapped !== undefined) fragment.append(wrapped)
+                return fragment.childNodes
+              } else {
+                return subtree.value
+              }
+            } else if (subtree.kind === 'text') {
+              return subtree.value
+            }
+            return subtree.value
+          }).filter((e): e is TreeValue => !(e instanceof Error))          
+        
+        } else if (form.hasText) {
+          if (!Array.isArray(subtrees)) return []
+          // [WIP] we know here that there is only text but this part should pretend it doesnt know
+          return subtrees.map(subtree => toString()(subtree.value)).join('')
+        
+        } else {
+          if (!Array.isArray(subtrees)) return []
+          // [WIP] we know here that there is only text but this part should pretend it doesnt know
+          return subtrees.map(subtree => toString()(subtree.value)).join('')
+        }
       }
+
       return undefined
     }
 
@@ -268,7 +332,7 @@ export namespace Darkdouille {
     get pathFromParent (): string | undefined {
       const { node, parent } = this
       if (parent === undefined) return undefined
-      return parent.getLocalPathOf(node)
+      return parent.getNodeLocalPath(node)
     }
 
     get path (): string | undefined {
@@ -380,7 +444,7 @@ export namespace Darkdouille {
       // </transformer>
       return rawArgs.reduce<(TreeValue | Transformer)[]>((args, argElement) => {
         const newArgs = [...args]
-        const kind = this.getNodeKind(argElement)
+        const kind = getNodeKind(argElement)
         if (kind === 'element') {
           const lastArgPos = args.length - 1
           const lastArg = args[lastArgPos]
@@ -453,7 +517,7 @@ export namespace Darkdouille {
           }, reducedValue)
         }, input)
       }
-      
+
       // Type transformations
       const typeTransformer = (input: TreeValue) => {
         const { node } = this
@@ -467,7 +531,7 @@ export namespace Darkdouille {
         }
         return input
       }
-      
+
       // Returned master transformer
       return (input: TreeValue): TreeValue => {
         const innerTransformed = innerTransformer(input)
@@ -477,15 +541,23 @@ export namespace Darkdouille {
     }
 
     get value (): TreeValue {
-      // console.group(this.shortName)
       const { pretransformed, masterTransformer } = this
       const transformed = masterTransformer(pretransformed)
-      // console.log('children', this.children)
-      // console.log('pretransformed', pretransformed)
-      // console.log('transformers', this.children.transformers)
-      // console.log('transformed', transformed)
-      // console.groupEnd()
       return transformed
+    }
+
+    get wrapped (): Element | undefined {
+      const { value, node } = this
+      if (!(node instanceof Element)) return undefined
+      const valueNode = createValueNode(value)
+      if (valueNode === undefined) return undefined
+      const attributes = [...node.attributes]
+      attributes.forEach(attribute => {
+        if (attribute.name === 'wrap') return;
+        if (attribute.name === 'nowrap') return;
+        valueNode?.setAttribute(attribute.name, attribute.value)
+      })
+      return valueNode
     }
   }
 
@@ -509,7 +581,7 @@ export namespace Darkdouille {
     ARRAY = 'array',
     RECORD = 'record',
     DATA = 'data',
-    TRANSFORMER = 'transformer'
+    TRANSFORMER = 'transformer',
   }
 
   export const Types = Object.values(Type)
@@ -518,7 +590,7 @@ export namespace Darkdouille {
     return Types.includes(tag as any)
   }
 
-  /* ========== FUNCTIONS ========== */
+  /* ========== FUNCTIONS & TRANSFORMERS ========== */
 
   export enum FunctionName {
     /* Cast */
@@ -572,6 +644,14 @@ export namespace Darkdouille {
   const functionsAndTypesNamesOverlap = Object.values(Function).some(isType)
   if (functionsAndTypesNamesOverlap) throw `A function cannot share its name with a type`
 
+  export const transformers = {
+    /* Cast    */ toString, toNumber, toBoolean, toNull, toHtml, toRef, toArray, toRecord,
+    /* Number  */ add, subtract, multiply, pow, divide, max, min, clamp, greater, smaller, equals,
+    /* String  */ append, prepend, replace, trim, split,
+    /* Array   */ join, at, map, push,
+    /* Utility */ that, clone, print, set, get, cond, loop
+  }
+
   /* ========== HELPERS ========== */
 
   export function isValueElement (node: Node) {
@@ -601,6 +681,22 @@ export namespace Darkdouille {
     return isFunctionName(functionTag)
   }
 
+  export function getNodeKind (node: Node) {
+    if (node instanceof Text) return 'text'
+    if (!(node instanceof Element)) return undefined
+    const isValue = isValueElement(node)
+    const isTransformer = isTransformerElement(node)
+    const isFunction = isFunctionElement(node)
+    if (isTransformer) return 'transformer'
+    if (isFunction) return 'function'
+    if (isValue) {
+      const classAttr = node.getAttribute('class')
+      if (classAttr === null || classAttr === '') return 'positionned'
+      return 'named'
+    }
+    return 'element'
+  }
+
   export function valueIsRecord (value: TreeValue): value is { [key: string]: TreeValue } {
     return typeof value === 'object'
       && !Array.isArray(value)
@@ -619,6 +715,43 @@ export namespace Darkdouille {
 
   export function cloneNode<T extends Node> (node: T, deep?: boolean): T {
     return node.cloneNode(deep) as T
+  }
+
+  export function createPrimitiveValueNode (value: TreePrimitiveValue): Element | undefined {
+    if (value === undefined) return undefined
+    let type: 'string' | 'number' | 'boolean' | 'null' | 'lm-html'
+    if (typeof value === 'string') { type = 'string' }
+    else if (typeof value === 'number') { type = 'number' }
+    else if (typeof value === 'boolean') { type = 'boolean' }
+    else if (value === null) { type = 'null' }
+    else { type = 'lm-html' } /* (value instanceof NodeList) */
+    const wrapper = document.createElement(type)
+    if (value instanceof NodeList) wrapper.append(...value)
+    else wrapper.append(toString()(value))
+    return wrapper
+  }
+
+  export function createValueNode (value: TreeValue): Element | undefined {
+    if (Array.isArray(value)) {
+      const wrapper = document.createElement('array')
+      const children = value
+        .map(val => createValueNode(val))
+        .filter((e): e is Element => e !== undefined)
+      wrapper.append(...children)
+      return wrapper
+    }
+    if (valueIsRecord(value)) {
+      const wrapper = document.createElement('record')
+      Object.keys(value).forEach(key => {
+        const val = value[key]
+        const elt = createValueNode(val)
+        if (elt === undefined) return
+        elt.classList.add(key)
+        wrapper.append(elt)
+      })
+      return wrapper
+    }
+    return createPrimitiveValueNode(value)
   }
 
   // MERGE
