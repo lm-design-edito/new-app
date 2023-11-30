@@ -4,6 +4,7 @@ import { LmHtml } from '~/shared/lm-html'
 import { toString } from '~/utils/cast'
 import { injectStylesheet } from '~/utils/dynamic-css'
 import isArrayOf from '~/utils/is-array-of'
+import randomUUID from '~/utils/random-uuid'
 import Logger from '~/utils/silent-log'
 
 export namespace Apps {
@@ -121,8 +122,9 @@ export namespace Apps {
       logger?.error('Render', '%cRenderer load error', 'font-weight: 800;', `\nNo renderer found for app '${name}'. Props:`, unknownProps)
       return <></>
     }
-    const privateId = window.crypto.randomUUID().split('-')[0] ?? ''
-    const publicName = _id ?? window.crypto.randomUUID().split('-')[0] ?? null
+    
+    const privateId = randomUUID().split('-')[0] ?? ''
+    const publicName = _id ?? randomUUID().split('-')[0] ?? null
     const { props, Component } = await appRenderer(unknownProps, privateId, logger)
     const appComponent = <App
       component={Component}
