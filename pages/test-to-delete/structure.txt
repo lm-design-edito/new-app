@@ -1,0 +1,723 @@
+<data class='CONFIG' action="append">
+  <data>
+    <string class='name'>hideHeader</string>
+    <boolean class='value'>true</boolean>
+  </data>
+  <data>
+    <string class='name'>css</string>
+    <lm-html class='value'>
+      <style>
+        html,
+        body {
+          margin: 0;
+          padding: 0;
+        }
+
+        .header-wrapper {
+          position: fixed;
+          top: 0;
+          left: 0;
+          padding: 8px;
+          z-index: 100;
+        }
+
+        .header-wrapper .lm-header .lm-svg .fill-1 {
+          fill: black;
+        }
+
+        .header-wrapper .lm-header .lm-svg .fill-2 {
+          fill: rgb(0, 0, 0, .3);
+        }
+
+        .lmlayout-1024-under {
+          display: none;
+        }
+        @media (max-width: 1024px) {
+          .lmlayout-1024-and-over { display: none; }
+          .lmlayout-1024-under {
+            display: inherit;
+          }
+        }
+
+        .page-wrapper {
+          min-height: 100vh;
+          display: flex;
+          justify-content: center;
+          align-items: flex-start;
+          padding: 64px;
+          padding-top: 10vh;
+        }
+
+        @media (max-width: 1024px) {
+          .page-wrapper {
+            padding: 24px;
+            padding-top: 10vh;
+          }
+        }
+        @media (max-width: 640px) {
+          .page-wrapper {
+            padding: 16px;
+            padding-top: 50vh;
+          }
+        }
+
+        .page-wrapper.page-wrapper_align-left {
+          justify-content: flex-start;
+        }
+
+        .page-wrapper.page-wrapper_align-right {
+          justify-content: flex-end;
+        }
+
+        @media(max-width:600px) {
+          .page-wrapper.page-wrapper_align-left,
+          .page-wrapper.page-wrapper_align-right
+            {
+              justify-content: center;
+            }
+        }
+
+        .bg-image img {
+          width: 100vw;
+          height: 100vh;
+          object-fit: cover;
+        }
+
+        .bloc-chapitre {
+          flex-direction: column;
+          justify-content: flex-start;
+          display: inline-flex;
+          width: 90%;
+          max-width: 420px;
+          padding: 30px;
+          background: white;
+          box-shadow: 4px 4px 29px rgba(0, 0, 0, 0.20);
+          margin-bottom: 400px;
+        }
+
+        @media (max-width: 1024px) {
+          .bloc-chapitre {
+            padding: 24px;
+          }
+        }
+        @media (max-width: 640px) {
+          .bloc-chapitre {
+            padding: 16px;
+          }
+        }
+
+        .dm-conteneur-titre {
+          width: 100%;
+          height: 100%;
+          padding-top: 14px;
+          padding-bottom: 14px;
+          flex-direction: column;
+          justify-content: flex-start;
+          align-items: left;
+          gap: 7px;
+          display: inline-flex;
+          margin-bottom:800px;
+          margin-top:100px;
+        }
+
+        .dm-conteneur-titre p {
+          color: white;
+          margin-top: 0px;
+        }
+
+        .dm-conteneur-titre-rouge {
+          display: flex;
+          align-items: center;
+          width: 500px;
+          position: relative;
+          background: #CF5315;
+          padding:8px;
+          box-shadow: 4px 4px 29px rgba(0, 0, 0, 0.20);
+        }
+
+        @media (max-width: 640px) {
+          .dm-conteneur-titre-rouge {
+            width: 100%;
+          }
+        }
+
+        .fleche {
+          width: 30px;
+          margin-right: 7px;
+        }
+
+        /* TEXTES */
+
+        .bloc-chapitre .dm-lire-article a {
+          color: black !important;
+          text-decoration: underline;
+          text-underline-offset: 0.28em !important;
+          text-decoration-color: black !important;
+          text-decoration-thickness: 1px !important;
+        }
+
+        /* INTRO */
+        .dm-intro-surtitre {
+          color: black;
+          font-size: 25px;
+          font-family: var(--lmui-ff-marr-sans-condensed);
+          font-weight: 500;
+          line-height: 1.16;
+          word-wrap: break-word;
+          letter-spacing: 1px;
+          text-transform: uppercase;
+        }
+
+        @media (max-width: 1024px) {
+          .dm-intro-surtitre {
+            font-size: 19px;
+          }
+        }
+
+        @media (max-width: 640px) {
+          .dm-intro-surtitre {
+            font-size: 16px;
+          }
+        }
+
+        .dm-intro-titre {
+          font-size: 84px;
+          font-family: var(--lmui-ff-marr-sans);
+          font-weight: 100;
+          text-transform: uppercase;
+          line-height: 1;
+          letter-spacing: -3px;
+          word-wrap: break-word;
+        }
+
+        @media (max-width: 1024px) {
+          .dm-intro-titre {
+            font-size: 66px;
+          }
+        }
+
+        @media (max-width: 640px) {
+          .dm-intro-titre {
+            font-size: 50px;
+          }
+        }
+
+        .dm-intro-chapo {
+          color: black;
+          font-size: 23px;
+          font-family: var(--lmui-ff-marr-sans);
+          font-weight: 500;
+          line-height: 1.1;
+          letter-spacing: 0.16px;
+          word-wrap: break-word;
+      }
+
+        @media (max-width: 1024px) {
+          .dm-intro-chapo {
+            font-size: 23px;
+          }
+        }
+        @media (max-width: 640px) {
+          .dm-intro-chapo {
+            font-size: 19px;
+          }
+        }
+
+        /* CHAPITRES */
+        .dm-date {
+          margin-bottom: 5px;
+          color: #CF5315;
+          font-size: 19px;
+          font-family: var(--lmui-ff-marr-sans-condensed);
+          font-weight: 400;
+          text-transform: uppercase;
+          letter-spacing: 0.19px;
+          word-wrap: break-word;
+          text-align: left;
+        }
+
+        .dm-date::before {
+          content: "__";
+        }
+
+        .dm-titre {
+          margin-bottom: 10px;
+          color: #CF5315;
+          font-size: 26px;
+          font-family: var(--lmui-ff-marr-sans);
+          font-weight: 700;
+          text-transform: uppercase;
+          line-height: 26.20px;
+          word-wrap: break-word
+        }
+
+        .dm-chapo {
+          margin-bottom: 40px;
+          color: #CF5315;
+          font-size: 16px;
+          font-family: var(--lmui-ff-marr-sans);
+          font-weight: 500;
+          line-height: 19px;
+          letter-spacing: 0.15px;
+          word-wrap: break-word
+        }
+
+        .dm-lire-article {
+          display: flex;
+          justify-content: flex-end;
+          align-items: center;
+          color: black;
+          font-size: 16px;
+          font-family: var(--lmui-ff-marr-sans);
+          font-weight: 600;
+          text-transform: uppercase;
+          line-height: 18.20px;
+          word-wrap: break-word
+        }
+
+        .dm-credits {
+          color: black;
+          font-size: 16px;
+          font-family: var(--lmui-ff-marr-sans);
+          font-weight: 300;
+          line-height: 19.20px;
+          word-wrap: break-word
+        }
+
+        .dm-credits-bold {
+          font-weight: 600;
+        }
+      </style>
+    </lm-html>
+  </data>
+</data>
+<data class='SLOTS' action="append">
+  <data>
+    <data class='destination'>
+      <string class='selector'>.header-wrapper</string>
+      <string class='position'>after</string>
+      <string class='reference'>.dupont-wrapper</string>
+    </data>
+    <data class="content">
+      <comp name="header"></comp>
+    </data>
+  </data>
+  <data>
+    <data class='destination'>
+      <string class='selector'>.dupont-wrapper</string>
+    </data>
+    <lm-html class='content'>
+      <comp name='scrllgngn'>
+        <string class="forceStickBlocks">before</string>
+        <string class="thresholdOffset">80%</string>
+        <data class='pages'>
+          <!-- Page 1 -->
+          <data>
+            <data class='blocks'>
+              <!-- Bloc de fond -->
+              <data>
+                <string class="id">mon-premier-plan</string>
+                <string class='depth'>back</string>
+                <lm-html class='content'>
+                  <div class="bg-image">
+                    <img class="lmlayout-1024-and-over" src="https://assets-decodeurs.lemonde.fr/redacweb/2311-dupont-moretti/img-dm-01-fondD.jpg">
+                    <img class="lmlayout-1024-under" src="https://assets-decodeurs.lemonde.fr/redacweb/2311-dupont-moretti/img-dm-01-fondD-mobile.jpg">
+                  </div>
+                </lm-html>
+              </data>
+              <!-- Bloc de texte -->
+              <data>
+                <string class='depth'>scroll</string>
+                <lm-html class='content'>
+                  <div class="page-wrapper page-wrapper_align-right">
+                    <div class="bloc-titre">
+                      <!-- Conteneur -->
+                      <div class="dm-conteneur-titre">
+                        <div class="dm-conteneur-titre-rouge">
+                          <p class="dm-intro-surtitre">Le procÃ¨s dâ€™Ã‰ric Dupond-Moretti</p>
+                        </div>
+                        <div class="dm-conteneur-titre-rouge">
+                          <p class="dm-intro-titre">un garde</p>
+                        </div>
+                        <div class="dm-conteneur-titre-rouge">
+                          <p class="dm-intro-titre">des</p>
+                        </div>
+                        <div class="dm-conteneur-titre-rouge">
+                          <p class="dm-intro-titre">Sceaux</p>
+                        </div>
+                        <div class="dm-conteneur-titre-rouge">
+                          <p class="dm-intro-titre">devant</p>
+                        </div>
+                        <div class="dm-conteneur-titre-rouge">
+                          <p class="dm-intro-titre">la justice</p>
+                        </div>
+                        <div class="dm-conteneur-titre-rouge">
+                          <p class="dm-intro-chapo">Pour la premiÃ¨re fois dans lâ€™histoire, un ministre en exercice a comparu devant la Cour de justice de la RÃ©publique. Retrouvez tous nos comptes rendus dâ€™audience.</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </lm-html>
+              </data>
+            </data>
+          </data>
+          <!-- Page 2 ... -->
+          <data>
+            <data class='blocks'>
+              <!-- Bloc de fond prÃ©cÃ©dent -->
+              <data>
+                <string class="id">mon-premier-plan</string>
+              </data>
+              <!-- Bloc de fond -->
+              <data>
+                <string class='depth'>back</string>
+                <data class="transitions">
+                  <data>
+                    <string>fade</string>
+                    <number>400</number>
+                  </data>
+                </data>
+                <lm-html class='content'>
+                  <div class="bg-image">
+                    <img class="lmlayout-1024-and-over" src="https://assets-decodeurs.lemonde.fr/redacweb/2311-dupont-moretti/img-dm-01.jpg">
+                    <img class="lmlayout-1024-under" src="https://assets-decodeurs.lemonde.fr/redacweb/2311-dupont-moretti/img-dm-01-mobile.jpg">
+                  </div>
+                </lm-html>
+              </data>
+              <!-- Bloc de texte -->
+              <data>
+                <string class='depth'>scroll</string>
+                <lm-html class='content'>
+                  <div class="page-wrapper page-wrapper_align-right">
+                    <div class="bloc-chapitre">
+                      <p class="dm-date">6 novembre 2023</p>
+                      <p class="dm-titre">Le procÃ¨s dâ€™Ã‰ric Dupond-Moretti sâ€™ouvre devant la Cour de justice de la RÃ©publique</p>
+                      <p class="dm-chapo">Le garde des sceaux est poursuivi pour Â« prises illÃ©gales dâ€™intÃ©rÃªts Â» dans deux dossiers oÃ¹ il est soupÃ§onnÃ© dâ€™avoir usÃ© de sa fonction pour rÃ©gler des comptes avec des magistrats avec lesquels il Ã©tait en conflit lorsquâ€™il Ã©tait encore avocat.</p>
+                      <p class="dm-lire-article">
+                        <img src="https://assets-decodeurs.lemonde.fr/redacweb/2311-dupont-moretti/flecherouge.svg" class="fleche"/>
+                        <a href="https://www.lemonde.fr/societe/article/2023/11/06/ce-proces-est-une-infamie-les-premiers-mots-d-eric-dupond-moretti-devant-la-cjr_6198578_3224.html">Lire l'article</a>
+                      </p>
+                    </div>
+                  </div>
+                  </div>
+                </lm-html>
+              </data>
+            </data>
+          </data>
+          <!-- Page 3 ... -->
+          <data>
+            <data class='blocks'>
+              <!-- Bloc de fond -->
+              <data>
+                <string class='depth'>back</string>
+                <data class="transitions">
+                  <data>
+                    <string>fade</string>
+                    <number>400</number>
+                  </data>
+                </data>
+                <lm-html class='content'>
+                  <div class="bg-image">
+                    <img class="lmlayout-1024-and-over" src="https://assets-decodeurs.lemonde.fr/redacweb/2311-dupont-moretti/img-dm-moretti.jpg">
+                    <img class="lmlayout-1024-under" src="https://assets-decodeurs.lemonde.fr/redacweb/2311-dupont-moretti/img-dm-moretti-mobile.jpg">
+                  </div>
+                </lm-html>
+              </data>
+              <!-- Bloc de texte -->
+              <data>
+                <string class='depth'>scroll</string>
+                <lm-html class='content'>
+                  <div class="page-wrapper page-wrapper_align-left">
+                    <div class="bloc-chapitre">
+                      <p class="dm-date">7 novembre 2023</p>
+                      <p class="dm-titre">Â«&nbsp;La discipline des magistrats, je ne sais pas ce que câ€™est !&nbsp;Â»</p>
+                      <p class="dm-chapo">Le ministre, poursuivi pour Â« prises illÃ©gales dâ€™intÃ©rÃªts Â» devant la Cour de justice de la RÃ©publique en raison de procÃ©dures disciplinaires lancÃ©es contre des magistrats, sâ€™est dÃ©faussÃ© sur son administration : Â« Je nâ€™imagine pas quâ€™ils mâ€™aient donnÃ© des conseils pour nuire Ã  leurs collÃ¨gues. Â»</p>
+                      <p class="dm-lire-article"><img src="https://assets-decodeurs.lemonde.fr/redacweb/2311-dupont-moretti/flecherouge.svg" class="fleche" /><a href="https://www.lemonde.fr/societe/article/2023/11/08/devant-la-cour-de-justice-de-la-republique-eric-dupond-moretti-decrit-son-arrivee-au-ministere-de-la-justice-la-discipline-des-magistrats-je-ne-sais-pas-ce-que-c-est_6198832_3224.html">Lire l'article</a>
+                      </p>
+                    </div>
+                  </div>
+                  </div>
+                </lm-html>
+              </data>
+            </data>
+          </data>
+          <!-- Page 4 ... -->
+          <data>
+            <data class='blocks'>
+              <!-- Bloc de fond -->
+              <data>
+                <string class='depth'>back</string>
+                <data class="transitions">
+                  <data>
+                    <string>fade</string>
+                    <number>400</number>
+                  </data>
+                </data>
+                <lm-html class='content'>
+                  <div class="bg-image">
+                    <img class="lmlayout-1024-and-over" src="https://assets-decodeurs.lemonde.fr/redacweb/2311-dupont-moretti/img-dm-weiss-optionD.jpg">
+                    <img class="lmlayout-1024-under" src="https://assets-decodeurs.lemonde.fr/redacweb/2311-dupont-moretti/img-dm-weiss-mobile.jpg">
+                  </div>
+                </lm-html>
+              </data>
+              <!-- Bloc de texte -->
+              <data>
+                <string class='depth'>scroll</string>
+                <lm-html class='content'>
+                  <div class="page-wrapper">
+                    <div class="bloc-chapitre">
+                      <p class="dm-date">8 novembre 2023</p>
+                      <p class="dm-titre">Â«&nbsp;Le ministre a vengÃ© lâ€™avocat&nbsp;Â», assure une magistrate</p>
+                      <p class="dm-chapo">Mercredi, plusieurs magistrats, qui estiment avoir fait lâ€™objet dâ€™un rÃ¨glement de compte, ont tÃ©moignÃ© devant la Cour de justice de la RÃ©publique, soulignant aussi les pressions de lâ€™exÃ©cutif dans ce dossier.</p>
+                      <p class="dm-lire-article">
+                        <img src="https://assets-decodeurs.lemonde.fr/redacweb/2311-dupont-moretti/flecherouge.svg" class="fleche"/>
+                        <a href="https://www.lemonde.fr/societe/article/2023/11/09/le-ministre-a-venge-l-avocat-assure-une-magistrate-au-proces-d-eric-dupond-moretti_6199121_3224.html">Lire l'article</a>
+                      </p>
+                    </div>
+                  </div>
+                  </div>
+                </lm-html>
+              </data>
+            </data>
+          </data>
+          <!-- Page 5 ... -->
+          <data>
+            <data class='blocks'>
+              <!-- Bloc de fond -->
+              <data>
+                <string class='depth'>back</string>
+                <data class="transitions">
+                  <data>
+                    <string>fade</string>
+                    <number>400</number>
+                  </data>
+                </data>
+                <lm-html class='content'>
+                  <div class="bg-image">
+                    <img class="lmlayout-1024-and-over" src="https://assets-decodeurs.lemonde.fr/redacweb/2311-dupont-moretti/img-dm-molins.jpg">
+                    <img class="lmlayout-1024-under" src="https://assets-decodeurs.lemonde.fr/redacweb/2311-dupont-moretti/img-dm-molins-mobile.jpg">
+                  </div>
+                </lm-html>
+              </data>
+              <!-- Bloc de texte -->
+              <data>
+                <string class='depth'>scroll</string>
+                <lm-html class='content'>
+                  <div class="page-wrapper page-wrapper_align-right">
+                    <div class="bloc-chapitre">
+                      <p class="dm-date">9 novembre 2023</p>
+                      <p class="dm-titre">FranÃ§ois Molins et le parquet gÃ©nÃ©ral Ã©branlent la dÃ©fense du ministre de la justice
+                      </p>
+                      <p class="dm-chapo">RÃ©my Heitz, le procureur gÃ©nÃ©ral prÃ¨s la Cour de cassation, et son prÃ©dÃ©cesseur, FranÃ§ois Molins, ont vivement remis en cause, jeudi, la version de proches du garde des sceaux. Un tournant dans le procÃ¨s de la Cour de justice de la RÃ©publique.</p>
+                      <p class="dm-lire-article">
+                        <img src="https://assets-decodeurs.lemonde.fr/redacweb/2311-dupont-moretti/flecherouge.svg" class="fleche"/>
+                        <a href="https://www.lemonde.fr/societe/article/2023/11/10/proces-d-eric-dupond-moretti-francois-molins-et-le-parquet-general-ebranlent-la-defense-du-ministre-de-la-justice_6199243_3224.html">Lire l'article</a>
+                      </p>
+                    </div>
+                  </div>
+                  </div>
+                </lm-html>
+              </data>
+            </data>
+          </data>
+          <!-- Page 6 ... -->
+          <data>
+            <data class='blocks'>
+              <!-- Bloc de fond -->
+              <data>
+                <string class='depth'>back</string>
+                <data class="transitions">
+                  <data>
+                    <string>fade</string>
+                    <number>400</number>
+                  </data>
+                </data>
+                <lm-html class='content'>
+                  <div class="bg-image">
+                    <img class="lmlayout-1024-and-over" src="https://assets-decodeurs.lemonde.fr/redacweb/2311-dupont-moretti/img-dm-castex.jpg">
+                    <img class="lmlayout-1024-under" src="https://assets-decodeurs.lemonde.fr/redacweb/2311-dupont-moretti/img-dm-castex-mobile.jpg">
+                  </div>
+                </lm-html>
+              </data>
+              <!-- Bloc de texte -->
+              <data>
+                <string class='depth'>scroll</string>
+                <lm-html class='content'>
+                  <div class="page-wrapper page-wrapper_align-right">
+                    <div class="bloc-chapitre">
+                      <p class="dm-date">10 novembre 2023</p>
+                      <p class="dm-titre">Devant la Cour de justice de la RÃ©publique, Jean Castex et les conflits dâ€™intÃ©rÃªts dâ€™Ã‰ric Dupond-Moretti
+                      </p>
+                      <p class="dm-chapo">Alors que lâ€™ancien avocat a Ã©tÃ© nommÃ© Ã  la Chancellerie en juillet 2020, le premier dÃ©cret de dÃ©port lui interdisant de gÃ©rer des affaires quâ€™il avait eues Ã  connaÃ®tre auparavant nâ€™a Ã©tÃ© pris quâ€™en octobre. Lâ€™ex-premier ministre et les conseillers justice de lâ€™ElysÃ©e et de Matignon sâ€™en sont expliquÃ©s plus ou moins finement, vendredi, devant la CJR.</p>
+                      <p class="dm-lire-article">
+                        <img src="https://assets-decodeurs.lemonde.fr/redacweb/2311-dupont-moretti/flecherouge.svg" class="fleche"/>
+                        <a href="https://www.lemonde.fr/societe/article/2023/11/10/devant-la-cour-de-justice-de-la-republique-jean-castex-et-les-conflits-d-interets-d-eric-dupond-moretti_6199419_3224.html">Lire l'article</a>
+                      </p>
+                    </div>
+                  </div>
+                  </div>
+                </lm-html>
+              </data>
+            </data>
+          </data>
+          <!-- Page 7 ... -->
+          <data>
+            <data class='blocks'>
+              <!-- Bloc de fond -->
+              <data>
+                <string class='depth'>back</string>
+                <data class="transitions">
+                  <data>
+                    <string>fade</string>
+                    <number>400</number>
+                  </data>
+                </data>
+                <lm-html class='content'>
+                  <div class="bg-image">
+                    <img class="lmlayout-1024-and-over" src="https://assets-decodeurs.lemonde.fr/redacweb/2311-dupont-moretti/img-dm-huber.jpg">
+                    <img class="lmlayout-1024-under" src="https://assets-decodeurs.lemonde.fr/redacweb/2311-dupont-moretti/img-dm-huber-mobile.jpg">
+                  </div>
+                </lm-html>
+              </data>
+              <!-- Bloc de texte -->
+              <data>
+                <string class='depth'>scroll</string>
+                <lm-html class='content'>
+                  <div class="page-wrapper page-wrapper_align-left">
+                    <div class="bloc-chapitre">
+                      <p class="dm-date">14 novembre 2023</p>
+                      <p class="dm-titre">La direction des services judiciaires sur la sellette
+                      </p>
+                      <p class="dm-chapo">La journÃ©e de mardi devant la Cour de justice de la RÃ©publique a permis de dÃ©cortiquer comment a Ã©tÃ© ordonnÃ©e, faute de mieux, une enquÃªte administrative sur le Parquet national financier. Le ministre de la justice sâ€™est Ã©charpÃ© avec un tÃ©moin, ancien directeur des services.</p>
+                      <p class="dm-lire-article">
+                        <img src="https://assets-decodeurs.lemonde.fr/redacweb/2311-dupont-moretti/flecherouge.svg" class="fleche"/>
+                        <a href="https://www.lemonde.fr/societe/article/2023/11/15/au-proces-d-eric-dupond-moretti-la-direction-des-services-judiciaires-sur-la-sellette_6200104_3224.html">Lire l'article</a>
+                      </p>
+                    </div>
+                  </div>
+                  </div>
+                </lm-html>
+              </data>
+            </data>
+          </data>
+          <!-- Page 8 ... -->
+          <data>
+            <data class='blocks'>
+              <!-- Bloc de fond -->
+              <data>
+                <string class='depth'>back</string>
+                <data class="transitions">
+                  <data>
+                    <string>fade</string>
+                    <number>400</number>
+                  </data>
+                </data>
+                <lm-html class='content'>
+                  <div class="bg-image">
+                    <img class="lmlayout-1024-and-over" src="https://assets-decodeurs.lemonde.fr/redacweb/2311-dupont-moretti/img-dm-Remy-Heitz.jpg">
+                    <img class="lmlayout-1024-under" src="https://assets-decodeurs.lemonde.fr/redacweb/2311-dupont-moretti/img-dm-Remy-Heitz-mobile.jpg">
+                  </div>
+                </lm-html>
+              </data>
+              <!-- Bloc de texte -->
+              <data>
+                <string class='depth'>scroll</string>
+                <lm-html class='content'>
+                  <div class="page-wrapper page-wrapper_align-right">
+                    <div class="bloc-chapitre">
+                      <p class="dm-date">15 novembre 2023</p>
+                      <p class="dm-titre">RÃ©quisitions du procureur gÃ©nÃ©ral : Â«&nbsp;Je vous demande de dÃ©clarer le ministre coupable des faits de prises illÃ©gales dâ€™intÃ©rÃªts qui lui sont reprochÃ©s&nbsp;Â»
+                      </p>
+                      <p class="dm-chapo">Le procureur gÃ©nÃ©ral prÃ¨s la Cour de cassation, RÃ©my Heitz, sâ€™est attachÃ©, mercredi, Ã  convaincre les douze juges parlementaires de la Cour de justice de la RÃ©publique de la nÃ©cessitÃ© de condamner le ministre de la justice. Il a requis un an de prison avec sursis contre le garde des sceaux.</p>
+                      <p class="dm-lire-article">
+                        <img src="https://assets-decodeurs.lemonde.fr/redacweb/2311-dupont-moretti/flecherouge.svg" class="fleche"/>
+                        <a href="https://www.lemonde.fr/societe/article/2023/11/16/un-an-de-prison-avec-sursis-requis-a-l-encontre-du-garde-des-sceaux-eric-dupond-moretti-pour-prises-illegales-d-interets_6200333_3224.html">Lire l'article</a>
+                      </p>
+                    </div>
+                  </div>
+                  </div>
+                </lm-html>
+              </data>
+            </data>
+          </data>
+          <!-- Page 9 ... -->
+          <data>
+            <data class='blocks'>
+              <!-- Bloc de fond -->
+              <data>
+                <string class='depth'>back</string>
+                <data class="transitions">
+                  <data>
+                    <string>fade</string>
+                    <number>400</number>
+                  </data>
+                </data>
+                <lm-html class='content'>
+                  <div class="bg-image">
+                    <img class="lmlayout-1024-and-over" src="https://assets-decodeurs.lemonde.fr/redacweb/2311-dupont-moretti/img-dupont-laffont.jpg">
+                    <img class="lmlayout-1024-under" src="https://assets-decodeurs.lemonde.fr/redacweb/2311-dupont-moretti/img-dupont-laffont-mobile.jpg">
+                  </div>
+                </lm-html>
+              </data>
+              <!-- Bloc de texte -->
+              <data>
+                <string class='depth'>scroll</string>
+                <lm-html class='content'>
+                  <div class="page-wrapper">
+                    <div class="bloc-chapitre">
+                      <p class="dm-date">16 novembre 2023</p>
+                      <p class="dm-titre">Â«&nbsp;Câ€™est le bureau de FranÃ§ois Molins quâ€™il aurait fallu perquisitionner&nbsp;Â»&nbsp;:La dÃ©fense du ministre attaque l'ancien magistrat
+                      </p>
+                      <p class="dm-chapo">Les avocats du garde des sceaux ont tentÃ© de dÃ©construire lâ€™accusation Ã  lâ€™occasion de leurs plaidoiries, jeudi, attaquant directement lâ€™ancien procureur gÃ©nÃ©ral prÃ¨s la Cour de cassation.</p>
+                      <p class="dm-lire-article">
+                        <img src="https://assets-decodeurs.lemonde.fr/redacweb/2311-dupont-moretti/flecherouge.svg" class="fleche"/>
+                        <a href="https://www.lemonde.fr/societe/article/2023/11/16/au-proces-d-eric-dupond-moretti-la-defense-du-ministre-s-en-prend-a-francois-molins-c-est-le-bureau-de-l-ancien-magistrat-qu-il-aurait-fallu-perquisitionner_6200525_3224.html">Lire l'article</a>
+                      </p>
+                    </div>
+                  </div>
+                  </div>
+                </lm-html>
+              </data>
+            </data>
+          </data>
+          <!-- Page 10 ... -->
+          <data>
+            <data class='blocks'>
+              <!-- Bloc de fond -->
+              <data>
+                <string class='depth'>back</string>
+                <data class="transitions">
+                  <data>
+                    <string>fade</string>
+                    <number>400</number>
+                  </data>
+                </data>
+                <lm-html class='content'>
+                  <div class="bg-image" style="background-color: black; height: 100vh;">
+                  </div>
+                </lm-html>
+              </data>
+              <!-- Bloc de texte -->
+              <data>
+                <string class='depth'>scroll</string>
+                <lm-html class='content'>
+                  <div class="page-wrapper">
+                    <div class="bloc-chapitre dm-credits">
+                      <p>CrÃ©dits</p>
+                      <p>--------------------------</p>
+                      <p>Edition <span class='dm-credits-bold'>Sabine Ledoux</span></p>
+                      <p>Design et dÃ©veloppement <span class='dm-credits-bold'>Sylvain Peirani</span></p>
+                      <p>Dessins <span class='dm-credits-bold'>Ivan Brun</span></p>
+                      </p>
+                    </div>
+                  </div>
+                  </div>
+                </lm-html>
+              </data>
+            </data>
+          </data>
+        </data>
+      </comp>
+    </lm-html>
+  </data>
+</data>
