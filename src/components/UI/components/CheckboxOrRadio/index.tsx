@@ -1,6 +1,7 @@
 import { VNode, FunctionalComponent } from 'preact'
 import { useState, useEffect } from 'preact/hooks'
 import bem from '~/utils/bem'
+import randomUUID from '~/utils/random-uuid'
 
 export type Props = {
   customClass?: string
@@ -13,7 +14,7 @@ export type Props = {
 const Checkbox: FunctionalComponent<Props> = (props: Props) => {
   const [randomId, setRandomId] = useState('')
   useEffect(() => {
-    const fullId = window.crypto.randomUUID()
+    const fullId = randomUUID()
     const shortId = fullId.split('-')[0] ?? ''
     setRandomId(shortId)
   }, [])
