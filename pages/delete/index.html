@@ -8,7 +8,21 @@
     <div class="dest24-carousel-wrapper" style="max-width: 600px;"></div>
 
     <!-- Application -->
-    <script type='module' src='http://localhost:3000/shared/index.js'></script>
+    <script type='module' src='https://assets-decodeurs.lemonde.fr/design-edito/_TEST/shared/index.js'></script>
+    <script type='module'>
+      let isInited = false
+      window.setInterval(() => {
+        if (isInited) return;
+        const prev = document.querySelector('.dest24-carousel .lm-gallery__button_prev')
+        const next = document.querySelector('.dest24-carousel .lm-gallery__button_next')
+        const scroller = document.querySelector('.lm-gallery__scroller')
+        if (prev === null || next === null || scroller === null) return;
+        isInited = true
+        prev.addEventListener('click', () => { scroller.scrollLeft -= 260 })
+        next.addEventListener('click', () => { scroller.scrollLeft += 260 })
+        return
+      }, 200)
+    </script>
     
     <!-- Config -->
     <data class='dkdll' style='display: none;'>
@@ -22,6 +36,52 @@
               .article--longform .article__media--wide {
                 z-index: 3;
               }
+
+              /* Fake callery comp */
+              .lm-gallery__scroller {
+                overflow: scroll;
+                overflow-y: hidden;
+                scroll-behavior: smooth;
+                display: flex;
+                flex-direction: row;
+                scrollbar-width: none;
+                -ms-overflow-style: none;
+                scrollbar-color: transparent transparent;
+              }
+
+              .lm-gallery.lm-gallery_snap .lm-gallery_scroller {
+                scroll-snap-type: x mandatory;
+              }
+
+              .lm-gallery__scroller::-webkit-scrollbar {
+                display: none;
+                height: 0;
+              }
+
+              .lm-gallery__scroller::-webkit-scrollbar-track,
+              .lm-gallery__scroller::-webkit-scrollbar-thumb {
+                background: transparent;
+              }
+
+              .lm-gallery__scroller::before,
+              .lm-gallery__scroller::after {
+                content: "";
+                display: block;
+                flex-grow: 0;
+                flex-shrink: 0;
+                width: calc((100% - var(--scroller-width, 100%)) / 2);
+              }
+
+              .lm-gallery__slot {
+                flex-grow: 0;
+                flex-shrink: 0;
+              }
+
+              .lm-gallery.lm-gallery_snap .lm-gallery__slot {
+                scroll-snap-type: x mandatory;
+                scroll-snap-align: center;
+              }
+
               
               /* Header */
               .dest24-header {
@@ -542,130 +602,113 @@
               <div class="dest24-carousel__title">
                 Toutes les destinations 2024
               </div>
-              <comp name="gallery">
-                <string class="customClass">dest24-carousel__gallery</string>
-                <boolean class="snapScroll">true</boolean>
-                <lm-html class="prevButtonContent">
-                  <comp name="ui">
-                    <string class="component">icon</string>
-                    <string class="name">chevron-back</string>
-                    <string class="customClass">dest24-carousel__button-icon dest24-carousel__button-icon_prev</string>
-                    <boolean class="inline">true</boolean>
-                  </comp>
-                </lm-html>
-                <lm-html class="nextButtonContent">
-                  <comp name="ui">
-                    <string class="component">icon</string>
-                    <string class="name">chevron-next</string>
-                    <string class="customClass">dest24-carousel__button-icon dest24-carousel__button-icon_next</string>
-                    <boolean class="inline">true</boolean>
-                  </comp>
-                </lm-html>
-                <string class="scrollerWidth">calc(100% - 48px)</string>
-                <array class="itemsContent">
-                  
-                  <!-- 10 — De Londres à Penzance, les Cornouailles sur les rails/en majesté -->
-                  <lm-html>
+              <div class="lm-gallery lm-gallery_snap-scroll _wrapper_1h6cj_12 _wrapper_snap_1h6cj_12 dest24-carousel__gallery lm-app" style="--scroller-width: calc(100% - 48px);">
+                <div class="lm-gallery__scroller _scroller_1h6cj_1">
+                  <div class="lm-gallery__slot lm-gallery__slot_current _slot_1h6cj_35">
+                    <!-- 10 — De Londres à Penzance, les Cornouailles sur les rails/en majesté -->
                     <!-- [PUBLI] - Ajouter le lien, remplacer "à paraître" par la date de publi  -->
                     <a class="dest24-carousel-thumb dest24-carousel-thumb_unpublished">
-                      <img class="dest24-carousel-thumb__image" src="https://assets-decodeurs.lemonde.fr/redacweb/231130-10-desti-2024/10desti-londresPenzance-10-carousel.jpg" />
-                      <div class="dest24-carousel-thumb__date">À paraître</div>
-                      <div class="dest24-carousel-thumb__title">De Londres à Penzance, les Cornouailles sur les rails/en majesté</div>
+                      <img class="dest24-carousel-thumb__image" src="https://assets-decodeurs.lemonde.fr/redacweb/231130-10-desti-2024/10desti-londresPenzance-10-carousel.jpg">
+                      <div class="dest24-carousel-thumb__date">À paraître le 03/12/2023</div>
+                      <div class="dest24-carousel-thumb__title">N°10</div>
                     </a>
-                  </lm-html>
-
-                  <!-- 9 — Sur la ViaRhona, le fleuve peut en cacher un autre -->
-                  <lm-html>
+                  </div>
+                  <div class="lm-gallery__slot _slot_1h6cj_35">
+                    <!-- 9 — Sur la ViaRhona, le fleuve peut en cacher un autre -->
                     <!-- [PUBLI] - Ajouter le lien, remplacer "à paraître" par la date de publi  -->
                     <a class="dest24-carousel-thumb dest24-carousel-thumb_unpublished">
-                      <img class="dest24-carousel-thumb__image" src="https://assets-decodeurs.lemonde.fr/redacweb/231130-10-desti-2024/10desti-viarhona-09-carousel.jpg" />
-                      <div class="dest24-carousel-thumb__date">À paraître</div>
-                      <div class="dest24-carousel-thumb__title">Sur la ViaRhona, le fleuve peut en cacher un autre</div>
+                      <img class="dest24-carousel-thumb__image" src="https://assets-decodeurs.lemonde.fr/redacweb/231130-10-desti-2024/10desti-viarhona-09-carousel.jpg">
+                      <div class="dest24-carousel-thumb__date">À paraître le 06/12/2023</div>
+                      <div class="dest24-carousel-thumb__title">N°9</div>
                     </a>
-                  </lm-html>
-
-                  <!-- 8 — Saragosse, un « paseo » des ruines romaines à Goya -->
-                  <lm-html>
+                  </div>
+                  <div class="lm-gallery__slot _slot_1h6cj_35">
+                    <!-- 8 — Saragosse, un « paseo » des ruines romaines à Goya -->
                     <!-- [PUBLI] - Ajouter le lien, remplacer "à paraître" par la date de publi  -->
                     <a class="dest24-carousel-thumb dest24-carousel-thumb_unpublished">
-                      <img class="dest24-carousel-thumb__image" src="	https://assets-decodeurs.lemonde.fr/redacweb/231130-10-desti-2024/10desti-saragosse-08-carousel.jpg" />
-                      <div class="dest24-carousel-thumb__date">À paraître</div>
-                      <div class="dest24-carousel-thumb__title">Saragosse, un « paseo » des ruines romaines à Goya</div>
+                      <img class="dest24-carousel-thumb__image" src="	https://assets-decodeurs.lemonde.fr/redacweb/231130-10-desti-2024/10desti-saragosse-08-carousel.jpg">
+                      <div class="dest24-carousel-thumb__date">À paraître le 10/12/2023</div>
+                      <div class="dest24-carousel-thumb__title">N°8</div>
                     </a>
-                  </lm-html>
-
-                  <!-- 7 — Luchon et le port de Venasque, chemin d’histoires -->
-                  <lm-html>
+                  </div>
+                  <div class="lm-gallery__slot _slot_1h6cj_35">
+                    <!-- 7 — Luchon et le port de Venasque, chemin d’histoires -->
                     <!-- [PUBLI] - Ajouter le lien, remplacer "à paraître" par la date de publi  -->
                     <a class="dest24-carousel-thumb dest24-carousel-thumb_unpublished">
-                      <img class="dest24-carousel-thumb__image" src="https://assets-decodeurs.lemonde.fr/redacweb/231130-10-desti-2024/10desti-luchon-07-carousel.jpg" />
-                      <div class="dest24-carousel-thumb__date">À paraître</div>
-                      <div class="dest24-carousel-thumb__title">Luchon et le port de Venasque, chemin d’histoires</div>
+                      <img class="dest24-carousel-thumb__image" src="https://assets-decodeurs.lemonde.fr/redacweb/231130-10-desti-2024/10desti-luchon-07-carousel.jpg">
+                      <div class="dest24-carousel-thumb__date">À paraître le 13/12/2023</div>
+                      <div class="dest24-carousel-thumb__title">N°7</div>
                     </a>
-                  </lm-html>
-
-                  <!-- 6 — Bergame, la douceur dans l’âme -->
-                  <lm-html>
+                  </div>
+                  <div class="lm-gallery__slot _slot_1h6cj_35">
+                    <!-- 6 — Bergame, la douceur dans l’âme -->
                     <!-- [PUBLI] - Ajouter le lien, remplacer "à paraître" par la date de publi  -->
                     <a class="dest24-carousel-thumb dest24-carousel-thumb_unpublished">
-                      <img class="dest24-carousel-thumb__image" src="https://assets-decodeurs.lemonde.fr/redacweb/231130-10-desti-2024/10desti-bergame-06-carousel.jpg" />
-                      <div class="dest24-carousel-thumb__date">À paraître</div>
-                      <div class="dest24-carousel-thumb__title">Bergame, la douceur dans l’âme</div>
+                      <img class="dest24-carousel-thumb__image" src="https://assets-decodeurs.lemonde.fr/redacweb/231130-10-desti-2024/10desti-bergame-06-carousel.jpg">
+                      <div class="dest24-carousel-thumb__date">À paraître le 17/12/2023</div>
+                      <div class="dest24-carousel-thumb__title">N°6</div>
                     </a>
-                  </lm-html>
-
-                  <!-- 5 — La ria d’Etel, le Morbihan envoûtant -->
-                  <lm-html>
+                  </div>
+                  <div class="lm-gallery__slot _slot_1h6cj_35">
+                    <!-- 5 — La ria d’Etel, le Morbihan envoûtant -->
                     <!-- [PUBLI] - Ajouter le lien, remplacer "à paraître" par la date de publi  -->
                     <a class="dest24-carousel-thumb dest24-carousel-thumb_unpublished">
-                      <img class="dest24-carousel-thumb__image" src="https://assets-decodeurs.lemonde.fr/redacweb/231130-10-desti-2024/10desti-riadetel-05-carousel.jpg" />
-                      <div class="dest24-carousel-thumb__date">À paraître</div>
-                      <div class="dest24-carousel-thumb__title">La ria d’Etel, le Morbihan envoûtant</div>
+                      <img class="dest24-carousel-thumb__image" src="https://assets-decodeurs.lemonde.fr/redacweb/231130-10-desti-2024/10desti-riadetel-05-carousel.jpg">
+                      <div class="dest24-carousel-thumb__date">À paraître le 20/12/2023</div>
+                      <div class="dest24-carousel-thumb__title">N°5</div>
                     </a>
-                  </lm-html>
-
-                  <!-- 4 — Le glacier d’Aletsch, colosse sensible -->
-                  <lm-html>
+                  </div>
+                  <div class="lm-gallery__slot _slot_1h6cj_35">
+                    <!-- 4 — Le glacier d’Aletsch, colosse sensible -->
                     <!-- [PUBLI] - Ajouter le lien, remplacer "à paraître" par la date de publi  -->
                     <a class="dest24-carousel-thumb dest24-carousel-thumb_unpublished">
-                      <img class="dest24-carousel-thumb__image" src="https://assets-decodeurs.lemonde.fr/redacweb/231130-10-desti-2024/10desti-aletsch-04-carousel.jpg" />
-                      <div class="dest24-carousel-thumb__date">À paraître</div>
-                      <div class="dest24-carousel-thumb__title">Le glacier d’Aletsch, colosse sensible</div>
+                      <img class="dest24-carousel-thumb__image" src="https://assets-decodeurs.lemonde.fr/redacweb/231130-10-desti-2024/10desti-aletsch-04-carousel.jpg">
+                      <div class="dest24-carousel-thumb__date">À paraître le 24/12/2023</div>
+                      <div class="dest24-carousel-thumb__title">N°4</div>
                     </a>
-                  </lm-html>
-
-                  <!-- 3 — La Montagne Noire, aux sources du canal du Midi -->
-                  <lm-html>
+                  </div>
+                  <div class="lm-gallery__slot _slot_1h6cj_35">
+                    <!-- 3 — La Montagne Noire, aux sources du canal du Midi -->
                     <!-- [PUBLI] - Ajouter le lien, remplacer "à paraître" par la date de publi  -->
                     <a class="dest24-carousel-thumb dest24-carousel-thumb_unpublished">
-                      <img class="dest24-carousel-thumb__image" src="https://assets-decodeurs.lemonde.fr/redacweb/231130-10-desti-2024/10desti-canalmidi-03-carousel.jpg" />
-                      <div class="dest24-carousel-thumb__date">À paraître</div>
-                      <div class="dest24-carousel-thumb__title">La Montagne Noire, aux sources du canal du Midi</div>
+                      <img class="dest24-carousel-thumb__image" src="https://assets-decodeurs.lemonde.fr/redacweb/231130-10-desti-2024/10desti-canalmidi-03-carousel.jpg">
+                      <div class="dest24-carousel-thumb__date">À paraître 27/12/2023</div>
+                      <div class="dest24-carousel-thumb__title">N°3</div>
                     </a>
-                  </lm-html>
-
-                  <!-- 2 — De châteaux en côteaux, les méandres de la Moselle -->
-                  <lm-html>
+                  </div>
+                  <div class="lm-gallery__slot _slot_1h6cj_35">
+                    <!-- 2 — De châteaux en côteaux, les méandres de la Moselle -->
                     <!-- [PUBLI] - Ajouter le lien, remplacer "à paraître" par la date de publi  -->
                     <a class="dest24-carousel-thumb dest24-carousel-thumb_unpublished">
-                      <img class="dest24-carousel-thumb__image" src="	https://assets-decodeurs.lemonde.fr/redacweb/231130-10-desti-2024/10desti-moselle-02-carousel.jpg" />
-                      <div class="dest24-carousel-thumb__date">À paraître</div>
-                      <div class="dest24-carousel-thumb__title">De châteaux en côteaux, les méandres de la Moselle</div>
+                      <img class="dest24-carousel-thumb__image" src="https://assets-decodeurs.lemonde.fr/redacweb/231130-10-desti-2024/10desti-moselle-02-carousel.jpg">
+                      <div class="dest24-carousel-thumb__date">À paraître 31/12/2023</div>
+                      <div class="dest24-carousel-thumb__title">N°2</div>
                     </a>
-                  </lm-html>
-
-                  <!-- 1 — Les beaux endormis de la chaîne des Puys -->
-                  <lm-html>
+                  </div>
+                  <div class="lm-gallery__slot _slot_1h6cj_35">
+                    <!-- 1 — Les beaux endormis de la chaîne des Puys -->
                     <!-- [PUBLI] - Ajouter le lien, remplacer "à paraître" par la date de publi  -->
                     <a class="dest24-carousel-thumb dest24-carousel-thumb_unpublished">
-                      <img class="dest24-carousel-thumb__image" src="https://assets-decodeurs.lemonde.fr/redacweb/231130-10-desti-2024/10desti-chainesPuys-01-carousel.jpg" />
-                      <div class="dest24-carousel-thumb__date">À paraître</div>
-                      <div class="dest24-carousel-thumb__title">Les beaux endormis de la chaîne des Puys</div>
+                      <img class="dest24-carousel-thumb__image" src="https://assets-decodeurs.lemonde.fr/redacweb/231130-10-desti-2024/10desti-chainesPuys-01-carousel.jpg">
+                      <div class="dest24-carousel-thumb__date">À paraître 03/01/2024</div>
+                      <div class="dest24-carousel-thumb__title">N°1</div>
                     </a>
-                  </lm-html>
+                  </div>
+                </div>
+                <button class="lm-gallery__button lm-gallery__button_prev lm-gallery__button">
+                  <svg class="lmui-icon lmui-icon_inline dest24-carousel__button-icon dest24-carousel__button-icon_prev lm-app lm-svg" width="9" height="15" viewBox="0 0 9 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <desc>Icône chevron vers la gauche</desc>
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M8.5 12.7526L7.08333 14.1693L3.65925e-07 7.08598L7.08333 0.00264431L8.5 1.41931L2.8776 7.08598L8.5 12.7526Z" fill="#026B9C"></path>
+                  </svg>
+                </button>
+                <button class="lm-gallery__button lm-gallery__button_next lm-gallery__button">
+                  <svg class="lmui-icon lmui-icon_inline dest24-carousel__button-icon dest24-carousel__button-icon_next lm-app lm-svg" width="9" height="15" viewBox="0 0 9 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <desc>Icône chevron vers la droite</desc>
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M0 1.58598L1.41667 0.169312L8.5 7.25265L1.41667 14.336L0 12.9193L5.6224 7.25265L0 1.58598Z" fill="#026B9C"></path>
+                  </svg>
+                </button>
+              </div>
 
-                </array>
-              </comp>
               <!-- [PUBLI] - Ajouter le lien, décommenter -->
               <!-- <a class="dest24-carousel__cta">Accéder au grand format <comp name="ui">
                 <string class="component">icon</string>
