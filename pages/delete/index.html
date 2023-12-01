@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+  </head>
+  <body>
+    <div class="dest24-carousel-wrapper" style="max-width: 600px;"></div>
+
+    <!-- Application -->
+    <script type='module' src='http://localhost:3000/shared/index.js'></script>
+    
+    <!-- Config -->
+    <data class='dkdll' style='display: none;'>
+      <!-- ========================= CONFIG ========================= -->
+      <data class='CONFIG' action='append'>
+        <data>
+          <string class='name'>css</string>
+          <lm-html class='value'>
+            <style>
+              /* Site */
+              .article--longform .article__media--wide {
+                z-index: 3;
+              }
+              
+              /* Header */
+              .dest24-header {
+                height: 56px;
+                background-color: #F1EBE3;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                position: fixed;
+                top: 58px;
+                left: 0;
+                right: 0;
+                z-index: 1000;
+              }
+
+              @media (max-width: 1024px) {
+                .dest24-header {
+                  top: 60px;
+                }
+              }
+
+              .dest24-header__inner {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+              }
+
+              .dest24-header.dest24-header_with-link .dest24-header__inner {
+                border-bottom: 1px solid rgb(5, 13, 87, 0.3);
+                transition: border-bottom 400ms;
+              }
+
+              .dest24-header.dest24-header_with-link .dest24-header__inner:hover {
+                border-bottom: 1px solid rgb(5, 13, 87, 0.8);
+                cursor: pointer;
+              }
+
+              .dest24-header__arrow {
+                display: none;
+                margin-right: 8px;
+                filter: invert(1);
+              }
+
+              .dest24-header.dest24-header_with-link .dest24-header__arrow {
+                display: block;
+              }
+
+              .dest24-header__arrow path {
+                filter: invert(1);
+                fill: #050D57;
+              }
+
+              .dest24-header__title {
+                color: #050D57;
+                text-align: center;
+                font-family: var(--lmui-ff-sang-bleu-og-sans);
+                font-size: 22px;
+                font-style: normal;
+                font-weight: 400;
+                line-height: normal;
+              }
+
+              @media (max-width: 1024px) {
+                .dest24-header__title {
+                  font-size: 19px;
+                }
+              }
+
+              @media (max-width: 600px) {
+                .dest24-header__title {
+                      font-size: 13px;
+                      line-height: 1.2;
+                      max-width: 80%;
+
+                }
+              }
+
+              .dest24-header__title a {
+                text-decoration: none !important;
+              }
+
+              /* Carousel thumb */
+
+              .dest24-carousel-thumb {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                color: #050D57;
+                text-decoration: none !important;
+              }
+
+              .dest24-carousel-thumb.dest24-carousel-thumb_unpublished {
+                opacity: .5;
+                pointer-events: none;
+              }
+
+              .dest24-carousel-thumb__image {
+                max-width: 100%;
+              }
+
+              .dest24-carousel-thumb__date {
+                font-family: var(--lmui-ff-marr-sans);
+                font-size: 12px;
+                line-height: calc(15 / 12);
+                margin-top: 8px;
+              }
+
+              .dest24-carousel-thumb__title {
+                font-family: var(--lmui-ff-sang-bleu-og-sans);
+                font-size: 22px;
+                line-height: calc(26 / 22);
+                margin-top: 8px;
+                text-align: center;
+              }
+
+              @media (max-width: 1024px) {
+                .dest24-carousel-thumb__title {
+                  font-size: 20px;
+                }
+              }
+
+              @media (max-width: 600px) {
+                .dest24-carousel-thumb__title {
+                  font-size: 18px;
+                }
+              }
+
+              /* Carousel */
+              .dest24-carousel {
+                background-color: #F1EBE3;
+                border: 1px solid rgb(5, 13, 87, .2);
+                border-radius: 2px;
+                position: relative;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+              }
+
+              .dest24-carousel .dest24-carousel__title {
+                margin: 0 16px;
+                margin-bottom: 16px;
+                align-self: stretch;
+              }
+
+              .dest24-carousel__title {
+                padding: 30px 0;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                font-family: var(--lmui-ff-marr-sans);
+                font-weight: 700;
+                font-size: 20px;
+                line-height: 30px;
+                color: #050D57;
+                border-bottom: 1px solid rgba(5, 13, 87, 0.2);
+              }
+
+              @media (max-width: 1024px) {
+                .dest24-carousel__title {
+                  font-size: 18px;
+                }
+              }
+
+              @media (max-width: 600px) {
+                .dest24-carousel__title {
+                  font-size: 13px;
+                }
+              }
+
+              .dest24-carousel .dest24-carousel__gallery {
+                display: flex;
+                flex-direction: column;
+                align-self: stretch;
+                margin-bottom: 20px;
+              }
+
+              .dest24-carousel .dest24-carousel__gallery .lm-gallery__scroller {
+                order: 3;
+              }
+
+              .dest24-carousel .lm-gallery__button {
+                position: absolute;
+                top: 26px;
+                background-color: transparent;
+                padding: 8px;
+                margin: 0;
+                border: 1px solid #E3E3E3;
+                height: 40px;
+                width: 40px;
+                border-radius: 40px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                cursor: pointer;
+              }
+
+              .dest24-carousel .lm-gallery__button.lm-gallery__button_prev {
+                left: 16px;
+              }
+
+              .dest24-carousel .lm-gallery_is-at-start .lm-gallery__button.lm-gallery__button_prev {
+                opacity: .5;
+                pointer-events: none;
+                cursor: default;
+              }
+
+              .dest24-carousel .lm-gallery__button.lm-gallery__button_next {
+                right: 16px;
+              }
+
+              .dest24-carousel .lm-gallery_is-at-end .lm-gallery__button.lm-gallery__button_next {
+                opacity: .5;
+                pointer-events: none;
+                cursor: default;
+              }
+
+              .dest24-carousel__button-icon {
+                display: block;
+                filter: invert(1);
+              }
+
+              .dest24-carousel__button-icon path {
+                filter: invert(1);
+                fill: #050D57;
+              }
+
+              .dest24-carousel .dest24-carousel-thumb {
+                max-width: 260px;
+                margin-right: 20px;
+              }
+
+              .dest24-carousel .lm-gallery__slot:last-child .dest24-carousel-thumb {
+                margin-right: 0;
+              }
+
+              .dest24-carousel__cta {
+                display: flex;
+                align-items: center;
+                margin: 0;
+                padding: 16px;
+                border-radius: 100px;
+                background-color: transparent;
+                border: 1px solid rgb(5, 13, 87, .5);
+                font-family: var(--lmui-ff-marr-sans);
+                font-size: 16px;
+                line-height: calc(18 / 16);
+                font-weight: 500;
+                color: rgb(5, 13, 87);
+                margin-top: 24px;
+                margin-bottom: 32px;
+                text-decoration: none !important;
+              }
+
+              .dest24-carousel__cta-arrow {
+                margin-left: 4px;
+                filter: invert(1);
+              }
+
+              .dest24-carousel__cta-arrow path {
+                filter: invert(1);
+                fill: rgb(5, 13, 87);
+              }
+
+              /* Footer */
+              .dest24-footer {
+                background-color: #F1EBE3;
+              }
+
+              .dest24-footer .dest24-footer__title {
+                padding-top: 60px;
+                padding-right: 60px;
+                padding-bottom: 10px;
+                padding-left: 60px;
+              }
+
+              .dest24-footer__title {
+                color: #050D57;
+                text-align: center;
+                font-family: var(--lmui-ff-sang-bleu-og-sans);
+                font-size: 50px;
+                font-style: normal;
+                font-weight: 400;
+                line-height: normal;
+                width: 100%;
+              }
+
+              @media (max-width: 1024px) {
+                .dest24-footer__title {
+                  font-size: 40px;
+                }
+              }
+
+              @media (max-width: 600px) {
+                .dest24-footer__title {
+                  font-size: 28px;
+                }
+              }
+
+              .dest24-footer__chapo {
+                color: #000;
+                text-align: center;
+                font-family: var(--lmui-ff-the-antiqua-b);
+                font-size: 20px;
+                font-style: normal;
+                font-weight: 400;
+                line-height: 140%;
+                padding-left: 24%;
+                padding-right: 24%;
+                padding-top: 1%;
+                padding-bottom: 2%;
+                width: 100%;
+              }
+
+              @media (max-width: 600px) {
+                .dest24-footer__chapo {
+                  font-size: 17px;
+                  padding-left: 10%;
+                  padding-right: 10%;
+                }
+              }
+
+              .dest24-footer__button {
+                --height: 39px;
+                color: #050D57;
+                font-family: var(--lmui-ff-marr-sans);
+                font-size: 20px;
+                font-style: normal;
+                font-weight: 500;
+                line-height: 140%;
+                width: 283px;
+                height: var(--height);
+                text-align: center;
+                border-radius: calc(var(--height) / 2);
+                border: 1px solid #7B7C9D;
+                background-color: transparent;
+                margin: auto;
+                padding-top: 6px;
+              }
+
+              .dest24-footer__button:hover {
+                opacity: 40%;
+              }
+
+              .dest24-footer__img-box {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                padding-top: 40px;
+                margin: 0 auto;
+              }
+
+              .dest24-footer__img-container {
+                display: flex;
+                position: relative;
+                width: 20%;
+              }
+
+              a.dest24-footer__img-container:hover {
+                opacity: 1 !important; /* Fix css site */
+              }
+
+              @media (max-width: 1400px) {
+                .dest24-footer__img-container {
+                  width: 25%;
+                }
+              }
+
+              @media (max-width: 1120px) {
+                .dest24-footer__img-container {
+                  width: calc(100% / 3);
+                }
+              }
+
+              @media (max-width: 780px) {
+                .dest24-footer__img-container {
+                  width: 50%;
+                }
+              }
+
+              @media (max-width: 440px) {
+                .dest24-footer__img-container {
+                  width: 100%;
+                }
+              }
+
+              .dest24-footer__img {
+                position: relative;
+                font-size: 0;
+                width: 100%;
+              }
+
+              .dest24-footer__img img {
+                width: 100%;
+              }
+
+              .dest24-footer__img-overlay {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                position: absolute;
+                width: 100%;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+              }
+
+              .dest24-footer__shadow {
+                background: linear-gradient(to top, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 100%);
+                position: absolute;
+                width: 100%;
+                height: 50%;
+                bottom: 0;
+                opacity: 80%;
+              }
+
+              .dest24-footer__img__text-container {
+                bottom: 35px;
+                position: absolute;
+                padding-left: 15px;
+                padding-right: 15px;
+              }
+
+              .dest24-footer__img__text-date {
+                color: #050D57;
+                font-family: var(--lmui-ff-marr-sans);
+                font-size: 15px;
+                font-style: normal;
+                font-weight: 400;
+                line-height: 22px;
+                text-transform: uppercase;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                width: 100%;
+                height: 100%;
+                position: absolute;
+              }
+
+              .dest24-footer__img__text-title {
+                color: #FFF;
+                text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.80);
+                font-family: var(--lmui-ff-marr-sans);
+                font-size: 15px;
+                font-style: normal;
+                text-align: center;
+                font-weight: 700;
+                line-height: 140%;
+                letter-spacing: 1.5px;
+                padding-bottom: 10px;
+                text-transform: uppercase;
+              }
+
+              .dest24-footer__img__text-chapo {
+                color: #FFF;
+                text-align: center;
+                text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.80);
+                font-family: var(--lmui-ff-sang-bleu-og-sans);
+                font-size: 30px;
+                font-style: normal;
+                font-weight: 400;
+                line-height: 110%;
+              }
+
+              @media (max-width: 1024px) {
+                .dest24-footer__img__text-chapo {
+                  font-size: 26px;
+                }
+              }
+
+              @media (max-width: 600px) {
+                .dest24-footer__img__text-chapo {
+                  font-size: 22px;
+                }
+              }
+
+              .dest24-footer__img-container.dest24-footer__img-container_unpublished .dest24-footer__img {
+                opacity: 20%;
+              }
+
+            </style>
+          </lm-html>
+        </data>
+      </data>
+
+      <!-- ========================= SLOTS ========================= -->
+      <data class='SLOTS' action='append'>
+        <data>
+          <!-- ========================= HEADER ========================= -->
+          <data class='destination'>
+            <string class='selector'>.dest24-header-wrapper</string>
+          </data>
+          <lm-html class='content'>
+            <!-- [PUBLI] - Ajouter la classe dest24-header_with-link sur header et l'url du lien -->
+            <div class="dest24-header">
+              <div class="dest24-header__inner">
+                <comp name="ui">
+                  <string class="component">icon</string>
+                  <string class="name">arrow-next</string>
+                  <string class="customClass">dest24-header__arrow</string>
+                  <boolean class="inline">true</boolean>
+                </comp>
+                <div class="dest24-header__title">
+                  <a>Le palmarès 2024 des 10 destinations sans avion du «&nbsp;Monde&nbsp;»</a>
+                </div>
+              </div>
+            </div>
+          </lm-html>
+        </data>
+
+        <!-- ========================= CAROUSEL ========================= -->
+        <data>
+          <data class='destination'>
+            <string class='selector'>.dest24-carousel-wrapper</string>
+          </data>
+          <lm-html class='content'>
+            <div class="dest24-carousel">
+              <div class="dest24-carousel__title">
+                Toutes les destinations 2024
+              </div>
+              <comp name="gallery">
+                <string class="customClass">dest24-carousel__gallery</string>
+                <boolean class="snapScroll">true</boolean>
+                <lm-html class="prevButtonContent">
+                  <comp name="ui">
+                    <string class="component">icon</string>
+                    <string class="name">chevron-back</string>
+                    <string class="customClass">dest24-carousel__button-icon dest24-carousel__button-icon_prev</string>
+                    <boolean class="inline">true</boolean>
+                  </comp>
+                </lm-html>
+                <lm-html class="nextButtonContent">
+                  <comp name="ui">
+                    <string class="component">icon</string>
+                    <string class="name">chevron-next</string>
+                    <string class="customClass">dest24-carousel__button-icon dest24-carousel__button-icon_next</string>
+                    <boolean class="inline">true</boolean>
+                  </comp>
+                </lm-html>
+                <string class="scrollerWidth">calc(100% - 48px)</string>
+                <array class="itemsContent">
+                  
+                  <!-- 10 — De Londres à Penzance, les Cornouailles sur les rails/en majesté -->
+                  <lm-html>
+                    <!-- [PUBLI] - Ajouter le lien, remplacer "à paraître" par la date de publi  -->
+                    <a class="dest24-carousel-thumb dest24-carousel-thumb_unpublished">
+                      <img class="dest24-carousel-thumb__image" src="https://assets-decodeurs.lemonde.fr/redacweb/231130-10-desti-2024/10desti-londresPenzance-10-carousel.jpg" />
+                      <div class="dest24-carousel-thumb__date">À paraître</div>
+                      <div class="dest24-carousel-thumb__title">De Londres à Penzance, les Cornouailles sur les rails/en majesté</div>
+                    </a>
+                  </lm-html>
+
+                  <!-- 9 — Sur la ViaRhona, le fleuve peut en cacher un autre -->
+                  <lm-html>
+                    <!-- [PUBLI] - Ajouter le lien, remplacer "à paraître" par la date de publi  -->
+                    <a class="dest24-carousel-thumb dest24-carousel-thumb_unpublished">
+                      <img class="dest24-carousel-thumb__image" src="https://assets-decodeurs.lemonde.fr/redacweb/231130-10-desti-2024/10desti-viarhona-09-carousel.jpg" />
+                      <div class="dest24-carousel-thumb__date">À paraître</div>
+                      <div class="dest24-carousel-thumb__title">Sur la ViaRhona, le fleuve peut en cacher un autre</div>
+                    </a>
+                  </lm-html>
+
+                  <!-- 8 — Saragosse, un « paseo » des ruines romaines à Goya -->
+                  <lm-html>
+                    <!-- [PUBLI] - Ajouter le lien, remplacer "à paraître" par la date de publi  -->
+                    <a class="dest24-carousel-thumb dest24-carousel-thumb_unpublished">
+                      <img class="dest24-carousel-thumb__image" src="	https://assets-decodeurs.lemonde.fr/redacweb/231130-10-desti-2024/10desti-saragosse-08-carousel.jpg" />
+                      <div class="dest24-carousel-thumb__date">À paraître</div>
+                      <div class="dest24-carousel-thumb__title">Saragosse, un « paseo » des ruines romaines à Goya</div>
+                    </a>
+                  </lm-html>
+
+                  <!-- 7 — Luchon et le port de Venasque, chemin d’histoires -->
+                  <lm-html>
+                    <!-- [PUBLI] - Ajouter le lien, remplacer "à paraître" par la date de publi  -->
+                    <a class="dest24-carousel-thumb dest24-carousel-thumb_unpublished">
+                      <img class="dest24-carousel-thumb__image" src="https://assets-decodeurs.lemonde.fr/redacweb/231130-10-desti-2024/10desti-luchon-07-carousel.jpg" />
+                      <div class="dest24-carousel-thumb__date">À paraître</div>
+                      <div class="dest24-carousel-thumb__title">Luchon et le port de Venasque, chemin d’histoires</div>
+                    </a>
+                  </lm-html>
+
+                  <!-- 6 — Bergame, la douceur dans l’âme -->
+                  <lm-html>
+                    <!-- [PUBLI] - Ajouter le lien, remplacer "à paraître" par la date de publi  -->
+                    <a class="dest24-carousel-thumb dest24-carousel-thumb_unpublished">
+                      <img class="dest24-carousel-thumb__image" src="https://assets-decodeurs.lemonde.fr/redacweb/231130-10-desti-2024/10desti-bergame-06-carousel.jpg" />
+                      <div class="dest24-carousel-thumb__date">À paraître</div>
+                      <div class="dest24-carousel-thumb__title">Bergame, la douceur dans l’âme</div>
+                    </a>
+                  </lm-html>
+
+                  <!-- 5 — La ria d’Etel, le Morbihan envoûtant -->
+                  <lm-html>
+                    <!-- [PUBLI] - Ajouter le lien, remplacer "à paraître" par la date de publi  -->
+                    <a class="dest24-carousel-thumb dest24-carousel-thumb_unpublished">
+                      <img class="dest24-carousel-thumb__image" src="https://assets-decodeurs.lemonde.fr/redacweb/231130-10-desti-2024/10desti-riadetel-05-carousel.jpg" />
+                      <div class="dest24-carousel-thumb__date">À paraître</div>
+                      <div class="dest24-carousel-thumb__title">La ria d’Etel, le Morbihan envoûtant</div>
+                    </a>
+                  </lm-html>
+
+                  <!-- 4 — Le glacier d’Aletsch, colosse sensible -->
+                  <lm-html>
+                    <!-- [PUBLI] - Ajouter le lien, remplacer "à paraître" par la date de publi  -->
+                    <a class="dest24-carousel-thumb dest24-carousel-thumb_unpublished">
+                      <img class="dest24-carousel-thumb__image" src="https://assets-decodeurs.lemonde.fr/redacweb/231130-10-desti-2024/10desti-aletsch-04-carousel.jpg" />
+                      <div class="dest24-carousel-thumb__date">À paraître</div>
+                      <div class="dest24-carousel-thumb__title">Le glacier d’Aletsch, colosse sensible</div>
+                    </a>
+                  </lm-html>
+
+                  <!-- 3 — La Montagne Noire, aux sources du canal du Midi -->
+                  <lm-html>
+                    <!-- [PUBLI] - Ajouter le lien, remplacer "à paraître" par la date de publi  -->
+                    <a class="dest24-carousel-thumb dest24-carousel-thumb_unpublished">
+                      <img class="dest24-carousel-thumb__image" src="https://assets-decodeurs.lemonde.fr/redacweb/231130-10-desti-2024/10desti-canalmidi-03-carousel.jpg" />
+                      <div class="dest24-carousel-thumb__date">À paraître</div>
+                      <div class="dest24-carousel-thumb__title">La Montagne Noire, aux sources du canal du Midi</div>
+                    </a>
+                  </lm-html>
+
+                  <!-- 2 — De châteaux en côteaux, les méandres de la Moselle -->
+                  <lm-html>
+                    <!-- [PUBLI] - Ajouter le lien, remplacer "à paraître" par la date de publi  -->
+                    <a class="dest24-carousel-thumb dest24-carousel-thumb_unpublished">
+                      <img class="dest24-carousel-thumb__image" src="	https://assets-decodeurs.lemonde.fr/redacweb/231130-10-desti-2024/10desti-moselle-02-carousel.jpg" />
+                      <div class="dest24-carousel-thumb__date">À paraître</div>
+                      <div class="dest24-carousel-thumb__title">De châteaux en côteaux, les méandres de la Moselle</div>
+                    </a>
+                  </lm-html>
+
+                  <!-- 1 — Les beaux endormis de la chaîne des Puys -->
+                  <lm-html>
+                    <!-- [PUBLI] - Ajouter le lien, remplacer "à paraître" par la date de publi  -->
+                    <a class="dest24-carousel-thumb dest24-carousel-thumb_unpublished">
+                      <img class="dest24-carousel-thumb__image" src="https://assets-decodeurs.lemonde.fr/redacweb/231130-10-desti-2024/10desti-chainesPuys-01-carousel.jpg" />
+                      <div class="dest24-carousel-thumb__date">À paraître</div>
+                      <div class="dest24-carousel-thumb__title">Les beaux endormis de la chaîne des Puys</div>
+                    </a>
+                  </lm-html>
+
+                </array>
+              </comp>
+              <!-- [PUBLI] - Ajouter le lien, décommenter -->
+              <!-- <a class="dest24-carousel__cta">Accéder au grand format <comp name="ui">
+                <string class="component">icon</string>
+                <string class="name">arrow-next</string>
+                <boolean class="inline">true</boolean>
+                <string class="customClass">dest24-carousel__cta-arrow</string>
+              </comp></a> -->
+            </div>
+          </lm-html>
+        </data>
+
+        <!-- ========================= FOOTER ========================= -->
+        <data>
+          <data class='destination'>
+            <string class='selector'>.dest24-footer-wrapper</string>
+          </data>
+          <lm-html class='content'>
+            <div class="dest24-footer">
+              <div class="dest24-footer__title">Les dix voyages du «&nbsp;Monde&nbsp;» pour 2024, en France et en Europe</div>
+              <div class="dest24-footer__chapo">Comme chaque année, <span style="font-style: italic;">Le Monde</span> révèle son palmarès de destinations. Pour 2024, elles sont 10 et sans avion ! Des voyages pour découvrir la France et l'Europe autrement, en pédalant entre les volcans d'Auvergne, en marchant sur l'époustouflant glacier d'Aletsch ou en flânant sur les places de Saragosse.</div>
+              <!-- [PUBLI] - Ajouter le lien, décommenter -->
+              <!-- <a class="dest24-footer__button">Accéder au grand format</a> -->
+              <div class="dest24-footer__img-box">
+                
+                <!-- 10 - De Londres à Penzance, les Cornouailles sur les rails -->
+                <!-- [PUBLI] - Ajouter le lien, retirer la classe dest24-footer__img-container_unpublished -->
+                <a class="dest24-footer__img-container dest24-footer__img-container_unpublished">
+                  <div class="dest24-footer__img__text-date">a paraître le 03/12/2023</div>
+                  <div class="dest24-footer__img">
+                    <img src="https://assets-decodeurs.lemonde.fr/redacweb/231130-10-desti-2024/10desti-londresPenzance-10-footer.jpg" />
+                    <div class="dest24-footer__img-overlay">
+                      <div class="dest24-footer__shadow"></div>
+                      <div class="dest24-footer__img__text-container">
+                        <div class="dest24-footer__img__text-title">Royaume-Uni</div>
+                        <div class="dest24-footer__img__text-chapo">De Londres à Penzance, les Cornouailles sur les rails</div>
+                      </div>
+                    </div>
+                  </div>
+                </a>
+
+                <!-- 9 - Le long de la ViaRhona, le fleuve peut en cacher un autre -->
+                <!-- [PUBLI] - Ajouter le lien, retirer la classe dest24-footer__img-container_unpublished -->
+                <a class="dest24-footer__img-container dest24-footer__img-container_unpublished">
+                  <div class="dest24-footer__img__text-date">a paraître le 06/12/2023</div>
+                  <div class="dest24-footer__img">
+                    <img src="https://assets-decodeurs.lemonde.fr/redacweb/231130-10-desti-2024/10desti-viarhona-09-footer.jpg" />
+                    <div class="dest24-footer__img-overlay">
+                      <div class="dest24-footer__shadow"></div>
+                      <div class="dest24-footer__img__text-container">
+                        <div class="dest24-footer__img__text-title">France</div>
+                        <div class="dest24-footer__img__text-chapo">Le long de la ViaRhona, le fleuve peut en cacher un autre</div>
+                      </div>
+                    </div>
+                  </div>
+                </a>
+
+                <!-- 8 - Saragosse, à l’ombre des « plazas » et de Goya -->
+                <!-- [PUBLI] - Ajouter le lien, retirer la classe dest24-footer__img-container_unpublished -->
+                <a class="dest24-footer__img-container dest24-footer__img-container_unpublished">
+                  <div class="dest24-footer__img__text-date">a paraître le 10/12/2023</div>
+                  <div class="dest24-footer__img">
+                    <img src="https://assets-decodeurs.lemonde.fr/redacweb/231130-10-desti-2024/10desti-saragosse-08-footer.jpg" />
+                    <div class="dest24-footer__img-overlay">
+                      <div class="dest24-footer__shadow"></div>
+                      <div class="dest24-footer__img__text-container">
+                        <div class="dest24-footer__img__text-title">Espagne</div>
+                        <div class="dest24-footer__img__text-chapo">Saragosse, à l’ombre des « plazas » et de Goya</div>
+                      </div>
+                    </div>
+                  </div>
+                </a>
+
+                <!-- 7 - Luchon et le port de Venasque, chemin d’histoires -->
+                <!-- [PUBLI] - Ajouter le lien, retirer la classe dest24-footer__img-container_unpublished -->
+                <a class="dest24-footer__img-container dest24-footer__img-container_unpublished">
+                  <div class="dest24-footer__img__text-date">a paraître le 13/12/2023</div>
+                  <div class="dest24-footer__img">
+                    <img src="https://assets-decodeurs.lemonde.fr/redacweb/231130-10-desti-2024/10desti-luchon-07-footer.jpg" />
+                    <div class="dest24-footer__img-overlay">
+                      <div class="dest24-footer__shadow"></div>
+                      <div class="dest24-footer__img__text-container">
+                        <div class="dest24-footer__img__text-title">France</div>
+                        <div class="dest24-footer__img__text-chapo">Luchon et le port de Venasque, chemin d’histoires</div>
+                      </div>
+                    </div>
+                  </div>
+                </a>
+
+                <!-- 6 - Bergame, la douceur dans l’âme -->
+                <!-- [PUBLI] - Ajouter le lien, retirer la classe dest24-footer__img-container_unpublished -->
+                <a class="dest24-footer__img-container dest24-footer__img-container_unpublished">
+                  <div class="dest24-footer__img__text-date">a paraître le 17/12/2023</div>
+                  <div class="dest24-footer__img">
+                    <img src="https://assets-decodeurs.lemonde.fr/redacweb/231130-10-desti-2024/10desti-bergame-06-footer.jpg" />
+                    <div class="dest24-footer__img-overlay">
+                      <div class="dest24-footer__shadow"></div>
+                      <div class="dest24-footer__img__text-container">
+                        <div class="dest24-footer__img__text-title">Italie</div>
+                        <div class="dest24-footer__img__text-chapo">Bergame, la douceur dans l’âme</div>
+                      </div>
+                    </div>
+                  </div>
+                </a>
+
+                <!-- 5 - La ria d’Etel, le Morbihan envoûtant -->
+                <!-- [PUBLI] - Ajouter le lien, retirer la classe dest24-footer__img-container_unpublished -->
+                <a class="dest24-footer__img-container dest24-footer__img-container_unpublished">
+                  <div class="dest24-footer__img__text-date">a paraître le 20/12/2023</div>
+                  <div class="dest24-footer__img">
+                    <img src="https://assets-decodeurs.lemonde.fr/redacweb/231130-10-desti-2024/10desti-riadetel-05-footer.jpg" />
+                    <div class="dest24-footer__img-overlay">
+                      <div class="dest24-footer__shadow"></div>
+                      <div class="dest24-footer__img__text-container">
+                        <div class="dest24-footer__img__text-title">France</div>
+                        <div class="dest24-footer__img__text-chapo">La ria d’Etel, le Morbihan envoûtant</div>
+                      </div>
+                    </div>
+                  </div>
+                </a>
+
+                <!-- 4 - Le glacier d’Aletsch, colosse sensible -->
+                <!-- [PUBLI] - Ajouter le lien, retirer la classe dest24-footer__img-container_unpublished -->
+                <a class="dest24-footer__img-container dest24-footer__img-container_unpublished">
+                  <div class="dest24-footer__img__text-date">a paraître le 24/12/2023</div>
+                  <div class="dest24-footer__img">
+                    <img src="https://assets-decodeurs.lemonde.fr/redacweb/231130-10-desti-2024/10desti-aletsch-04-footer.jpg" />
+                    <div class="dest24-footer__img-overlay">
+                      <div class="dest24-footer__shadow"></div>
+                      <div class="dest24-footer__img__text-container">
+                        <div class="dest24-footer__img__text-title">Suisse</div>
+                        <div class="dest24-footer__img__text-chapo">Le glacier d’Aletsch, colosse sensible</div>
+                      </div>
+                    </div>
+                  </div>
+                </a>
+
+                <!-- 3 - La Montagne Noire, aux sources du canal du Midi -->
+                <!-- [PUBLI] - Ajouter le lien, retirer la classe dest24-footer__img-container_unpublished -->
+                <a class="dest24-footer__img-container dest24-footer__img-container_unpublished">
+                  <div class="dest24-footer__img__text-date">a paraître le 27/12/2023</div>
+                  <div class="dest24-footer__img">
+                    <img src="https://assets-decodeurs.lemonde.fr/redacweb/231130-10-desti-2024/10desti-canalmidi-03-footer.jpg" />
+                    <div class="dest24-footer__img-overlay">
+                      <div class="dest24-footer__shadow"></div>
+                      <div class="dest24-footer__img__text-container">
+                        <div class="dest24-footer__img__text-title">France</div>
+                        <div class="dest24-footer__img__text-chapo">La Montagne Noire, aux sources du canal du Midi</div>
+                      </div>
+                    </div>
+                  </div>
+                </a>
+
+                <!-- 2 - De châteaux en côteaux, les méandres de la Moselle -->
+                <!-- [PUBLI] - Ajouter le lien, retirer la classe dest24-footer__img-container_unpublished -->
+                <a class="dest24-footer__img-container dest24-footer__img-container_unpublished">
+                  <div class="dest24-footer__img__text-date">a paraître le 31/12/2023</div>
+                  <div class="dest24-footer__img">
+                    <img src="https://assets-decodeurs.lemonde.fr/redacweb/231130-10-desti-2024/10desti-moselle-02-footer.jpg" />
+                    <div class="dest24-footer__img-overlay">
+                      <div class="dest24-footer__shadow"></div>
+                      <div class="dest24-footer__img__text-container">
+                        <div class="dest24-footer__img__text-title">Allemagne</div>
+                        <div class="dest24-footer__img__text-chapo">De châteaux en côteaux, les méandres de la Moselle</div>
+                      </div>
+                    </div>
+                  </div>
+                </a>
+
+                <!-- 1 - Les beaux endormis de la chaîne des Puys -->
+                <!-- [PUBLI] - Ajouter le lien, retirer la classe dest24-footer__img-container_unpublished -->
+                <a class="dest24-footer__img-container dest24-footer__img-container_unpublished">
+                  <div class="dest24-footer__img__text-date">a paraître le 03/01/2024</div>
+                  <div class="dest24-footer__img">
+                    <img src="https://assets-decodeurs.lemonde.fr/redacweb/231130-10-desti-2024/10desti-chainesPuys-01-footer.jpg" />
+                    <div class="dest24-footer__img-overlay">
+                      <div class="dest24-footer__shadow"></div>
+                      <div class="dest24-footer__img__text-container">
+                        <div class="dest24-footer__img__text-title">France</div>
+                        <div class="dest24-footer__img__text-chapo">Les beaux endormis de la chaîne des Puys</div>
+                      </div>
+                    </div>
+                  </div>
+                </a>
+
+              </div>
+            </div>
+          </lm-html>
+        </data>
+      </data>
+
+    </data>
+  </body>
+</html>
