@@ -30,6 +30,11 @@ server.listen(port)
 server.on('error', onError)
 server.on('listening', onListening)
 
+app.use('/', async (req, res, next) => {
+  const delayMs = Math.random() * 800 + 20
+  await new Promise((resolve) => setTimeout(() => resolve(true), delayMs))
+  return next()
+})
 app.use(cors({ origin: true }))
 app.use(logger('dev'))
 app.use(express.json())
