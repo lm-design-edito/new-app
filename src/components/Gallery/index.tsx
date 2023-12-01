@@ -52,6 +52,7 @@ export default class Gallery extends Component<Props, State> {
 
   getSlotsPositionData () {
     const { $scroller } = this
+    console.log('getSlotsPositionData - $scroller', $scroller)
     if ($scroller === null) return;
     const scrollerWidth = $scroller.clientWidth
     const maxScrollValue = $scroller.scrollWidth - scrollerWidth
@@ -84,6 +85,13 @@ export default class Gallery extends Component<Props, State> {
         const isSnapped = (clientRect.left <= targetForSnapped) && (clientRect.right >= targetForSnapped)
         return { ...slotData, isCurrent, isSnapped }
       })
+      console.log('getSlotsPositionData - ', {
+        scrollerWidth,
+        maxScrollValue,
+        currentScrollValue,
+        scrolledRatio,
+        slotsPositionData
+      })
     return slotsPositionData
   }
 
@@ -99,6 +107,19 @@ export default class Gallery extends Component<Props, State> {
     const isAtStart = scrollerScrolled <= 2
     const isAtEnd = (scrollerScrollMax - scrollerScrolled) <= 2
     this.setState(curr => {
+      console.log('updateState - ', {
+        curr,
+        slotsPositionData,
+        indexOfCurrent,
+        indexOfSnapped,
+        $scroller,
+        scrollerScrolled,
+        scrollerScrollWidth,
+        scrollerWidth,
+        scrollerScrollMax,
+        isAtStart,
+        isAtEnd
+      })
       if (curr.currentSlotPos === indexOfCurrent
         && curr.snappedSlotPos === indexOfSnapped
         && curr.isAtStart === isAtStart
@@ -121,21 +142,39 @@ export default class Gallery extends Component<Props, State> {
 
   handleButtonClick (goForward: boolean = true) {
     const { $scroller } = this
+    console.log('handleButtonClick - ', {
+      goForward,
+      $scroller
+    })
     if ($scroller === null) return;
     const scrollerWidth = $scroller.clientWidth
     const targetForSnap = scrollerWidth / 2
     const slotsPositionData = this.getSlotsPositionData()
+    console.log('handleButtonClick - ', {
+      scrollerWidth,
+      targetForSnap,
+      slotsPositionData
+    })
     if (slotsPositionData === undefined) return;
     const snappedPos = slotsPositionData.findIndex(slot => slot.isSnapped === true)
     const targetPos = goForward
       ? snappedPos + 1
       : snappedPos - 1
     const targetSlotPositionData = slotsPositionData[targetPos]
+    console.log('handleButtonClick - ', {
+      snappedPos,
+      targetPos
+    })
     if (targetSlotPositionData === undefined) return;
     const { left: targetLeft, right: targetRight } = targetSlotPositionData.clientRect
     const targetCenter = (targetLeft + targetRight) / 2
     const snappedSlotPositionData = slotsPositionData[snappedPos]
     let toScroll = 0
+    console.log('handleButtonClick - ', {
+      targetLeft,
+      targetRight,
+      snappedSlotPositionData
+    })
     if (snappedSlotPositionData !== undefined) {
       const { left: snappedLeft, right: snappedRight } = snappedSlotPositionData.clientRect
       const snappedCenter = (snappedLeft + snappedRight) / 2
@@ -143,6 +182,7 @@ export default class Gallery extends Component<Props, State> {
       if (diff > 0 === goForward && Math.abs(diff) > 5) { toScroll = diff }
       else { toScroll = targetCenter - targetForSnap }
     } else { toScroll = targetCenter - targetForSnap }
+    console.log('handleButtonClick - ', { toScroll })
     $scroller.scrollLeft += toScroll
   }
 
@@ -164,6 +204,7 @@ export default class Gallery extends Component<Props, State> {
     const buttonClasses = [buttonBemClass.value]
     const prevButtonClasses = [buttonBemClass.mod('prev').value, ...buttonClasses]
     const nextButtonClasses = [buttonBemClass.mod('next').value, ...buttonClasses]
+    console.log('render - ', { props, state })
     return <div
       style={wrapperStyle}
       className={wrapperClasses.join(' ')}>
