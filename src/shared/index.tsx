@@ -268,7 +268,7 @@ async function init () {
           error: 'Something has already been rendered here.' as string,
         }
         const clonedContent = [...slotData.content].map(node => node.cloneNode(true))
-        const renderedContent = await Promise.all(clonedContent.map(node => LmHtml.render(node, logger)))
+        const renderedContent = await Promise.all(clonedContent.map(node => LmHtml.render(node)))
         target.innerHTML = ''
         preactRender(<>{renderedContent}</>, target)
         pageSlotsRenderedMap.add(target)
