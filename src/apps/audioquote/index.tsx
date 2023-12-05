@@ -1,17 +1,16 @@
 import { Apps } from '~/apps'
 import { Events } from '~/shared/events'
-import Logger from '~/utils/silent-log'
 import { toString, toBoolean, toNumberArr } from '~/utils/cast'
 import isRecord from '~/utils/is-record'
 import AudioQuote, { Props } from '~/components/AudioQuote'
 import recordFormat from '~/utils/record-format'
 
-export default async function renderer (unknownProps: unknown, id: string, logger?: Logger): ReturnType<Apps.AsyncRendererModule<Props>> {
-  const props = await toProps(unknownProps, id, logger)
+export default async function renderer (unknownProps: unknown, id: string): ReturnType<Apps.AsyncRendererModule<Props>> {
+  const props = await toProps(unknownProps, id)
   return { props, Component: AudioQuote }
 }
  
-async function toProps (input: unknown, id: string, logger?: Logger): Promise<Props> {
+async function toProps (input: unknown, id: string): Promise<Props> {
   if (!isRecord(input)) return {}
   const props: Props = await recordFormat(input, {
     customClass: (i: unknown) => i !== undefined ? toString(i) : undefined,
@@ -22,11 +21,11 @@ async function toProps (input: unknown, id: string, logger?: Logger): Promise<Pr
     autoPauseWhenVisible: (i: unknown) => i !== undefined ? toBoolean(i) : undefined,
     autoLoudWhenVisible: (i: unknown) => i !== undefined ? toBoolean(i) : undefined,
     autoMuteWhenHidden: (i: unknown) => i !== undefined ? toBoolean(i) : undefined,
-    title: (i: unknown) => i !== undefined ? Apps.toStringOrVNodeHelper(i, logger) : undefined,
-    playButton: (i: unknown) => i !== undefined ? Apps.toStringOrVNodeHelper(i, logger) : undefined,
-    pauseButton: (i: unknown) => i !== undefined ? Apps.toStringOrVNodeHelper(i, logger) : undefined,
-    loudButton: (i: unknown) => i !== undefined ? Apps.toStringOrVNodeHelper(i, logger) : undefined,
-    muteButton: (i: unknown) => i !== undefined ? Apps.toStringOrVNodeHelper(i, logger) : undefined,
+    title: (i: unknown) => i !== undefined ? Apps.toStringOrVNodeHelper(i) : undefined,
+    playButton: (i: unknown) => i !== undefined ? Apps.toStringOrVNodeHelper(i) : undefined,
+    pauseButton: (i: unknown) => i !== undefined ? Apps.toStringOrVNodeHelper(i) : undefined,
+    loudButton: (i: unknown) => i !== undefined ? Apps.toStringOrVNodeHelper(i) : undefined,
+    muteButton: (i: unknown) => i !== undefined ? Apps.toStringOrVNodeHelper(i) : undefined,
     hidePauseButton: toBoolean,
     // Handlers
     onSubsLoad: (i: unknown) => {

@@ -1,11 +1,11 @@
 import { Component, ComponentClass, VNode } from 'preact'
 import appConfig from '~/config'
+import { Globals } from '~/shared/globals'
 import { LmHtml } from '~/shared/lm-html'
 import { toString } from '~/utils/cast'
 import { injectStylesheet } from '~/utils/dynamic-css'
 import isArrayOf from '~/utils/is-array-of'
 import randomUUID from '~/utils/random-uuid'
-import Logger from '~/utils/silent-log'
 
 export namespace Apps {
   export enum Name {
@@ -17,10 +17,10 @@ export namespace Apps {
     UI = 'ui'
   }
 
-  export async function toStringOrVNodeHelper (input: unknown, logger?: Logger): Promise<string | VNode> {
-    if (input instanceof Node) return await LmHtml.render(input, logger)
+  export async function toStringOrVNodeHelper (input: unknown): Promise<string | VNode> {
+    if (input instanceof Node) return await LmHtml.render(input)
     if (isArrayOf<Node>(input, [Node]) || input instanceof NodeList) {
-      const renderingNodes = [...input].map(node => LmHtml.render(node, logger))
+      const renderingNodes = [...input].map(node => LmHtml.render(node))
       const renderedNodes = await Promise.all(renderingNodes)
       return <>{renderedNodes}</>
     }
@@ -28,11 +28,11 @@ export namespace Apps {
   }
 
   type RendererModuleResult<T extends Record<string, unknown> = {}> = { props: T, Component: ComponentClass }
-  export type SyncRendererModule<T extends Record<string, unknown> = {}> = (unknownProps: unknown, id: string, logger?: Logger) => RendererModuleResult<T>
-  export type AsyncRendererModule<T extends Record<string, unknown> = {}> = (unknownProps: unknown, id: string, logger?: Logger) => Promise<RendererModuleResult<T>>
+  export type SyncRendererModule<T extends Record<string, unknown> = {}> = (unknownProps: unknown, id: string) => RendererModuleResult<T>
+  export type AsyncRendererModule<T extends Record<string, unknown> = {}> = (unknownProps: unknown, id: string) => Promise<RendererModuleResult<T>>
   export type RendererModule<T extends Record<string, unknown> = {}> = SyncRendererModule<T> | AsyncRendererModule<T>
 
-  export async function load (name: Name, logger?: Logger): Promise<RendererModule | undefined> {
+  export async function load (name: Name): Promise<RendererModule | undefined> {
     try {
       let loaded: RendererModule | null = null
       if (name === Name.AUDIOQUOTE) { loaded = (await import('~/apps/audioquote')).default }
@@ -42,6 +42,7 @@ export namespace Apps {
       if (name === Name.SCRLLGNGN) { loaded = (await import('~/apps/scrllgngn')).default }
       if (name === Name.UI) {
         const uiStyles = appConfig.paths.STYLES_UI_URL.toString()
+        const logger = Globals.retrieve(Globals.GlobalKey.LOGGER)
         injectStylesheet(uiStyles, () => logger?.log('Styles', '%cStylesheet loaded', 'font-weight: 800;', uiStyles))
         loaded = (await import('~/apps/ui')).default
       }
@@ -112,19 +113,16 @@ export namespace Apps {
     }
   }
 
-  export async function render (
-    name: Name,
-    _id: string | null,
-    unknownProps: unknown,
-    logger?: Logger): Promise<VNode> {
-    const appRenderer = await load(name, logger)
+  export async function render (name: Name, _id: string | null, unknownProps: unknown): Promise<VNode> {
+    const logger = Globals.retrieve(Globals.GlobalKey.LOGGER)
+    const appRenderer = await load(name)
     if (appRenderer === undefined) {
       logger?.error('Render', '%cRenderer load error', 'font-weight: 800;', `\nNo renderer found for app '${name}'. Props:`, unknownProps)
       return <></>
     }
     const privateId = randomUUID().split('-')[0] ?? ''
     const publicName = _id ?? randomUUID().split('-')[0] ?? null
-    const { props, Component } = await appRenderer(unknownProps, privateId, logger)
+    const { props, Component } = await appRenderer(unknownProps, privateId)
     const appComponent = <App
       component={Component}
       props={props}

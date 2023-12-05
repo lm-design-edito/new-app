@@ -1,6 +1,5 @@
 import { Apps } from '~/apps'
 import { Events } from '~/shared/events'
-import Logger from '~/utils/silent-log'
 import { toString, toNumber, toBoolean } from '~/utils/cast'
 import isRecord from '~/utils/is-record'
 import Scrollgneugneu, {
@@ -16,12 +15,12 @@ import Scrollgneugneu, {
 } from '~/components/Scrllgngn'
 import recordFormat from '~/utils/record-format'
 
-export default async function renderer (unknownProps: unknown, id: string, logger?: Logger): ReturnType<Apps.AsyncRendererModule<Props>> {
-  const props = await toProps(unknownProps, id, logger)
+export default async function renderer (unknownProps: unknown, id: string): ReturnType<Apps.AsyncRendererModule<Props>> {
+  const props = await toProps(unknownProps, id)
   return { props, Component: Scrollgneugneu }
 }
 
-async function toProps (input: unknown, id: string, logger?: Logger): Promise<Props> {
+async function toProps (input: unknown, id: string): Promise<Props> {
   if (!isRecord(input)) return {}
   const props: Props = await recordFormat(input, {
     customClass: (i: unknown) => i !== undefined ? toString(i) : undefined,
@@ -38,7 +37,7 @@ async function toProps (input: unknown, id: string, logger?: Logger): Promise<Pr
     },
     thresholdOffset: (i: unknown) => i !== undefined ? toString(i) : undefined,
     bgColorTransitionDuration: (i: unknown) => i !== undefined ? toNumber(i) : undefined,
-    pages: async (i: unknown) => Array.isArray(i) ? await arrayToPages(i, id, logger) : undefined,
+    pages: async (i: unknown) => Array.isArray(i) ? await arrayToPages(i, id) : undefined,
     onPageChange: (i: unknown) => {
       if (!Array.isArray(i)) return undefined
       const handlers = i
@@ -59,14 +58,14 @@ async function toProps (input: unknown, id: string, logger?: Logger): Promise<Pr
 /* * * * * * * * * * * * * * * * * * *
  * ARRAY TO PAGES
  * * * * * * * * * * * * * * * * * * */
-async function arrayToPages (array: unknown[], id: string, logger?: Logger): Promise<PropsPageData[]> {
+async function arrayToPages (array: unknown[], id: string): Promise<PropsPageData[]> {
   const extractedPages: PropsPageData[] = []
   for (const pageData of array) {
     if (!isRecord(pageData)) continue
     const extractedPage: PropsPageData = await recordFormat(pageData, {
       id: (i: unknown) => i !== undefined ? toString(i) : undefined,
       bgColor: (i: unknown) => i !== undefined ? toString(i) : undefined,
-      blocks: async (i: unknown) => Array.isArray(i) ? await arrayToBlocks(i, id, logger) : undefined
+      blocks: async (i: unknown) => Array.isArray(i) ? await arrayToBlocks(i, id) : undefined
     })
     extractedPages.push(extractedPage)
   }
@@ -76,7 +75,7 @@ async function arrayToPages (array: unknown[], id: string, logger?: Logger): Pro
 /* * * * * * * * * * * * * * * * * * *
  * ARRAY TO BLOCKS
  * * * * * * * * * * * * * * * * * * */
-async function arrayToBlocks (array: unknown[], id: string, logger?: Logger): Promise<PropsBlockData[]> {
+async function arrayToBlocks (array: unknown[], id: string): Promise<PropsBlockData[]> {
   const extractedBlocks: PropsBlockData[] = []
   for (const blockData of array) {
     if (!isRecord(blockData)) continue
@@ -95,7 +94,7 @@ async function arrayToBlocks (array: unknown[], id: string, logger?: Logger): Pr
           if (strI === 'module') return 'module'
           return undefined
         },
-        content: (i: unknown) => i !== undefined ? Apps.toStringOrVNodeHelper(i, logger) : undefined, // [WIP] should be possible to have VNode if type === 'module'
+        content: (i: unknown) => i !== undefined ? Apps.toStringOrVNodeHelper(i) : undefined, // [WIP] should be possible to have VNode if type === 'module'
         trackScroll: (i: unknown) => i !== undefined ? toBoolean(i) : undefined,
         layout: (i: unknown) => i !== undefined ? toString(i) as LayoutName : undefined,
         mobileLayout: (i: unknown) => i !== undefined ? toString(i) as LayoutName : undefined
@@ -115,7 +114,7 @@ async function arrayToBlocks (array: unknown[], id: string, logger?: Logger): Pr
           if (strI === 'module') return 'module'
           return undefined
         },
-        content: (i: unknown) => i !== undefined ? Apps.toStringOrVNodeHelper(i, logger) : undefined, // [WIP] should be possible to have VNode if type === 'module'
+        content: (i: unknown) => i !== undefined ? Apps.toStringOrVNodeHelper(i) : undefined, // [WIP] should be possible to have VNode if type === 'module'
         trackScroll: (i: unknown) => i !== undefined ? toBoolean(i) : undefined,
         layout: (i: unknown) => i !== undefined ? toString(i) as LayoutName : undefined,
         mobileLayout: (i: unknown) => i !== undefined ? toString(i) as LayoutName : undefined,

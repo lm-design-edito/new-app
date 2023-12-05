@@ -1,7 +1,6 @@
 import { VNode, isValidElement } from 'preact'
 import { Apps } from '~/apps'
 import iconsData from '~/theme/icons'
-import Logger from '~/utils/silent-log'
 import isRecord from '~/utils/is-record'
 import { toBoolean, toString } from '~/utils/cast'
 import UI, { Component, Props } from '~/components/UI'
@@ -14,12 +13,12 @@ import { Props as TextBoxProps } from '~/components/UI/components/TextBox'
 import { Props as ToggleProps } from '~/components/UI/components/Toggle'
 import recordFormat from '~/utils/record-format'
 
-export default async function renderer (unknownProps: unknown, id: string, logger?: Logger): ReturnType<Apps.AsyncRendererModule<Props>> {
-  const props = await toProps(unknownProps, id, logger)
+export default async function renderer (unknownProps: unknown, id: string): ReturnType<Apps.AsyncRendererModule<Props>> {
+  const props = await toProps(unknownProps, id)
   return { props, Component: UI }
 }
 
-async function toProps (input: unknown, id: string, logger?: Logger): Promise<Props> {
+async function toProps (input: unknown, id: string): Promise<Props> {
   if (!isRecord(input)) return {}
   const { component } = input
   
@@ -27,7 +26,7 @@ async function toProps (input: unknown, id: string, logger?: Logger): Promise<Pr
   if (component === Component.BUTTON) {
     const props: ButtonProps = await recordFormat(input, {
       customClass: (i: unknown) => i !== undefined ? toString(i) : undefined,
-      content: async (i: unknown) => i !== undefined ? await Apps.toStringOrVNodeHelper(i, logger) : undefined,
+      content: async (i: unknown) => i !== undefined ? await Apps.toStringOrVNodeHelper(i) : undefined,
       size: (i: unknown) => {
         if (i === undefined) return undefined
         const strI = toString(i)
@@ -39,7 +38,7 @@ async function toProps (input: unknown, id: string, logger?: Logger): Promise<Pr
       disabled: (i: unknown) => i !== undefined ? toBoolean(i) : undefined,
       squared: (i: unknown) => i !== undefined ? toBoolean(i) : undefined,
       secondary: (i: unknown) => i !== undefined ? toBoolean(i) : undefined,
-      iconContent: (i: unknown) => i !== undefined ? Apps.toStringOrVNodeHelper(i, logger) : undefined,
+      iconContent: (i: unknown) => i !== undefined ? Apps.toStringOrVNodeHelper(i) : undefined,
       iconFirst: (i: unknown) => i !== undefined ? toBoolean(i) : undefined
     })
     return { component, ...props }
@@ -49,7 +48,7 @@ async function toProps (input: unknown, id: string, logger?: Logger): Promise<Pr
     const props: CheckboxOrRadioProps = await recordFormat(input, {
       type: () => component === Component.RADIO ? 'radio' : 'checkbox',
       customClass: (i: unknown) => i !== undefined ? toString(i) : undefined,
-      labelContent: (i: unknown) => i !== undefined ? Apps.toStringOrVNodeHelper(i, logger) : undefined,
+      labelContent: (i: unknown) => i !== undefined ? Apps.toStringOrVNodeHelper(i) : undefined,
       disabled: (i: unknown) => i !== undefined ? toBoolean(i) : undefined,
       error: (i: unknown) => i !== undefined ? toBoolean(i) : undefined,
     })
@@ -69,9 +68,9 @@ async function toProps (input: unknown, id: string, logger?: Logger): Promise<Pr
   } else if (component === Component.TAB) {
     const props: TabProps = await recordFormat(input, {
       customClass: (i: unknown) => i !== undefined ? toString(i) : undefined,
-      content: (i: unknown) => i !== undefined ? Apps.toStringOrVNodeHelper(i, logger) : undefined,
+      content: (i: unknown) => i !== undefined ? Apps.toStringOrVNodeHelper(i) : undefined,
       active: (i: unknown) => i !== undefined ? toBoolean(i) : undefined,
-      iconContent: (i: unknown) => i !== undefined ? Apps.toStringOrVNodeHelper(i, logger) : undefined,
+      iconContent: (i: unknown) => i !== undefined ? Apps.toStringOrVNodeHelper(i) : undefined,
       iconFirst: (i: unknown) => i !== undefined ? toBoolean(i) : undefined
     })
     return { component, ...props }
@@ -84,7 +83,7 @@ async function toProps (input: unknown, id: string, logger?: Logger): Promise<Pr
         if (!Array.isArray(i)) return undefined
         const tabsPromise = i.map(async tab => {
           if (isValidElement(tab)) return tab
-          if (tab instanceof NodeList) return await Apps.toStringOrVNodeHelper(tab, logger)
+          if (tab instanceof NodeList) return await Apps.toStringOrVNodeHelper(tab)
           return undefined
         }).filter((elt): elt is Promise<VNode> => elt !== undefined)
         return await Promise.all(tabsPromise)
@@ -96,7 +95,7 @@ async function toProps (input: unknown, id: string, logger?: Logger): Promise<Pr
   } else if (component === Component.TEXT_BOX) {
     const props: TextBoxProps = await recordFormat(input, {
       customClass: (i: unknown) => i !== undefined ? toString(i) : undefined,
-      content: (i: unknown) => i !== undefined ? Apps.toStringOrVNodeHelper(i, logger) : undefined
+      content: (i: unknown) => i !== undefined ? Apps.toStringOrVNodeHelper(i) : undefined
     })
     return { component, ...props }
 
@@ -104,7 +103,7 @@ async function toProps (input: unknown, id: string, logger?: Logger): Promise<Pr
   } else if (component === Component.TOGGLE) {
     const props: ToggleProps = await recordFormat(input, {
       customClass: (i: unknown) => i !== undefined ? toString(i) : undefined,
-      labelContent: (i: unknown) => i !== undefined ? Apps.toStringOrVNodeHelper(i, logger) : undefined,
+      labelContent: (i: unknown) => i !== undefined ? Apps.toStringOrVNodeHelper(i) : undefined,
       size: (i: unknown) => {
         if (i === undefined) return undefined
         const strI = toString(i)

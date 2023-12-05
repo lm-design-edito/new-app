@@ -1,16 +1,15 @@
 import { Apps } from '~/apps'
-import Logger from '~/utils/silent-log'
 import { toString } from '~/utils/cast'
 import isRecord from '~/utils/is-record'
 import Drawer, { Props } from '~/components/Drawer'
 import recordFormat from '~/utils/record-format'
 
-export default async function renderer (unknownProps: unknown, id: string, logger?: Logger): ReturnType<Apps.AsyncRendererModule<Props>> {
-  const props = await toProps(unknownProps, id, logger)
+export default async function renderer (unknownProps: unknown, id: string): ReturnType<Apps.AsyncRendererModule<Props>> {
+  const props = await toProps(unknownProps, id)
   return { props, Component: Drawer }
 }
 
-async function toProps (input: unknown, id: string, logger?: Logger): Promise<Props> {
+async function toProps (input: unknown, id: string): Promise<Props> {
   if (!isRecord(input)) return {}
   const props: Props = await recordFormat(input, {
     customClass: (i: unknown) => i !== undefined ? toString(i) : undefined,
@@ -21,11 +20,11 @@ async function toProps (input: unknown, id: string, logger?: Logger): Promise<Pr
       if (strI === 'closed') return 'closed'
       return undefined
     },
-    content: (i: unknown) => i !== undefined ? Apps.toStringOrVNodeHelper(i, logger) : undefined,
-    topBarContent: (i: unknown) => i !== undefined ? Apps.toStringOrVNodeHelper(i, logger) : undefined,
-    topBarClosedContent: (i: unknown) => i !== undefined ? Apps.toStringOrVNodeHelper(i, logger) : undefined,
-    togglerContent: (i: unknown) => i !== undefined ? Apps.toStringOrVNodeHelper(i, logger) : undefined,
-    togglerClosedContent: (i: unknown) => i !== undefined ? Apps.toStringOrVNodeHelper(i, logger) : undefined,
+    content: (i: unknown) => i !== undefined ? Apps.toStringOrVNodeHelper(i) : undefined,
+    topBarContent: (i: unknown) => i !== undefined ? Apps.toStringOrVNodeHelper(i) : undefined,
+    topBarClosedContent: (i: unknown) => i !== undefined ? Apps.toStringOrVNodeHelper(i) : undefined,
+    togglerContent: (i: unknown) => i !== undefined ? Apps.toStringOrVNodeHelper(i) : undefined,
+    togglerClosedContent: (i: unknown) => i !== undefined ? Apps.toStringOrVNodeHelper(i) : undefined,
     transitionDuration: (i: unknown) => {
       if (i === undefined) return undefined
       if (typeof i === 'number') return i

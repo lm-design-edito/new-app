@@ -1,5 +1,3 @@
-import isRecord from '~/utils/is-record'
-
 /* Cast transformers */
 import toString from './transformers/toString'
 import toNumber from './transformers/toNumber'
