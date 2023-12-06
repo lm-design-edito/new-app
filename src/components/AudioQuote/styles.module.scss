@@ -5,7 +5,7 @@
 .subs-container {
   display: grid;
 
-  >* {
+  > * {
     grid-area: 1 / -1;
   }
 }

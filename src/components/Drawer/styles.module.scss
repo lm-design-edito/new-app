@@ -1,9 +1,6 @@
 .panel {
   height: 0;
-  transition:
-    height
-    var(--transition-duration, 200ms)
-    var(--transition-ease, ease);
+  transition: height var(--transition-duration, 200ms) var(--transition-ease, ease);
   overflow: hidden;
 }
 

@@ -102,12 +102,13 @@
   display: block;
 }
 
-// This below results in the same than no rule at all so...
-// .wrapper.wrapper_left-align-items {
-//   .nav-item:first-child {
-//     margin-left: 0;
-//   }
-// }
+/* This below results in the same than no rule at all so...
+ * .wrapper.wrapper_left-align-items {
+ *   .nav-item:first-child {
+ *     margin-left: 0;
+ *   }
+ * }
+ */
 
 .wrapper.wrapper_center-align-items {
   .nav-left-spacer {
@@ -132,7 +133,7 @@
 }
 
 .nav-item_active {
-  // Needed in order to querySelector styles['nav-item_active'] in js
+  /* Needed in order to querySelector styles['nav-item_active'] in js */
   cursor: pointer;
 }
 
