@@ -9,10 +9,9 @@ const toHtml: Darkdouille.TransformerFunctionGenerator<NodeListOf<Node>> = () =>
       inputValue.forEach(item => fragment.append(...toHtml()(item)))
       return fragment.childNodes
     }
-    const fragment = document.createDocumentFragment()
-    const textNode = document.createTextNode(toString()(inputValue))
-    fragment.appendChild(textNode)
-    return fragment.childNodes
+    const div = document.createElement('div')
+    div.innerHTML = toString()(inputValue)
+    return div.childNodes
   }
 }
 

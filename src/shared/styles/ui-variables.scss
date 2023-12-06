@@ -1,6 +1,5 @@
 /* Couleurs lm-site */
 :root {
-
   --lmui-c-white: white;
   --lmui-c-snow-lighter: #FCFCFD;
   --lmui-c-snow-light: #F5F6F8;
@@ -86,12 +85,12 @@
   --lmui-search__button-scale: scale(0.95);
 }
 
-/* Re-dÃ©finition des variables fonction du contexte */
+/* Re-définition des variables fonction du contexte */
 :root .lmui-search_s {
   --height-autocomplete: 36px;
 }
 
-/* Re-dÃ©finition des variables fonction du viewport */
+/* Re-définition des variables fonction du viewport */
 @media (max-width: 600px) {
   :root {
   --height-autocomplete: 36px;
@@ -100,7 +99,6 @@
   --lmui-search__button-scale: scale(0.7);
   }
 }
-
 
 /* couleurs lightmode fonctionnelles lmui */
 :root,

@@ -34,6 +34,7 @@ import selectorToElement from '~/utils/selector-to-element'
 import Logger from '~/utils/silent-log'
 import { debounce, throttle } from '~/utils/throttle-debounce'
 import transition from '~/utils/transition'
+import toString from './utils/darkdouille/transformers/toString'
 
 /* * * * * * * * * * * * * * * * * * * * * *
  * EXPORT & GLOBALS
@@ -65,15 +66,7 @@ Globals.expose(Globals.GlobalKey.LM_HTML, LmHtml)
 Globals.expose(Globals.GlobalKey.LOGGER, logger)
 Globals.expose(Globals.GlobalKey.INIT, init)
 Globals.expose(Globals.GlobalKey.UTILS, utils)
-export { meta }
-export { Analytics }
-export { Darkdouille }
-export { Apps }
-export { Events }
-export { LmHtml }
-export { Logger }
-export { utils }
-export { init }
+export { meta, Analytics, Apps, Darkdouille, Events, LmHtml, Logger, logger, utils, init }
 
 /* * * * * * * * * * * * * * * * * * * * * *
  * INIT ON LOAD
@@ -204,7 +197,7 @@ async function init () {
   /* RENDER APPS * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
   
   type SlotData = {
-    content: NodeListOf<Node>
+    content: Darkdouille.TreeValue
     destination: {
       selector: string
       position?: string
@@ -218,14 +211,11 @@ async function init () {
   // Validate data
   const validSlots = pageSlotsArray.filter((value): value is SlotData => {
     if (!Darkdouille.valueIsRecord(value)) return false
-    const { destination, content } = value
+    const { destination } = value
     if (!isRecord(destination)) return false;
     if (typeof destination.selector !== 'string') return false
     if (typeof destination.position !== 'string' && destination.position !== undefined) return false
     if (typeof destination.reference !== 'string' && destination.reference !== undefined) return false
-    const contentIsNodeList = content instanceof NodeList
-    const contentIsNodeListOfNodes = contentIsNodeList && isArrayOf([...content], Node)
-    if (!contentIsNodeListOfNodes) return false
     return true
   })
   logger.log('Slots', '%cData', 'font-weight: 800;', validSlots)
@@ -267,8 +257,14 @@ async function init () {
           ...slotData,
           error: 'Something has already been rendered here.' as string,
         }
-        const clonedContent = [...slotData.content].map(node => node.cloneNode(true))
-        const renderedContent = await Promise.all(clonedContent.map(node => LmHtml.render(node)))
+        const { content } = slotData
+        let clonedContent: Node[] | string
+        if (content instanceof NodeList) { clonedContent = [...content].map(node => node.cloneNode(true)) }
+        else { clonedContent = toString()(content) }
+        console.log(clonedContent)
+        const renderedContent = typeof clonedContent === 'string'
+          ? clonedContent
+          : await Promise.all(clonedContent.map(node => LmHtml.render(node)))
         target.innerHTML = ''
         preactRender(<>{renderedContent}</>, target)
         pageSlotsRenderedMap.add(target)

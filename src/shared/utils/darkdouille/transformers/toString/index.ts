@@ -7,7 +7,7 @@ const toString: Darkdouille.TransformerFunctionGenerator<string> = () => {
     if (inputValue instanceof NodeList) { // NodeList
       const tempWrapper = document.createElement('div')
       tempWrapper.append(...[...inputValue].map(node => node.cloneNode(true)))
-      return tempWrapper.textContent ?? ''
+      return tempWrapper.innerHTML ?? ''
     }
     if (Array.isArray(inputValue)) return inputValue.map(e => toString()(e)).join('') // Array
     if (typeof inputValue === 'object') return JSON.stringify(Object // Record
