@@ -10,89 +10,18 @@
     
     <!-- Config -->
     <data class='dkdll' style='display: none;'>
-      <!--
-        // element + has named       => chaque item devient text ou NodeList, et poussés dans le NodeList de value. Named et Positionned peuvent-être wrapped, elements MUST be wrapped
-        // element + has elements    => chaque item devient text ou NodeList, et poussés dans le NodeList de value. Named et Positionned peuvent-être wrapped, elements MUST be wrapped
-        // element + has positionned => chaque item devient text ou NodeList, et poussés dans le NodeList de value. Named et Positionned peuvent-être wrapped, elements MUST be wrapped
-        // element + has text        => chaque item devient text ou NodeList, et poussés dans le NodeList de value. Named et Positionned peuvent-être wrapped, elements MUST be wrapped
-        // value   + has named       => chaque item est poussé dans un {}, elements MUST be wrapped, pas named & positionned
-        // value   + has elements    => chaque item devient text ou NodeList, et poussés dans le NodeList de value. Named et Positionned peuvent-être wrapped, elements MUST be wrapped
-        // value   + has positionned => chaque item est poussé dans un [], elements MUST be wrapped, pas named & positionned
-        // value   + has text        => toutes les valeurs sont textifiées et jointes dans une seule valeur
-      -->
-      <div>
-        <h1>tut tut</h1>
-        <number>7</number>
-        <lm-html>
-          <div>1</div>
-          <div>2</div>
-          <string nowrap>coucou cocotte!</string>
-        </lm-html>
-      </div>
-      
-      <!-- <data class="element-w-named">
-        <div>
-          <string class="named">named</string>
-          <div>element</div>
-          <number>3</number>
-          text
-        </div>
-      </data> -->
-      
-      <!-- <data class="element-w-elements">
-        <div>
-          <div>element</div>
-          <number>3</number>
-          text
-        </div>
-      </data> -->
-
-      <!-- <data class="element-w-pos">
-        <div>
-          <number>3</number>
-          text
-        </div>
-      </data> -->
-      
-      <!-- <data class="element-w-text">
-        <div>
-          text
-        </div>
-      </data> -->
-
-      <!-- <data class="value-w-named">
+      <data class='SLOTS'>
         <data>
-          <string class="named">named</string>
-          <div>element</div>
-          <number>3</number>
-          text
+          <data class='destination'>
+            <string class='selector'>.dupont-wrapper</string>
+          </data>
+          <lm-html class='content'>
+            <comp name="ui">
+              <string class="component">toggle</string>
+            </comp>
+          </lm-html>
         </data>
-      </data> -->
-
-      <!-- <data class="value-w-elements">
-        <data>
-          <div>element</div>
-          <number>3</number>
-          text
-        </data>
-      </data> -->
-
-      <!-- <data class="value-w-pos">
-        <data>
-          <number>3</number>
-          text
-        </data>
-      </data> -->
-
-      <!-- <data class="value-w-text">
-        <data>
-          text
-        </data>
-        <transformer>
-          <print></print>
-        </transformer>
-      </data> -->
-
+      </data>
     </data>
 
     <!-- Slot -->
