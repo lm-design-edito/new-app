@@ -174,14 +174,16 @@ async function selectTarget () {
     // TEST = 'gs://decodeurs/design-edito/_TEST',
     // V0 = 'gs://decodeurs/design-edito/v0',
     // V01 = 'gs://decodeurs/design-edito/v0.1',
-    V1_ALPHA = 'gs://decodeurs/design-edito/v1.alpha'
+    V1_ALPHA = 'gs://decodeurs/design-edito/v1.alpha',
+    V1_BETA = 'gs://decodeurs/design-edito/v1.beta'
   }
   const targetToRootUrlMap = new Map<Targets, string>([
     // [Targets.FOR_TESTS_ONLY, 'https://assets-decodeurs.lemonde.fr/design-edito/_FOR_TESTS_ONLY'],
     // [Targets.TEST, 'https://assets-decodeurs.lemonde.fr/design-edito/_TEST'],
     // [Targets.V0, 'https://assets-decodeurs.lemonde.fr/design-edito/v0'],
     // [Targets.V01, 'https://assets-decodeurs.lemonde.fr/design-edito/v0.1']
-    [Targets.V1_ALPHA, 'https://assets-decodeurs.lemonde.fr/design-edito/v1.alpha']
+    [Targets.V1_ALPHA, 'https://assets-decodeurs.lemonde.fr/design-edito/v1.alpha'],
+    [Targets.V1_BETA, 'https://assets-decodeurs.lemonde.fr/design-edito/v1.beta']
   ])
   console.log(styles.title('Select a target destination'))
   STATE.target_name = (await prompts({
