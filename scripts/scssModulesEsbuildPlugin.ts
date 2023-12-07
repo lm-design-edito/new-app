@@ -18,26 +18,20 @@ const scssModulesEsbuildPlugin: Plugin = {
       filter: /.*/,
       namespace: 'lm-scss-modules-esbuild-plugin'
     }, async args => {
-      console.log('MODULE:', args.path)
       const css = sass.compile(args.path).css
       let json: string | null = null
       const processed = await postcss([
         postcssModules({
-          getJSON: (filePath, jsonContent) => {
+          getJSON: (_, jsonContent) => {
             json = JSON.stringify(jsonContent, null, 2)
             return json
           }
         })
       ]).process(css, { from: undefined })
       const jsContents = `
-        const style = document.createElement('style');
-        style.setAttribute('name', 'lm-injected-css-module');
-        style.setAttribute('source', '${args.path}');
-        style.textContent = \`${processed.css}\`;
-        document.head.appendChild(style);
-        const styles = ${json};
-        export default styles;
-      `;
+        const injectStyles = window.LM_PAGE?.Apps?.injectStyles;
+        if (injectStyles !== undefined) injectStyles('css', \`${processed.css}\`, \`${args.path}\`);
+        export default ${json};`;
       return { contents: jsContents, loader: 'js' }
     })
   }

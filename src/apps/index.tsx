@@ -3,7 +3,6 @@ import appConfig from '~/config'
 import { Globals } from '~/shared/globals'
 import { LmHtml } from '~/shared/lm-html'
 import { toString } from '~/utils/cast'
-import { injectStylesheet } from '~/utils/dynamic-css'
 import isArrayOf from '~/utils/is-array-of'
 import randomUUID from '~/utils/random-uuid'
 
@@ -17,21 +16,32 @@ export namespace Apps {
     UI = 'ui'
   }
 
-  export async function toStringOrVNodeHelper (input: unknown): Promise<string | VNode> {
-    if (input instanceof Node) return await LmHtml.render(input)
-    if (isArrayOf<Node>(input, [Node]) || input instanceof NodeList) {
-      const renderingNodes = [...input].map(node => LmHtml.render(node))
-      const renderedNodes = await Promise.all(renderingNodes)
-      return <>{renderedNodes}</>
-    }
-    return toString(input)
+  export const rendered: Array<{
+    id: string | null
+    name: string | null
+    props: unknown
+    app: App
+  }> = []
+
+  export const globalStyles = new Set<{
+    type: 'url' | 'css'
+    content: string
+    name?: string
+  }>()
+  export function refreshGlobalStyles () { rendered.forEach(item => item.app.forceUpdate()) }
+  export function injectStyles (as: 'url' | 'css', content: string, name?: string) {
+    const exists = [...globalStyles].find(item => (item.type === as
+      && item.content === content
+      && item.name === name))
+    if (exists !== undefined) return
+    globalStyles.add({ type: as, content, name })
+    refreshGlobalStyles()
   }
 
   type RendererModuleResult<T extends Record<string, unknown> = {}> = { props: T, Component: ComponentClass }
   export type SyncRendererModule<T extends Record<string, unknown> = {}> = (unknownProps: unknown, id: string) => RendererModuleResult<T>
   export type AsyncRendererModule<T extends Record<string, unknown> = {}> = (unknownProps: unknown, id: string) => Promise<RendererModuleResult<T>>
   export type RendererModule<T extends Record<string, unknown> = {}> = SyncRendererModule<T> | AsyncRendererModule<T>
-
   export async function load (name: Name): Promise<RendererModule | undefined> {
     try {
       let loaded: RendererModule | null = null
@@ -42,8 +52,9 @@ export namespace Apps {
       if (name === Name.SCRLLGNGN) { loaded = (await import('~/apps/scrllgngn')).default }
       if (name === Name.UI) {
         const uiStyles = appConfig.paths.STYLES_UI_URL.toString()
+        injectStyles('url', uiStyles)
         const logger = Globals.retrieve(Globals.GlobalKey.LOGGER)
-        injectStylesheet(uiStyles, () => logger?.log('Styles', '%cStylesheet loaded', 'font-weight: 800;', uiStyles))
+        logger?.log('Styles', '%cStylesheet injected', 'font-weight: 800;', uiStyles)
         loaded = (await import('~/apps/ui')).default
       }
       if (loaded === null) throw null
@@ -53,26 +64,16 @@ export namespace Apps {
     }
   }
 
-  export const rendered: Array<{
-    id: string | null
-    name: string | null
-    props: unknown
-    app: App
-  }> = []
-
   export type AppProps = {
     component: ComponentClass
     props: Record<string, unknown>
     identifier: string | null
     name: string | null
   }
-
   export type AppState = AppProps['props']
-
   export type AppObjPropsSetter = Partial<AppState>
   export type AppFuncPropsSetter = (curr: AppState) => AppState | null
   export type AppPropsSetter = AppObjPropsSetter | AppFuncPropsSetter
-
   export class App extends Component<AppProps, AppState> {
     identifier: string | null = null
     name: string | null = null
@@ -91,15 +92,8 @@ export namespace Apps {
     }
 
     updateProps (propsSetter: AppPropsSetter) {
-      if (typeof propsSetter === 'function') {
-        this.setState(propsSetter)
-      } else {
-        const newState: AppState = {
-          ...this.state, 
-          ...propsSetter
-        }
-        this.setState(() => ({ ...newState }))
-      }
+      if (typeof propsSetter === 'function') this.setState(propsSetter)
+      else this.setState(() => ({ ...this.state,  ...propsSetter }))
     }
 
     render () {
@@ -109,7 +103,13 @@ export namespace Apps {
         ? `${state.customClass} lm-app`
         : 'lm-app'
       const childProps = { ...this.state, customClass } as typeof state
-      return <ChildComp {...childProps} />
+      return <>
+        {[...globalStyles].map(item => item.type === 'css'
+          ? <style name={item.name}>{item.content}</style>
+          : <link name={item.name} rel='stylesheet' href={item.content} />
+        )}
+        <ChildComp {...childProps} />
+      </>
     }
   }
 
@@ -139,5 +139,15 @@ export namespace Apps {
     })
     const apps = foundAppsDetails.map(details => details.app)
     apps.forEach(app => app.updateProps(updater))
+  }
+
+  export async function toStringOrVNodeHelper (input: unknown): Promise<string | VNode> {
+    if (input instanceof Node) return await LmHtml.render(input)
+    if (isArrayOf<Node>(input, [Node]) || input instanceof NodeList) {
+      const renderingNodes = [...input].map(node => LmHtml.render(node))
+      const renderedNodes = await Promise.all(renderingNodes)
+      return <>{renderedNodes}</>
+    }
+    return toString(input)
   }
 }

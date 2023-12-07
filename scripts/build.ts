@@ -7,11 +7,9 @@ import { glob } from 'glob'
 import * as sass from 'sass'
 import { debounce } from 'throttle-debounce'
 import { build as esbuild, BuildOptions } from 'esbuild'
-import { sassPlugin, postcssModules } from 'esbuild-sass-plugin'
 import inlineImageModule from 'esbuild-plugin-inline-image'
 import * as config from './config.js'
 import lmScssModulesPlugin from './scssModulesEsbuildPlugin.js'
-import lmScssPlugin from './scssEsbuildPlugin.js'
 
 // This in order to handle wrong typings from the lib I guess
 const inlineImagePulgin = inlineImageModule as unknown as typeof inlineImageModule.default
@@ -44,17 +42,7 @@ const bundleOptions = (otherEntries: BuildOptions['entryPoints'] = {}): BuildOpt
     inlineImagePulgin({
       limit: -1
     }),
-    // lmScssModulesPlugin,
-    // lmScssPlugin,
-    sassPlugin({
-      type: 'style',
-      filter: /style(s)?\.module\.scss/,
-      transform: postcssModules({})
-    }),
-    sassPlugin({
-      type: 'style',
-      filter: /style(s)?\.scss/
-    })
+    lmScssModulesPlugin
   ],
   assetNames: 'assets/[name].[hash]',
   loader: {

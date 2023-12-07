@@ -1,7 +1,8 @@
 import appConfig from '~/config'
 import getHeaderElements from '~/shared/get-header-element'
-import { Darkdouille } from '~/shared/darkdouille'
+import { Apps } from '~/apps'
 import { Analytics } from '~/shared/analytics'
+import { Darkdouille } from '~/shared/darkdouille'
 import { toString, toNumber, toBoolean } from '~/utils/cast'
 import { injectCssRule } from '~/utils/dynamic-css'
 import interpolate, { ratio } from '~/utils/interpolate'
@@ -127,7 +128,7 @@ export namespace Config {
         } else {
           injected += toString(value)
         }
-        injectCssRule(injected, `lm-page-config-css-${window.crypto.randomUUID()}`)
+        Apps.injectStyles('css', injected, 'lm-page-config-css')
         logger?.log('Apply config', '%cCSS injected\n', 'font-weight: 800;', injected)
       }
       // SCALE
@@ -135,7 +136,7 @@ export namespace Config {
         const valueIsRecord = Darkdouille.valueIsRecord(value)
         if (!valueIsRecord) return
         const name = toString(value.name)
-        const root = value.root !== undefined ? toString(value.root) : ':root'
+        const root = value.root !== undefined ? toString(value.root) : ':host'
         const bounds = Array.isArray(value.bounds)
           ? value.bounds.map(val => toNumber(val))
           : undefined
@@ -195,7 +196,7 @@ export namespace Config {
             else { thisBreakpointCss += `}}` }
             return thisBreakpointCss
           }).join('')
-          injectCssRule(scaleCss, 'lm-page-scale')
+          Apps.injectStyles('css', scaleCss, 'lm-page-config-scale')
           logger?.log('Apply config', `%cScale created – ${name}\n`, 'font-weight: 800;', `\n${scaleCss.trim()}`)
       }
       // HANDLERS_FILE

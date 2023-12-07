@@ -8,6 +8,7 @@ import http from 'http'
 import { glob } from 'glob'
 import cors from 'cors'
 import { lookup } from 'mime-types'
+import { JSDOM } from 'jsdom'
 
 const { readFile, readdir } = fs.promises
 
@@ -131,7 +132,12 @@ app.use('/pages', async (req, res, next) => {
   try {
     const fileContent = await readFile(HTML_TARGET, { encoding: 'utf-8' })
     if (!req.originalUrl.match(/\/$/)) return res.redirect(`${req.originalUrl}/`)
-    return res.type('text/html').send(fileContent)
+    const dom = new JSDOM(fileContent)
+    const styleElement = dom.window.document.createElement('style')
+    styleElement.innerHTML += 'html, body { margin: 0; padding: 0 }'
+    dom.window.document.head.append(styleElement)
+    const domStr = dom.window.document.documentElement.outerHTML
+    return res.type('text/html').send(domStr)
   } catch (err) {
     try {
       const fileContent = await readFile(TARGET, { encoding: 'utf-8' })

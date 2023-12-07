@@ -1,7 +1,6 @@
 import { render as preactRender } from 'preact'
 import appConfig from '~/config'
 import { Apps } from '~/apps'
-
 import { Analytics } from '~/shared/analytics'
 import { Config } from '~/shared/config'
 import { Events } from '~/shared/events'
@@ -9,13 +8,11 @@ import getHeaderElements from '~/shared/get-header-element'
 import { Globals, LmPage } from '~/shared/globals'
 import { LmHtml } from '~/shared/lm-html'
 import { Darkdouille } from '~/shared/darkdouille'
-
 import absoluteModulo from '~/utils/absolute-modulo'
 import arrayRandomPick from '~/utils/array-random-pick'
 import bem from '~/utils/bem'
 import * as Cast from '~/utils/cast'
 import clamp from '~/utils/clamp'
-import { injectStylesheet } from '~/utils/dynamic-css'
 import generateNiceColor from '~/utils/generate-nice-color'
 import getCurrentDownlink from '~/utils/get-current-downlink'
 import interpolate from '~/utils/interpolate'
@@ -34,7 +31,6 @@ import selectorToElement from '~/utils/selector-to-element'
 import Logger from '~/utils/silent-log'
 import { debounce, throttle } from '~/utils/throttle-debounce'
 import transition from '~/utils/transition'
-import toString from './utils/darkdouille/transformers/toString'
 
 /* * * * * * * * * * * * * * * * * * * * * *
  * EXPORT & GLOBALS
@@ -109,9 +105,12 @@ async function init () {
   // Load styles
   const mainStyles = appConfig.paths.STYLES_INDEX_URL.toString()
   const devStyles = appConfig.paths.STYLES_DEV_URL.toString()
-  injectStylesheet(mainStyles, () => logger.log('Styles', '%cStylesheet loaded', 'font-weight: 800;', mainStyles))
-  if (appConfig.env === 'developpment') injectStylesheet(devStyles, () => logger.log('Styles', '%cStylesheet loaded', 'font-weight: 800;', devStyles))
-
+  Apps.injectStyles('url', mainStyles)
+  logger.log('Styles', '%cStylesheet injected', 'font-weight: 800;', mainStyles)
+  if (appConfig.env === 'developpment') {
+    Apps.injectStyles('url', devStyles)
+    logger.log('Styles', '%cStylesheet injected', 'font-weight: 800;', devStyles)
+  }
   /* INLINE CONFIG * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
   // Find, merge and evaluate inline page data
@@ -260,12 +259,14 @@ async function init () {
         const { content } = slotData
         let clonedContent: Node[] | string
         if (content instanceof NodeList) { clonedContent = [...content].map(node => node.cloneNode(true)) }
-        else { clonedContent = toString()(content) }
+        else { clonedContent = Darkdouille.transformers.toString()(content) }
         const renderedContent = typeof clonedContent === 'string'
           ? clonedContent
           : await Promise.all(clonedContent.map(node => LmHtml.render(node)))
         target.innerHTML = ''
-        preactRender(<>{renderedContent}</>, target)
+        target.classList.add('lm-slot')
+        const shadow = target.attachShadow({ mode: 'open' })
+        preactRender(<>{renderedContent}</>, shadow)
         pageSlotsRenderedMap.add(target)
         return {
           ...slotData,

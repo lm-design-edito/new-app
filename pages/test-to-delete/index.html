@@ -13,6 +13,33 @@
       <data class='CHUNKS'>
         <string class="referenced">Je suis un texte référencé</string>
       </data>
+      <data class='CONFIG'>
+        <data>
+          <string class='name'>css</string>
+          <string class='value'>.lm-app { opacity: .6 }</string>
+        </data>
+        <data>
+          <string class='name'>scale</string>
+          <data class='value'>
+            <string class='name'>un-nom</string>
+            <string class='root'>:host</string>
+            <data class='bounds'>
+              <number>320</number>
+              <number>1440</number>
+            </data>
+            <data class='low'>
+              <number>12</number>
+              <number>14</number>
+            </data>
+            <data class='high'>
+              <number>48</number>
+              <number>96</number>
+            </data>
+            <number class='breakpoints'>12</number>
+            <number class='levels'>32</number>
+          </data>
+        </data>
+      </data>
       <data class='SLOTS'>
         <data>
           <data class='destination'>
@@ -25,8 +52,8 @@
                   <record>
                     <string class="layout">left-half</string>
                     <lm-html class="content">
-                      <div style="height: 2000px; background: coral;">
-                        <ref>/CHUNKS/referenced</ref>
+                      <div style="height: 2000px; background: coral; font-size: var(--un-nom-level-1);">
+                        <ref nowrap>/CHUNKS/referenced</ref>
                       </div>
                     </lm-html>
                   </record>
