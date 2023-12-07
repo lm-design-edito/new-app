@@ -1,5 +1,5 @@
 // ENVIRONMENT VARIABLES
-const env = process.env.NODE_ENV === 'production' ? 'production' : 'developpment'
+const env = process.env.NODE_ENV === 'production' ? 'production' : 'developpment' as 'production' | 'developpment'
 const port = process.env.PORT ?? '3000'
 const builtOn = process.env.BUILT_ON ?? ''
 const builtOnReadable = process.env.BUILT_ON_READABLE ?? ''
@@ -15,10 +15,9 @@ const SCRIPTS_INDEX_URL = new URL(`${SHARED_URL.href.replace(/\/$/, '')}/index.j
 const SHARED_ASSETS_URL = new URL(`${SHARED_URL.href.replace(/\/$/, '')}/assets`)                       // shared/assets/
 const SHARED_ASSETS_ICONS_URL = new URL(`${SHARED_ASSETS_URL.href.replace(/\/$/, '')}/ui-icons`)        // shared/assets/ui-icons/
 const STYLES_URL = new URL(`${SHARED_URL.href.replace(/\/$/, '')}/styles`)                              // shared/styles/
-const STYLES_INDEX_URL = new URL(`${STYLES_URL.href.replace(/\/$/, '')}/index.css`)                     // shared/styles/index.css
 const STYLES_DEV_URL = new URL(`${STYLES_URL.href.replace(/\/$/, '')}/developpment.css`)                // shared/styles/developpment.css
-const STYLES_ARTICLE_URL = new URL(`${STYLES_URL.href.replace(/\/$/, '')}/article.css`)                 // shared/styles/article.css
-const STYLES_UI_URL = new URL(`${STYLES_URL.href.replace(/\/$/, '')}/ui.css`)                           // shared/styles/ui.css
+const STYLES_INDEX_URL = new URL(`${STYLES_URL.href.replace(/\/$/, '')}/index.css`)                     // shared/styles/index.css
+const STYLES_UI_URL = new URL(`${STYLES_URL.href.replace(/\/$/, '')}/ui.css`)                           // shared/styles/ui.css.css
 
 // OTHER
 const eventHandlersAllowedUrlSchemes: Array<Partial<URL>> = [
@@ -42,10 +41,8 @@ export default {
     SCRIPTS_INDEX_URL,
     SHARED_ASSETS_URL,
     SHARED_ASSETS_ICONS_URL,
-    STYLES_URL,
-    STYLES_INDEX_URL,
     STYLES_DEV_URL,
-    STYLES_ARTICLE_URL,
+    STYLES_INDEX_URL,
     STYLES_UI_URL
   },
   dataSourceSelector: 'data.dkdll',

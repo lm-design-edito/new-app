@@ -10,7 +10,8 @@ import { build as esbuild, BuildOptions } from 'esbuild'
 import { sassPlugin, postcssModules } from 'esbuild-sass-plugin'
 import inlineImageModule from 'esbuild-plugin-inline-image'
 import * as config from './config.js'
-import myScssPlugin from './scssEsbuildPlugin.js'
+import lmScssModulesPlugin from './scssModulesEsbuildPlugin.js'
+import lmScssPlugin from './scssEsbuildPlugin.js'
 
 // This in order to handle wrong typings from the lib I guess
 const inlineImagePulgin = inlineImageModule as unknown as typeof inlineImageModule.default
@@ -43,7 +44,8 @@ const bundleOptions = (otherEntries: BuildOptions['entryPoints'] = {}): BuildOpt
     inlineImagePulgin({
       limit: -1
     }),
-    // myScssPlugin,
+    // lmScssModulesPlugin,
+    // lmScssPlugin,
     sassPlugin({
       type: 'style',
       filter: /style(s)?\.module\.scss/,

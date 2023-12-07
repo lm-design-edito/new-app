@@ -261,7 +261,6 @@ async function init () {
         let clonedContent: Node[] | string
         if (content instanceof NodeList) { clonedContent = [...content].map(node => node.cloneNode(true)) }
         else { clonedContent = toString()(content) }
-        console.log(clonedContent)
         const renderedContent = typeof clonedContent === 'string'
           ? clonedContent
           : await Promise.all(clonedContent.map(node => LmHtml.render(node)))

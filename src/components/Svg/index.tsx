@@ -1,5 +1,6 @@
 import { Component, JSX } from 'preact'
 import bem, { BEM } from '~/utils/bem'
+import styles from './styles.module.scss'
 
 interface Props {
   className?: string
@@ -87,17 +88,17 @@ class Svg extends Component<Props, State> {
 
   stringToCSS(string: string): JSX.CSSProperties {
     const properties = string.trim().split(';')
-
     const cleanProperties: JSX.CSSProperties = {}
-
     properties
       .filter((property: string) => property !== '')
       .map((property: string) => {
-        const key = property.split(':')[0].trim()
-        const value = property.split(':')[1].trim()
+        const key = property.split(':')[0]?.trim()
+        const value = property.split(':')[1]?.trim()
+        return { key, value }
+      }).forEach(({ key, value }) => {
+        if (key === undefined || value === undefined) return;
         cleanProperties[key] = value
       })
-
     return cleanProperties
   }
 
@@ -116,6 +117,7 @@ class Svg extends Component<Props, State> {
     const classes = bem(attributes.class ?? '')
       .block(props.className)
       .block(this.bem.value)
+      .block(styles['wrapper'])
     
     const inlineStyle = { 
       ...(attributes.style ? this.stringToCSS(attributes.style as string) : {}),
