@@ -3,7 +3,6 @@ import { Component, JSX, VNode } from 'preact'
 import { throttle } from '~/utils/throttle-debounce'
 import clamp from '~/utils/clamp'
 import bem from '~/utils/bem'
-import { injectCssRule } from '~/utils/dynamic-css' // [WIP] use injectCssRule everywhere
 
 import IntersectionObserverComponent from '~/components/IntersectionObserver'
 import ResizeObserverComponent from '~/components/ResizeObserver'
@@ -199,9 +198,10 @@ type StatePageData = PropsPageData & {
 }
 
 export type State = {
-  pages: Map<number, StatePageData>,
-  blocks: Map<BlockIdentifier, StateBlockData>,
-  cssUrlDataMap: Map<string, string>
+  pages: Map<number, StatePageData>
+  blocks: Map<BlockIdentifier, StateBlockData>
+  stylesheetsUrls: Set<string>
+  cssStrings: Set<string>
   prevPropsPages?: PropsPageData[]
   currPagePos?: number
   prevPagePos?: number
@@ -352,7 +352,7 @@ export default class Scrollgneugneu extends Component<Props, State> {
     if (name === 'right-half') return '1/2(1/2)_1'
   }
 
-  static generateLayoutClasses (
+  generateLayoutClasses (
     position: 'scrolling'|'sticky',
     _layout?: LayoutName,
     _mobileLayout?: LayoutName
@@ -361,6 +361,7 @@ export default class Scrollgneugneu extends Component<Props, State> {
       layoutNameToFormula: toFormula,
       layoutPosAndFormulaToCssProps: toCss
     } = Scrollgneugneu
+    const { injectCss } = this
     const layout = (toFormula(_layout ?? '') ?? _layout) as LayoutFormula|undefined
     const mobileLayout = (toFormula(_mobileLayout ?? '') ?? _mobileLayout) as LayoutFormula|undefined
     const layoutCss = layout !== undefined ? toCss(position, layout) : undefined
@@ -397,7 +398,7 @@ export default class Scrollgneugneu extends Component<Props, State> {
       ].join('')
       const mediaQuery = '@media (min-width: 1025px)'
       const cssBlock = `${mediaQuery} { ${selectors} { ${layoutCss} } }`
-      injectCssRule(cssBlock, `${layoutClass}____${position}`)
+      injectCss(cssBlock)
     }
     if (mobileLayoutClass !== undefined) {
       classes.push(mobileLayoutClass)
@@ -408,7 +409,7 @@ export default class Scrollgneugneu extends Component<Props, State> {
       ].join('')
       const mediaQuery = '@media (max-width: 1024px)'
       const cssBlock = `${mediaQuery} { ${selectors} { ${mobileLayoutCss} } }`
-      injectCssRule(cssBlock, `${mobileLayoutClass}____${position}`)
+      injectCss(cssBlock)
     }
     return classes
   }
@@ -461,7 +462,9 @@ export default class Scrollgneugneu extends Component<Props, State> {
   constructor (props: Props) {
     super(props)
     this.getBgColorTransitionDuration = this.getBgColorTransitionDuration.bind(this)
-    this.loadCss = this.loadCss.bind(this)
+    this.generateLayoutClasses = this.generateLayoutClasses.bind(this)
+    this.injectStylesheet = this.injectStylesheet.bind(this)
+    this.injectCss = this.injectCss.bind(this)
     this.boundsDetection = this.boundsDetection.bind(this)
     this.getThresholdRect = this.getThresholdRect.bind(this)
     this.throttledGetThresholdRect = this.throttledGetThresholdRect.bind(this)
@@ -483,7 +486,6 @@ export default class Scrollgneugneu extends Component<Props, State> {
     this.cleanRefsMaps = this.cleanRefsMaps.bind(this)
     this.getCurrentPageData = this.getCurrentPageData.bind(this)
     this.getPreviousPageData = this.getPreviousPageData.bind(this)
-    this.injectModulesStyles = this.injectModulesStyles.bind(this)
     this.StickyBlocks = this.StickyBlocks.bind(this)
     this.ScrollingBlocks = this.ScrollingBlocks.bind(this)
   }
@@ -491,7 +493,8 @@ export default class Scrollgneugneu extends Component<Props, State> {
   state: State = {
     pages: new Map(),
     blocks: new Map(),
-    cssUrlDataMap: new Map(),
+    stylesheetsUrls: new Set(),
+    cssStrings: new Set(),
     currPagePos: 0
   }
 
@@ -523,35 +526,21 @@ export default class Scrollgneugneu extends Component<Props, State> {
     window.removeEventListener('scroll', handleWindowScroll)
   }
 
-  /**
-   * Loads a CSS file from url and stores data in state,
-   * if something goes wrong, the loading is retried
-   * up to three times (500ms delay) before giving up
-   */
-  loadCssAttemptsMap = new Map<string, number>()
-  async loadCss (url: string): Promise<void> {
-    const {
-      loadCss,
-      loadCssAttemptsMap,
-      state
-    } = this
-    const alreadyLoadedData = state.cssUrlDataMap.get(url)
-    if (alreadyLoadedData !== undefined) return
-    const attemptsCnt = loadCssAttemptsMap.get(url) ?? 0
-    if (attemptsCnt >= 3) return
-    loadCssAttemptsMap.set(url, attemptsCnt + 1)
-    try {
-      const requestResponse = await window.fetch(url)
-      const responseData = await requestResponse.text()
-      this.setState(curr => {
-        const currCssFilesMap = curr.cssUrlDataMap
-        const newCssFilesMap = new Map(currCssFilesMap ?? [])
-        newCssFilesMap.set(url, responseData)
-        return { ...curr, cssUrlDataMap: newCssFilesMap }
-      })
-    } catch (err) {
-      window.setTimeout(() => loadCss(url), 500)
-    }
+  injectStylesheet (url: string): void {
+    this.setState(curr => {
+      const stylesheetsUrls = new Set<string>(curr.stylesheetsUrls)
+      stylesheetsUrls.add(url)
+      return { ...curr, stylesheetsUrls }
+    })
+  }
+
+  injectCss (cssString: string): void {
+    this.setState(curr => {
+      const cssStrings = new Set<string>(curr.cssStrings)
+      if (cssStrings.has(cssString)) return null
+      cssStrings.add(cssString)
+      return { ...curr, cssStrings }
+    })
   }
 
   /* * * * * * * * * * * * * * * * * * * * * *
@@ -1000,33 +989,17 @@ export default class Scrollgneugneu extends Component<Props, State> {
 
   wrapperBemClass = bem('lm-scrllgngn')
 
-  // [WIP] Take back the styles load and display to BlockRenderer 
-  injectModulesStyles () {
-    const { state } = this
-    const { cssUrlDataMap } = state
-    const fullCssStr = Array
-      .from(cssUrlDataMap)
-      .map(([url, data]) => {
-        const cssStr = data
-          .trim()
-          .replace(/\s+/igm, ' ')
-        return `/*${url}*/\n${cssStr}`
-      })
-    fullCssStr
-      .forEach(cssBlock => injectCssRule(cssBlock))
-  }
-
   StickyBlocks () {
-    const { generateLayoutClasses } = Scrollgneugneu
     const {
       props,
       state,
       blocksRefsMap,
       wrapperBemClass,
       isBlockSticky,
+      generateLayoutClasses,
       getBlockStatus,
       getBlockDistanceFromDisplay,
-      loadCss,
+      injectStylesheet,
       throttledHandleBlockResize,
     } = this
     const { stickyBlocksLazyLoadDistance } = props
@@ -1112,7 +1085,7 @@ export default class Scrollgneugneu extends Component<Props, State> {
                     type={type}
                     content={content}
                     context={_context}
-                    cssLoader={loadCss} />
+                    injectStylesheet={injectStylesheet} />
                 })()}
               </TransitionsWrapper>
             </div>
@@ -1123,14 +1096,14 @@ export default class Scrollgneugneu extends Component<Props, State> {
   }
 
   ScrollingBlocks () {
-    const { generateLayoutClasses } = Scrollgneugneu
     const {
       props,
       state,
       blocksRefsMap,
       pagesRefsMap,
       wrapperBemClass,
-      loadCss,
+      generateLayoutClasses,
+      injectStylesheet,
       isBlockSticky,
       getBlockStatus,
       handlePageChange,
@@ -1211,7 +1184,7 @@ export default class Scrollgneugneu extends Component<Props, State> {
                   <BlockRenderer
                     type={type}
                     content={content}
-                    cssLoader={loadCss} />
+                    injectStylesheet={injectStylesheet} />
                 </div>
               </ResizeObserverComponent>
             })
@@ -1233,7 +1206,6 @@ export default class Scrollgneugneu extends Component<Props, State> {
       getBgColorTransitionDuration,
       handlePaginatorResize,
       getCurrentPageData,
-      injectModulesStyles,
       StickyBlocks,
       ScrollingBlocks
     } = this
@@ -1284,9 +1256,6 @@ export default class Scrollgneugneu extends Component<Props, State> {
       scrollPanelBemClass.value,
       styles['scroll-panel']
     ]
-
-    // Modules css
-    injectModulesStyles()
     
     // Return virtual DOM
     return <div
@@ -1299,6 +1268,12 @@ export default class Scrollgneugneu extends Component<Props, State> {
         '--bg-color-transition-duration': getBgColorTransitionDuration(),
         '--bg-color': currPageData?.bgColor
       }}>
+      {/* STYLESHEETS & INLINE CSS */}
+      <>
+        {[...state.stylesheetsUrls].map(url => <link rel='stylesheet' href={url} />)}
+        {[...state.cssStrings].map(cssString => <style>{cssString}</style>)}
+      </>
+      
 
       {/* STICKY BLOCKS */}
       <StickyBlocks />

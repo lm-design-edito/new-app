@@ -3,7 +3,7 @@ import { BlockContext, createBlockContext, diffContexts } from '../../'
 
 type Props = {
   url?: string
-  cssLoader?: (url: string) => Promise<void>
+  injectStylesheet?: (url: string) => void
   context?: BlockContext
 }
 
@@ -101,7 +101,7 @@ export default class ModuleBlockRenderer extends Component<Props, State> {
 
   async loadModule () {
     const { props, aSetState } = this
-    const { url, cssLoader } = props
+    const { url, injectStylesheet } = props
     if (url === undefined) return await aSetState({
       status: null,
       moduleData: null,
@@ -113,7 +113,7 @@ export default class ModuleBlockRenderer extends Component<Props, State> {
       moduleLoadError: null
     })
     try {
-      const importedData = (await import(/* vite-ignore */ url)) as unknown
+      const importedData = (await import(url)) as unknown
       const importedIsNotObject = typeof importedData !== 'object'
       const importedIsNullish = importedData === null || importedData === undefined
       if (importedIsNotObject || importedIsNullish) throw new Error('Imported module is not an object')
@@ -126,9 +126,9 @@ export default class ModuleBlockRenderer extends Component<Props, State> {
       if (!importedHasInitFunc) throw new Error('Imported module must export a function named init')
       if (!importedHasUpdateFunc) throw new Error('Imported module must export a function named update')
       const moduleData = importedData as ModuleData
-      if (cssLoader !== undefined && importedHasStyles) {
+      if (injectStylesheet !== undefined && importedHasStyles) {
         const styles = (importedDataAsAny.styles as string[])
-        styles.forEach(url => cssLoader(url))
+        styles.forEach(url => injectStylesheet(url))
       }
       await aSetState({
         status: 'loaded',

@@ -7,21 +7,20 @@ type Props = {
   type?: 'module' | 'html'
   content?: string|VNode
   context?: BlockContext
-  // [WIP] use dynamic-css
-  cssLoader?: (url: string) => Promise<void>
+  injectStylesheet?: (url: string) => void
 }
 
 export default class BlockRenderer extends Component<Props> {
   render() {
     const { props } = this
-    const { type, content, context, cssLoader } = props
+    const { type, content, context, injectStylesheet } = props
     switch (type) {
       case 'html':
       case undefined: return <HtmlBlockRenderer content={content} />
       case 'module': return <ModuleBlockRenderer
         url={typeof content === 'string' ? content : ''}
         context={context}
-        cssLoader={cssLoader} />
+        injectStylesheet={injectStylesheet} />
       default: return <></>
     }
   }

@@ -10,14 +10,33 @@
     
     <!-- Config -->
     <data class='dkdll' style='display: none;'>
+      <data class='CHUNKS'>
+        <string class="referenced">Je suis un texte référencé</string>
+      </data>
       <data class='SLOTS'>
         <data>
           <data class='destination'>
             <string class='selector'>.dupont-wrapper</string>
           </data>
           <lm-html class='content'>
-            <comp name="ui">
-              <string class="component">toggle</string>
+            <comp name="scrllgngn">
+              <array class="pages">
+                <array class="blocks">
+                  <record>
+                    <string class="layout">left-half</string>
+                    <lm-html class="content">
+                      <div style="height: 2000px; background: coral;">
+                        <ref>/CHUNKS/referenced</ref>
+                      </div>
+                    </lm-html>
+                  </record>
+                  <record>
+                    <string class="type">module</string>
+                    <string class="depth">back</string>
+                    <string class="content">http://localhost:3000/pages/test-to-delete/module.js</string>
+                  </record>
+                </array>
+              </array>
             </comp>
           </lm-html>
         </data>
