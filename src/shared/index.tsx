@@ -62,7 +62,7 @@ Globals.expose(Globals.GlobalKey.LM_HTML, LmHtml)
 Globals.expose(Globals.GlobalKey.LOGGER, logger)
 Globals.expose(Globals.GlobalKey.INIT, init)
 Globals.expose(Globals.GlobalKey.UTILS, utils)
-export { meta, Analytics, Apps, Darkdouille, Events, LmHtml, Logger, logger, utils, init }
+export { meta, Analytics, Apps, Darkdouille, Events, LmHtml, Logger, logger, init, utils }
 
 /* * * * * * * * * * * * * * * * * * * * * *
  * INIT ON LOAD
@@ -103,7 +103,14 @@ async function init () {
   lmPageStylesheets.forEach(stylesheetNode => stylesheetNode.remove())
 
   // Load styles
+  const fontsStyles = appConfig.paths.STYLES_FONTS_URL.toString()
   const mainStyles = appConfig.paths.STYLES_INDEX_URL.toString()
+  const fontsLinkElt = document.createElement('link')
+  fontsLinkElt.setAttribute('rel', 'stylesheet')
+  fontsLinkElt.setAttribute('href', fontsStyles)
+  Apps.injectStyles('url', fontsStyles)
+  document.head.append(fontsLinkElt)
+  logger.log('Styles', '%cStylesheet injected', 'font-weight: 800;', fontsStyles)
   Apps.injectStyles('url', mainStyles)
   logger.log('Styles', '%cStylesheet injected', 'font-weight: 800;', mainStyles)
   /* INLINE CONFIG * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
