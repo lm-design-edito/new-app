@@ -15,6 +15,7 @@ import * as Cast from '~/utils/cast'
 import clamp from '~/utils/clamp'
 import generateNiceColor from '~/utils/generate-nice-color'
 import getCurrentDownlink from '~/utils/get-current-downlink'
+import getNodeAncestors from '~/utils/get-node-ancestors'
 import interpolate from '~/utils/interpolate'
 import isArrayOf from '~/utils/is-array-of'
 import isConstructorFunction from '~/utils/is-constructor-function'
@@ -24,6 +25,7 @@ import isNullish from '~/utils/is-nullish'
 import isRecord from '~/utils/is-record'
 import isValidClassName from '~/utils/is-valid-css-class-name'
 import memoize from '~/utils/memoize'
+import randomUUID from '~/utils/random-uuid'
 import recordFormat from '~/utils/record-format'
 import replaceAll from '~/utils/replace-all'
 import roundNumbers from '~/utils/round-numbers'
@@ -47,10 +49,10 @@ const meta: LmPage[Globals.GlobalKey.META] = {
 const logger = new Logger()
 const utils = {
   absoluteModulo,         arrayRandomPick,          bem,                    Cast,
-  clamp,                  generateNiceColor,        getCurrentDownlink,     getHeaderElements,
+  clamp,                  generateNiceColor,        getCurrentDownlink,     getNodeAncestors,     getHeaderElements,
   interpolate,            isArrayOf,                isConstructorFunction,  isFalsy,
   isInEnum,               isNullish,                isRecord,               isValidClassName,
-  memoize,                recordFormat,             replaceAll,             roundNumbers,
+  memoize,                randomUUID,               recordFormat,           replaceAll,           roundNumbers,
   selectorToElement,      throttle,                 debounce,               transition
 }
 Globals.expose(Globals.GlobalKey.META, meta)
@@ -68,7 +70,7 @@ export { meta, Analytics, Apps, Darkdouille, Events, LmHtml, Logger, logger, ini
  * INIT ON LOAD
  * * * * * * * * * * * * * * * * * * * * * */
 const importUrl = new URL(import.meta.url)
-const hasIdleParam = importUrl.searchParams.has('idle');
+const hasIdleParam = importUrl.searchParams.has('idle')
 if (!hasIdleParam) autoInit()
 async function autoInit () {
   const key = Globals.GlobalKey.HAS_AUTO_INIT
@@ -268,7 +270,22 @@ async function init () {
         target.innerHTML = ''
         target.classList.add('lm-slot')
         const shadow = target.attachShadow({ mode: 'open' })
-        preactRender(<>{renderedContent}</>, shadow)
+        const slotInner = document.createElement('div')
+        slotInner.classList.add('lm-slot__inner')
+        const targetAncestors = getNodeAncestors(target)
+        const firstThemedTargetAncestor = targetAncestors.find(elt => {
+          const attr = elt.getAttribute('data-color-mode')
+          if (attr !== null) return true
+          return false
+        })
+        let colorMode: 'light' | 'dark' = 'light'
+        if (firstThemedTargetAncestor !== undefined) {
+          const attr = firstThemedTargetAncestor.getAttribute('data-color-mode')
+          if (attr === 'dark') colorMode = 'dark'
+        }
+        if (colorMode === 'dark') slotInner.setAttribute('data-color-mode', 'dark')
+        shadow.append(slotInner)
+        preactRender(<>{renderedContent}</>, slotInner)
         pageSlotsRenderedMap.add(target)
         return {
           ...slotData,

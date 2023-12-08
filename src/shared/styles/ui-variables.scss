@@ -102,9 +102,10 @@
 }
 
 /* couleurs lightmode fonctionnelles lmui */
-:root, :host,
-:root[data-color-mode="dark"] .lmui-no-dark-mode,
-:host[data-color-mode="dark"] .lmui-no-dark-mode {
+:root,
+:host,
+.lmui-no-dark-mode
+[data-color-mode="dark"] .lmui-no-dark-mode {
 
   /* Backgrounds, containers */
   --lmui-c-article-bg: var(--lmui-c-white);
@@ -218,10 +219,8 @@
 }
 
 /* couleurs darkmode fonctionnelles lmui*/
-:root[data-color-mode="dark"],
-:host[data-color-mode="dark"],
-:root .lmui-no-light-mode,
-:host .lmui-no-light-mode {
+[data-color-mode="dark"],
+.lmui-no-light-mode {
 
   /* Backgrounds, containers */
   --lmui-c-article-bg: var(--lmui-c-charcoal-dark);
