@@ -817,7 +817,7 @@
  *
  * * * * * * * * * * * * * * */
 
-:root {
+:root, :host {
   /* Fonts */
   --lmui-ff-the-antiqua-b:               "The-Antiqua-B-Variable", Garamond, Times, serif;
   --lmui-ff-the-antiqua-b-non-variable:  "The-Antiqua-B", Garamond, Times, serif;

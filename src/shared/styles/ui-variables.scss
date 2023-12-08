@@ -1,5 +1,5 @@
 /* Couleurs lm-site */
-:root {
+:root, :host {
   --lmui-c-white: white;
   --lmui-c-snow-lighter: #FCFCFD;
   --lmui-c-snow-light: #F5F6F8;
@@ -86,13 +86,14 @@
 }
 
 /* Re-définition des variables fonction du contexte */
-:root .lmui-search_s {
+:root .lmui-search_s,
+:host .lmui-search_s {
   --height-autocomplete: 36px;
 }
 
 /* Re-définition des variables fonction du viewport */
 @media (max-width: 600px) {
-  :root {
+  :root, :host {
   --height-autocomplete: 36px;
   --lmui-tab-size-large: 32px;
   --lmui-tab-padding-large: 4px;
@@ -101,8 +102,9 @@
 }
 
 /* couleurs lightmode fonctionnelles lmui */
-:root,
-:root[data-color-mode="dark"] .lmui-no-dark-mode {
+:root, :host,
+:root[data-color-mode="dark"] .lmui-no-dark-mode,
+:host[data-color-mode="dark"] .lmui-no-dark-mode {
 
   /* Backgrounds, containers */
   --lmui-c-article-bg: var(--lmui-c-white);
@@ -216,7 +218,10 @@
 }
 
 /* couleurs darkmode fonctionnelles lmui*/
-:root[data-color-mode="dark"], :root .lmui-no-light-mode {
+:root[data-color-mode="dark"],
+:host[data-color-mode="dark"],
+:root .lmui-no-light-mode,
+:host .lmui-no-light-mode {
 
   /* Backgrounds, containers */
   --lmui-c-article-bg: var(--lmui-c-charcoal-dark);

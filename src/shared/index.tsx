@@ -104,13 +104,8 @@ async function init () {
 
   // Load styles
   const mainStyles = appConfig.paths.STYLES_INDEX_URL.toString()
-  const devStyles = appConfig.paths.STYLES_DEV_URL.toString()
   Apps.injectStyles('url', mainStyles)
   logger.log('Styles', '%cStylesheet injected', 'font-weight: 800;', mainStyles)
-  if (appConfig.env === 'developpment') {
-    Apps.injectStyles('url', devStyles)
-    logger.log('Styles', '%cStylesheet injected', 'font-weight: 800;', devStyles)
-  }
   /* INLINE CONFIG * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
   // Find, merge and evaluate inline page data
