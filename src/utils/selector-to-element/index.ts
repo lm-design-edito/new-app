@@ -12,8 +12,8 @@ export default function selectorToElement (selector: string) {
   const matchedClasses = selector.match(classRegexp) ?? []
   const matchedAttrs = selector.match(attributeRegexp) ?? []
   // Extracted
-  const tag = matchedTags.at(-1) ?? 'div'
-  const id = matchedIds.at(-1) ?? null
+  const tag = matchedTags[matchedTags.length - 1] ?? 'div'
+  const id = matchedIds[matchedIds.length - 1] ?? null
   const classes = matchedClasses.map(matchedClass => matchedClass .replace(/^\./, ''))
   const attributes = matchedAttrs.map(matchedAttr => matchedAttr
     .replace(/^\[/, '')

@@ -213,11 +213,11 @@ class AudioQuote extends Component<Props, State> {
     const { subsContent } = state
     if (subsContent === undefined) return
     const alreadyPronouncedSubs = subsContent.filter(({ start }) => start < state.timecodeInMs)
-    const lastPronouncedSub = alreadyPronouncedSubs.at(-1) ?? null
+    const lastPronouncedSub = alreadyPronouncedSubs[alreadyPronouncedSubs.length - 1] ?? null
     const highestSubId = Math.max(...subsContent.map(sub => sub.id))
     const subsGroupsWithBoundaries: SubGroupBoundaries[] = props.subsGroups?.reduce(
       (acc, curr, currIndex) => {
-        const lastInAcc = acc.at(-1)
+        const lastInAcc = acc[acc.length - 1]
         const startId = lastInAcc === undefined ? 1 : lastInAcc.endId + 1
         const endId = curr
         if (currIndex === (props.subsGroups?.length ?? 0) - 1
@@ -234,8 +234,10 @@ class AudioQuote extends Component<Props, State> {
     ) ?? []
     const alreadyPronouncedGroups = subsGroupsWithBoundaries.filter(group => group.startId <= (lastPronouncedSub?.id ?? 0))
     const activeGroup = alreadyPronouncedGroups.length === 0
-      ? (state.isEnded ? subsGroupsWithBoundaries.at(-1) : subsGroupsWithBoundaries[0])
-      : alreadyPronouncedGroups.at(-1)
+      ? (state.isEnded
+        ? subsGroupsWithBoundaries[subsGroupsWithBoundaries.length - 1]
+        : subsGroupsWithBoundaries[0])
+      : alreadyPronouncedGroups[alreadyPronouncedGroups.length - 1]
     const subsArray: VNode[] = []
     subsGroupsWithBoundaries.map(group => {
       const subsNodes: VNode[] = []
