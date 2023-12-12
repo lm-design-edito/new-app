@@ -1,0 +1,1202 @@
+<data class='CONFIG' action="append">
+  <data>
+    <string class='name'>hideHeader</string>
+    <boolean class='value'>true</boolean>
+  </data>
+  <data>
+    <string class='name'>css</string>
+    <lm-html class='value'>
+      <style>
+        /* ----------- */
+        /* HEADER */
+        /* ----------- */
+        .header-wrapper {
+          z-index: 1000;
+          position: fixed;
+          top: 0;
+          width: 100%;
+          padding: 8px;
+        }
+
+        .header-wrapper .lm-svg .fill-1 {
+          fill: white;
+        }
+        
+        .header-wrapper .lm-svg .fill-2 {
+          fill: rgb(255, 255, 255, .3);
+        }
+
+        /* ----------- */
+        /* ANIMATIONS */
+        /* ----------- */
+        @keyframes title-slide {
+          from {
+            opacity: 0;
+          }
+
+          to {
+            opacity: 1;
+          }
+        }
+
+        /* ----------- */
+        /* PLACEMENT DIV */
+        /* ----------- */
+        /* INTRO */
+        .logo-idees {
+          width: 80vw;
+          filter: drop-shadow(16px 16px 10px black);
+          animation: title-slide ease-in 1s 0s forwards;
+          opacity: 0;
+        }
+
+        .wrapper-logo {
+          display: flex;
+          justify-content: flex-start;
+          align-items: center;
+          padding-top: 3vh;
+          flex-direction: column;
+        }
+
+        .page-wrapper {
+          min-height: 100vh;
+          display: flex;
+          justify-content: center;
+          align-items: flex-start;
+          padding: 10vw;
+        }
+
+        .page-wrapper.page-wrapper_align-left {
+          justify-content: flex-start;
+        }
+
+        .page-wrapper.page-wrapper_align-right {
+          justify-content: flex-end;
+        }
+
+        .wrapper-super-fiche {
+          display: flex;
+          flex-direction: row;
+          justify-content: center;
+        }
+
+        .wrapper-fiche {
+          min-height: 100vh;
+          max-width: 1000px;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: flex-start;
+          padding: 7vw;
+          min-height: 100vh;
+          margin-bottom: 200px;
+        }
+
+        .background-intro {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          width: 100vw;
+          height: 100vh;
+          background: radial-gradient(100.00% 100.00% at 50% 50%, #e9c0d9 10%, #943e90 65%, #270f26 100%);
+        }
+
+        .background-image-intro {
+          width: 100%;
+          animation: title-slide ease-in 2s 0.5s forwards;
+          opacity: 0;
+        }
+
+        /* CONDITION TAILLE ECRAN CHARGEMENT IMAGE */
+
+        .if-1024-under {display: none;}
+        
+        @media (max-width: 1024px) {
+            .if-1024-and-over {display: none;}
+            .if-1024-under {display: inherit;}
+        }
+
+
+
+
+        /* ------- */
+        /* FICHES */
+        .background-fiche {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          width: 100vw;
+          height: 100vh;
+          background: radial-gradient(100.00% 100.00% at 50% 50%, #e9c0d9 10%, #c251bd 50%, #411a3f 100%);
+          padding: 5vh 15vw 0vh 15vw;
+        }
+
+        .background-fiche.bleu {
+          background: radial-gradient(100.00% 100.00% at 50% 50%, #CBD8E1 0%, #34505e 65%, #0c3054 100%);
+        }
+
+        .background-fiche.marron {
+          background: radial-gradient(100.00% 100.00% at 50% 50%, #FDE4C7 0%, #A08130 53%, #734C00 100%);
+        }
+
+        .background-fiche.vert {
+          background: radial-gradient(100.00% 100.00% at 50% 50%, #d2faa2 0%, #6D9B47 30%, #36591b 60%, #234408 100%);
+        }
+
+        .baseline-fiche {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          justify-content: right;
+          width: 100%;
+          gap: 0px;
+        }
+
+        .fiche-image {
+          max-height: 90vh;
+        }
+
+        .fiche-double-ecran {
+          height: 40px;
+          margin-left: 50px;
+          margin-right: 10px;
+        }
+
+        /* ----------- */
+        /* TYPOGRAPHIE */
+        /* ----------- */
+        .intro-noms {
+          color: white;
+          font-size: 30px;
+          line-height: 1.1em;
+          font-family: var(--lmui-ff-marr-sans-condensed);
+          font-weight: 600;
+          word-wrap: break-word;
+          text-align: center;
+          width: 100%;
+          margin-bottom: 20px;
+          animation: title-slide ease-in 2s 1s forwards;
+          opacity: 0;
+        }
+
+        .intro-texte {
+          color: white;
+          font-size: 22px;
+          font-family: var(--lmui-ff-the-antiqua-b);
+          font-style: italic;
+          font-weight: 360;
+          line-height: 1.1em;
+          word-wrap: break-word;
+          text-align: center;
+          margin-bottom: 30px;
+          letter-spacing: -0.025em;
+          width: 100%;
+        }
+
+        .wrapper-fiche {
+          color: white;
+        }
+
+        .fiche-nom {
+          font-size: 36px;
+          font-family: var(--lmui-ff-marr-sans-condensed);
+          font-weight: 600;
+          word-wrap: break-word;
+          text-align: left;
+          letter-spacing: +0.010em;
+          width: 100%;
+          margin-bottom: 10px;
+        }
+
+        .fiche-nom-left {
+          text-align: left;
+        }
+
+        .fiche-nom-qualite {
+          font-family: var(--lmui-ff-giorgio-sans);
+          font-weight: 300;
+          letter-spacing: +0.030em;
+        }
+
+        .fiche-titre {
+          font-size: 50px;
+          font-family: var(--lmui-ff-the-antiqua-b);
+          font-style: italic;
+          font-weight: 390;
+          line-height: 1em;
+          word-wrap: break-word;
+          text-align: left;
+          margin-bottom: 30px;
+          letter-spacing: -0.025em;
+          filter: drop-shadow(3px 3px 10px black);
+        }
+
+        /* -------------------------- */
+        /* --/ CONDITIONS MOBILE / -- */
+
+        @media (max-width: 1024px) {
+          .fiche-titre {
+            font-size: 30px;
+          }
+
+          .fiche-lireaussi {
+            font-size: 13px;
+          }
+
+          .a {
+            text-underline-offset: 0.05em;
+            text-decoration-thickness: 1px;
+          }
+
+          .intro-noms {
+            font-size: 42px;
+            filter: drop-shadow(3px 3px 10px black);
+
+          }
+        }
+
+        .fiche-titre-left {
+          text-align: left;
+        }
+
+        /* .fiche-chapo {
+          font-size: 24px;
+          font-family: var(--lmui-ff-euclid-flex-xl);
+          font-weight: 200;
+          word-wrap: break-word;
+          line-height: 1.1em;
+          margin-bottom: 20px;
+        } */
+
+        .fiche-date {
+          font-size: 20px;
+          font-family: var(--lmui-ff-marr-sans-condensed);
+          font-weight: 500;
+          word-wrap: break-word;
+        }
+
+        .fiche-lireaussi {
+          color: white;
+          font-size: 20px;
+          font-family: var(--lmui-ff-marr-sans-condensed);
+          font-weight: 500;
+          text-transform: uppercase;
+          word-wrap: break-word;
+          letter-spacing: 0.03em;
+        }
+
+        a {
+          text-underline-offset: 0.38em;
+          text-decoration-color: white;
+          text-decoration-thickness: 2px;
+        }
+      </style>
+
+
+
+</lm-html>
+  </data>
+</data>
+<data class='SLOTS' action='append'>
+  <data>
+    <data class='destination'>
+      <string class='selector'>.legendre-wrapper</string>
+      <string class='position'>startof</string>
+      <string class='reference'>body</string>
+    </data>
+    <lm-html class='content'>
+      <comp name='scrllgngn'>
+        <string class='thresholdOffset'>80%</string>
+        <data class='pages'>
+          <!-- -----------------  -->
+          <!-- PAGE INTRODUCTION -->
+          <data>
+            <data class='blocks'>
+              <data>
+                <data class="transitions">
+                  <data>
+                    <string>fade</string>
+                    <number>1000</number>
+                  </data>
+                </data>
+                <string class='depth'>back</string>
+                <lm-html class='content'>
+                  <div class="background-intro">
+                    <img class="background-image-intro if-1024-and-over" src='https://assets-decodeurs.lemonde.fr/redacweb/231207-legendre/front.png'/>
+                    <img class="background-image-intro if-1024-under" src="https://assets-decodeurs.lemonde.fr/redacweb/231207-legendre/front-mobile.png">
+                  </div>
+                </lm-html>
+              </data>
+              <data>
+                <string class='depth'>scroll</string>
+                <lm-html class='content'>
+                  <div class="wrapper-logo">
+                    <img class="logo-idees if-1024-and-over" src="https://assets-decodeurs.lemonde.fr/redacweb/231207-legendre/idees.svg">
+                    <img class="logo-idees if-1024-under" src="https://assets-decodeurs.lemonde.fr/redacweb/231207-legendre/idees-mobile.svg">
+
+                  </div>
+                  <div class="wrapper-super-fiche">
+                    <div class='wrapper-fiche' style="justify-content: flex-start; padding-top: 3vh; padding-left: 0; padding-right: 0; width: 75vw; max-width:none;">
+                      <p class="intro-noms">«&nbsp;Cynthia Fleury, François Dubet, Delphine Horvilleur, Vincent Lemire, Aïcha Limbada, Hugo Micheron, Edith Bruder…&nbsp;» Notre sélection des grands entretiens qui ont marqué l’actualité en 2023
+                      </p>
+                      <!-- <p class="intro-texte">Notre sélection des grands entretiens qui ont marqué l’actualité en 2023</p> -->
+                    </div>
+                  </div>
+                </lm-html>
+              </data>
+            </data>
+          </data>
+          <!-- -------- -->
+          <!--/ PAGE 1 /-->
+          <!-- -------- -->
+          <data>
+            <data class='blocks'>
+              <data>
+                <data class="transitions">
+                  <data>
+                    <string>fade</string>
+                    <number>1000</number>
+                  </data>
+                </data>
+                <string class='depth'>back</string>
+                <lm-html class='content'>
+                  <div class="background-fiche bleu">
+                    <img class="fiche-image" src="https://assets-decodeurs.lemonde.fr/redacweb/231207-legendre/fillieule.png"/>
+                  </div>
+                </lm-html>
+              </data>
+              <data>
+                <string class='depth'>scroll</string>
+                <lm-html class='content'>
+                  <div class="wrapper-super-fiche">
+                    <div class='wrapper-fiche'>
+                      <p class="fiche-nom">Olivier Fillieule<span class="fiche-nom-qualite"> - sociologue</span></p>
+                      <p class="fiche-titre">«&nbsp;La brutalisation des interventions est au cœur de la stratégie de maintien de l’ordre&nbsp;»</p>
+                      <!-- <p class="fiche-chapo">Nasses, contrôles d’identité à grande échelle, gardes à vue, gazage rapproché : le sociologue regrette que la stratégie policière, plutôt que de faire baisser la tension, contribue à amplifier le désordre.</p>  -->
+                      <div class="baseline-fiche">
+                        <p class="fiche-date">30 mars 2023</p>
+                        <img src="https://assets-decodeurs.lemonde.fr/redacweb/231207-legendre/doubleecran.svg" class="fiche-double-ecran"/>
+                        <a class="fiche-lireaussi" href="https://www.lemonde.fr/idees/article/2023/03/27/maintien-de-l-ordre-la-brutalisation-des-interventions-est-aujourd-hui-au-c-ur-de-la-strategie-francaise_6167151_3232.html">Lire l'article</a>
+                      </div>
+                    </div>
+                  </div>
+                </lm-html>
+              </data>
+            </data>
+          </data>
+          <!-- -------- -->
+          <!--/ PAGE 7 /-->
+          <!-- -------- -->
+          <data>
+            <data class='blocks'>
+              <data>
+                <data class="transitions">
+                  <data>
+                    <string>fade</string>
+                    <number>1000</number>
+                  </data>
+                </data>
+                <string class='depth'>back</string>
+                <lm-html class='content'>
+                  <div class="background-fiche vert">
+                    <img class="fiche-image" src="https://assets-decodeurs.lemonde.fr/redacweb/231207-legendre/bruder.png"/>
+                  </div>
+                </lm-html>
+              </data>
+              <data>
+                <string class='depth'>scroll</string>
+                <lm-html class='content'>
+                  <div class="wrapper-super-fiche">
+                    <div class='wrapper-fiche'>
+                      <p class="fiche-nom">Edith Bruder<span class="fiche-nom-qualite"> - historienne</span></p>
+                      <p class="fiche-titre">«&nbsp;Juifs et Noirs ont en partage cette expérience de la stigmatisation&nbsp;»</p>
+                      <!-- <p class="fiche-chapo">L'historienne constate qu’en Occident, Juifs et Noirs sont deux minorités discriminées et renvoyées à l’altérité. S’ils ont entretenu des relations complexes, à la fois de solidarité et de rivalité, leurs histoires restent toutefois distinctes.</p>  -->
+                      <div class="baseline-fiche">
+                        <p class="fiche-date">13 novembre 2023</p>
+                        <img src="https://assets-decodeurs.lemonde.fr/redacweb/231207-legendre/doubleecran.svg" class="fiche-double-ecran"/>
+                        <a class="fiche-lireaussi" href="https://www.lemonde.fr/idees/article/2023/04/24/edith-bruder-historienne-juifs-et-noirs-ont-en-partage-cette-experience-de-la-stigmatisation_6170751_3232.html">Lire l'article</a>
+                      </div>
+                    </div>
+                  </div>
+                </lm-html>
+              </data>
+            </data>
+          </data>
+          <!-- -------- -->
+          <!--/ PAGE 8 /-->
+          <!-- -------- -->
+          <data>
+            <data class='blocks'>
+              <data>
+                <data class="transitions">
+                  <data>
+                    <string>fade</string>
+                    <number>1000</number>
+                  </data>
+                </data>
+                <string class='depth'>back</string>
+                <lm-html class='content'>
+                  <div class="background-fiche marron">
+                    <img class="fiche-image" src="https://assets-decodeurs.lemonde.fr/redacweb/231207-legendre/callamard.png"/>
+                  </div>
+                </lm-html>
+              </data>
+              <data>
+                <string class='depth'>scroll</string>
+                <lm-html class='content'>
+                  <div class="wrapper-super-fiche">
+                    <div class='wrapper-fiche'>
+                      <p class="fiche-nom">Agnès Callamard<span class="fiche-nom-qualite"> - secrétaire générale d’Amnesty International</span></p>
+                      <p class="fiche-titre">«&nbsp;Les Etats occidentaux ont eux-mêmes affaibli l’Etat de droit et les règles internationales&nbsp;»</p>
+                      <!-- <p class="fiche-chapo">Les Etats occidentaux sont accusés d’agir selon un «&nbsp;double standard&nbsp;» en matière de droits internationaux et de droits humains. Il leur faut démontrer que le discours sur l’Etat de droit international n’est pas seulement articulé pour défendre leurs intérêts, explique la secrétaire générale d’Amnesty International.</p>  -->
+                      <div class="baseline-fiche">
+                        <p class="fiche-date">28 avril 2023</p>
+                        <img src="https://assets-decodeurs.lemonde.fr/redacweb/231207-legendre/doubleecran.svg" class="fiche-double-ecran"/>
+                        <a class="fiche-lireaussi" href="https://www.lemonde.fr/international/article/2023/04/21/agnes-callamard-la-reponse-occidentale-a-l-invasion-russe-en-ukraine-devrait-etre-dupliquee-ailleurs_6170509_3210.html">Lire l'article</a>
+                      </div>
+                    </div>
+                  </div>
+                </lm-html>
+              </data>
+            </data>
+          </data>
+          <!-- -------- -->
+          <!--/ PAGE 8 BIS /-->
+          <!-- -------- -->
+          <data>
+            <data class='blocks'>
+              <data>
+                <data class="transitions">
+                  <data>
+                    <string>fade</string>
+                    <number>1000</number>
+                  </data>
+                </data>
+                <string class='depth'>back</string>
+                <lm-html class='content'>
+                  <div class="background-fiche bleu">
+                    <img class="fiche-image" src="https://assets-decodeurs.lemonde.fr/redacweb/231207-legendre/descola-morizot.png"/>
+                  </div>
+                </lm-html>
+              </data>
+              <data>
+                <string class='depth'>scroll</string>
+                <lm-html class='content'>
+                  <div class="wrapper-super-fiche">
+                    <div class='wrapper-fiche'>
+                      <p class="fiche-nom">Philippe Descola et Baptiste Morizot<span class="fiche-nom-qualite"> - anthropologue et sociologue</span></p>
+                      <p class="fiche-titre">«&nbsp;Il est temps d’aménager le monde pour la vie&nbsp;»</p>
+                      <!-- <p class="fiche-chapo">La crise climatique nous fait entrer dans une époque nouvelle que les concepts des Lumières peinent à appréhender, alors qu’il convient de refaire société avec la Terre, estiment l’anthropologue et le philosophe. Dialogue entre deux explorateurs engagés.</p>  -->
+                      <div class="baseline-fiche">
+                        <p class="fiche-date">10 juin 2023</p>
+                        <img src="https://assets-decodeurs.lemonde.fr/redacweb/231207-legendre/doubleecran.svg" class="fiche-double-ecran"/>
+                        <a class="fiche-lireaussi" href="https://www.lemonde.fr/idees/article/2023/06/09/philippe-descola-et-baptiste-morizot-face-aux-bouleversements-ecologiques-il-est-temps-de-bifurquer-et-d-amenager-le-monde-pour-la-vie_6176849_3232.html">Lire l'article</a>
+                      </div>
+                    </div>
+                  </div>
+                </lm-html>
+              </data>
+            </data>
+          </data>
+          <!-- -------- -->
+          <!--/ PAGE 9 /-->
+          <!-- -------- -->
+          <data>
+            <data class='blocks'>
+              <data>
+                <data class="transitions">
+                  <data>
+                    <string>fade</string>
+                    <number>1000</number>
+                  </data>
+                </data>
+                <string class='depth'>back</string>
+                <lm-html class='content'>
+                  <div class="background-fiche">
+                    <img class="fiche-image" src="https://assets-decodeurs.lemonde.fr/redacweb/231207-legendre/boyer.png"/>
+                  </div>
+                </lm-html>
+              </data>
+              <data>
+                <string class='depth'>scroll</string>
+                <lm-html class='content'>
+                  <div class="wrapper-super-fiche">
+                    <div class='wrapper-fiche'>
+                      <p class="fiche-nom">Robert Boyer<span class="fiche-nom-qualite"> - économiste</span></p>
+                      <p class="fiche-titre">«&nbsp;Pour faire face au réchauffement climatique, les économistes doivent prendre leurs responsabilités et changer leurs façons de réfléchir&nbsp;»</p>
+                      <!-- <p class="fiche-chapo">Les sciences économiques et historiques doivent s’allier afin d’apporter un corpus de connaissances permettant d’analyser et de répondre efficacement aux crises qui bouleversent nos sociétés, explique l’économiste, dans un entretien au «&nbsp;Monde&nbsp;».</p>  -->
+                      <div class="baseline-fiche">
+                        <p class="fiche-date">13 novembre 2023</p>
+                        <img src="https://assets-decodeurs.lemonde.fr/redacweb/231207-legendre/doubleecran.svg" class="fiche-double-ecran"/>
+                        <a class="fiche-lireaussi" href="https://www.lemonde.fr/idees/article/2023/06/12/robert-boyer-economiste-pour-faire-face-au-rechauffement-climatique-les-economistes-doivent-prendre-leurs-responsabilites-et-changer-leurs-facons-de-reflechir_6177226_3232.html">Lire l'article</a>
+                      </div>
+                    </div>
+                  </div>
+                </lm-html>
+              </data>
+            </data>
+          </data>
+          <!-- -------- -->
+          <!--/ PAGE 10 /-->
+          <!-- -------- -->
+          <data>
+            <data class='blocks'>
+              <data>
+                <data class="transitions">
+                  <data>
+                    <string>fade</string>
+                    <number>1000</number>
+                  </data>
+                </data>
+                <string class='depth'>back</string>
+                <lm-html class='content'>
+                  <div class="background-fiche bleu">
+                    <img class="fiche-image" src="https://assets-decodeurs.lemonde.fr/redacweb/231207-legendre/salas.png"/>
+                  </div>
+                </lm-html>
+              </data>
+              <data>
+                <string class='depth'>scroll</string>
+                <lm-html class='content'>
+                  <div class="wrapper-super-fiche">
+                    <div class='wrapper-fiche'>
+                      <p class="fiche-nom">Denis Salas<span class="fiche-nom-qualite"> - magistrat</span></p>
+                      <p class="fiche-titre">«&nbsp;L’approche narrative doit être privilégiée pour les victimes de violences sexuelles&nbsp;»</p>
+                      <!-- <p class="fiche-chapo">Puisant dans textes littéraires et les témoignages, le magistrat met en évidence le déni séculaire du viol. Il analyse aussi, dans un entretien au «&nbsp;Monde&nbsp;», les avancées récentes du système judiciaire.</p>  -->
+                      <div class="baseline-fiche">
+                        <p class="fiche-date">20 juin 2023</p>
+                        <img src="https://assets-decodeurs.lemonde.fr/redacweb/231207-legendre/doubleecran.svg" class="fiche-double-ecran"/>
+                        <a class="fiche-lireaussi" href="https://www.lemonde.fr/idees/article/2023/06/19/denis-salas-seule-une-approche-narrative-peut-mettre-en-lumiere-l-experience-humaine-singuliere-des-victimes-d-une-violence-intime_6178225_3232.html">Lire l'article</a>
+                      </div>
+                    </div>
+                  </div>
+                </lm-html>
+              </data>
+            </data>
+          </data>
+          <!-- -------- -->
+          <!--/ PAGE 11 /-->
+          <!-- -------- -->
+          <data>
+            <data class='blocks'>
+              <data>
+                <data class="transitions">
+                  <data>
+                    <string>fade</string>
+                    <number>1000</number>
+                  </data>
+                </data>
+                <string class='depth'>back</string>
+                <lm-html class='content'>
+                  <div class="background-fiche vert">
+                    <img class="fiche-image" src="https://assets-decodeurs.lemonde.fr/redacweb/231207-legendre/fleury.png"/>
+                  </div>
+                </lm-html>
+              </data>
+              <data>
+                <string class='depth'>scroll</string>
+                <lm-html class='content'>
+                  <div class="wrapper-super-fiche">
+                    <div class='wrapper-fiche'>
+                      <p class="fiche-nom">Cynthia Fleury<span class="fiche-nom-qualite"> - philosophe</span></p>
+                      <p class="fiche-titre">«&nbsp;Nos sociétés sont devenues des fabriques systémiques de situations indignes&nbsp;»</p>
+                      <!-- <p class="fiche-chapo">La psychanalyste et philosophe appelle à refonder la dignité par le soin et déplore, dans un entretien au «&nbsp;Monde&nbsp;», le décalage tragique entre l’affirmation d’une dignité humaine universelle et la réalité des faits qui dément ce discours.</p>  -->
+                      <div class="baseline-fiche">
+                        <p class="fiche-date">13 novembre 2023</p>
+                        <img src="https://assets-decodeurs.lemonde.fr/redacweb/231207-legendre/doubleecran.svg" class="fiche-double-ecran"/>
+                        <a class="fiche-lireaussi" href="https://www.lemonde.fr/idees/article/2023/08/27/cynthia-fleury-nos-societes-sont-devenues-des-fabriques-systemiques-de-situations-indignes_6186723_3232.html
+                          ">Lire l'article</a>
+                      </div>
+                    </div>
+                  </div>
+                </lm-html>
+              </data>
+            </data>
+          </data>
+          <!-- -------- -->
+          <!--/ PAGE 13 /-->
+          <!-- -------- -->
+          <data>
+            <data class='blocks'>
+              <data>
+                <data class="transitions">
+                  <data>
+                    <string>fade</string>
+                    <number>1000</number>
+                  </data>
+                </data>
+                <string class='depth'>back</string>
+                <lm-html class='content'>
+                  <div class="background-fiche marron">
+                    <img class="fiche-image" src="https://assets-decodeurs.lemonde.fr/redacweb/231207-legendre/limbada.png"/>
+                  </div>
+                </lm-html>
+              </data>
+              <data>
+                <string class='depth'>scroll</string>
+                <lm-html class='content'>
+                  <div class="wrapper-super-fiche">
+                    <div class='wrapper-fiche'>
+                      <p class="fiche-nom">Aïcha Limbada<span class="fiche-nom-qualite"> - historienne</span></p>
+                      <p class="fiche-titre">«&nbsp;Au XIX<sup>e</sup> siècle, la nuit de noces installe un rapport de domination du mari&nbsp;»</p>
+                      <!-- <p class="fiche-chapo">L’historienne revient sur son livre, «&nbsp;La Nuit de noces. Une histoire de l’intimité conjugale&nbsp;», dans lequel elle restitue avec rigueur et sensibilité l’imaginaire nuptial du XIX<sup>e</sup> et du début du XX<sup>e</sup> siècle.</p>  -->
+                      <div class="baseline-fiche">
+                        <p class="fiche-date">13 novembre 2023</p>
+                        <img src="https://assets-decodeurs.lemonde.fr/redacweb/231207-legendre/doubleecran.svg" class="fiche-double-ecran"/>
+                        <a class="fiche-lireaussi" href="https://www.lemonde.fr/idees/article/2023/09/04/au-xix-siecle-la-nuit-de-noces-installe-un-rapport-de-domination-du-mari-sur-sa-femme-jusque-dans-leurs-gestes-les-plus-intimes_6187699_3232.html">Lire l'article</a>
+                      </div>
+                    </div>
+                  </div>
+                </lm-html>
+              </data>
+            </data>
+          </data>
+          <!-- -------- -->
+          <!--/ PAGE 14 /-->
+          <!-- -------- -->
+          <data>
+            <data class='blocks'>
+              <data>
+                <data class="transitions">
+                  <data>
+                    <string>fade</string>
+                    <number>1000</number>
+                  </data>
+                </data>
+                <string class='depth'>back</string>
+                <lm-html class='content'>
+                  <div class="background-fiche">
+                    <img class="fiche-image" src="https://assets-decodeurs.lemonde.fr/redacweb/231207-legendre/rosa.png"/>
+                  </div>
+                </lm-html>
+              </data>
+              <data>
+                <string class='depth'>scroll</string>
+                <lm-html class='content'>
+                  <div class="wrapper-super-fiche">
+                    <div class='wrapper-fiche'>
+                      <p class="fiche-nom">Hartmut Rosa<span class="fiche-nom-qualite"> - sociologue et philosophe</span></p>
+                      <p class="fiche-titre">«&nbsp;L’accélération conduit à un état d’agressivité, particulièrement sensible chez les individus des sociétés occidentales&nbsp;»</p>
+                      <!-- <p class="fiche-chapo">Le penseur allemand qui a conceptualisé «&nbsp;l’accélération&nbsp;» mortifère de notre modernité a aussi élaboré son antidote : «&nbsp;la résonance&nbsp;». Il en trouve la trace dans les grandes traditions spirituelles.</p>  -->
+                      <div class="baseline-fiche">
+                        <p class="fiche-date">10 septembre 2023</p>
+                        <img src="https://assets-decodeurs.lemonde.fr/redacweb/231207-legendre/doubleecran.svg" class="fiche-double-ecran"/>
+                        <a class="fiche-lireaussi" href="https://www.lemonde.fr/idees/article/2023/09/10/hartmut-rosa-la-logique-moderne-est-intrinsequement-agressive_6188676_3232.html">Lire l'article</a>
+                      </div>
+                    </div>
+                  </div>
+                </lm-html>
+              </data>
+            </data>
+          </data>
+          <!-- -------- -->
+          <!--/ PAGE 15 /-->
+          <!-- -------- -->
+          <data>
+            <data class='blocks'>
+              <data>
+                <data class="transitions">
+                  <data>
+                    <string>fade</string>
+                    <number>1000</number>
+                  </data>
+                </data>
+                <string class='depth'>back</string>
+                <lm-html class='content'>
+                  <div class="background-fiche bleu">
+                    <img class="fiche-image" src="https://assets-decodeurs.lemonde.fr/redacweb/231207-legendre/robbes.png"/>
+                  </div>
+                </lm-html>
+              </data>
+              <data>
+                <string class='depth'>scroll</string>
+                <lm-html class='content'>
+                  <div class="wrapper-super-fiche">
+                    <div class='wrapper-fiche'>
+                      <p class="fiche-nom">Bruno Robbes<span class="fiche-nom-qualite"> - professeur en sciences de l’éducation</span></p>
+                      <p class="fiche-titre">«&nbsp;L’autorité ne se décrète pas et les enseignants le savent bien&nbsp;»</p>
+                      <!-- <p class="fiche-chapo">A l’instar du ministre de l’éducation nationale, Gabriel Attal, ou d’Emmanuel Macron, la multiplication des messages appelant au «&nbsp;retour&nbsp;» de l’autorité témoigne souvent d’une confusion avec la notion d’«&nbsp;autoritarisme&nbsp;», souligne, dans un entretien au «&nbsp;Monde&nbsp;», le professeur en sciences de l’éducation.</p>  -->
+                      <div class="baseline-fiche">
+                        <p class="fiche-date">20 septembre 2023</p>
+                        <img src="https://assets-decodeurs.lemonde.fr/redacweb/231207-legendre/doubleecran.svg" class="fiche-double-ecran"/>
+                        <a class="fiche-lireaussi" href="https://www.lemonde.fr/idees/article/2023/09/19/bruno-robbes-l-autorite-ne-se-decrete-pas-et-les-enseignants-le-savent-bien_6189952_3232.html">Lire l'article</a>
+                      </div>
+                    </div>
+                  </div>
+                </lm-html>
+              </data>
+            </data>
+          </data>
+          <!-- -------- -->
+          <!--/ PAGE 17 /-->
+          <!-- -------- -->
+          <data>
+            <data class='blocks'>
+              <data>
+                <data class="transitions">
+                  <data>
+                    <string>fade</string>
+                    <number>1000</number>
+                  </data>
+                </data>
+                <string class='depth'>back</string>
+                <lm-html class='content'>
+                  <div class="background-fiche vert">
+                    <img class="fiche-image" src="https://assets-decodeurs.lemonde.fr/redacweb/231207-legendre/rauwel.png"/>
+                  </div>
+                </lm-html>
+              </data>
+              <data>
+                <string class='depth'>scroll</string>
+                <lm-html class='content'>
+                  <div class="wrapper-super-fiche">
+                    <div class='wrapper-fiche'>
+                      <p class="fiche-nom">Alain Rauwel<span class="fiche-nom-qualite"> - historien</span></p>
+                      <p class="fiche-titre">«&nbsp;La vedettarisation du pape est un fait très récent dans l’histoire&nbsp;»</p>
+                      <!-- <p class="fiche-chapo">Pourquoi l’Eglise nous fascine-t-elle encore ? Alors que le pape François se déplace ce week-end à Marseille, l’historien Alain Rauwel analyse «&nbsp;l’Eglise comme forme sociale&nbsp;», et son influence sur nos sociétés contemporaines. «&nbsp;Il y a toujours des nostalgiques de la chrétienté, qui idéalisent les formes de vie anciennes&nbsp;», estime-t-il également.</p>  -->
+                      <div class="baseline-fiche">
+                        <p class="fiche-date">26 septembre 2023</p>
+                        <img src="https://assets-decodeurs.lemonde.fr/redacweb/231207-legendre/doubleecran.svg" class="fiche-double-ecran"/>
+                        <a class="fiche-lireaussi" href="https://www.lemonde.fr/le-monde-des-religions/article/2023/09/24/alain-rauwel-historien-de-l-eglise-la-vedettarisation-du-pape-est-un-fait-tres-recent-dans-l-histoire_6190756_6038514.html">Lire l'article</a>
+                      </div>
+                    </div>
+                  </div>
+                </lm-html>
+              </data>
+            </data>
+          </data>
+          <!-- -------- -->
+          <!--/ PAGE 17 B/-->
+          <!-- -------- -->
+          <data>
+            <data class='blocks'>
+              <data>
+                <data class="transitions">
+                  <data>
+                    <string>fade</string>
+                    <number>1000</number>
+                  </data>
+                </data>
+                <string class='depth'>back</string>
+                <lm-html class='content'>
+                  <div class="background-fiche marron">
+                    <img class="fiche-image" src="https://assets-decodeurs.lemonde.fr/redacweb/231207-legendre/leger.png"/>
+                  </div>
+                </lm-html>
+              </data>
+              <data>
+                <string class='depth'>scroll</string>
+                <lm-html class='content'>
+                  <div class="wrapper-super-fiche">
+                    <div class='wrapper-fiche'>
+                      <p class="fiche-nom">Danièle Hervieu-Léger<span class="fiche-nom-qualite"> - sociologue</span></p>
+                      <p class="fiche-titre">«&nbsp;La survie de l’Eglise telle qu’elle fonctionne aujourd’hui est en jeu&nbsp;»</p>
+                      <!-- <p class="fiche-chapo">Selon la sociologue l’Eglise doit, pour survivre, sortir de son système d’autorité centralisatrice et remettre en cause la sacralité du prêtre.</p>  -->
+                      <div class="baseline-fiche">
+                        <p class="fiche-date">4 octobre 2023</p>
+                        <img src="https://assets-decodeurs.lemonde.fr/redacweb/231207-legendre/doubleecran.svg" class="fiche-double-ecran"/>
+                        <a class="fiche-lireaussi" href="https://www.lemonde.fr/le-monde-des-religions/article/2022/06/26/daniele-hervieu-leger-le-catholicisme-de-demain-sera-diasporique-ou-ne-sera-pas_6132079_6038514.html">Lire l'article</a>
+                      </div>
+                    </div>
+                  </div>
+                </lm-html>
+              </data>
+            </data>
+          </data>
+          <!-- -------- -->
+          <!--/ PAGE 18 /-->
+          <!-- -------- -->
+          <data>
+            <data class='blocks'>
+              <data>
+                <data class="transitions">
+                  <data>
+                    <string>fade</string>
+                    <number>1000</number>
+                  </data>
+                </data>
+                <string class='depth'>back</string>
+                <lm-html class='content'>
+                  <div class="background-fiche">
+                    <img class="fiche-image" src="https://assets-decodeurs.lemonde.fr/redacweb/231207-legendre/truong-dubet.png"/>
+                  </div>
+                </lm-html>
+              </data>
+              <data>
+                <string class='depth'>scroll</string>
+                <lm-html class='content'>
+                  <div class="wrapper-super-fiche">
+                    <div class='wrapper-fiche'>
+                      <p class="fiche-nom">Fabien Truong et François Dubet<span class="fiche-nom-qualite"> - sociologues</span></p>
+                      <p class="fiche-titre">«&nbsp;es explosions de colère des quartiers ne trouvent pas de traduction politique&nbsp;»</p>
+                      <!-- <p class="fiche-chapo">Le professeur d’histoire revient, dans un entretien au «&nbsp;Monde&nbsp;», sur les attaques terroristes du 7 octobre en Israël. Selon lui, cet événement sans précédent nous fait basculer dans le cinquième acte de la tragédie israélo-palestinienne. La communauté internationale doit se mobiliser pour empêcher l’Etat hébreu de tomber dans le piège que lui a tendu le Hamas.</p>  -->
+                      <div class="baseline-fiche">
+                        <p class="fiche-date">16 octobre 2023</p>
+                        <img src="https://assets-decodeurs.lemonde.fr/redacweb/231207-legendre/doubleecran.svg" class="fiche-double-ecran"/>
+                        <a class="fiche-lireaussi" href="https://www.lemonde.fr/idees/article/2023/10/06/de-la-marche-contre-le-racisme-de-1983-aux-emeutes-de-2023-meme-quand-les-explosions-de-colere-se-repetent-elles-ne-trouvent-pas-de-traduction-politique_6192869_3232.html">Lire l'article</a>
+                      </div>
+                    </div>
+                  </div>
+                </lm-html>
+              </data>
+            </data>
+          </data>
+          <!-- -------- -->
+          <!--/ PAGE 18B /-->
+          <!-- -------- -->
+          <data>
+            <data class='blocks'>
+              <data>
+                <data class="transitions">
+                  <data>
+                    <string>fade</string>
+                    <number>1000</number>
+                  </data>
+                </data>
+                <string class='depth'>back</string>
+                <lm-html class='content'>
+                  <div class="background-fiche bleu">
+                    <img class="fiche-image" src="https://assets-decodeurs.lemonde.fr/redacweb/231207-legendre/lemire.png"/>
+                  </div>
+                </lm-html>
+              </data>
+              <data>
+                <string class='depth'>scroll</string>
+                <lm-html class='content'>
+                  <div class="wrapper-super-fiche">
+                    <div class='wrapper-fiche'>
+                      <p class="fiche-nom">Vincent Lemire<span class="fiche-nom-qualite"> - historien</span></p>
+                      <p class="fiche-titre">«&nbsp;Depuis l’attaque du Hamas contre Israël, nous sommes entrés dans une période obscure qu’il est encore impossible de nommer&nbsp;»</p>
+                      <!-- <p class="fiche-chapo">Le professeur d’histoire revient, dans un entretien au «&nbsp;Monde&nbsp;», sur les attaques terroristes du 7 octobre en Israël. Selon lui, cet événement sans précédent nous fait basculer dans le cinquième acte de la tragédie israélo-palestinienne. La communauté internationale doit se mobiliser pour empêcher l’Etat hébreu de tomber dans le piège que lui a tendu le Hamas.</p>  -->
+                      <div class="baseline-fiche">
+                        <p class="fiche-date">16 octobre 2023</p>
+                        <img src="https://assets-decodeurs.lemonde.fr/redacweb/231207-legendre/doubleecran.svg" class="fiche-double-ecran"/>
+                        <a class="fiche-lireaussi" href="https://www.lemonde.fr/idees/article/2023/10/14/vincent-lemire-historien-depuis-l-attaque-du-hamas-contre-israel-nous-sommes-entres-dans-une-periode-obscure-qu-il-est-encore-impossible-de-nommer_6194355_3232.html">Lire l'article</a>
+                      </div>
+                    </div>
+                  </div>
+                </lm-html>
+              </data>
+            </data>
+          </data>
+          <!-- -------- -->
+          <!--/ PAGE 19 /-->
+          <!-- -------- -->
+          <data>
+            <data class='blocks'>
+              <data>
+                <data class="transitions">
+                  <data>
+                    <string>fade</string>
+                    <number>1000</number>
+                  </data>
+                </data>
+                <string class='depth'>back</string>
+                <lm-html class='content'>
+                  <div class="background-fiche vert">
+                    <img class="fiche-image" src="https://assets-decodeurs.lemonde.fr/redacweb/231207-legendre/horvilleur.png"/>
+                  </div>
+                </lm-html>
+              </data>
+              <data>
+                <string class='depth'>scroll</string>
+                <lm-html class='content'>
+                  <div class="wrapper-super-fiche">
+                    <div class='wrapper-fiche'>
+                      <p class="fiche-nom">Delphine Horvilleur<span class="fiche-nom-qualite"> - rabinne</span></p>
+                      <p class="fiche-titre">«&nbsp;Face aux meurtres du Hamas, certains silences m’ont terrassée&nbsp;»</p>
+                      <!-- <p class="fiche-chapo">La rabbine, voix du judaïsme libéral en France, confie comment elle a perçu, depuis Paris, les actions terroristes du Hamas en Israël.</p>  -->
+                      <div class="baseline-fiche">
+                        <p class="fiche-date">17 octobre 2023</p>
+                        <img src="https://assets-decodeurs.lemonde.fr/redacweb/231207-legendre/doubleecran.svg" class="fiche-double-ecran"/>
+                        <a class="fiche-lireaussi" href="https://www.lemonde.fr/le-monde-des-religions/article/2023/10/15/delphine-horvilleur-face-aux-meurtres-du-hamas-certains-silences-m-ont-terrassee_6194559_6038514.html">Lire l'article</a>
+                      </div>
+                    </div>
+                  </div>
+                </lm-html>
+              </data>
+            </data>
+          </data>
+          <!-- -------- -->
+          <!--/ PAGE 20 /-->
+          <!-- -------- -->
+          <data>
+            <data class='blocks'>
+              <data>
+                <data class="transitions">
+                  <data>
+                    <string>fade</string>
+                    <number>1000</number>
+                  </data>
+                </data>
+                <string class='depth'>back</string>
+                <lm-html class='content'>
+                  <div class="background-fiche marron">
+                    <img class="fiche-image" src="https://assets-decodeurs.lemonde.fr/redacweb/231207-legendre/mouratov.png"/>
+                  </div>
+                </lm-html>
+              </data>
+              <data>
+                <string class='depth'>scroll</string>
+                <lm-html class='content'>
+                  <div class="wrapper-super-fiche">
+                    <div class='wrapper-fiche'>
+                      <p class="fiche-nom">Dmitri Mouratov<span class="fiche-nom-qualite"> - journaliste russe</span></p>
+                      <p class="fiche-titre">«&nbsp;Je suis agent de l’étranger numéro 665&nbsp;»</p>
+                      <!-- <p class="fiche-chapo">Le rédacteur en chef du journal indépendant «&nbsp;Novaïa Gazeta&nbsp;», explique comment Vladimir Poutine veut mettre fin à l’histoire de la démocratie et créer un nouvel ordre mondial.</p>  -->
+                      <div class="baseline-fiche">
+                        <p class="fiche-date">23 octobre 2023</p>
+                        <img src="https://assets-decodeurs.lemonde.fr/redacweb/231207-legendre/doubleecran.svg" class="fiche-double-ecran"/>
+                        <a class="fiche-lireaussi" href="https://www.lemonde.fr/idees/article/2023/10/22/dmitri-mouratov-journaliste-russe-prix-nobel-de-la-paix-je-suis-agent-de-l-etranger-numero-665_6195944_3232.html">Lire l'article</a>
+                      </div>
+                    </div>
+                  </div>
+                </lm-html>
+              </data>
+            </data>
+          </data>
+          <!-- -------- -->
+          <!--/ PAGE 21 /-->
+          <!-- -------- -->
+          <data>
+            <data class='blocks'>
+              <data>
+                <data class="transitions">
+                  <data>
+                    <string>fade</string>
+                    <number>1000</number>
+                  </data>
+                </data>
+                <string class='depth'>back</string>
+                <lm-html class='content'>
+                  <div class="background-fiche bleu">
+                    <img class="fiche-image" src="https://assets-decodeurs.lemonde.fr/redacweb/231207-legendre/ledoux.png"/>
+                  </div>
+                </lm-html>
+              </data>
+              <data>
+                <string class='depth'>scroll</string>
+                <lm-html class='content'>
+                  <div class="wrapper-super-fiche">
+                    <div class='wrapper-fiche'>
+                      <p class="fiche-nom">Sébastien Ledoux<span class="fiche-nom-qualite"> - historien</span></p>
+                      <p class="fiche-titre">«&nbsp;L’école publique est surinvestie d’une mission symbolique régalienne : sauver la République en danger&nbsp;»</p>
+                      <!-- <p class="fiche-chapo">L’historien a enquêté sur le monde scolaire après l’attentat contre «&nbsp;Charlie Hebdo&nbsp;» et l’assassinat de Samuel Paty. Il souligne le désarroi des enseignants et les limites de l’insistance politique sur les questions de laïcité face à l’enjeu du terrorisme islamiste.</p>  -->
+                      <div class="baseline-fiche">
+                        <p class="fiche-date">27 octobre 2023</p>
+                        <img src="https://assets-decodeurs.lemonde.fr/redacweb/231207-legendre/doubleecran.svg" class="fiche-double-ecran"/>
+                        <a class="fiche-lireaussi" href="https://www.lemonde.fr/idees/article/2023/10/25/depuis-les-attentats-de-2015-l-ecole-publique-est-surinvestie-d-une-mission-symbolique-regalienne-celle-de-sauver-la-republique-en-danger_6196451_3232.html">Lire l'article</a>
+                      </div>
+                    </div>
+                  </div>
+                </lm-html>
+              </data>
+            </data>
+          </data>
+          <!-- -------- -->
+          <!--/ PAGE 22 /-->
+          <!-- -------- -->
+          <data>
+            <data class='blocks'>
+              <data>
+                <data class="transitions">
+                  <data>
+                    <string>fade</string>
+                    <number>1000</number>
+                  </data>
+                </data>
+                <string class='depth'>back</string>
+                <lm-html class='content'>
+                  <div class="background-fiche">
+                    <img class="fiche-image" src="https://assets-decodeurs.lemonde.fr/redacweb/231207-legendre/bartov.png"/>
+                  </div>
+                </lm-html>
+              </data>
+              <data>
+                <string class='depth'>scroll</string>
+                <lm-html class='content'>
+                  <div class="wrapper-super-fiche">
+                    <div class='wrapper-fiche'>
+                      <p class="fiche-nom">Omer Bartov<span class="fiche-nom-qualite"> - spécialiste de la Shoah</span></p>
+                      <p class="fiche-titre">«&nbsp;Même si le Hamas était chassé de Gaza, les Israéliens n’ont aucun plan connu pour la suite&nbsp;»</p>
+                      <!-- <p class="fiche-chapo">Le spécialiste de la Shoah, vivant aux Etats-Unis, condamne l’aveuglement coupable du gouvernement de Nétanyahou, qui n’a rien voulu voir avant le 7 octobre. Mais juge aussi indignes les réactions sur les campus américains après les massacres perpétrés en Israël.</p>  -->
+                      <div class="baseline-fiche">
+                        <p class="fiche-date">28 octobre 2023</p>
+                        <img src="https://assets-decodeurs.lemonde.fr/redacweb/231207-legendre/doubleecran.svg" class="fiche-double-ecran"/>
+                        <a class="fiche-lireaussi" href="https://www.lemonde.fr/idees/article/2023/10/27/omer-bartov-historien-israel-ne-semble-disposer-d-aucun-plan-politique-il-ne-dispose-que-d-un-plan-militaire-tres-hasardeux_6196683_3232.html">Lire l'article</a>
+                      </div>
+                    </div>
+                  </div>
+                </lm-html>
+              </data>
+            </data>
+          </data>
+          <!-- -------- -->
+          <!--/ PAGE 23 /-->
+          <!-- -------- -->
+          <data>
+            <data class='blocks'>
+              <data>
+                <data class="transitions">
+                  <data>
+                    <string>fade</string>
+                    <number>1000</number>
+                  </data>
+                </data>
+                <string class='depth'>back</string>
+                <lm-html class='content'>
+                  <div class="background-fiche vert">
+                    <img class="fiche-image" src="https://assets-decodeurs.lemonde.fr/redacweb/231207-legendre/devos.png"/>
+                  </div>
+                </lm-html>
+              </data>
+              <data>
+                <string class='depth'>scroll</string>
+                <lm-html class='content'>
+                  <div class="wrapper-super-fiche">
+                    <div class='wrapper-fiche'>
+                      <p class="fiche-nom">Aurelia Devos<span class="fiche-nom-qualite"> - juriste</span></p>
+                      <p class="fiche-titre">«&nbsp;Les actes de terrorisme peuvent être aussi des crimes de guerre&nbsp;»</p>
+                      <!-- <p class="fiche-chapo">L’ancienne responsable du pôle «&nbsp;crimes contre l’humanité&nbsp;» du tribunal judiciaire de Paris explique l’intérêt d’une telle structure malgré les difficultés à mener à bien les enquêtes, faute de moyens adaptés.</p>  -->
+                      <div class="baseline-fiche">
+                        <p class="fiche-date">31 octobre 2023</p>
+                        <img src="https://assets-decodeurs.lemonde.fr/redacweb/231207-legendre/doubleecran.svg" class="fiche-double-ecran"/>
+                        <a class="fiche-lireaussi" href="https://www.lemonde.fr/idees/article/2023/10/30/aurelia-devos-magistrate-les-actes-de-terrorisme-peuvent-etre-aussi-des-crimes-de-guerre_6197318_3232.html">Lire l'article</a>
+                      </div>
+                    </div>
+                  </div>
+                </lm-html>
+              </data>
+            </data>
+          </data>
+          <!-- -------- -->
+          <!--/ PAGE 24 /-->
+          <!-- -------- -->
+          <data>
+            <data class='blocks'>
+              <data>
+                <data class="transitions">
+                  <data>
+                    <string>fade</string>
+                    <number>1000</number>
+                  </data>
+                </data>
+                <string class='depth'>back</string>
+                <lm-html class='content'>
+                  <div class="background-fiche marron">
+                    <img class="fiche-image" src="https://assets-decodeurs.lemonde.fr/redacweb/231207-legendre/kaufmann.png"/>
+                  </div>
+                </lm-html>
+              </data>
+              <data>
+                <string class='depth'>scroll</string>
+                <lm-html class='content'>
+                  <div class="wrapper-super-fiche">
+                    <div class='wrapper-fiche'>
+                      <p class="fiche-nom">Grégoire Kauffmann<span class="fiche-nom-qualite"> - historien</span></p>
+                      <p class="fiche-titre">«&nbsp;La présence du RN à la marche contre l’antisémitisme montre qu’un plafond de verre a explosé&nbsp;»</p>
+                      <!-- <p class="fiche-chapo">L’historien analyse les spécificités de l’antisémitisme français et son évolution. Il explique aussi comment la normalisation entreprise par Marine Le Pen a permis au Rassemblement national de «&nbsp;se débarrasser de son lourd passé&nbsp;» en la matière.</p>  -->
+                      <div class="baseline-fiche">
+                        <p class="fiche-date">13 novembre 2023</p>
+                        <img src="https://assets-decodeurs.lemonde.fr/redacweb/231207-legendre/doubleecran.svg" class="fiche-double-ecran"/>
+                        <a class="fiche-lireaussi" href="https://www.lemonde.fr/idees/article/2023/11/12/gregoire-kauffmann-historien-la-presence-siderante-du-rn-a-la-manifestation-contre-l-antisemitisme-est-le-signe-d-une-profonde-recomposition-du-jeu-politique_6199658_3232.html">Lire l'article</a>
+                      </div>
+                    </div>
+                  </div>
+                </lm-html>
+              </data>
+            </data>
+          </data>
+          <!-- -------- -->
+          <!--/ PAGE 1 /-->
+          <!-- -------- -->
+          <data>
+            <data class='blocks'>
+              <data>
+                <data class="transitions">
+                  <data>
+                    <string>fade</string>
+                    <number>1000</number>
+                  </data>
+                </data>
+                <string class='depth'>back</string>
+                <lm-html class='content'>
+                  <div class="background-fiche bleu">
+                    <img class="fiche-image" src="https://assets-decodeurs.lemonde.fr/redacweb/231207-legendre/stefanini.png"/>
+                  </div>
+                </lm-html>
+              </data>
+              <data>
+                <string class='depth'>scroll</string>
+                <lm-html class='content'>
+                  <div class="wrapper-super-fiche">
+                    <div class='wrapper-fiche'>
+                      <p class="fiche-nom">Marthe Fatin-Rouge Stéfanini<span class="fiche-nom-qualite"> - juriste</span></p>
+                      <p class="fiche-titre">«&nbsp;Il faut introduire de nouveaux garde-fous au référendum présidentiel&nbsp;»</p>
+                      <!-- <p class="fiche-chapo">La juriste directrice de recherches au CNRS réagit aux propositions d’Emmanuel Macron, qui souhaite élargir le champ du référendum aux questions de société et rendre plus accessible le référendum d’initiative partagée.</p>  -->
+                      <div class="baseline-fiche">
+                        <p class="fiche-date">17 novembre 2023</p>
+                        <img src="https://assets-decodeurs.lemonde.fr/redacweb/231207-legendre/doubleecran.svg" class="fiche-double-ecran"/>
+                        <a class="fiche-lireaussi" href="https://www.lemonde.fr/idees/article/2023/11/16/marthe-fatin-rouge-stefanini-juriste-si-le-chef-de-l-etat-veut-elargir-le-champ-du-referendum-il-faut-introduire-de-nouveaux-garde-fous_6200409_3232.html">Lire l'article</a>
+                      </div>
+                    </div>
+                  </div>
+                </lm-html>
+              </data>
+            </data>
+          </data>
+          <!-- -------- -->
+          <!--/ PAGE 1 /-->
+          <!-- -------- -->
+          <data>
+            <data class='blocks'>
+              <data>
+                <data class="transitions">
+                  <data>
+                    <string>fade</string>
+                    <number>1000</number>
+                  </data>
+                </data>
+                <string class='depth'>back</string>
+                <lm-html class='content'>
+                  <div class="background-fiche">
+                    <img class="fiche-image" src="https://assets-decodeurs.lemonde.fr/redacweb/231207-legendre/mackinnon.png"/>
+                  </div>
+                </lm-html>
+              </data>
+              <data>
+                <string class='depth'>scroll</string>
+                <lm-html class='content'>
+                  <div class="wrapper-super-fiche">
+                    <div class='wrapper-fiche'>
+                      <p class="fiche-nom">Catharine MacKinnon<span class="fiche-nom-qualite"> - juriste</span></p>
+                      <p class="fiche-titre">«&nbsp;Le consentement est le principal prétexte, légal et social, de ne rien faire contre les agressions sexuelles&nbsp;»</p>
+                      <!-- <p class="fiche-chapo">En France, lors des procès pour viol, on se focalise davantage sur l’état d’esprit de la plaignante que sur le comportement de l’accusé, explique, dans un entretien au ​«&nbsp;Monde​&nbsp;», la juriste féministe américaine. Qui s’invite dans le débat national en publiant chez Flammarion «&nbsp;Le Viol redéfini&nbsp;».</p>  -->
+                      <div class="baseline-fiche">
+                        <p class="fiche-date">21 novembre 2023</p>
+                        <img src="https://assets-decodeurs.lemonde.fr/redacweb/231207-legendre/doubleecran.svg" class="fiche-double-ecran"/>
+                        <a class="fiche-lireaussi" href="https://www.lemonde.fr/idees/article/2023/11/20/catharine-mackinnon-le-consentement-est-le-principal-pretexte-legal-et-social-de-ne-rien-faire-contre-les-agressions-sexuelles_6201214_3232.html">Lire l'article</a>
+                      </div>
+                    </div>
+                  </div>
+                </lm-html>
+              </data>
+            </data>
+          </data>
+        </data>
+      </comp>
+    </lm-html>
+  </data>
+  <data>
+    <data class='destination'>
+      <string class='selector'>.header-slot</string>
+      <string class='position'>before</string>
+      <string class='reference'>.legendre-wrapper</string>
+    </data>
+    <lm-html class='content'>
+      <div class="header-wrapper">
+        <comp name="header"></comp>
+      </div>
+    </lm-html>
+  </data>
+</data>

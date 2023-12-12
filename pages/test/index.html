@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+  </head>
+  <body>
+    <!-- Application -->
+    <script type='module' src='/shared/index.js'></script>
+    
+    <!-- Config -->
+    <data class='dkdll' style='display: none;'>
+      <data class='CONFIG'>
+        <data>
+          <string class='name'>css</string>
+          <string class='value'>.test { background: red; }</string>
+        </data>
+      </data>
+      <data class='SLOTS'>
+        <data>
+          <data class='destination'>
+            <string class='selector'>.test-wrapper</string>
+            <string class='position'>endof</string>
+            <string class='reference'>.wrapper</string>
+          </data>
+          <lm-html class='content'>
+            <div class="test">test!</div>
+            <comp name="ui">
+              <string class="component">toggle</string>
+            </comp>
+          </lm-html>
+        </data>
+      </data>
+    </data>
+
+    <!-- Slots -->
+    <div class="wrapper" data-color-mode="dark"></div>
+  </body>
+</html>
