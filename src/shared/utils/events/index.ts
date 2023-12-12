@@ -1,4 +1,4 @@
-import { Apps } from '~/shared'
+import { Apps } from '~/apps'
 import { Globals } from '~/shared/globals'
 
 export namespace Events {

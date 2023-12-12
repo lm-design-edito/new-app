@@ -5,6 +5,7 @@ import { Analytics } from '~/shared/analytics'
 import { Darkdouille } from '~/shared/darkdouille'
 import { Events } from '~/shared/events'
 import { LmHtml } from '~/shared/lm-html'
+import { Slots } from '~/shared/slots'
 import Logger from '~/utils/silent-log'
 import isInEnum from '~/utils/is-in-enum'
 
@@ -16,6 +17,7 @@ export type LmPage = {
   [Globals.GlobalKey.HAS_AUTO_INIT]?: boolean
   [Globals.GlobalKey.INIT]?: typeof init
   [Globals.GlobalKey.LM_HTML]?: typeof LmHtml
+  [Globals.GlobalKey.SLOTS]?: typeof Slots
   [Globals.GlobalKey.LOGGER]?: Logger
   [Globals.GlobalKey.META]?: {
     env?: string
@@ -47,6 +49,7 @@ export namespace Globals {
     LM_HTML = 'LmHtml',
     LOGGER = 'logger',
     META = 'meta',
+    SLOTS = 'slots',
     TREE = 'tree',
     UTILS = 'utils',
   }

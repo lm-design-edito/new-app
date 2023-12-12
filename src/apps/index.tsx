@@ -2,6 +2,7 @@ import { Component, ComponentClass, VNode } from 'preact'
 import appConfig from '~/config'
 import { Globals } from '~/shared/globals'
 import { LmHtml } from '~/shared/lm-html'
+import { Slots } from '~/shared/slots'
 import { toString } from '~/utils/cast'
 import isArrayOf from '~/utils/is-array-of'
 import randomUUID from '~/utils/random-uuid'
@@ -23,21 +24,6 @@ export namespace Apps {
     app: App
   }> = []
 
-  export const globalStyles = new Set<{
-    type: 'url' | 'css'
-    content: string
-    name?: string
-  }>()
-  export function refreshGlobalStyles () { rendered.forEach(item => item.app.forceUpdate()) }
-  export function injectStyles (as: 'url' | 'css', content: string, name?: string) {
-    const exists = [...globalStyles].find(item => (item.type === as
-      && item.content === content
-      && item.name === name))
-    if (exists !== undefined) return
-    globalStyles.add({ type: as, content, name })
-    refreshGlobalStyles()
-  }
-
   type RendererModuleResult<T extends Record<string, unknown> = {}> = { props: T, Component: ComponentClass }
   export type SyncRendererModule<T extends Record<string, unknown> = {}> = (unknownProps: unknown, id: string) => RendererModuleResult<T>
   export type AsyncRendererModule<T extends Record<string, unknown> = {}> = (unknownProps: unknown, id: string) => Promise<RendererModuleResult<T>>
@@ -52,7 +38,7 @@ export namespace Apps {
       if (name === Name.SCRLLGNGN) { loaded = (await import('~/apps/scrllgngn')).default }
       if (name === Name.UI) {
         const uiStyles = appConfig.paths.STYLES_UI_URL.toString()
-        injectStyles('url', uiStyles)
+        Slots.injectStyles('url', uiStyles, { position: Slots.StylesPositions.APP })
         const logger = Globals.retrieve(Globals.GlobalKey.LOGGER)
         logger?.log('Styles', '%cStylesheet injected', 'font-weight: 800;', uiStyles)
         loaded = (await import('~/apps/ui')).default
@@ -99,17 +85,9 @@ export namespace Apps {
     render () {
       const { props, state } = this
       const ChildComp = props.component
-      const customClass = typeof state.customClass === 'string'
-        ? `${state.customClass} lm-app`
-        : 'lm-app'
+      const customClass = typeof state.customClass === 'string' ? `${state.customClass} lm-app` : 'lm-app'
       const childProps = { ...this.state, customClass } as typeof state
-      return <>
-        {[...globalStyles].map(item => item.type === 'css'
-          ? <style name={item.name}>{item.content}</style>
-          : <link name={item.name} rel='stylesheet' href={item.content} />
-        )}
-        <ChildComp {...childProps} />
-      </>
+      return <ChildComp {...childProps} />
     }
   }
 

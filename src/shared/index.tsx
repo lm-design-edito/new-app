@@ -1,13 +1,13 @@
-import { render as preactRender } from 'preact'
 import appConfig from '~/config'
 import { Apps } from '~/apps'
 import { Analytics } from '~/shared/analytics'
 import { Config } from '~/shared/config'
+import { Darkdouille } from '~/shared/darkdouille'
 import { Events } from '~/shared/events'
 import getHeaderElements from '~/shared/get-header-element'
 import { Globals, LmPage } from '~/shared/globals'
 import { LmHtml } from '~/shared/lm-html'
-import { Darkdouille } from '~/shared/darkdouille'
+import { Slots } from '~/shared/slots'
 import absoluteModulo from '~/utils/absolute-modulo'
 import arrayRandomPick from '~/utils/array-random-pick'
 import bem from '~/utils/bem'
@@ -16,6 +16,7 @@ import clamp from '~/utils/clamp'
 import generateNiceColor from '~/utils/generate-nice-color'
 import getCurrentDownlink from '~/utils/get-current-downlink'
 import getNodeAncestors from '~/utils/get-node-ancestors'
+import insertNode, { Position as InsertNodePosition } from '~/utils/insert-node'
 import interpolate from '~/utils/interpolate'
 import isArrayOf from '~/utils/is-array-of'
 import isConstructorFunction from '~/utils/is-constructor-function'
@@ -49,10 +50,10 @@ const meta: LmPage[Globals.GlobalKey.META] = {
 const logger = new Logger()
 const utils = {
   absoluteModulo,         arrayRandomPick,          bem,                    Cast,
-  clamp,                  generateNiceColor,        getCurrentDownlink,     getNodeAncestors,     getHeaderElements,
-  interpolate,            isArrayOf,                isConstructorFunction,  isFalsy,
+  clamp,                  generateNiceColor,        getCurrentDownlink,     getNodeAncestors,          getHeaderElements,
+  insertNode,             interpolate,              isArrayOf,              isConstructorFunction,     isFalsy,
   isInEnum,               isNullish,                isRecord,               isValidClassName,
-  memoize,                randomUUID,               recordFormat,           replaceAll,           roundNumbers,
+  memoize,                randomUUID,               recordFormat,           replaceAll,                roundNumbers,
   selectorToElement,      throttle,                 debounce,               transition
 }
 Globals.expose(Globals.GlobalKey.META, meta)
@@ -61,10 +62,11 @@ Globals.expose(Globals.GlobalKey.APPS, Apps)
 Globals.expose(Globals.GlobalKey.DARKDOUILLE, Darkdouille)
 Globals.expose(Globals.GlobalKey.EVENTS, Events)
 Globals.expose(Globals.GlobalKey.LM_HTML, LmHtml)
+Globals.expose(Globals.GlobalKey.SLOTS, Slots)
 Globals.expose(Globals.GlobalKey.LOGGER, logger)
 Globals.expose(Globals.GlobalKey.INIT, init)
 Globals.expose(Globals.GlobalKey.UTILS, utils)
-export { meta, Analytics, Apps, Darkdouille, Events, LmHtml, Logger, logger, init, utils }
+export { meta, Analytics, Apps, Darkdouille, Events, LmHtml, Slots, Logger, logger, init, utils }
 
 /* * * * * * * * * * * * * * * * * * * * * *
  * INIT ON LOAD
@@ -100,7 +102,7 @@ async function init () {
 
   // Keep lm-page-stylesheet elements at the end of the body
   // [WIP] find something better after Adaptation
-  const lmPageStylesheets = [...document.querySelectorAll('link[href^="https://assets-decodeurs.lemonde.fr/redacweb"]')]
+  const lmPageStylesheets = Array.from(document.querySelectorAll('link[href^="https://assets-decodeurs.lemonde.fr/redacweb"]'))
   document.body.append(...lmPageStylesheets.map(node => node.cloneNode()))
   lmPageStylesheets.forEach(stylesheetNode => stylesheetNode.remove())
 
@@ -110,17 +112,18 @@ async function init () {
   const fontsLinkElt = document.createElement('link')
   fontsLinkElt.setAttribute('rel', 'stylesheet')
   fontsLinkElt.setAttribute('href', fontsStyles)
-  Apps.injectStyles('url', fontsStyles)
+  Slots.injectStyles('url', fontsStyles, { position: Slots.StylesPositions.GENERAL })
   document.head.append(fontsLinkElt)
   logger.log('Styles', '%cStylesheet injected', 'font-weight: 800;', fontsStyles)
-  Apps.injectStyles('url', mainStyles)
+  Slots.injectStyles('url', mainStyles, { position: Slots.StylesPositions.GENERAL })
   logger.log('Styles', '%cStylesheet injected', 'font-weight: 800;', mainStyles)
+  
   /* INLINE CONFIG * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
   // Find, merge and evaluate inline page data
   const pageInlineDataNodes = document.body.querySelectorAll(appConfig.dataSourceSelector)
-  const pageInlineDataNodesCopy = [...pageInlineDataNodes].map(e => e.cloneNode(true)) as Element[]
-  const pageInlineDataValue = Darkdouille.tree([...pageInlineDataNodes]).value
+  const pageInlineDataNodesCopy = Array.from(pageInlineDataNodes).map(e => e.cloneNode(true)) as Element[]
+  const pageInlineDataValue = Darkdouille.tree(Array.from(pageInlineDataNodes)).value
   logger.log('Inline data', pageInlineDataValue)
   const pageInlineDataValueIsRecord = Darkdouille.valueIsRecord(pageInlineDataValue)
   const pageDataConfigCollectionName = appConfig.dataSourcesReservedNames.config
@@ -199,101 +202,41 @@ async function init () {
 
   /* RENDER APPS * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
   
-  type SlotData = {
-    content: Darkdouille.TreeValue
-    destination: {
-      selector: string
-      position?: string
-      reference?: string
-    }
-  }
   const pageSlotsIsArray = Array.isArray(pageFullDataSlots)
   const pageSlotsArray = pageSlotsIsArray ? pageFullDataSlots : []
-  const pageSlotsRenderedMap = new Set<Element>()
-  
-  // Validate data
-  const validSlots = pageSlotsArray.filter((value): value is SlotData => {
-    if (!Darkdouille.valueIsRecord(value)) return false
-    const { destination } = value
-    if (!isRecord(destination)) return false;
-    if (typeof destination.selector !== 'string') return false
-    if (typeof destination.position !== 'string' && destination.position !== undefined) return false
-    if (typeof destination.reference !== 'string' && destination.reference !== undefined) return false
-    return true
-  })
-  logger.log('Slots', '%cData', 'font-weight: 800;', validSlots)
-  
-  // Select/create render targets
-  const withTargets = validSlots.map(slotData => {
-    const { destination } = slotData
-    const { selector, position, reference } = destination
-    if (position === undefined || reference === undefined) {
-      const targetElements = document.querySelectorAll(selector)
-      if (targetElements.length === 0) logger.warn('Slots', `No target matching selector ${selector}`)
-      return { ...slotData, targetElements: [...targetElements] }
-    }
-    const referenceElements = document.querySelectorAll(reference)
-    const targetElements = [...referenceElements].map(refElement => {
+  await Promise.all(pageSlotsArray.map(async pageSlotData => {
+    // Validate data shape
+    if (!Darkdouille.valueIsRecord(pageSlotData)) return
+    const { destination } = pageSlotData
+    if (!Darkdouille.valueIsRecord(destination)) return
+    const selector = Darkdouille.transformers.toString()(destination.selector)
+    const position = destination.position !== undefined ? Darkdouille.transformers.toString()(destination.position) : undefined
+    const reference = destination.reference !== undefined ? Darkdouille.transformers.toString()(destination.reference) : undefined
+    // Create or select targets
+    const targetElements: Element[] = []
+    if (position === undefined || reference === undefined) targetElements.push(...document.querySelectorAll(selector))
+    else {
+      const cleanPosition = position.trim().replace(/(-|\s)/igm, '') as InsertNodePosition
       const targetElement = selectorToElement(selector)
-      if (position === 'after') {
-        if (refElement.nextSibling !== null) refElement.parentNode?.insertBefore(targetElement, targetElement.nextSibling)
-        else refElement.parentNode?.appendChild(targetElement)
-      } else if (position === 'before') {
-        refElement.parentNode?.insertBefore(refElement, targetElement)
-      } else if (position.replace(/(-|\s)/igm, '') === 'startof') {
-        if (refElement.firstChild !== null) refElement.insertBefore(targetElement, refElement.firstChild)
-        else refElement.appendChild(targetElement)
-      } else if (position.replace(/(-|\s)/igm, 'endof')) {
-        refElement.appendChild(targetElement)
-      }
-      logger.log('Slots', '%cCreated', 'font-weight: 800;', targetElement, `with position '${position}'`, 'from', refElement)
-      return targetElement
-    })
-    return { ...slotData, targetElements }
-  })
-  
-  // Render in targets
-  const renderedPromises = withTargets
-    .map(async slotData => {
-      return await Promise.all(slotData.targetElements.map(async target => {
-        if (pageSlotsRenderedMap.has(target)) return {
-          ...slotData,
-          error: 'Something has already been rendered here.' as string,
-        }
-        const { content } = slotData
-        let clonedContent: Node[] | string
-        if (content instanceof NodeList) { clonedContent = [...content].map(node => node.cloneNode(true)) }
-        else { clonedContent = Darkdouille.transformers.toString()(content) }
-        const renderedContent = typeof clonedContent === 'string'
-          ? clonedContent
-          : await Promise.all(clonedContent.map(node => LmHtml.render(node)))
-        target.innerHTML = ''
-        target.classList.add('lm-slot')
-        const shadow = target.attachShadow({ mode: 'open' })
-        const slotInner = document.createElement('div')
-        slotInner.classList.add('lm-slot__inner')
-        const targetAncestors = getNodeAncestors(target)
-        const firstThemedTargetAncestor = targetAncestors.find(elt => {
-          const attr = elt.getAttribute('data-color-mode')
-          if (attr !== null) return true
-          return false
-        })
-        let colorMode: 'light' | 'dark' = 'light'
-        if (firstThemedTargetAncestor !== undefined) {
-          const attr = firstThemedTargetAncestor.getAttribute('data-color-mode')
-          if (attr === 'dark') colorMode = 'dark'
-        }
-        if (colorMode === 'dark') slotInner.setAttribute('data-color-mode', 'dark')
-        shadow.append(slotInner)
-        preactRender(<>{renderedContent}</>, slotInner)
-        pageSlotsRenderedMap.add(target)
-        return {
-          ...slotData,
-          content: clonedContent,
-          rendered: renderedContent
-        }
-      }))
-    })
-  await Promise.all(renderedPromises)
-  logger.log('Slots', '%cRendered content in slots:', 'font-weight: 800;', Apps.rendered)
+      const referenceElements = document.querySelectorAll(reference)
+      Array.from(referenceElements).forEach(referenceElement => {
+        const clonedTarget = targetElement.cloneNode(true) as HTMLElement
+        insertNode(clonedTarget, cleanPosition, referenceElement)
+        targetElements.push(clonedTarget)
+      })
+    }
+    // Inject content inside targets
+    await Promise.all(targetElements.map(async targetElement => {
+      const { content } = pageSlotData
+      const clonedContent = content instanceof NodeList
+        ? Array.from(content).map(node => node.cloneNode(true))
+        : Darkdouille.transformers.toString()(content)
+      const renderedContent = typeof clonedContent === 'string'
+        ? clonedContent
+        : await Promise.all(clonedContent.map(node => LmHtml.render(node)))
+      Slots.makeSlot(targetElement, renderedContent)
+    }))
+  }))
+  logger.log('Slots', '%cCreated slots:', 'font-weight: 800;', Slots.created)
+  logger.log('Apps', '%cRendered apps:', 'font-weight: 800;', Apps.rendered)
 }

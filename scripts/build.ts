@@ -39,9 +39,7 @@ const bundleOptions = (otherEntries: BuildOptions['entryPoints'] = {}): BuildOpt
     'safari12'
   ],
   plugins: [
-    inlineImagePulgin({
-      limit: -1
-    }),
+    inlineImagePulgin({ limit: -1 }),
     lmScssModulesPlugin
   ],
   assetNames: 'assets/[name].[hash]',

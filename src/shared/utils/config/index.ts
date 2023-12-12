@@ -1,8 +1,8 @@
 import appConfig from '~/config'
 import getHeaderElements from '~/shared/get-header-element'
-import { Apps } from '~/apps'
 import { Analytics } from '~/shared/analytics'
 import { Darkdouille } from '~/shared/darkdouille'
+import { Slots } from '~/shared/slots'
 import { toString, toNumber, toBoolean } from '~/utils/cast'
 import interpolate, { ratio } from '~/utils/interpolate'
 import roundNumbers from '~/utils/round-numbers'
@@ -35,6 +35,7 @@ export namespace Config {
     instructions.forEach(({ name, value }) => {
       // ID
       if (name === InlineOnlyInstructionName.ID) return document.body.classList.add(toString(value))
+      
       // HIDE_HEADER
       if (name === RemoteInstructionName.HIDE_HEADER) {
         const headerElements = getHeaderElements() ?? []
@@ -59,6 +60,7 @@ export namespace Config {
         else logger?.log('Apply config', '%cHeader displayed', 'font-weight: 800;', headerElements)
         return
       }
+      
       // TRACKING
       if (name === RemoteInstructionName.TRACKING) {
         // [WIP] if multiple tracking instructions, this logic
@@ -110,6 +112,7 @@ export namespace Config {
           200
         )
       }
+      
       // CSS
       if (name === RemoteInstructionName.CSS) {
         let injected = '\n'
@@ -127,9 +130,10 @@ export namespace Config {
         } else {
           injected += toString(value)
         }
-        Apps.injectStyles('css', injected, 'lm-page-config-css')
+        Slots.injectStyles('css', injected, { name: 'lm-page-config-css', position: Slots.StylesPositions.CUSTOM })
         logger?.log('Apply config', '%cCSS injected\n', 'font-weight: 800;', injected)
       }
+      
       // SCALE
       if (name === RemoteInstructionName.SCALE) {
         const valueIsRecord = Darkdouille.valueIsRecord(value)
@@ -195,9 +199,10 @@ export namespace Config {
             else { thisBreakpointCss += `}}` }
             return thisBreakpointCss
           }).join('')
-          Apps.injectStyles('css', scaleCss, 'lm-page-config-scale')
+          Slots.injectStyles('css', scaleCss, { name: 'lm-page-config-scale', position: Slots.StylesPositions.CUSTOM })
           logger?.log('Apply config', `%cScale created – ${name}\n`, 'font-weight: 800;', `\n${scaleCss.trim()}`)
       }
+      
       // HANDLERS_FILE
       if (name === RemoteInstructionName.HANDLERS_FILE) {
         try {

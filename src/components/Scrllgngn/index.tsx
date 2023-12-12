@@ -1,13 +1,10 @@
 import { Component, JSX, VNode } from 'preact'
-
 import { throttle } from '~/utils/throttle-debounce'
 import clamp from '~/utils/clamp'
 import bem from '~/utils/bem'
-
 import IntersectionObserverComponent from '~/components/IntersectionObserver'
 import ResizeObserverComponent from '~/components/ResizeObserver'
 import Paginator, { State as PaginatorState } from '~/components/Paginator'
-
 import TransitionsWrapper from './TransitionsWrapper'
 import BlockRenderer from './BlockRenderer'
 import styles from './styles.module.scss'
