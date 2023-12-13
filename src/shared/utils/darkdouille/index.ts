@@ -7,6 +7,8 @@ import toHtml from './transformers/toHtml'
 import toRef from './transformers/toRef'
 import toArray from './transformers/toArray'
 import toRecord from './transformers/toRecord'
+/* Any type transformers */
+import length from './transformers/length'
 /* Number transformers */
 import add from './transformers/add'
 import subtract from './transformers/subtract'
@@ -385,6 +387,9 @@ export namespace Darkdouille {
       if (name === FunctionName.TOREF) return toRef(this.resolve.bind(this))
       if (name === FunctionName.TOARRAY) return toArray
       if (name === FunctionName.TORECORD) return toRecord
+
+      /* Any */
+      if (name === FunctionName.LENGTH) return length
       
       /* Numbers */
       if (name === FunctionName.ADD) return add
@@ -600,6 +605,8 @@ export namespace Darkdouille {
     TOREF = 'toref',
     TOARRAY = 'toarray',
     TORECORD = 'torecord',
+    /* Any */
+    LENGTH = 'length',
     /* Number */
     ADD = 'add',
     SUBTRACT = 'subtract',
@@ -644,6 +651,7 @@ export namespace Darkdouille {
 
   export const transformers = {
     /* Cast    */ toString, toNumber, toBoolean, toNull, toHtml, toRef, toArray, toRecord,
+    /* Any     */ length,
     /* Number  */ add, subtract, multiply, pow, divide, max, min, clamp, greater, smaller, equals,
     /* String  */ append, prepend, replace, trim, split,
     /* Array   */ join, at, map, push,
