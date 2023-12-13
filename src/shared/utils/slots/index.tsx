@@ -45,8 +45,18 @@ export namespace Slots {
     })
     return preactRender(<>
       {sortedStyles.map(styleData => {
-        if (styleData.type === 'css') return <style name={styleData.name} data-lmid={styleData.id} key={styleData.id}>{styleData.content}</style>
-        else if (styleData.type === 'url') return <link name={styleData.name} href={styleData.content} rel='stylesheet' data-lmid={styleData.id} key={styleData.id} />
+        if (styleData.type === 'css') return <style
+          name={styleData.name}
+          data-lmid={styleData.id}
+          key={styleData.id}>
+          {styleData.content}
+        </style>
+        else if (styleData.type === 'url') return <link
+          name={styleData.name}
+          href={styleData.content}
+          rel='stylesheet'
+          data-lmid={styleData.id}
+          key={styleData.id} />
         return null
       })}
     </>, target)
