@@ -25,7 +25,7 @@ const at: Darkdouille.TransformerFunctionGenerator<Darkdouille.TreeValue> = (...
         }
         return elt
       })
-    return retrieved.length < 2 ? retrieved[0] : retrieved
+    return retrieved.length > 1 ? retrieved[0] : retrieved
   }
 }
 
