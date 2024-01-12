@@ -9,6 +9,7 @@ import roundNumbers from '~/utils/round-numbers'
 import Logger from '~/utils/silent-log'
 import isRecord from '~/utils/is-record'
 import { Events } from '../events'
+import randomUUID from '~/utils/random-uuid'
 
 export namespace Config {
   export enum InlineOnlyInstructionName {
@@ -127,7 +128,7 @@ export namespace Config {
         } else {
           injected += toString(value)
         }
-        injectCssRule(injected, `lm-page-config-css-${window.crypto.randomUUID()}`)
+        injectCssRule(injected, `lm-page-config-css-${randomUUID()}`)
         logger?.log('Apply config', '%cCSS injected\n', 'font-weight: 800;', injected)
       }
       // SCALE
