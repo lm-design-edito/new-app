@@ -1,8 +1,7 @@
 import { Component, JSX, createRef, RefObject, VNode } from 'preact'
 
 import Icon, { Icons } from '~/components/Icon'
-import Img from '~/components/Img'
-import ToggleButton from '~/components/ToggleButton'
+import ToggleButton from '~/components/_ToggleButton'
 import Drawer from '~/components/Drawer'
 
 import bem from '~/utils/bem'
@@ -111,7 +110,7 @@ class Slide extends Component<Props, {}> {
         <div className={imageClasses.join(' ')}>
           {props.media?.type === 'video'
             ? <video onClick={this.toggleVideo} ref={this.video} muted loop playsInline autoPlay={props.selected} src={mediaURL} />
-            : <Img src={mediaURL} loading='eager' />}
+            : <img src={mediaURL} loading='eager' />}
         </div>
 
         {displayCaption && <div className={captionClasses.join(' ')}>

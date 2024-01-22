@@ -9,6 +9,8 @@ import randomUUID from '~/utils/random-uuid'
 
 export namespace Apps {
   export enum Name {
+    _CAROUSEL = '_carousel',
+    _SLIDESHOW = '_slideshow',
     AUDIOQUOTE = 'audioquote',
     DRAWER = 'drawer',
     GALLERY = 'gallery',
@@ -35,6 +37,8 @@ export namespace Apps {
   export async function load (name: Name): Promise<RendererModule | undefined> {
     try {
       let loaded: RendererModule | null = null
+      if (name === Name._CAROUSEL) { loaded = (await import('~/apps/_carousel')).default }
+      if (name === Name._SLIDESHOW) { loaded = (await import('~/apps/_slideshow')).default }
       if (name === Name.AUDIOQUOTE) { loaded = (await import('~/apps/audioquote')).default }
       if (name === Name.DRAWER) { loaded = (await import('~/apps/drawer')).default }
       if (name === Name.GALLERY) { loaded = (await import('~/apps/gallery')).default }

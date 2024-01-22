@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
+  <body>
+    <!-- Application -->
+    <script type="module" src="http://localhost:3000/shared/index.js"></script>
+    
+    <!-- Config -->
+    <data class="dkdll" style="display: none;">
+      <array class="SLOTS">
+        <record>
+          <record class="destination">
+            <string class="selector">.slot</string>
+          </record>
+          <lm-html class="content">
+            <comp name="_carousel">
+              <boolean class="leftArrow">true</boolean>
+              <boolean class="rightArrow">true</boolean>
+              <boolean class="dots">true</boolean>
+              <boolean class="loop">true</boolean>
+              <number class="duration">2000</number>
+              <number class="imageHeight">800</number>
+              <lm-html class="title">Un titre</lm-html>
+              <lm-html class="credits">Les crédits</lm-html>
+              <lm-html class="description">Une description</lm-html>
+              <array class="images">
+                <record>
+                  <string class="url">http://www.snut.fr/wp-content/uploads/2015/08/image-de-paysage.jpg</string>
+                  <string class="mobileUrl">http://www.snut.fr/wp-content/uploads/2015/08/image-de-paysage.jpg</string>
+                  <string class="imageFit">contain</string>
+                  <lm-html class="description">Une description</lm-html>
+                  <lm-html class="credits">Un crédit</lm-html>
+                </record>
+                <record>
+                  <string class="url">http://www.snut.fr/wp-content/uploads/2015/08/image-de-paysage.jpg</string>
+                  <string class="mobileUrl">http://www.snut.fr/wp-content/uploads/2015/08/image-de-paysage.jpg</string>
+                  <string class="imageFit">contain</string>
+                  <lm-html class="description">Une description</lm-html>
+                  <lm-html class="credits">Un crédit</lm-html>
+                </record>
+                <record>
+                  <string class="url">http://www.snut.fr/wp-content/uploads/2015/08/image-de-paysage.jpg</string>
+                  <string class="mobileUrl">http://www.snut.fr/wp-content/uploads/2015/08/image-de-paysage.jpg</string>
+                  <string class="imageFit">contain</string>
+                  <lm-html class="description">Une description</lm-html>
+                  <lm-html class="credits">Un crédit</lm-html>
+                </record>
+              </array>
+              <!-- customClass: (i: unknown) => i !== undefined ? toString(i) : undefined, -->
+              <!-- leftArrow: (i: unknown) => i !== undefined ? toBoolean(i) : undefined, -->
+              <!-- rightArrow: (i: unknown) => i !== undefined ? toBoolean(i) : undefined, -->
+              <!-- arrowsPosition: (i: unknown) => i !== undefined ? toString(i): undefined, -->
+              <!-- dots: (i: unknown) => i !== undefined ? toBoolean(i) : undefined, -->
+              <!-- loop: (i: unknown) => i !== undefined ? toBoolean(i) : undefined, -->
+              <!-- duration: (i: unknown) => i !== undefined ? toNumber(i) : undefined, -->
+              <!-- fullscreen: (i: unknown) => i !== undefined ? toBoolean(i) : undefined, -->
+              <!-- imageHeight: (i: unknown) => i !== undefined ? toNumber(i) : undefined, -->
+              <!-- imageFit: (i: unknown) => i !== undefined ? toString(i) : undefined, -->
+              <!-- gapValue: (i: unknown) => i !== undefined ? toNumber(i) : undefined, -->
+              <!-- backgroundColor: (i: unknown) => i !== undefined ? toString(i) : undefined, -->
+              <!-- imageBackgroundColor: (i: unknown) => i !== undefined ? toString(i) : undefined, -->
+              <!-- titleColor: (i: unknown) => i !== undefined ? toString(i) : undefined, -->
+              <!-- descriptionColor: (i: unknown) => i !== undefined ? toString(i) : undefined, -->
+              <!-- creditsColor: (i: unknown) => i !== undefined ? toString(i) : undefined, -->
+              <!-- dotColor: (i: unknown) => i !== undefined ? toString(i) : undefined, -->
+              <!-- fullscreenButtonColor: (i: unknown) => i !== undefined ? toString(i) : undefined, -->
+              <!-- arrowColor: (i: unknown) => i !== undefined ? toString(i) : undefined, -->
+              <!-- arrowColorDisabled: (i: unknown) => i !== undefined ? toString(i) : undefined, -->
+              <!-- arrowBackgroundColor: (i: unknown) => i !== undefined ? toString(i) : undefined, -->
+              <!-- arrowBackgroundColorHover: (i: unknown) => i !== undefined ? toString(i) : undefined, -->
+              <!-- title: (i: undefined) => i !== undefined ? Apps.toStringOrVNodeHelper(i) : undefined, -->
+              <!-- credits: (i: undefined) => i !== undefined ? Apps.toStringOrVNodeHelper(i) : undefined, -->
+              <!-- description: (i: undefined) => i !== undefined ? Apps.toStringOrVNodeHelper(i) : undefined, -->
+              <!-- images: async (i: unknown) => Array.isArray(i) ? await arrayToImages(i, id) : undefined -->
+
+              <!-- url: (i: unknown) => i !== undefined ? toString(i) : undefined, -->
+              <!-- mobileUrl: (i: unknown) => i !== undefined ? toString(i) : undefined, -->
+              <!-- type: (i: unknown) => i !== undefined ? toString(i) : undefined, -->
+              <!-- imageFit: (i: unknown) => i !== undefined ? toString(i) : undefined, -->
+              <!-- description: (i: unknown) => i !== undefined ? Apps.toStringOrVNodeHelper(i) : undefined, -->
+              <!-- credits: (i: unknown) => i !== undefined ? Apps.toStringOrVNodeHelper(i) : undefined -->
+            </comp>
+          </lm-html>
+        </record>
+      </array>
+    </data>
+
+    <!-- Slots -->
+    <div class="slot"></div>
+  </body>
+</html>

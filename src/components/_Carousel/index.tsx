@@ -6,7 +6,7 @@ import CarouselElement, { Media } from './components/CarouselElement'
 import bem from '~/utils/bem'
 import styles from './styles.module.scss'
 
-interface State {
+type State = {
   index: number,
   visibleIndex?: number,
   arrowsPos?: number,
@@ -17,7 +17,7 @@ interface State {
   fullscreen?: boolean
 }
 
-interface Props {
+type Props = {
   customClass?: string
   leftArrow?: boolean
   rightArrow?: boolean
@@ -299,7 +299,7 @@ class Carousel extends Component<Props, State> {
       }
     }
 
-    this.indexThreshold = this.scrollBreakpoints[1] / 2
+    this.indexThreshold = (this.scrollBreakpoints[1] ?? 0) / 2
 
     // [WIP][ELSA] Attention, tu as un setState qui après avoir
     // changé le state appelle une fonction qui... setState aussi !
