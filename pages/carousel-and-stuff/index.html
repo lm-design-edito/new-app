@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
+  <body>
+    <!-- Application -->
+    <script type="module" src="http://localhost:3000/shared/index.js"></script>
+    
+    <!-- Config -->
+    <data class="dkdll" style="display: none;">
+      <array class="SLOTS">
+        <record>
+          <record class="destination">
+            <string class="selector">.slot</string>
+          </record>
+          <lm-html class="content">
+            <comp name="scrllgngn">
+              <string class="customClass">une-classe</string>
+              <array class="pages"><record>
+                <string class="id">un-id</string>
+                <string class="bgColor"></string>
+                <array class="blocks">
+                  <record>
+                    <lm-html class="content">
+                      <div style="height: 150vh;">Une page</div>
+                    </lm-html>
+                  </record>
+                </array>
+              </record></array>
+            </comp>
+          </lm-html>
+        </record>
+      </array>
+    </data>
+
+    <!-- Slots -->
+    <div class="slot"></div>
+  </body>
+</html>

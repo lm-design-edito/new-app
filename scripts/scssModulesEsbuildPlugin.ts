@@ -29,8 +29,13 @@ const scssModulesEsbuildPlugin: Plugin = {
         })
       ]).process(css, { from: undefined })
       const jsContents = `
-        const injectStyles = window.LM_PAGE?.Apps?.injectStyles;
-        if (injectStyles !== undefined) injectStyles('css', \`${processed.css}\`, \`${args.path}\`);
+        const Slots = window.LM_PAGE?.Slots;
+        const injectStyles = Slots?.injectStyles;
+        const appStylesPositions = Slots?.StylesPositions?.APP;
+        if (injectStyles !== undefined) injectStyles('css', \`${processed.css}\`, {
+          name: \`${args.path}\`,
+          position: appStylesPositions
+        });
         export default ${json};`;
       return { contents: jsContents, loader: 'js' }
     })

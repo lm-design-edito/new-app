@@ -17,7 +17,6 @@ export type LmPage = {
   [Globals.GlobalKey.HAS_AUTO_INIT]?: boolean
   [Globals.GlobalKey.INIT]?: typeof init
   [Globals.GlobalKey.LM_HTML]?: typeof LmHtml
-  [Globals.GlobalKey.SLOTS]?: typeof Slots
   [Globals.GlobalKey.LOGGER]?: Logger
   [Globals.GlobalKey.META]?: {
     env?: string
@@ -28,6 +27,7 @@ export type LmPage = {
     deployed_on_readable?: string
     paths?: typeof appConfig.paths
   }
+  [Globals.GlobalKey.SLOTS]?: typeof Slots
   [Globals.GlobalKey.TREE]?: Darkdouille.Tree
   [Globals.GlobalKey.UTILS]?: Record<string, any>
 }
@@ -49,7 +49,7 @@ export namespace Globals {
     LM_HTML = 'LmHtml',
     LOGGER = 'logger',
     META = 'meta',
-    SLOTS = 'slots',
+    SLOTS = 'Slots',
     TREE = 'tree',
     UTILS = 'utils',
   }
