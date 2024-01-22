@@ -129,6 +129,7 @@ class Carousel extends Component<Props, State> {
     }
 
     this.calculateDimensions()
+    setTimeout(this.calculateDimensions, 50)
 
     setTimeout(this.fixArrowsPosition, 200)
     setTimeout(this.fixArrowsPosition, 500)

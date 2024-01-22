@@ -11,31 +11,55 @@
     <!-- Config -->
     <data class="dkdll" style="display: none;">
       <array class="SLOTS">
+        
+        <!-- Slot 1 -->
         <record>
           <record class="destination">
-            <string class="selector">.slot</string>
+            <string class="selector">.slot-1</string>
           </record>
           <lm-html class="content">
-            <comp name="scrllgngn">
-              <string class="customClass">une-classe</string>
-              <array class="pages"><record>
-                <string class="id">un-id</string>
-                <string class="bgColor"></string>
-                <array class="blocks">
-                  <record>
-                    <lm-html class="content">
-                      <div style="height: 150vh;">Une page</div>
-                    </lm-html>
-                  </record>
-                </array>
-              </record></array>
+            <comp name="_carousel">
+              <boolean class="leftArrow">true</boolean>
+              <boolean class="rightArrow">true</boolean>
+              <boolean class="dots">true</boolean>
+              <boolean class="loop">true</boolean>
+              <number class="duration">2000</number>
+              <number class="imageHeight">800</number>
+              <lm-html class="title">Un titre</lm-html>
+              <lm-html class="credits">Les crédits</lm-html>
+              <lm-html class="description">Une description</lm-html>
+              <array class="images">
+                <record>
+                  <string class="url">http://www.snut.fr/wp-content/uploads/2015/08/image-de-paysage.jpg</string>
+                  <string class="mobileUrl">http://www.snut.fr/wp-content/uploads/2015/08/image-de-paysage.jpg</string>
+                  <string class="imageFit">contain</string>
+                  <lm-html class="description">Une description</lm-html>
+                  <lm-html class="credits">Un crédit</lm-html>
+                </record>
+                <record>
+                  <string class="url">http://www.snut.fr/wp-content/uploads/2015/08/image-de-paysage.jpg</string>
+                  <string class="mobileUrl">http://www.snut.fr/wp-content/uploads/2015/08/image-de-paysage.jpg</string>
+                  <string class="imageFit">contain</string>
+                  <lm-html class="description">Une description</lm-html>
+                  <lm-html class="credits">Un crédit</lm-html>
+                </record>
+                <record>
+                  <string class="url">http://www.snut.fr/wp-content/uploads/2015/08/image-de-paysage.jpg</string>
+                  <string class="mobileUrl">http://www.snut.fr/wp-content/uploads/2015/08/image-de-paysage.jpg</string>
+                  <string class="imageFit">contain</string>
+                  <lm-html class="description">Une description</lm-html>
+                  <lm-html class="credits">Un crédit</lm-html>
+                </record>
+              </array>
             </comp>
           </lm-html>
         </record>
+
+        <!-- Slot 2, etc... -->
       </array>
     </data>
 
     <!-- Slots -->
-    <div class="slot"></div>
+    <div class="slot-1"></div>
   </body>
 </html>
