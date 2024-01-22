@@ -21,6 +21,7 @@ export namespace Config {
     HIDE_HEADER = 'hideHeader',
     TRACKING = 'tracking',
     CSS = 'css',
+    STYLESHEET = 'stylesheet',
     SCALE = 'scale',
     HANDLERS_FILE = 'handlersFile'
   }
@@ -130,8 +131,21 @@ export namespace Config {
         } else {
           injected += toString(value)
         }
-        Slots.injectStyles('css', injected, { name: 'lm-page-config-css', position: Slots.StylesPositions.CUSTOM })
+        Slots.injectStyles('css', injected, {
+          name: 'lm-page-config-css',
+          position: Slots.StylesPositions.CUSTOM
+        })
         logger?.log('Apply config', '%cCSS injected\n', 'font-weight: 800;', injected)
+      }
+
+      // STYLESHEETS
+      if (name === RemoteInstructionName.STYLESHEET) {
+        const strValue = toString(value)
+        Slots.injectStyles('url', strValue, {
+          name: 'lm-page-config-stylesheet',
+          position: Slots.StylesPositions.CUSTOM
+        })
+        logger?.log('Apply config', '%cStylesheet injected\n', 'font-weight: 800;', strValue)
       }
       
       // SCALE
