@@ -1,27 +1,25 @@
 import { Component, JSX, createRef, VNode, RefObject } from 'preact'
 
-import Img from '~/components/Img'
-
 import bem from '~/utils/bem'
 import styles from './styles.module.scss'
 
 const isMobile = window.innerWidth < 768
 
-interface Media {
+type Media = {
   url?: string
   mobileUrl?: string
   type?: string
   imageFit?: string
-  description?: string|VNode
-  credits?: string|VNode
+  description?: string | VNode
+  credits?: string | VNode
 }
 
-interface Props {
+type Props = {
   selected?: boolean
   visible?: boolean
   media?: Media
-  carouselDescription?: string|VNode
-  carouselCredits?: string|VNode
+  carouselDescription?: string | VNode
+  carouselCredits?: string | VNode
   onImageLoad?: () => void
   imageWrapperRef?: RefObject<HTMLDivElement>
 }
@@ -115,7 +113,7 @@ class CarouselElement extends Component<Props, {}> {
               autoPlay={props.selected}
               src={props.media?.url} />
             : (imageUrl !== undefined
-              && <Img
+              && <img
               onLoad={props.onImageLoad}
               src={imageUrl}
               loading='eager' />

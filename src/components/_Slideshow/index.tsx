@@ -6,7 +6,7 @@ import Slide, { Media } from './components/Slide'
 import bem from '~/utils/bem'
 import styles from './styles.module.scss'
 
-interface Props {
+type Props = {
   customClass?: string
   leftArrow?: boolean
   rightArrow?: boolean
@@ -21,7 +21,7 @@ interface Props {
   images?: Media[]
 }
 
-interface State {
+type State = {
   index: number
   descriptionOpen: boolean
 }
