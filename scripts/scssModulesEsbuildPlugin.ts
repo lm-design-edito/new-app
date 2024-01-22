@@ -33,7 +33,7 @@ const scssModulesEsbuildPlugin: Plugin = {
         const injectStyles = Slots?.injectStyles;
         const appStylesPositions = Slots?.StylesPositions?.APP;
         if (injectStyles !== undefined) injectStyles('css', \`${processed.css}\`, {
-          name: \`${args.path}\`,
+          name: \`lm-page-bundled-css__${args.path}\`,
           position: appStylesPositions
         });
         export default ${json};`;
