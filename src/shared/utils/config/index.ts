@@ -107,7 +107,12 @@ export namespace Config {
             logger?.log('Tracking', 'End reached')
           }
         }
-        logger?.log('Apply config', '%cTracking', 'font-weight: 800;', '– scroll listener attached')
+        logger?.log(
+          'Apply config',
+          '%cTracking',
+          'font-weight: 800;',
+          '– scroll listener attached'
+        )
         return window.setTimeout(
           () => window.addEventListener('scroll', scrollListener),
           200
@@ -135,17 +140,27 @@ export namespace Config {
           name: 'lm-page-config-css',
           position: Slots.StylesPositions.CUSTOM
         })
-        logger?.log('Apply config', '%cCSS injected\n', 'font-weight: 800;', injected)
+        logger?.log(
+          'Apply config',
+          '%cCSS injected\n',
+          'font-weight: 800;',
+          injected
+        )
       }
 
-      // STYLESHEETS
+      // STYLESHEET
       if (name === RemoteInstructionName.STYLESHEET) {
         const strValue = toString(value)
         Slots.injectStyles('url', strValue, {
           name: 'lm-page-config-stylesheet',
           position: Slots.StylesPositions.CUSTOM
         })
-        logger?.log('Apply config', '%cStylesheet injected\n', 'font-weight: 800;', strValue)
+        logger?.log(
+          'Apply config',
+          '%cStylesheet injected\n',
+          'font-weight: 800;',
+          strValue
+        )
       }
       
       // SCALE
@@ -191,11 +206,11 @@ export namespace Config {
             const lowLevel = interpolate(thresholdRatio, lowLevelMin, lowLevelMax)
             const highLevel = interpolate(thresholdRatio, highLevelMin, highLevelMax)
             const highOverLow = highLevel / lowLevel
-            const oneOverLevels = 1 / (levels - 1)
+            const oneOverLevels = 1 / levels
             const factor = Math.pow(highOverLow, oneOverLevels)
             return {
               minWidth: threshold,
-              levels: new Array(levels)
+              levels: new Array(levels + 1)
                 .fill(null)
                 .map((_, level) => level)
                 .map(level => roundNumbers(lowLevel * Math.pow(factor, level), 2))
@@ -207,14 +222,22 @@ export namespace Config {
             if (isFirstBreakpoint) { thisBreakpointCss += `${root}{` }
             else { thisBreakpointCss += `@media (min-width:${minWidth}px){${root}{` }
             levels.forEach((value, levelPos) => {
-              thisBreakpointCss += `${scaleIdentifier}-level-${levelPos + 1}:${value}px;`
+              thisBreakpointCss += `${scaleIdentifier}-level-${levelPos}:${value}px;`
             })
             if (isFirstBreakpoint) { thisBreakpointCss += `}` }
             else { thisBreakpointCss += `}}` }
             return thisBreakpointCss
           }).join('')
-          Slots.injectStyles('css', scaleCss, { name: 'lm-page-config-scale', position: Slots.StylesPositions.CUSTOM })
-          logger?.log('Apply config', `%cScale created – ${name}\n`, 'font-weight: 800;', `\n${scaleCss.trim()}`)
+          Slots.injectStyles('css', scaleCss, {
+            name: 'lm-page-config-scale',
+            position: Slots.StylesPositions.CUSTOM
+          })
+          logger?.log(
+            'Apply config',
+            `%cScale created – ${name}\n`,
+            'font-weight: 800;',
+            `\n${scaleCss.trim()}`
+          )
       }
       
       // HANDLERS_FILE
