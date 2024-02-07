@@ -1,7 +1,7 @@
 export default function replaceAll (
   input: string,
-  pattern: string|RegExp,
-  replacer: string|((substring: string, ...args: any[]) => string),
+  pattern: string | RegExp,
+  replacer: string | ((substring: string, ...args: any[]) => string),
   maxOps: number = 1000) {
   let output = input
   let opsCnt = 0
