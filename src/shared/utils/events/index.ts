@@ -21,7 +21,8 @@ export namespace Events {
     AUDIOQUOTE_ON_MUTE_CLICK = 'audioquote-on-mute-click',
     AUDIOQUOTE_ON_VISIBLE = 'audioquote-on-visible',
     AUDIOQUOTE_HIDDEN = 'audioquote-hidden',
-    SCRLLGNGN_ON_PAGE_CHANGE = 'scrllgngn-on-page-change'
+    SCRLLGNGN_ON_PAGE_CHANGE = 'scrllgngn-on-page-change',
+    RESIZE_OBSERVER_ON_RESIZE = 'resizeobserver-on-resize',
   }
 
   type HandlerName = string

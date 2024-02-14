@@ -1,7 +1,8 @@
-import { Component, toChildArray } from 'preact'
+import { Component, VNode } from 'preact'
 
-type Props = {
-  onResize?: (entries: ResizeObserverEntry[]) => void
+export type Props = {
+  content?: string | VNode,
+  onResize?: (component?: ResizeObserverComponent, event?: ResizeObserverEntry[]) => void,
 }
 
 export default class ResizeObserverComponent extends Component<Props> {
@@ -30,27 +31,21 @@ export default class ResizeObserverComponent extends Component<Props> {
     this.observer = new ResizeObserver(entries => {
       const { onResize } = props
       if (onResize === undefined) return
-      onResize(entries)
+      onResize(this, entries)
     })
     const { children } = $root
-    const firstChild = children[0]
-    if (firstChild === undefined) return
-    this.observer.observe(firstChild)
+    Array.from(children).forEach((child) => {
+      this.observer?.observe(child)
+    })
   }
 
   render () {
-    const { children } = this.props
-    const childrenArr = toChildArray(children)
-    // [WIP] not sure why single child is expected
-    if (childrenArr.length !== 1) {
-      console.error('ResizeObserverComponent expects a single child.')
-      return <></>
-    }
-    // [WIP] not sure why wrapper is needed
+    const { children, content } = this.props
     return <div
       className={`lm-resize-observer`}
       ref={n => { this.$root = n }}>
       {children}
+      {content}
     </div>
   }
 }
