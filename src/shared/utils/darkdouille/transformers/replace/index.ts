@@ -13,7 +13,7 @@ const replace: Darkdouille.TransformerFunctionGenerator<string | NodeListOf<Node
     const replacer = replacerArg instanceof NodeList ? replacerArg : toString()(replacerArg)
     const strReplacer = toString()(replacer)
     const strInput = toString()(inputValue)
-    const strOutput = toReplaceStrArgs.reduce((replaced, toReplace) => replaceAll(replaced, toReplace, strReplacer), strInput)
+    const strOutput = toReplaceStrArgs.reduce((str, torpl) => replaceAll(str, torpl, strReplacer), strInput)
     if (replacer instanceof NodeList || inputValue instanceof NodeList) {
       const wrapperDiv = document.createElement('div')
       wrapperDiv.innerHTML = strOutput
