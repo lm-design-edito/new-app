@@ -39,6 +39,17 @@ export namespace Slots {
     refreshStyles()
   }
 
+  function removeStyle (name: string) {
+    const found = [...Slots.styles].find(styleData => styleData.name === name)
+    if (found === undefined) return;
+    Slots.styles.delete(found)
+    Slots.refreshStyles()
+  }
+
+  export function removeStyles (...names: string[]) {
+    names.forEach(name => removeStyle(name))
+  }
+
   export function renderStylesInTarget (target: Element) {
     const sortedStyles = Array.from(styles).sort((a, b) => {
       return (a.position ?? 0) - (b.position ?? 0)
