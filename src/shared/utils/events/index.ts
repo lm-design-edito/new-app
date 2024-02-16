@@ -23,6 +23,7 @@ export namespace Events {
     AUDIOQUOTE_HIDDEN = 'audioquote-hidden',
     SCRLLGNGN_ON_PAGE_CHANGE = 'scrllgngn-on-page-change',
     RESIZE_OBSERVER_ON_RESIZE = 'resizeobserver-on-resize',
+    INTERSECTION_OBSERVER_CALLBACK = 'intersectionobserver-callback',
   }
 
   type HandlerName = string
