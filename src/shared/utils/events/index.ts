@@ -24,6 +24,7 @@ export namespace Events {
     SCRLLGNGN_ON_PAGE_CHANGE = 'scrllgngn-on-page-change',
     RESIZE_OBSERVER_ON_RESIZE = 'resizeobserver-on-resize',
     INTERSECTION_OBSERVER_CALLBACK = 'intersectionobserver-callback',
+    EVENTLISTENER_CALLBACK = 'eventlistener-callback',
   }
 
   type HandlerName = string

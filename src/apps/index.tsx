@@ -19,6 +19,7 @@ export namespace Apps {
     UI = 'ui',
     RESIZEOBSERVER = 'resizeobserver',
     INTERSECTIONOBSERVER = 'intersectionobserver',
+    EVENTLISTENER = 'eventlistener',
   }
 
   export const rendered: Array<{
@@ -44,6 +45,7 @@ export namespace Apps {
       if (name === Name.SCRLLGNGN) { loaded = (await import('~/apps/scrllgngn')).default }
       if (name === Name.RESIZEOBSERVER) { loaded = (await import('~/apps/resizeobserver')).default }
       if (name === Name.INTERSECTIONOBSERVER) { loaded = (await import('~/apps/intersectionobserver')).default }
+      if (name === Name.EVENTLISTENER) { loaded = (await import('~/apps/eventlistener')).default }
       if (name === Name.UI) {
         const uiStyles = appConfig.paths.STYLES_UI_URL.toString()
         Slots.injectStyles('url', uiStyles, { position: Slots.StylesPositions.APP })
