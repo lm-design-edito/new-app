@@ -1,0 +1,124 @@
+<data class="CONFIG" action="append">
+  <data>
+    <string class="name">css</string>
+    <lm-html class="value">
+      <style>
+        :host,
+        :root {
+          --resize-width: 30%;
+          --resize-color: orange;
+        }
+      </style>
+    </lm-html>
+  </data>
+</data>
+<data class="SLOTS" action="append">
+  <!-- RESIZE OBSERVER -->
+  <data>
+    <data class="destination">
+      <string class="selector">.resize-observer</string>
+      <string class="position">endof</string>
+      <string class="reference">body</string>
+    </data>
+    <lm-html class="content">
+      <lm-html>
+        <h1>Resize observer</h1>
+      </lm-html>
+      <comp name="resizeobserver">
+        <data class="onResize">
+          <string>onResizeObserver</string>
+        </data>
+        <lm-html class="content">
+          <div style="height: 400px; width: var(--resize-width); background: var(--resize-color); border-radius: 8px; transition: width .3s;">Une div avec un event au resize</div>
+        </lm-html>
+      </comp>
+      <div style="display: flex; gap: 24px; margin-top: 16px; align-items: center;">
+        <comp name="eventlistener">
+          <string class="types">click</string>
+          <string class="customWrapperClass">maClasseCustom</string>
+          <data class="callback">
+            <string>onEventListenerClickUpdateResizeWidth</string>
+          </data>
+          <lm-html class="content">
+            <button class="updateOrangeDiv">Click me to update div with + trigger resize event</button>
+          </lm-html>
+        </comp>
+        
+        <comp name="eventlistener">
+          <string class="types">click</string>
+          <data class="callback">
+            <string>onEventListenerClickUpdateResizeColor</string>
+          </data>
+          <data class="content">
+            <comp name="ui" compid="mon-super-id-de-button">
+            <string class="component">button</string>
+            <lm-html class="content">
+              Click me to update div color
+            </lm-html>
+          </data>
+        </comp>
+      </div>
+    </lm-html>
+  </data>
+
+  <!-- INTERSECTION OBSERVER -->
+  <data>
+    <data class="destination">
+      <string class="selector">.intersection-observer</string>
+      <string class="position">endof</string>
+      <string class="reference">body</string>
+    </data>
+    <data class="content">
+      <lm-html>
+        <h1>Intersection observer</h1>
+      </lm-html>
+      <comp name="intersectionobserver">
+        <data class="callback">
+          <string>onIntersectionObserver</string>
+        </data>
+        <data class="threshold">
+          <data>0.5</data>
+          <data>1</data>
+        </data>
+        <data class="rootMargin">
+          10px
+          <transformer>
+            <trim></trim>
+          </transformer>
+        </data>
+        <lm-html class="content">
+          <div style="height: 400px; width: 30%; border-radius: 8px;  background: pink;">Une div avec un event à l'intersection</div>
+        </lm-html>
+      </comp>
+    </data>
+  </data>
+
+
+  <!-- EVENT LISTENER -->
+  <data>
+    <data class="destination">
+      <string class="selector">.event-listener</string>
+      <string class="position">endof</string>
+      <string class="reference">body</string>
+    </data>
+    <data class="content">
+      <lm-html>
+        <h1>Event listeners</h1>
+      </lm-html>
+      <comp name="eventlistener">
+        <data class="types">
+          <string>click</string>
+          <string>blur</string>
+        </data>
+        <data class="callback">
+          <string>onEventListenerClick</string>
+        </data>
+        <lm-html class="content">
+          <button>Click me or blur</button>
+          <button>Click me or blur</button>
+          <button>Click me or blur</button>
+        </lm-html>
+      </comp>
+    </data>
+  </data>
+</data>

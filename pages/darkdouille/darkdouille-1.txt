@@ -171,25 +171,6 @@
     </data>
   </data>
 
-  <!-- RESIZE OBSERVER -->
-  <data>
-    <data class="destination">
-      <string class="selector">.resize-observer</string>
-      <string class="position">endof</string>
-      <string class="reference">body</string>
-    </data>
-    <data class="content">
-      <comp name="resizeobserver">
-        <data class="onResize">
-          <string>onResizeTest</string>
-        </data>
-        <lm-html class="content">
-          <div style="height: 400px; width: 30%; background: orange">Une div au resize</div>
-        </lm-html>
-      </comp>
-    </data>
-  </data>
-
   <!-- SCRLLGNGN -->
   <data>
     <data class="destination">

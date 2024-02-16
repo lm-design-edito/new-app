@@ -11,8 +11,13 @@ const onResizeTest = (payload) => {
   console.log('i am a resize handler', payload)
 }
 
+const onIntersectionObserverTest = (payload) => {
+  console.log('i am a intersectionObserver handler', payload, payload.details.ioEntry.target)
+}
+
 export {
   myHandler,
   onAudioquotePlayClick,
   onResizeTest,
+  onIntersectionObserverTest
 }
