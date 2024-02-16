@@ -120,14 +120,19 @@ export namespace Apps {
     return appComponent
   }
 
-  export function updatePropsOf (names: string[], updater: AppPropsSetter) {
-    const foundAppsDetails = rendered.filter(appDetails => {
-      const isInFilter = names.includes(appDetails.name as string)
-      return isInFilter
-    })
-    const apps = foundAppsDetails.map(details => details.app)
+  export function updatePropsOf (apps: App[], updater: AppPropsSetter) {
     apps.forEach(app => app.updateProps(updater))
   }
+
+  export function getAppByName(name: string) {
+    const foundAppDetail = rendered.find(appDetails => appDetails.name === name)
+    return foundAppDetail?.app;
+  } 
+
+  export function getAppById(id: string) {
+    const foundAppDetail = rendered.find(appDetails => appDetails.id === id)
+    return foundAppDetail?.app;
+  } 
 
   export async function toStringOrVNodeHelper (input: unknown): Promise<string | VNode> {
     if (input instanceof Node) return await LmHtml.render(input)

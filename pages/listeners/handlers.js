@@ -26,7 +26,15 @@ const onEventListenerClickUpdateResizeWidth = (payload) => {
 }
 
 const onEventListenerClickUpdateResizeColor = (payload) => {
-  console.log('onEventListenerClickUpdateResizeColor')
+  if (!payload.appId) {
+    return;
+  }
+
+  const app = payload.globals.Apps.getAppById(payload.appId);
+  if (!app) {
+    return;
+  }
+
   if (!payload.details.e.target) {
     return;
   }
@@ -41,6 +49,8 @@ const onEventListenerClickUpdateResizeColor = (payload) => {
   const colors = ['coral', 'palegoldenrod', 'palevioletred', 'pink', 'aliceblue', 'aquamarine'];
   resizeObserverDivToUpdate.style.setProperty('--resize-color', colors[Math.floor(Math.random() * (colors.length - 1))]);
 }
+
+
 
 export {
   onResizeObserver,

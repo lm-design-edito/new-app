@@ -4,15 +4,12 @@ const myHandler = (payload) => {
 
 const onAudioquotePlayClick = (payload) => {
   console.log(payload.globals.Apps.rendered)
-  console.log(payload.globals.Apps.updatePropsOf('mon-super-id', curr => ({ ...curr, content: 'updated mamène' })))
-}
 
-const onResizeTest = (payload) => {
-  console.log('i am a resize handler', payload)
-}
-
-const onIntersectionObserverTest = (payload) => {
-  console.log('i am a intersectionObserver handler', payload, payload.details.ioEntry.target)
+  const app = payload.globals.Apps.getAppById(payload.appId);
+  if (!app) {
+    return;
+  }
+  console.log(payload.globals.Apps.updatePropsOf([app], curr => ({ ...curr, content: 'updated mamène' })))
 }
 
 export {
