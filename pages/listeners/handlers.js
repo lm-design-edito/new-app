@@ -1,13 +1,36 @@
+const _getRandomColor = () => {
+  const colors = ['coral', 'palegoldenrod', 'orange', 'palevioletred', 'pink', 'cadetblue', 'aquamarine', 'orange'];
+  return colors[Math.floor(Math.random() * (colors.length - 1))];
+}
+
 const onResizeObserver = (payload) => {
-  console.log('on Resize', payload)
+  // console.log('on Resize', payload)
 }
 
 const onIntersectionObserver = (payload) => {
-  // console.log('on Intersection Observer', payload)
+  if (!payload.details.ioEntry || !payload.details.ioEntry.target) {
+    return;
+  }
+  const intersectinObserverDivToUpdate = payload.details.ioEntry.target.querySelector('div')
+  let color = 'coral';
+  if ( payload.details.ioEntry.intersectionRatio >= 0.25) {
+    color = 'palegoldenrod';
+  } 
+  if ( payload.details.ioEntry.intersectionRatio >= 0.5) {
+    color = 'pink';
+  }
+  if ( payload.details.ioEntry.intersectionRatio >= 0.75) {
+    color = 'palevioletred';
+  }
+  intersectinObserverDivToUpdate.style.setProperty('--intersection-background',color);
 }
 
 const onEventListenerClick = (payload) => {
-  // console.log('on Click', payload)
+  if (!payload.details.e.currentTarget) {
+    return;
+  }
+
+  payload.details.e.currentTarget.style.setProperty('--button-color', _getRandomColor());
 }
 
 const onEventListenerClickUpdateResizeWidth = (payload) => {
@@ -46,11 +69,8 @@ const onEventListenerClickUpdateResizeColor = (payload) => {
   if (!resizeObserverDivToUpdate) {
     return;
   }
-  const colors = ['coral', 'palegoldenrod', 'palevioletred', 'pink', 'aliceblue', 'aquamarine'];
-  resizeObserverDivToUpdate.style.setProperty('--resize-color', colors[Math.floor(Math.random() * (colors.length - 1))]);
+  resizeObserverDivToUpdate.style.setProperty('--resize-color', _getRandomColor());
 }
-
-
 
 export {
   onResizeObserver,

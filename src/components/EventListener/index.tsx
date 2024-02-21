@@ -16,10 +16,7 @@ export default class EventListenerComponent extends Component<Props> {
   }
 
   componentDidUpdate(previousProps: Readonly<Props>): void {
-    const pCallback = previousProps.callback
-    if (pCallback !== previousProps.callback) {
-      this.removeListeners(previousProps.types, previousProps.callback)
-    }
+    this.removeListeners(previousProps.types, previousProps.callback)
     this.addListeners(this.props.types, this.props.callback)
   }
 
