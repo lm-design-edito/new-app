@@ -2,7 +2,7 @@ import { Component, VNode } from 'preact'
 
 export type Props = {
   content?: string | VNode,
-  onResize?: (component?: ResizeObserverComponent, event?: ResizeObserverEntry[]) => void,
+  onResize?: (entries: ResizeObserverEntry[]) => void,
 }
 
 export default class ResizeObserverComponent extends Component<Props> {
@@ -31,7 +31,7 @@ export default class ResizeObserverComponent extends Component<Props> {
     this.observer = new ResizeObserver(entries => {
       const { onResize } = props
       if (onResize === undefined) return
-      onResize(this, entries)
+      onResize(entries)
     })
     const { children } = $root
     Array.from(children).forEach((child) => {

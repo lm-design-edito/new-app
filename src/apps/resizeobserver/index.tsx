@@ -20,9 +20,9 @@ async function toProps (input: unknown, id: string): Promise<Props> {
       const handlers = i
       .map(e => Events.getRegisteredHandler(toString(e)))
       .filter((handler): handler is Events.HandlerFunc => handler !== undefined)
-      return async (component?: ResizeObserverComponent, event?: ResizeObserverEntry[]) => {
+      return async (entries?: ResizeObserverEntry[]) => {
         Events.syncCallHandlers(handlers, {
-          details: { component, event },
+          details: { entries },
           type: Events.Type.RESIZE_OBSERVER_ON_RESIZE,
           appId: id
         })

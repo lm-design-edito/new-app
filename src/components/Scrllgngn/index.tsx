@@ -812,7 +812,7 @@ export default class Scrollgneugneu extends Component<Props, State> {
   /* * * * * * * * * * * * * * * * * * * * * *
    * HANDLE PAGINATOR RESIZE
    * * * * * * * * * * * * * * * * * * * * * */
-  handlePaginatorResize (component: ResizeObserverComponent, entries: ResizeObserverEntry[]) {
+  handlePaginatorResize (entries: ResizeObserverEntry[]) {
     const $paginator = entries[0]
     if ($paginator === undefined) return
     const { contentRect } = $paginator

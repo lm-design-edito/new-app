@@ -68,7 +68,7 @@ export default class EventDispatcher extends Component<Props, {}> {
     this.handleIntersection = this.handleIntersection.bind(this)
   }
 
-  handleIntersection (ioEntry: IntersectionObserverEntry) {
+  handleIntersection (ioEntry: IntersectionObserverEntry | undefined) {
     const { props } = this
     const { trigger } = props
     const { ENTER_BOTTOM, ENTER_TOP, LEAVE_TOP, LEAVE_BOTTOM } = Trigger
