@@ -37,6 +37,7 @@ async function toProps (input: unknown, id: string): Promise<Props> {
     appId: () => id,
     customWrapperClass: (i: unknown) => i !== undefined ? toString(i) : undefined,
     content: (i: unknown) => i !== undefined ? Apps.toStringOrVNodeHelper(i) : undefined,
+    selector: (i: unknown) => i !== undefined ? toString(i) : undefined,
     types: (i: unknown) => i !== undefined ? (Array.isArray(i) ? i.map((_i) => toString(_i)) : [toString(i)]) : undefined,
     // // Handlers
     callback: (i: unknown) => {

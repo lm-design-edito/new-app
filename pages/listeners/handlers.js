@@ -4,7 +4,15 @@ const _getRandomColor = () => {
 }
 
 const onResizeObserver = (payload) => {
-  // console.log('on Resize', payload)
+  if (!payload.details.entries || !payload.details.entries[0]) {
+    return;
+  }
+  const resizeObserverDiv = payload.details.entries[0].target.getRootNode().host
+  if (!resizeObserverDiv) {
+    return;
+  }
+  const resizeObserverSpanToUpdate = resizeObserverDiv.shadowRoot.querySelector('span')
+  resizeObserverSpanToUpdate.innerHTML = 'Width onResizeObserver : ' + payload.details.entries[0].target.clientWidth + 'px'
 }
 
 const onIntersectionObserver = (payload) => {
@@ -32,9 +40,8 @@ const onEventListenerClick = (payload) => {
 
   payload.details.e.currentTarget.style.setProperty('--button-color', _getRandomColor());
   
-  payload.details.e.currentTarget.style.getPropertyValue ('--button-color', _getRandomColor());
-  const cs = getComputedStyle(payload.details.e.currentTarget).getPropertyValue('--button-transform');
-  payload.details.e.currentTarget.style.setProperty('--button-transform', parseInt(cs) > 0 ? 0 : 1);
+  const transformValue = getComputedStyle(payload.details.e.currentTarget).getPropertyValue('--button-transform');
+  payload.details.e.currentTarget.style.setProperty('--button-transform', parseInt(transformValue) > 0 ? 0 : 1);
 }
 
 const onEventListenerClickUpdateResizeWidth = (payload) => {
