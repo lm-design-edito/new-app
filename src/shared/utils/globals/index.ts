@@ -36,6 +36,9 @@ declare global {
   interface Window {
     LM_PAGE?: LmPage
   }
+  interface WindowEventMap {
+    [Apps.AppEventsTypes.APP_RENDERED]: Apps.AppEvents[Apps.AppEventsTypes.APP_RENDERED]
+  }
 }
 
 export namespace Globals {

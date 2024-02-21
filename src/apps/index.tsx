@@ -22,6 +22,14 @@ export namespace Apps {
     EVENTLISTENER = 'eventlistener',
   }
 
+  export enum AppEventsTypes {
+    APP_RENDERED = 'appRendered'
+  }
+
+  export type AppEvents = {
+    [Apps.AppEventsTypes.APP_RENDERED]: CustomEvent<{ appId: string | null }>
+  }
+
   export const rendered: Array<{
     id: string | null
     name: string | null
@@ -85,6 +93,12 @@ export namespace Apps {
         props,
         app: this
       })
+      const event = new CustomEvent(AppEventsTypes.APP_RENDERED, {
+        detail: {
+          appId: this.identifier
+        }
+      });
+      dispatchEvent(event);
     }
 
     updateProps (propsSetter: AppPropsSetter) {
@@ -125,12 +139,12 @@ export namespace Apps {
   }
 
   export function getAppByName(name: string) {
-    const foundAppDetail = rendered.find(appDetails => appDetails.name === name)
+    const foundAppDetail = Apps.rendered.find(appDetails => appDetails.name === name)
     return foundAppDetail?.app;
   } 
 
   export function getAppById(id: string) {
-    const foundAppDetail = rendered.find(appDetails => appDetails.id === id)
+    const foundAppDetail = Apps.rendered.find(appDetails => appDetails.id === id)
     return foundAppDetail?.app;
   } 
 
