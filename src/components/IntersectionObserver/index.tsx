@@ -13,7 +13,7 @@ type ObserverOptions = {
 type Props = {
   className?: string
   style?: JSX.CSSProperties
-  callback?: (ioEntry: IOE|undefined, observer: IO) => void
+  callback?: (ioEntry: IntersectionObserverEntry | undefined, observer: IO) => void
   render?: JSX.Element|((ioEntry: IOE|null) => JSX.Element)
   content?: string | VNode
 } & ObserverOptions
@@ -39,7 +39,6 @@ class IntersectionObserverComponent extends Component<Props, State> {
    * * * * * * * * * * * * * * */
   constructor (props: Props) {
     super(props)
-    console.log('intersection observer', props);
     this.getObserverOptions = this.getObserverOptions.bind(this)
     this.updateObserver = this.updateObserver.bind(this)
     this.observation = this.observation.bind(this)
