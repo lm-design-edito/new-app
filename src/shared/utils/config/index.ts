@@ -31,6 +31,10 @@ export namespace Config {
     [key: string]: Darkdouille.TreeValue
   }
 
+  export enum ConfigEvents {
+    HANDLERS_REGISTERED = 'handlersRegistered'
+  }
+
   export function apply (instructions: ConfigInstruction[], logger?: Logger) {
     logger?.log('Apply config', '%cInput', 'font-weight: 800;', instructions)
     instructions.forEach(({ name, value }) => {
@@ -264,6 +268,9 @@ export namespace Config {
                 )
               }
             })
+          }).then(() => {
+            const event = new CustomEvent(ConfigEvents.HANDLERS_REGISTERED);
+            dispatchEvent(event);
           })
         } catch (err) {
           logger?.error(
