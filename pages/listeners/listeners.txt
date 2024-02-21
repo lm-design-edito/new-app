@@ -20,6 +20,10 @@
           border-radius: 20px;
           transition: opacity .1s;
         }
+        .rotateButton {
+          --button-transform: 0;
+          transform: rotate(calc(var(--button-transform) * 180deg));
+        }
         button:hover {
           opacity: .7;
         }
@@ -133,9 +137,9 @@
           <string>onEventListenerClick</string>
         </data>
         <lm-html class="content">
-          <button style="background-color: var(--button-color);">Click me</button>
-          <button style="background-color: var(--button-color);">Click me</button>
-          <button style="background-color: var(--button-color);">Click me</button>
+          <button class="rotateButton" style="background-color: var(--button-color); ">Click me</button>
+          <button class="rotateButton" style="background-color: var(--button-color);">Click me</button>
+          <button class="rotateButton" style="background-color: var(--button-color); ">Click me</button>
         </lm-html>
       </comp>
     </data>

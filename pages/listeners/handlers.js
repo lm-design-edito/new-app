@@ -31,6 +31,10 @@ const onEventListenerClick = (payload) => {
   }
 
   payload.details.e.currentTarget.style.setProperty('--button-color', _getRandomColor());
+  
+  payload.details.e.currentTarget.style.getPropertyValue ('--button-color', _getRandomColor());
+  const cs = getComputedStyle(payload.details.e.currentTarget).getPropertyValue('--button-transform');
+  payload.details.e.currentTarget.style.setProperty('--button-transform', parseInt(cs) > 0 ? 0 : 1);
 }
 
 const onEventListenerClickUpdateResizeWidth = (payload) => {

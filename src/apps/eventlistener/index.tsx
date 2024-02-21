@@ -23,7 +23,9 @@ export default async function renderer (unknownProps: unknown, id: string): Retu
       updateProps()
     }
   }
-  window.addEventListener(Apps.AppEventsTypes.APP_RENDERED, onAppRendered)
+  if (!Apps.getAppById(id)) {
+    window.addEventListener(Apps.AppEventsTypes.APP_RENDERED, onAppRendered)
+  }
   window.addEventListener(Config.ConfigEvents.HANDLERS_REGISTERED, updateProps)
 
   return { props, Component: EventListenerComponent }
