@@ -4,10 +4,17 @@ const myHandler = (payload) => {
 
 const onAudioquotePlayClick = (payload) => {
   console.log(payload.globals.Apps.rendered)
-  console.log(payload.globals.Apps.updatePropsOf('mon-super-id', curr => ({ ...curr, content: 'updated mamène' })))
+
+  const app = payload.globals.Apps.getAppById(payload.appId);
+  if (!app) {
+    return;
+  }
+  console.log(payload.globals.Apps.updatePropsOf([app], curr => ({ ...curr, content: 'updated mamène' })))
 }
 
 export {
   myHandler,
-  onAudioquotePlayClick
+  onAudioquotePlayClick,
+  onResizeTest,
+  onIntersectionObserverTest
 }

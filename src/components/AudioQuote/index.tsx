@@ -370,7 +370,10 @@ class AudioQuote extends Component<Props, State> {
     this.setState({ hasManuallyMuted: true })
   }
 
-  handleIntersection (event: IntersectionObserverEntry) {
+  handleIntersection (event: IntersectionObserverEntry | undefined) {
+    if (!event) {
+       return
+    }
     // [WIP][ELSA] Si le fichier audio n'est pas encore chargé il faudrait
     // faire en sorte qu'il se lance au chargement (si conditions réunies)
     const { props, state } = this

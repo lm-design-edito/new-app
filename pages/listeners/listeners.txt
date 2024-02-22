@@ -1,0 +1,200 @@
+<data class="CONFIG" action="append">
+  <data>
+    <string class="name">css</string>
+    <lm-html class="value">
+      <style>
+        :host,
+        :root {
+          --resize-width: 30%;
+          --resize-color: orange;
+          --intersection-background: pink;
+          padding: 20px;
+        }
+        .demo-button {
+          border: none;
+          padding: 10px 16px;
+          cursor: pointer;
+          border-radius: 20px;   
+        }
+
+        .demo-eventListeners {
+          display: flex;
+          align-items: center;
+          flex-wrap: wrap;
+          margin: 20px;
+          gap: 10px;
+        }
+
+        .demo-listenerElement {
+          --button-color: orange;
+          --button-transform: 0;
+          padding: 10px 16px;
+          background: var(--button-color);
+          transform: rotate(calc(var(--button-transform) * 180deg));
+          cursor: pointer;
+          transition: opacity .1s;
+        }
+        .demo-listenerElement:hover {
+          opacity: .7;
+        }
+      </style>
+    </lm-html>
+  </data>
+</data>
+<data class="SLOTS" action="append">
+  <!-- RESIZE OBSERVER -->
+  <data>
+    <data class="destination">
+      <string class="selector">.resize-observer</string>
+      <string class="position">endof</string>
+      <string class="reference">body</string>
+    </data>
+    <lm-html class="content">
+      <lm-html>
+        <h1>Resize observer</h1>
+      </lm-html>
+      <comp name="resizeobserver">
+        <data class="onResize">
+          <string>onResizeObserver</string>
+        </data>
+        <lm-html class="content">
+          <div style="height: 200px; padding: 30px; width: var(--resize-width); background: var(--resize-color); border-radius: 8px; transition: width .3s;">Une div avec un event au resize</div>
+          <span></span>
+        </lm-html>
+      </comp>
+      <div style="display: flex; gap: 24px; margin-top: 16px; align-items: center;  margin-bottom: 800px; ">
+        <comp name="eventlistener">
+          <string class="types">click</string>
+          <string class="customWrapperClass">maClasseCustom</string>
+          <data class="callback">
+            <string>onEventListenerClickUpdateResizeWidth</string>
+          </data>
+          <lm-html class="content">
+            <button class="demo-button">Click me to update div with + trigger resize event</button>
+          </lm-html>
+        </comp>
+      </div>
+    </lm-html>
+  </data>
+
+  <!-- INTERSECTION OBSERVER -->
+  <data>
+    <data class="destination">
+      <string class="selector">.intersection-observer</string>
+      <string class="position">endof</string>
+      <string class="reference">body</string>
+    </data>
+    <data class="content">
+      <lm-html>
+        <h1>Intersection observer</h1>
+      </lm-html>
+      <comp name="intersectionobserver">
+        <data class="callback">
+          <string>onIntersectionObserver</string>
+        </data>
+        <data class="threshold">
+          <data>0</data>
+          <data>0.25</data>
+          <data>0.5</data>
+          <data>0.75</data>
+          <data>1</data>
+        </data>
+        <data class="rootMargin">
+          300px
+          <transformer>
+            <trim></trim>
+          </transformer>
+        </data>
+        <lm-html class="content">
+          <div style="height: 900px; padding: 30px; width: 30%; margin-bottom: 800px; border-radius: 8px;  background: var(--intersection-background); transition: background .1s;">Une div avec un event à l'intersection </div>
+        </lm-html>
+      </comp>
+    </data>
+  </data>
+
+
+  <!-- EVENT LISTENER -->
+  <data>
+    <data class="destination">
+      <string class="selector">.event-listener</string>
+      <string class="position">endof</string>
+      <string class="reference">body</string>
+    </data>
+    <data class="content">
+      <lm-html>
+        <h1>Event listeners</h1>
+        <h2>With selector</h2>
+        <i>Only on ".rotateButtons"</i>
+      </lm-html>
+      <comp name="eventlistener">
+        <data class="types">
+          <string>click</string>
+          <string>mouseEnter</string>
+        </data>
+        <data class="callback">
+          <string>onEventListenerClick</string>
+        </data>
+        <data class="selector">
+          <string>.rotateButton</string>
+        </data>
+        <data class="customWrapperClass">
+          <string>demo-eventListeners</string>
+        </data>
+        <lm-html class="content">
+          <button class="rotateButton demo-button demo-listenerElement">Click me</button>
+          <button class="rotateButton demo-button demo-listenerElement">Click me</button>
+          <button class="rotateButton demo-button demo-listenerElement">Click me</button>
+          <span class="rotateButton demo-button demo-listenerElement">I'm a span, click me</span>
+          <button class=" demo-button demo-listenerElement">Click me and nothing will happen</button>
+          <data>
+            <comp name="ui" compid="mon-super-id-de-button">
+            <string class="component">button</string>
+            <lm-html class="content">
+              Click me and nothing will happen
+            </lm-html>
+          </data
+        </lm-html>
+      </comp>
+      <lm-html>
+        <h2>Without selector</h2>
+        <i>Default : on all children elements</i>
+      </lm-html>
+      <comp name="eventlistener">
+        <data class="types">
+          <string>click</string>
+        </data>
+        <data class="callback">
+          <string>onEventListenerClick</string>
+        </data>
+        <data class="customWrapperClass">
+          <string>demo-eventListeners</string>
+        </data>
+        <lm-html class="content">
+          <div class="demo-listenerElement">Div : Click me</div>
+          <button class="demo-listenerElement demo-button rotateButton" style="background-color: var(--button-color); ">Button : Click me</button>
+          <h3 class="demo-listenerElement">H3 : Click me</h3>
+          <span class="demo-listenerElement">span : Click me</span>
+        </lm-html>
+      </comp>
+      <lm-html>
+        <h2>With multiple events</h2>
+        <i>mouseenter, mouseleave</i>
+      </lm-html>
+      <comp name="eventlistener">
+        <data class="types">
+          <string>mouseenter</string>
+          <string>mouseleave</string>
+        </data>
+        <data class="callback">
+          <string>onEventListenerClick</string>
+        </data>
+        <data class="customWrapperClass">
+          <string>demo-eventListeners</string>
+        </data>
+        <lm-html class="content">
+          <button class="demo-listenerElement demo-button rotateButton" style="background-color: var(--button-color); ">Hover me</button>
+        </lm-html>
+      </comp>
+    </data>
+  </data>
+</data>

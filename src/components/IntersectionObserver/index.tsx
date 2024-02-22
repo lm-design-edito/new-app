@@ -1,21 +1,22 @@
-import { Component, JSX } from 'preact'
+import { Component, JSX, VNode } from 'preact'
 import bem from '~/utils/bem'
 
-type IO = IntersectionObserver
-type IOE = IntersectionObserverEntry
+export type IO = IntersectionObserver
+export type IOE = IntersectionObserverEntry
 
-interface ObserverOptions {
+type ObserverOptions = {
   root?: HTMLElement
   rootMargin?: string
   threshold?: number[]|number
 }
 
-interface Props extends ObserverOptions {
+type Props = {
   className?: string
   style?: JSX.CSSProperties
-  callback?: (ioEntry: IOE, observer: IO) => void
+  callback?: (ioEntry: IntersectionObserverEntry | undefined, observer: IO) => void
   render?: JSX.Element|((ioEntry: IOE|null) => JSX.Element)
-}
+  content?: string | VNode
+} & ObserverOptions
 
 interface State {
   io_entry: IOE|null
@@ -108,6 +109,7 @@ class IntersectionObserverComponent extends Component<Props, State> {
       style={inlineStyle}>
       {rendered}
       {props.children}
+      {props.content}
     </div>
   }
 }

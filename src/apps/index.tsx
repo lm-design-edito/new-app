@@ -16,7 +16,18 @@ export namespace Apps {
     GALLERY = 'gallery',
     HEADER = 'header',
     SCRLLGNGN = 'scrllgngn',
-    UI = 'ui'
+    UI = 'ui',
+    RESIZEOBSERVER = 'resizeobserver',
+    INTERSECTIONOBSERVER = 'intersectionobserver',
+    EVENTLISTENER = 'eventlistener',
+  }
+
+  export enum AppEventsTypes {
+    APP_RENDERED = 'appRendered'
+  }
+
+  export type AppEvents = {
+    [Apps.AppEventsTypes.APP_RENDERED]: CustomEvent<{ appId: string | null }>
   }
 
   export const rendered: Array<{
@@ -40,6 +51,9 @@ export namespace Apps {
       if (name === Name.GALLERY) { loaded = (await import('~/apps/gallery')).default }
       if (name === Name.HEADER) { loaded = (await import('~/apps/header')).default }
       if (name === Name.SCRLLGNGN) { loaded = (await import('~/apps/scrllgngn')).default }
+      if (name === Name.RESIZEOBSERVER) { loaded = (await import('~/apps/resizeobserver')).default }
+      if (name === Name.INTERSECTIONOBSERVER) { loaded = (await import('~/apps/intersectionobserver')).default }
+      if (name === Name.EVENTLISTENER) { loaded = (await import('~/apps/eventlistener')).default }
       if (name === Name.UI) {
         const uiStyles = appConfig.paths.STYLES_UI_URL.toString()
         Slots.injectStyles('url', uiStyles, { position: Slots.StylesPositions.APP })
@@ -79,6 +93,12 @@ export namespace Apps {
         props,
         app: this
       })
+      const event = new CustomEvent(AppEventsTypes.APP_RENDERED, {
+        detail: {
+          appId: this.identifier
+        }
+      });
+      dispatchEvent(event);
     }
 
     updateProps (propsSetter: AppPropsSetter) {
@@ -114,14 +134,19 @@ export namespace Apps {
     return appComponent
   }
 
-  export function updatePropsOf (names: string[], updater: AppPropsSetter) {
-    const foundAppsDetails = rendered.filter(appDetails => {
-      const isInFilter = names.includes(appDetails.name as string)
-      return isInFilter
-    })
-    const apps = foundAppsDetails.map(details => details.app)
+  export function updatePropsOf (apps: App[], updater: AppPropsSetter) {
     apps.forEach(app => app.updateProps(updater))
   }
+
+  export function getAppByName(name: string) {
+    const foundAppDetail = Apps.rendered.find(appDetails => appDetails.name === name)
+    return foundAppDetail?.app;
+  } 
+
+  export function getAppById(id: string) {
+    const foundAppDetail = Apps.rendered.find(appDetails => appDetails.id === id)
+    return foundAppDetail?.app;
+  } 
 
   export async function toStringOrVNodeHelper (input: unknown): Promise<string | VNode> {
     if (input instanceof Node) return await LmHtml.render(input)
