@@ -15,20 +15,20 @@ export default async function renderer (unknownProps: unknown, id: string): Retu
     if (thisApp !== undefined) Apps.updatePropsOf([thisApp], { callback: newProps.callback })
   }
 
-  window.addEventListener(Config.EventName.HANDLERS_REGISTERED, processPropsAgain)
+  window.addEventListener(Config.EventType.HANDLERS_REGISTERED, processPropsAgain)
 
   // [@Léa] Donc ci-dessous, on attend d'avoir l'info que l'app a été rendue
   // pour recalculer les props right ? Pas sûr de comprendre pourquoi
-  const onThisAppRendered = (e: Apps.Events[Apps.EventName.APP_RENDERED]) => {
+  const onThisAppRendered = (e: Apps.Events[Apps.EventType.APP_RENDERED]) => {
     if (e.detail.appId !== id) return;
-    window.removeEventListener(Apps.EventName.APP_RENDERED, onThisAppRendered)
+    window.removeEventListener(Apps.EventType.APP_RENDERED, onThisAppRendered)
     processPropsAgain()
   }
 
   if (Apps.getAppById(id) === undefined) {
     // Apps.getAppById(id) should always be undefined since
     // renderer is only called once, obvisously before the app is rendered
-    window.addEventListener(Apps.EventName.APP_RENDERED, onThisAppRendered)
+    window.addEventListener(Apps.EventType.APP_RENDERED, onThisAppRendered)
   }
   return { props, Component: EventListenerComponent }
 }

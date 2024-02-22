@@ -23,12 +23,12 @@ export namespace Apps {
     EVENT_LISTENER = 'event-listener',
   }
 
-  export enum EventName {
+  export enum EventType {
     APP_RENDERED = 'app-rendered'
   }
 
   export type Events = {
-    [EventName.APP_RENDERED]: CustomEvent<{ appId: string | null }>
+    [EventType.APP_RENDERED]: CustomEvent<{ appId: string | null }>
   }
 
   export const rendered: Array<{
@@ -94,7 +94,7 @@ export namespace Apps {
         props,
         app: this
       })
-      const event = new CustomEvent(EventName.APP_RENDERED, {
+      const event = new CustomEvent(EventType.APP_RENDERED, {
         detail: {
           appId: this.identifier
         }

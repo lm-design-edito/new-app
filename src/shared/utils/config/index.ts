@@ -31,12 +31,12 @@ export namespace Config {
     [key: string]: Darkdouille.TreeValue
   }
 
-  export enum EventName {
+  export enum EventType {
     HANDLERS_REGISTERED = 'handlers-registered'
   }
 
   export type Events = {
-    [EventName.HANDLERS_REGISTERED]: CustomEvent<{}>
+    [EventType.HANDLERS_REGISTERED]: CustomEvent<{}>
   }
 
   export function apply (instructions: ConfigInstruction[], logger?: Logger) {
@@ -274,7 +274,7 @@ export namespace Config {
               }
             })
           }).then(() => {
-            const event = new CustomEvent(EventName.HANDLERS_REGISTERED, {})
+            const event = new CustomEvent(EventType.HANDLERS_REGISTERED, {})
             window.dispatchEvent(event)
           })
         } catch (err) {
