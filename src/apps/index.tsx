@@ -17,17 +17,18 @@ export namespace Apps {
     HEADER = 'header',
     SCRLLGNGN = 'scrllgngn',
     UI = 'ui',
-    RESIZEOBSERVER = 'resizeobserver',
-    INTERSECTIONOBSERVER = 'intersectionobserver',
-    EVENTLISTENER = 'eventlistener',
+    // [@Léa] oui, j'ai renommé en deux mots finalement, pourquoi, je ne sais pas....
+    RESIZE_OBSERVER = 'resize-observer',
+    INTERSECTION_OBSERVER = 'intersection-observer',
+    EVENT_LISTENER = 'event-listener',
   }
 
-  export enum AppEventsTypes {
-    APP_RENDERED = 'appRendered'
+  export enum EventName {
+    APP_RENDERED = 'app-rendered'
   }
 
-  export type AppEvents = {
-    [Apps.AppEventsTypes.APP_RENDERED]: CustomEvent<{ appId: string | null }>
+  export type Events = {
+    [EventName.APP_RENDERED]: CustomEvent<{ appId: string | null }>
   }
 
   export const rendered: Array<{
@@ -51,9 +52,9 @@ export namespace Apps {
       if (name === Name.GALLERY) { loaded = (await import('~/apps/gallery')).default }
       if (name === Name.HEADER) { loaded = (await import('~/apps/header')).default }
       if (name === Name.SCRLLGNGN) { loaded = (await import('~/apps/scrllgngn')).default }
-      if (name === Name.RESIZEOBSERVER) { loaded = (await import('~/apps/resizeobserver')).default }
-      if (name === Name.INTERSECTIONOBSERVER) { loaded = (await import('~/apps/intersectionobserver')).default }
-      if (name === Name.EVENTLISTENER) { loaded = (await import('~/apps/eventlistener')).default }
+      if (name === Name.RESIZE_OBSERVER) { loaded = (await import('~/apps/resize-observer')).default }
+      if (name === Name.INTERSECTION_OBSERVER) { loaded = (await import('~/apps/intersection-observer')).default }
+      if (name === Name.EVENT_LISTENER) { loaded = (await import('~/apps/event-listener')).default }
       if (name === Name.UI) {
         const uiStyles = appConfig.paths.STYLES_UI_URL.toString()
         Slots.injectStyles('url', uiStyles, { position: Slots.StylesPositions.APP })
@@ -93,7 +94,7 @@ export namespace Apps {
         props,
         app: this
       })
-      const event = new CustomEvent(AppEventsTypes.APP_RENDERED, {
+      const event = new CustomEvent(EventName.APP_RENDERED, {
         detail: {
           appId: this.identifier
         }

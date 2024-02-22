@@ -1,7 +1,8 @@
 import { init } from '~/shared'
 import appConfig from '~/config'
-import { Apps } from 'apps'
+import { Apps } from '~/apps'
 import { Analytics } from '~/shared/analytics'
+import { Config } from '~/shared/config'
 import { Darkdouille } from '~/shared/darkdouille'
 import { Events } from '~/shared/events'
 import { LmHtml } from '~/shared/lm-html'
@@ -12,6 +13,9 @@ import isInEnum from '~/utils/is-in-enum'
 export type LmPage = {
   [Globals.GlobalKey.ANALYTICS]?: typeof Analytics
   [Globals.GlobalKey.APPS]?: typeof Apps
+  // [WIP] pourquoi ~/shared/config n'est pas exporté ?
+  // ATTENTION, ~/shared/config === /src/shared/UTILS/config/index.ts,
+  // pas /src/shared/config.ts, qui est un fichier de config privé du projet
   [Globals.GlobalKey.DARKDOUILLE]?: typeof Darkdouille
   [Globals.GlobalKey.EVENTS]?: typeof Events
   [Globals.GlobalKey.HAS_AUTO_INIT]?: boolean
@@ -32,13 +36,11 @@ export type LmPage = {
   [Globals.GlobalKey.UTILS]?: Record<string, any>
 }
 
+type ProjectCustomEventsMap = Apps.Events & Config.Events
+
 declare global {
-  interface Window {
-    LM_PAGE?: LmPage
-  }
-  interface WindowEventMap {
-    [Apps.AppEventsTypes.APP_RENDERED]: Apps.AppEvents[Apps.AppEventsTypes.APP_RENDERED]
-  }
+  interface Window { LM_PAGE?: LmPage }
+  interface WindowEventMap extends ProjectCustomEventsMap {}
 }
 
 export namespace Globals {

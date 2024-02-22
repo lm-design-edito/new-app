@@ -1,8 +1,9 @@
 import { Component, VNode } from 'preact'
 
 export type Props = {
-  content?: string | VNode,
-  onResize?: (entries: ResizeObserverEntry[]) => void,
+  // [@Léa] customClass ici aussi plz 🙏
+  content?: string | VNode
+  onResize?: (entries: ResizeObserverEntry[]) => void
 }
 
 export default class ResizeObserverComponent extends Component<Props> {
@@ -14,13 +15,13 @@ export default class ResizeObserverComponent extends Component<Props> {
     this.createObserver()
   }
 
-  componentDidUpdate(previousProps: Readonly<Props>): void {
+  componentDidUpdate (previousProps: Readonly<Props>): void {
     const pOnResize = previousProps.onResize
     const { onResize } = this.props
     if (pOnResize !== onResize) this.createObserver()
   }
 
-  componentWillUnmount(): void {
+  componentWillUnmount (): void {
     this.observer?.disconnect()
   }
 

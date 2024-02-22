@@ -7,14 +7,15 @@ export type IOE = IntersectionObserverEntry
 type ObserverOptions = {
   root?: HTMLElement
   rootMargin?: string
-  threshold?: number[]|number
+  threshold?: number[] | number
 }
 
 type Props = {
+  // [@Léa] possible de : className > customClass, et exposer cette prop dans l'app ?
   className?: string
   style?: JSX.CSSProperties
-  callback?: (ioEntry: IntersectionObserverEntry | undefined, observer: IO) => void
-  render?: JSX.Element|((ioEntry: IOE|null) => JSX.Element)
+  callback?: (ioEntry: IOE | undefined, observer: IO) => void
+  render?: JSX.Element | ((ioEntry: IOE | null) => JSX.Element)
   content?: string | VNode
 } & ObserverOptions
 
@@ -27,8 +28,8 @@ class IntersectionObserverComponent extends Component<Props, State> {
    * PROPERTIES
    * * * * * * * * * * * * * * */
   mainClass: string = 'lm-intersection-observer'
-  $root: HTMLDivElement|null = null
-  $pRoot: HTMLDivElement|null = null
+  $root: HTMLDivElement | null = null
+  $pRoot: HTMLDivElement | null = null
   observer: IO = new IntersectionObserver(this.observation)
   state: State = {
     io_entry: null

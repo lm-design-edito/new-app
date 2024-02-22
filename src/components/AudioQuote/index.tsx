@@ -114,9 +114,7 @@ class AudioQuote extends Component<Props, State> {
   }
 
   componentDidUpdate (prevProps: Props) {
-    if (prevProps.subsSrc !== this.props.subsSrc) {
-      this.loadSubs()
-    }
+    if (prevProps.subsSrc !== this.props.subsSrc) this.loadSubs()
     if (this.videoElt !== null && this.videoElt.current !== null) {
       this.videoElt.current.addEventListener('timeupdate', this.handleTimeUpdate)
       this.videoElt.current.addEventListener('ended', this.handleVideoEnded)
@@ -371,9 +369,7 @@ class AudioQuote extends Component<Props, State> {
   }
 
   handleIntersection (event: IntersectionObserverEntry | undefined) {
-    if (!event) {
-       return
-    }
+    if (event === undefined) return;
     // [WIP][ELSA] Si le fichier audio n'est pas encore chargé il faudrait
     // faire en sorte qu'il se lance au chargement (si conditions réunies)
     const { props, state } = this

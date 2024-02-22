@@ -9,25 +9,27 @@ import { Config } from '~/shared/config'
 export default async function renderer (unknownProps: unknown, id: string): ReturnType<Apps.AsyncRendererModule<Props>> {
   const props = await toProps(unknownProps, id)
 
-  const updateProps = async () => {
-    const updatedProps = await toProps(unknownProps, id)
-    const app = Apps.getAppById(id);
-    if (app) {
-      Apps.updatePropsOf([app], { callback: updatedProps.callback })
-    }
+  const processPropsAgain = async () => {
+    const newProps = await toProps(unknownProps, id)
+    const thisApp = Apps.getAppById(id)
+    if (thisApp !== undefined) Apps.updatePropsOf([thisApp], { callback: newProps.callback })
   }
 
-  const onAppRendered = (e:  Apps.AppEvents[Apps.AppEventsTypes.APP_RENDERED]) => {
-    if (e.detail && e.detail.appId === id) {
-      window.removeEventListener(Apps.AppEventsTypes.APP_RENDERED, onAppRendered)
-      updateProps()
-    }
-  }
-  if (!Apps.getAppById(id)) {
-    window.addEventListener(Apps.AppEventsTypes.APP_RENDERED, onAppRendered)
-  }
-  window.addEventListener(Config.ConfigEvents.HANDLERS_REGISTERED, updateProps)
+  window.addEventListener(Config.EventName.HANDLERS_REGISTERED, processPropsAgain)
 
+  // [@Léa] Donc ci-dessous, on attend d'avoir l'info que l'app a été rendue
+  // pour recalculer les props right ? Pas sûr de comprendre pourquoi
+  const onThisAppRendered = (e: Apps.Events[Apps.EventName.APP_RENDERED]) => {
+    if (e.detail.appId !== id) return;
+    window.removeEventListener(Apps.EventName.APP_RENDERED, onThisAppRendered)
+    processPropsAgain()
+  }
+
+  if (Apps.getAppById(id) === undefined) {
+    // Apps.getAppById(id) should always be undefined since
+    // renderer is only called once, obvisously before the app is rendered
+    window.addEventListener(Apps.EventName.APP_RENDERED, onThisAppRendered)
+  }
   return { props, Component: EventListenerComponent }
 }
 
@@ -48,7 +50,7 @@ async function toProps (input: unknown, id: string): Promise<Props> {
       return async (e: Event) => {
         Events.syncCallHandlers(handlers, {
           details: { e },
-          type: Events.Type.EVENTLISTENER_CALLBACK,
+          type: Events.Type.EVENT_LISTENER_CALLBACK,
           appId: id
         })
       }

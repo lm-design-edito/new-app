@@ -22,9 +22,9 @@ export namespace Events {
     AUDIOQUOTE_ON_VISIBLE = 'audioquote-on-visible',
     AUDIOQUOTE_HIDDEN = 'audioquote-hidden',
     SCRLLGNGN_ON_PAGE_CHANGE = 'scrllgngn-on-page-change',
-    RESIZE_OBSERVER_ON_RESIZE = 'resizeobserver-on-resize',
-    INTERSECTION_OBSERVER_CALLBACK = 'intersectionobserver-callback',
-    EVENTLISTENER_CALLBACK = 'eventlistener-callback',
+    RESIZE_OBSERVER_ON_RESIZE = 'resize-observer-on-resize',
+    INTERSECTION_OBSERVER_CALLBACK = 'intersection-observer-callback',
+    EVENT_LISTENER_CALLBACK = 'event-listener-callback',
   }
 
   type HandlerName = string

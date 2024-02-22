@@ -31,8 +31,12 @@ export namespace Config {
     [key: string]: Darkdouille.TreeValue
   }
 
-  export enum ConfigEvents {
-    HANDLERS_REGISTERED = 'handlersRegistered'
+  export enum EventName {
+    HANDLERS_REGISTERED = 'handlers-registered'
+  }
+
+  export type Events = {
+    [EventName.HANDLERS_REGISTERED]: CustomEvent<{}>
   }
 
   export function apply (instructions: ConfigInstruction[], logger?: Logger) {
@@ -118,6 +122,7 @@ export namespace Config {
           '– scroll listener attached'
         )
         return window.setTimeout(
+          // [WIP] maybe throttle this ?
           () => window.addEventListener('scroll', scrollListener),
           200
         )
@@ -269,8 +274,8 @@ export namespace Config {
               }
             })
           }).then(() => {
-            const event = new CustomEvent(ConfigEvents.HANDLERS_REGISTERED);
-            dispatchEvent(event);
+            const event = new CustomEvent(EventName.HANDLERS_REGISTERED, {})
+            window.dispatchEvent(event)
           })
         } catch (err) {
           logger?.error(
