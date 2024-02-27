@@ -5,7 +5,7 @@ import { Config } from '~/shared/config'
 import { Darkdouille } from '~/shared/darkdouille'
 import { Events } from '~/shared/events'
 import getHeaderElements from '~/shared/get-header-element'
-import { Globals, LmPage } from '~/shared/globals'
+import { Globals } from '~/shared/globals'
 import { LmHtml } from '~/shared/lm-html'
 import { Slots } from '~/shared/slots'
 import absoluteModulo from '~/utils/absolute-modulo'
@@ -38,7 +38,7 @@ import transition from '~/utils/transition'
 /* * * * * * * * * * * * * * * * * * * * * *
  * EXPORT & GLOBALS
  * * * * * * * * * * * * * * * * * * * * * */
-const meta: LmPage[Globals.GlobalKey.META] = {
+const meta: Globals.GlobalObj[Globals.GlobalKey.META] = {
   env: appConfig.env,
   built_on: appConfig.builtOn,
   built_on_readable: appConfig.builtOnReadable,
@@ -75,7 +75,7 @@ const importUrl = new URL(import.meta.url)
 const hasIdleParam = importUrl.searchParams.has('idle')
 if (!hasIdleParam) autoInit()
 async function autoInit () {
-  const key = Globals.GlobalKey.HAS_AUTO_INIT
+  const key = Globals.GlobalKey.HAS_AUTO_INITED
   const hasAlreadyAutoInit = Globals.retrieve(key) === true
   if (hasAlreadyAutoInit) return;
   Globals.expose(key, true)
@@ -143,9 +143,11 @@ async function init () {
       : { name: '', value: undefined }
   }).filter(e => e.name !== '')
 
+  // [WIP] Before remote files load, could apply some config stuff already ?
+
   // Load sources
   const pageInlineDataConfigSources = pageInlineDataConfigInstructions.filter((instruction): instruction is {
-    name: Config.InlineOnlyInstructionName,
+    name: Config.InlineOnlyInstructionName.SOURCE,
     value: string
   } => {
     const { name, value } = instruction
@@ -198,7 +200,9 @@ async function init () {
       return validInstructionsNames.includes(name as string)
     })
     : []
-  Config.apply(pageFullDataRawConfig, logger)
+  // [WIP] Maybe await ? Maybe dont await but Config.apply should return a promise ?
+  // Maybe it only has promises like stylesInjected, stylesLoaded, handlersFileLoaded, trackingEventListenersAdded, etc... ?
+  Config.apply(pageFullDataRawConfig)
 
   /* RENDER APPS * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
   
@@ -213,6 +217,7 @@ async function init () {
     const position = destination.position !== undefined ? Darkdouille.transformers.toString()(destination.position) : undefined
     const reference = destination.reference !== undefined ? Darkdouille.transformers.toString()(destination.reference) : undefined
     // Create or select targets
+    // [WIP] Maybe slots creation should be inside Slots
     const targetElements: Element[] = []
     if (position === undefined || reference === undefined) targetElements.push(...document.querySelectorAll(selector))
     else {

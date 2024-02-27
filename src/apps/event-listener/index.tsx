@@ -1,10 +1,11 @@
 import { Apps } from '~/apps'
+import { Globals } from '~/shared/globals'
 import { Events } from '~/shared/events'
 import isRecord from '~/utils/is-record'
 import { toString } from '~/utils/cast'
 import recordFormat from '~/utils/record-format'
+import { throttle } from '~/utils/throttle-debounce'
 import EventListenerComponent, { Props } from '~/components/EventListener'
-import { Config } from '~/shared/config'
 
 export default async function renderer (unknownProps: unknown, id: string): ReturnType<Apps.AsyncRendererModule<Props>> {
   const props = await toProps(unknownProps, id)
@@ -14,29 +15,31 @@ export default async function renderer (unknownProps: unknown, id: string): Retu
     const thisApp = Apps.getAppById(id)
     if (thisApp !== undefined) Apps.updatePropsOf([thisApp], { callback: newProps.callback })
   }
+  const processPropsAgainThrottler = throttle(processPropsAgain, 100)
+  const processPropsAgainThrottled = processPropsAgainThrottler.throttled
 
-  window.addEventListener(Config.EventType.HANDLERS_REGISTERED, processPropsAgain)
-
-  // [@Léa] Donc ci-dessous, on attend d'avoir l'info que l'app a été rendue
-  // pour recalculer les props right ? Pas sûr de comprendre pourquoi
-  const onThisAppRendered = (e: Apps.Events[Apps.EventType.APP_RENDERED]) => {
-    if (e.detail.appId !== id) return;
-    window.removeEventListener(Apps.EventType.APP_RENDERED, onThisAppRendered)
+  const onThisAppMounted = (e: Globals.Events[Globals.EventName.APP_MOUNTED]) => {
+    if (e.detail.id !== id) return;
+    Globals.removeListener(Globals.EventName.APP_MOUNTED, onThisAppMounted)
     processPropsAgain()
   }
 
-  if (Apps.getAppById(id) === undefined) {
-    // Apps.getAppById(id) should always be undefined since
-    // renderer is only called once, obvisously before the app is rendered
-    window.addEventListener(Apps.EventType.APP_RENDERED, onThisAppRendered)
+  const onThisAppUnmounted = (e: Globals.Events[Globals.EventName.APP_UNMOUNTED]) => {
+    if (e.detail.id !== id) return;
+    Globals.removeListener(Globals.EventName.APP_UNMOUNTED, onThisAppUnmounted)
+    Globals.removeListener(Globals.EventName.HANDLER_REGISTERED, processPropsAgain)
   }
+
+  Globals.addListener(Globals.EventName.HANDLER_REGISTERED, processPropsAgainThrottled)
+  Globals.addListener(Globals.EventName.APP_MOUNTED, onThisAppMounted)
+  Globals.addListener(Globals.EventName.APP_UNMOUNTED, onThisAppUnmounted)
+
   return { props, Component: EventListenerComponent }
 }
 
 async function toProps (input: unknown, id: string): Promise<Props> {
   if (!isRecord(input)) return {}
   const props: Props = await recordFormat(input, {
-    appId: () => id,
     customWrapperClass: (i: unknown) => i !== undefined ? toString(i) : undefined,
     content: (i: unknown) => i !== undefined ? Apps.toStringOrVNodeHelper(i) : undefined,
     selector: (i: unknown) => i !== undefined ? toString(i) : undefined,
@@ -48,7 +51,7 @@ async function toProps (input: unknown, id: string): Promise<Props> {
       .map(e => Events.getRegisteredHandler(toString(e)))
       .filter((handler): handler is Events.HandlerFunc => handler !== undefined)
       return async (e: Event) => {
-        Events.syncCallHandlers(handlers, {
+        Events.sequentialHandlersCall(handlers, {
           details: { e },
           type: Events.Type.EVENT_LISTENER_CALLBACK,
           appId: id

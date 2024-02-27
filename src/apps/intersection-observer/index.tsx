@@ -23,7 +23,7 @@ async function toProps (input: unknown, id: string): Promise<Props> {
       .map(e => Events.getRegisteredHandler(toString(e)))
       .filter((handler): handler is Events.HandlerFunc => handler !== undefined)
       return async (ioEntry: IOE|undefined, observer: IO) => {
-        Events.syncCallHandlers(handlers, {
+        Events.sequentialHandlersCall(handlers, {
           details: { ioEntry, observer },
           type: Events.Type.INTERSECTION_OBSERVER_CALLBACK,
           appId: id

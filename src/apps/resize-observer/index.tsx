@@ -21,7 +21,7 @@ async function toProps (input: unknown, id: string): Promise<Props> {
       .map(e => Events.getRegisteredHandler(toString(e)))
       .filter((handler): handler is Events.HandlerFunc => handler !== undefined)
       return async (entries?: ResizeObserverEntry[]) => {
-        Events.syncCallHandlers(handlers, {
+        Events.sequentialHandlersCall(handlers, {
           details: { entries },
           type: Events.Type.RESIZE_OBSERVER_ON_RESIZE,
           appId: id

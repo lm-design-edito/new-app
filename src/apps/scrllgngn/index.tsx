@@ -44,7 +44,7 @@ async function toProps (input: unknown, id: string): Promise<Props> {
         .map(e => Events.getRegisteredHandler(toString(e)))
         .filter((handler): handler is Events.HandlerFunc => handler !== undefined)
       return async (state?: State) => {
-        Events.syncCallHandlers(handlers, {
+        Events.sequentialHandlersCall(handlers, {
           details: { state },
           type: Events.Type.SCRLLGNGN_ON_PAGE_CHANGE,
           appId: id

@@ -15,7 +15,9 @@ export type Props = {
   transitionCloseDuration?: string | number
   transitionEase?: string
   transitionCloseEase?: string
+  onSomeEvent?: (payload: any) => void
 }
+
 type State = {
   contentHeight: number | null
   opened?: boolean

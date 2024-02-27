@@ -2,8 +2,10 @@ import { Apps } from '~/apps'
 import { Events } from '~/shared/events'
 import { toString, toBoolean, toNumberArr } from '~/utils/cast'
 import isRecord from '~/utils/is-record'
-import AudioQuote, { Props } from '~/components/AudioQuote'
+import AudioQuote, { Props, State } from '~/components/AudioQuote'
 import recordFormat from '~/utils/record-format'
+
+export { Props, State }
 
 export default async function renderer (unknownProps: unknown, id: string): ReturnType<Apps.AsyncRendererModule<Props>> {
   const props = await toProps(unknownProps, id)
@@ -34,7 +36,7 @@ async function toProps (input: unknown, id: string): Promise<Props> {
         .map(e => Events.getRegisteredHandler(toString(e)))
         .filter((handler): handler is Events.HandlerFunc => handler !== undefined)
       return async (component?: AudioQuote, subs?: string) => {
-        Events.syncCallHandlers(handlers, {
+        Events.sequentialHandlersCall(handlers, {
           details: { component, subs },
           type: Events.Type.AUDIOQUOTE_ON_SUBS_LOAD,
           appId: id
@@ -47,7 +49,7 @@ async function toProps (input: unknown, id: string): Promise<Props> {
         .map(e => Events.getRegisteredHandler(toString(e)))
         .filter((handler): handler is Events.HandlerFunc => handler !== undefined)
       return async (component?: AudioQuote, error?: any) => {
-        Events.syncCallHandlers(handlers, {
+        Events.sequentialHandlersCall(handlers, {
           details: { component, error },
           type: Events.Type.AUDIOQUOTE_ON_SUBS_ERROR,
           appId: id
@@ -60,7 +62,7 @@ async function toProps (input: unknown, id: string): Promise<Props> {
         .map(e => Events.getRegisteredHandler(toString(e)))
         .filter((handler): handler is Events.HandlerFunc => handler !== undefined)
       return async (component?: AudioQuote, error?: any) => {
-        Events.syncCallHandlers(handlers, {
+        Events.sequentialHandlersCall(handlers, {
           details: { component, error },
           type: Events.Type.AUDIOQUOTE_ON_AUDIO_LOAD,
           appId: id
@@ -73,7 +75,7 @@ async function toProps (input: unknown, id: string): Promise<Props> {
         .map(e => Events.getRegisteredHandler(toString(e)))
         .filter((handler): handler is Events.HandlerFunc => handler !== undefined)
       return async (component?: AudioQuote, error?: any) => {
-        Events.syncCallHandlers(handlers, {
+        Events.sequentialHandlersCall(handlers, {
           details: { component, error },
           type: Events.Type.AUDIOQUOTE_ON_AUDIO_ERROR,
           appId: id
@@ -86,7 +88,7 @@ async function toProps (input: unknown, id: string): Promise<Props> {
         .map(e => Events.getRegisteredHandler(toString(e)))
         .filter((handler): handler is Events.HandlerFunc => handler !== undefined)
       return async (component?: AudioQuote, error?: any) => {
-        Events.syncCallHandlers(handlers, {
+        Events.sequentialHandlersCall(handlers, {
           details: { component, error },
           type: Events.Type.AUDIOQUOTE_ON_TIME_UPDATE,
           appId: id
@@ -99,7 +101,7 @@ async function toProps (input: unknown, id: string): Promise<Props> {
         .map(e => Events.getRegisteredHandler(toString(e)))
         .filter((handler): handler is Events.HandlerFunc => handler !== undefined)
       return async (component?: AudioQuote, error?: any) => {
-        Events.syncCallHandlers(handlers, {
+        Events.sequentialHandlersCall(handlers, {
           details: { component, error },
           type: Events.Type.AUDIOQUOTE_ON_START,
           appId: id
@@ -112,7 +114,7 @@ async function toProps (input: unknown, id: string): Promise<Props> {
         .map(e => Events.getRegisteredHandler(toString(e)))
         .filter((handler): handler is Events.HandlerFunc => handler !== undefined)
       return async (component?: AudioQuote, error?: any) => {
-        Events.syncCallHandlers(handlers, {
+        Events.sequentialHandlersCall(handlers, {
           details: { component, error },
           type: Events.Type.AUDIOQUOTE_ON_PLAY,
           appId: id
@@ -125,7 +127,7 @@ async function toProps (input: unknown, id: string): Promise<Props> {
         .map(e => Events.getRegisteredHandler(toString(e)))
         .filter((handler): handler is Events.HandlerFunc => handler !== undefined)
       return async (component?: AudioQuote, error?: any) => {
-        Events.syncCallHandlers(handlers, {
+        Events.sequentialHandlersCall(handlers, {
           details: { component, error },
           type: Events.Type.AUDIOQUOTE_ON_STOP,
           appId: id
@@ -138,7 +140,7 @@ async function toProps (input: unknown, id: string): Promise<Props> {
         .map(e => Events.getRegisteredHandler(toString(e)))
         .filter((handler): handler is Events.HandlerFunc => handler !== undefined)
       return async (component?: AudioQuote, error?: any) => {
-        Events.syncCallHandlers(handlers, {
+        Events.sequentialHandlersCall(handlers, {
           details: { component, error },
           type: Events.Type.AUDIOQUOTE_ON_END,
           appId: id
@@ -151,7 +153,7 @@ async function toProps (input: unknown, id: string): Promise<Props> {
         .map(e => Events.getRegisteredHandler(toString(e)))
         .filter((handler): handler is Events.HandlerFunc => handler !== undefined)
       return async (component?: AudioQuote, error?: any) => {
-        Events.syncCallHandlers(handlers, {
+        Events.sequentialHandlersCall(handlers, {
           details: { component, error },
           type: Events.Type.AUDIOQUOTE_ON_PAUSE,
           appId: id
@@ -164,7 +166,7 @@ async function toProps (input: unknown, id: string): Promise<Props> {
         .map(e => Events.getRegisteredHandler(toString(e)))
         .filter((handler): handler is Events.HandlerFunc => handler !== undefined)
       return async (component?: AudioQuote) => {
-        Events.syncCallHandlers(handlers, {
+        Events.sequentialHandlersCall(handlers, {
           details: { component },
           type: Events.Type.AUDIOQUOTE_ON_LOUD,
           appId: id
@@ -177,7 +179,7 @@ async function toProps (input: unknown, id: string): Promise<Props> {
         .map(e => Events.getRegisteredHandler(toString(e)))
         .filter((handler): handler is Events.HandlerFunc => handler !== undefined)
       return async (component?: AudioQuote) => {
-        Events.syncCallHandlers(handlers, {
+        Events.sequentialHandlersCall(handlers, {
           details: { component },
           type: Events.Type.AUDIOQUOTE_ON_MUTE,
           appId: id
@@ -190,7 +192,7 @@ async function toProps (input: unknown, id: string): Promise<Props> {
         .map(e => Events.getRegisteredHandler(toString(e)))
         .filter((handler): handler is Events.HandlerFunc => handler !== undefined)
       return async (component?: AudioQuote, error?: any) => {
-        Events.syncCallHandlers(handlers, {
+        Events.sequentialHandlersCall(handlers, {
           details: { component, error },
           type: Events.Type.AUDIOQUOTE_ON_PLAY_CLICK,
           appId: id
@@ -203,7 +205,7 @@ async function toProps (input: unknown, id: string): Promise<Props> {
         .map(e => Events.getRegisteredHandler(toString(e)))
         .filter((handler): handler is Events.HandlerFunc => handler !== undefined)
       return async (component?: AudioQuote, error?: any) => {
-        Events.syncCallHandlers(handlers, {
+        Events.sequentialHandlersCall(handlers, {
           details: { component, error },
           type: Events.Type.AUDIOQUOTE_ON_PAUSE_CLICK,
           appId: id
@@ -216,7 +218,7 @@ async function toProps (input: unknown, id: string): Promise<Props> {
         .map(e => Events.getRegisteredHandler(toString(e)))
         .filter((handler): handler is Events.HandlerFunc => handler !== undefined)
       return async (component?: AudioQuote, error?: any) => {
-        Events.syncCallHandlers(handlers, {
+        Events.sequentialHandlersCall(handlers, {
           details: { component, error },
           type: Events.Type.AUDIOQUOTE_ON_LOUD_CLICK,
           appId: id
@@ -229,7 +231,7 @@ async function toProps (input: unknown, id: string): Promise<Props> {
         .map(e => Events.getRegisteredHandler(toString(e)))
         .filter((handler): handler is Events.HandlerFunc => handler !== undefined)
       return async (component?: AudioQuote, error?: any) => {
-        Events.syncCallHandlers(handlers, {
+        Events.sequentialHandlersCall(handlers, {
           details: { component, error },
           type: Events.Type.AUDIOQUOTE_ON_MUTE_CLICK,
           appId: id
@@ -242,7 +244,7 @@ async function toProps (input: unknown, id: string): Promise<Props> {
         .map(e => Events.getRegisteredHandler(toString(e)))
         .filter((handler): handler is Events.HandlerFunc => handler !== undefined)
       return async (component?: AudioQuote, event?: IntersectionObserverEntry) => {
-        Events.syncCallHandlers(handlers, {
+        Events.sequentialHandlersCall(handlers, {
           details: { component, event },
           type: Events.Type.AUDIOQUOTE_ON_VISIBLE,
           appId: id
@@ -255,7 +257,7 @@ async function toProps (input: unknown, id: string): Promise<Props> {
         .map(e => Events.getRegisteredHandler(toString(e)))
         .filter((handler): handler is Events.HandlerFunc => handler !== undefined)
       return async (component?: AudioQuote, event?: IntersectionObserverEntry) => {
-        Events.syncCallHandlers(handlers, {
+        Events.sequentialHandlersCall(handlers, {
           details: { component, event },
           type: Events.Type.AUDIOQUOTE_HIDDEN,
           appId: id

@@ -1,5 +1,6 @@
 import { Component, ComponentClass, VNode } from 'preact'
 import appConfig from '~/config'
+import { Darkdouille, Events } from '~/shared'
 import { Globals } from '~/shared/globals'
 import { LmHtml } from '~/shared/lm-html'
 import { Slots } from '~/shared/slots'
@@ -17,18 +18,9 @@ export namespace Apps {
     HEADER = 'header',
     SCRLLGNGN = 'scrllgngn',
     UI = 'ui',
-    // [@Léa] oui, j'ai renommé en deux mots finalement, pourquoi, je ne sais pas....
     RESIZE_OBSERVER = 'resize-observer',
     INTERSECTION_OBSERVER = 'intersection-observer',
     EVENT_LISTENER = 'event-listener',
-  }
-
-  export enum EventType {
-    APP_RENDERED = 'app-rendered'
-  }
-
-  export type Events = {
-    [EventType.APP_RENDERED]: CustomEvent<{ appId: string | null }>
   }
 
   export const rendered: Array<{
@@ -88,18 +80,19 @@ export namespace Apps {
       this.identifier = props.identifier
       this.name = props.name
       this.updateProps = this.updateProps.bind(this)
-      rendered.push({
-        id: this.identifier,
-        name: this.name,
-        props,
-        app: this
-      })
-      const event = new CustomEvent(EventType.APP_RENDERED, {
-        detail: {
-          appId: this.identifier
-        }
-      });
-      dispatchEvent(event);
+    }
+
+    componentDidMount(): void {
+      const app = this
+      const { identifier: id, name, props } = app
+      rendered.push({ id, name, props, app })
+      Globals.dispatch(Globals.EventName.APP_MOUNTED, { id })
+    }
+
+    componentWillUnmount(): void {
+      const id = this.identifier
+      const posInRendered = rendered.findIndex(appData => appData.id === id)
+      if (posInRendered > -1) rendered.splice(posInRendered, 1) 
     }
 
     updateProps (propsSetter: AppPropsSetter) {
@@ -157,5 +150,29 @@ export namespace Apps {
       return <>{renderedNodes}</>
     }
     return toString(input)
+  }
+
+  export function eventsSyncHelper<T extends Events.Type> (options: {
+    names: unknown
+    appId: NonNullable<(typeof Apps.rendered)[number]['id']>
+    eventType: T,
+    syncProp: string
+  }) {
+    let names: string[]
+    if (options.names === undefined) names = []
+    else if (Array.isArray(options.names)) names = options.names.map(unknownName => toString(unknownName))
+    else names = [toString(options.names)]
+
+    // Here, some logic to listen the updates from loaded handlers, and update props of app
+
+    const foundHandlers = names
+      .map(name => Events.otherGetRegisteredHandler(name))
+      .filter((found): found is Events.OtherHandlerFunc<Events.Type> => typeof found === 'function')
+    return (payload: Events.Payloads[T]) => {
+      Events.otherSequentialHandlersCall(foundHandlers, payload, {
+        initiator: { id: options.appId },
+        type: options.eventType
+      })
+    }
   }
 }

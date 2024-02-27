@@ -3,6 +3,7 @@ import { toString } from '~/utils/cast'
 import isRecord from '~/utils/is-record'
 import Drawer, { Props } from '~/components/Drawer'
 import recordFormat from '~/utils/record-format'
+import { Events } from '~/shared'
 
 export default async function renderer (unknownProps: unknown, id: string): ReturnType<Apps.AsyncRendererModule<Props>> {
   const props = await toProps(unknownProps, id)
@@ -36,7 +37,14 @@ async function toProps (input: unknown, id: string): Promise<Props> {
       return toString(i)
     },
     transitionEase: (i: unknown) => i !== undefined ? toString(i) : undefined,
-    transitionCloseEase: (i: unknown) => i !== undefined ? toString(i) : undefined
+    transitionCloseEase: (i: unknown) => i !== undefined ? toString(i) : undefined,
+    onSomeEvent: (i: unknown) => i !== undefined
+      ? Apps.eventsSyncHelper({
+        names: i,
+        appId: id,
+        eventType: Events.Type.SOME_EVENT
+      })
+      : undefined
   })
   return props
 }

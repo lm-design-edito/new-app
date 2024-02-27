@@ -6,9 +6,8 @@ import { Slots } from '~/shared/slots'
 import { toString, toNumber, toBoolean } from '~/utils/cast'
 import interpolate, { ratio } from '~/utils/interpolate'
 import roundNumbers from '~/utils/round-numbers'
-import Logger from '~/utils/silent-log'
-import isRecord from '~/utils/is-record'
 import { Events } from '../events'
+import { Globals } from '../globals'
 
 export namespace Config {
   export enum InlineOnlyInstructionName {
@@ -31,15 +30,8 @@ export namespace Config {
     [key: string]: Darkdouille.TreeValue
   }
 
-  export enum EventType {
-    HANDLERS_REGISTERED = 'handlers-registered'
-  }
-
-  export type Events = {
-    [EventType.HANDLERS_REGISTERED]: CustomEvent<{}>
-  }
-
-  export function apply (instructions: ConfigInstruction[], logger?: Logger) {
+  export function apply (instructions: ConfigInstruction[]) {
+    const logger = Globals.retrieve(Globals.GlobalKey.LOGGER)
     logger?.log('Apply config', '%cInput', 'font-weight: 800;', instructions)
     instructions.forEach(({ name, value }) => {
       // ID
@@ -250,43 +242,7 @@ export namespace Config {
       }
       
       // HANDLERS_FILE
-      if (name === RemoteInstructionName.HANDLERS_FILE) {
-        try {
-          const fileUrl = new URL(toString(value))
-          const urlSchemeMatches = appConfig.eventHandlersAllowedUrlSchemes.some(scheme => {
-            const schemeKeys = Object.keys(scheme) as Array<keyof URL>
-            return schemeKeys.every(key => scheme[key] === fileUrl[key])
-          })
-          if (!urlSchemeMatches) throw false;
-          const modulePromise: Promise<unknown> = import(fileUrl.toString())
-          modulePromise.then(val => {
-            if (!isRecord(val)) return;
-            Object.entries(val).forEach(([name, handler]) => {
-              if (typeof handler === 'function') {
-                Events.registerHandler(name, handler as any)
-                logger?.log(
-                  'Apply config',
-                  `%cRegistered handler - ${name}`,
-                  'font-weight: 800;',
-                  `from ${fileUrl.toString()}`,
-                  `\n\n${handler.toString().trim()}`,
-                )
-              }
-            })
-          }).then(() => {
-            const event = new CustomEvent(EventType.HANDLERS_REGISTERED, {})
-            window.dispatchEvent(event)
-          })
-        } catch (err) {
-          logger?.error(
-            'Apply config',
-            `%cHandlers file not loaded - ${value}`,
-            'font-weight: 800;',
-            'File url must be a string and match one of these URL schemes:',
-            appConfig.eventHandlersAllowedUrlSchemes
-          )
-        }
-      }
+      if (name === RemoteInstructionName.HANDLERS_FILE) Events.fetchAndRegister(toString(value))
     })
   }
 }

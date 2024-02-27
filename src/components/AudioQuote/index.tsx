@@ -15,7 +15,7 @@ type SubData = {
   content: string
 }
 
-type Props = {
+export type Props = {
   customClass?: string
   audioSrc?: string
   subsSrc?: string
@@ -51,7 +51,7 @@ type Props = {
   onHidden?: (component?: AudioQuote, event?: IntersectionObserverEntry) => void
 }
 
-type State = {
+export type State = {
   timecodeInMs: number
   subsContent?: SubData[]
   isPlaying?: boolean
@@ -62,7 +62,7 @@ type State = {
   hasManuallyMuted?: boolean
 }
 
-class AudioQuote extends Component<Props, State> {
+export default class AudioQuote extends Component<Props, State> {
   bemClss = bem('lm-audio-quote')
   videoElt: RefObject<HTMLVideoElement> | null = null
   videoStateInterval?: number
@@ -458,6 +458,3 @@ class AudioQuote extends Component<Props, State> {
     </IntersectionObserverComponent>
   }
 }
-
-export type { Props, State }
-export default AudioQuote
