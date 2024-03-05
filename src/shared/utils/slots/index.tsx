@@ -82,12 +82,25 @@ export namespace Slots {
     })
   }
 
-  export function makeSlot (element: Element, content: VNode[] | string): Element | undefined {
+  // [WIP] this logic added just before switching to v1.rc. The idea is to
+  // tell makeSlot that we want this slot to push an attribute on __content
+  // if the context is AEC. This logic is not clean and will not be preserved
+  // in further versions starting from v1.rc
+  export type MakeSlotOptions = { innerSetAttributes?: { [key: string]: string } }
+
+  export function makeSlot (
+    element: Element,
+    content: VNode[] | string,
+    options: MakeSlotOptions = {}
+  ): Element | undefined {
     if (created.has(element)) return;
     element.classList.add('lm-slot')
     // Create inner element
     const contentElt = document.createElement('div')
     contentElt.classList.add('lm-slot__content')
+    Object
+      .entries(options.innerSetAttributes ?? {})
+      .forEach(([name, value]) => contentElt.setAttribute(name, value))
     preactRender(<>{content}</>, contentElt)
     // Create styles element
     const stylesElt = document.createElement('div')

@@ -98,6 +98,16 @@ async function init () {
     '\npaths:', appConfig.paths,
     '\nscript url:', appConfig.paths.SCRIPTS_INDEX_URL.toString())
 
+  /* CONTEXT DETECTION * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+  const aecHrefregexp = /apps.([a-z]+\-)?lemonde.(fr|io)/
+  const isAecViaHref = window.location.href.match(aecHrefregexp)
+  const isAecViaGlobalVar = (((window as any).lmd ?? {})).isAec as boolean | undefined
+  const isAec = isAecViaHref !== null || isAecViaGlobalVar === true
+  if (isAec) {
+    const body = document.querySelector('body')
+    if (body !== null) body.setAttribute('data-lm-device-context', 'aec')
+  }
+
   /* STYLES * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
   // Keep lm-page-stylesheet elements at the end of the body
@@ -234,7 +244,12 @@ async function init () {
       const renderedContent = typeof clonedContent === 'string'
         ? clonedContent
         : await Promise.all(clonedContent.map(node => LmHtml.render(node)))
-      Slots.makeSlot(targetElement, renderedContent)
+      Slots.makeSlot(
+        targetElement,
+        renderedContent,
+        !isAec
+          ? undefined
+          : { innerSetAttributes: { 'data-lm-device-context': 'aec' }})
     }))
   }))
   logger.log('Slots', '%cCreated slots:', 'font-weight: 800;', Slots.created)
