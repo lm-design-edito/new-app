@@ -2,6 +2,7 @@ import { Component, JSX, createRef, RefObject, VNode } from 'preact'
 import IntersectionObserverComponent from '~/components/IntersectionObserver'
 import bem from '~/utils/bem'
 import styles from './styles.module.scss'
+import { toError } from '~/utils/cast'
 
 type SubGroupBoundaries = {
   startId: number
@@ -31,24 +32,24 @@ export type Props = {
   muteButton?: string|VNode
   hidePauseButton?: boolean
   // Handlers
-  onSubsLoad?: (component?: AudioQuote, subs?: string) => void
-  onSubsError?: (component?: AudioQuote, error?: any) => void
-  onAudioLoad?: (component?: AudioQuote, event?: Event) => void
-  onAudioError?: (component?: AudioQuote, event?: Event) => void
-  onTimeUpdate?: (component?: AudioQuote, event?: Event) => void
-  onStart?: (component?: AudioQuote, event?: Event) => void
-  onPlay?: (component?: AudioQuote, event?: Event ) => void
-  onStop?: (component?: AudioQuote, event?: Event) => void
-  onEnd?: (component?: AudioQuote, event?: Event) => void
-  onPause?: (component?: AudioQuote, event?: Event) => void
-  onLoud?: (component?: AudioQuote) => void
-  onMute?: (component?: AudioQuote) => void
-  onPlayClick?: (component?: AudioQuote, event?: Event) => void
-  onPauseClick?: (component?: AudioQuote, event?: Event) => void
-  onLoudClick?: (component?: AudioQuote, event?: Event) => void
-  onMuteClick?: (component?: AudioQuote, event?: Event) => void
-  onVisible?: (component?: AudioQuote, event?: IntersectionObserverEntry) => void
-  onHidden?: (component?: AudioQuote, event?: IntersectionObserverEntry) => void
+  onSubsLoad?: (subs?: string) => void
+  onSubsError?: (error?: Error) => void
+  onAudioLoad?: (event?: Event) => void
+  onAudioError?: (event?: Event) => void
+  onTimeUpdate?: (event?: Event) => void
+  onStart?: (event?: Event) => void
+  onPlay?: (event?: Event ) => void
+  onStop?: (event?: Event) => void
+  onEnd?: (event?: Event) => void
+  onPause?: (event?: Event) => void
+  onLoud?: () => void
+  onMute?: () => void
+  onPlayClick?: (event?: Event) => void
+  onPauseClick?: (event?: Event) => void
+  onLoudClick?: (event?: Event) => void
+  onMuteClick?: (event?: Event) => void
+  onVisible?: (ioEntry?: IntersectionObserverEntry) => void
+  onHidden?: (ioEntry?: IntersectionObserverEntry) => void
 }
 
 export type State = {
@@ -129,10 +130,10 @@ export default class AudioQuote extends Component<Props, State> {
       const fetchResult = await fetch(props.subsSrc)
       const subsData = await fetchResult.text()
       this.setState({ subsContent: this.parseSubs(subsData) })
-      props.onSubsLoad?.(this, subsData)
+      props.onSubsLoad?.(subsData)
     } catch (error) {
       console.error(error)
-      props.onSubsError?.(this, error)
+      props.onSubsError?.(toError(error))
     }
   }
 
@@ -141,18 +142,18 @@ export default class AudioQuote extends Component<Props, State> {
     if (currentRef === undefined) return
     const { currentTime } = currentRef
     const currentTimeMs = currentTime * 1000
-    this.props.onTimeUpdate?.(this, e)
-    if (this.isPlaying() && currentTimeMs === 0) this.props.onStart?.(this, e)
+    this.props.onTimeUpdate?.(e)
+    if (this.isPlaying() && currentTimeMs === 0) this.props.onStart?.(e)
     this.setState({ timecodeInMs: currentTimeMs })
   }
 
   handleVideoEnded (e: Event) {
     this.syncVideoState()
-    this.props.onEnd?.(this, e)
+    this.props.onEnd?.(e)
   }
 
   handleVideoPaused (e: Event) {
-    this.props.onPause?.(this, e)
+    this.props.onPause?.(e)
   }
 
   timecodeToMs (timecode: string): number {
@@ -334,37 +335,37 @@ export default class AudioQuote extends Component<Props, State> {
     if (this.videoElt === null || this.videoElt.current === null) return
     this.videoElt.current.muted = false
     this.syncVideoState()
-    if (this.isLoud()) this.props.onLoud?.(this)
+    if (this.isLoud()) this.props.onLoud?.()
   }
 
   trySetMute () {
     if (this.videoElt === null || this.videoElt.current === null) return
     this.videoElt.current.muted = true
     this.syncVideoState()
-    if (!this.isLoud()) this.props.onMute?.(this)
+    if (!this.isLoud()) this.props.onMute?.()
   }
 
   handlePlayClick (e: Event) {
     this.tryStartPlayback()
-    this.props.onPlayClick?.(this, e)
+    this.props.onPlayClick?.(e)
     this.setState({ hasManuallyPaused: false })
   }
 
   handlePauseClick (e: Event) {
     this.tryStopPlayback()
-    this.props.onPauseClick?.(this, e)
+    this.props.onPauseClick?.(e)
     this.setState({ hasManuallyPaused: true })
   }
 
   handleLoudClick (e: Event) {
     this.trySetLoud()
-    this.props.onLoudClick?.(this, e)
+    this.props.onLoudClick?.(e)
     this.setState({ hasManuallyMuted: false })
   }
 
   handleMuteClick (e: Event) {
     this.trySetMute()
-    this.props.onMuteClick?.(this, e)
+    this.props.onMuteClick?.(e)
     this.setState({ hasManuallyMuted: true })
   }
 
@@ -374,7 +375,7 @@ export default class AudioQuote extends Component<Props, State> {
     // faire en sorte qu'il se lance au chargement (si conditions réunies)
     const { props, state } = this
     if (event.isIntersecting === true) {
-      this.props.onVisible?.(this, event)
+      this.props.onVisible?.(event)
       if (props.autoPlayWhenVisible === true
         && state.hasManuallyPaused !== true
         && state.isPlaying !== true
@@ -388,7 +389,7 @@ export default class AudioQuote extends Component<Props, State> {
       }
       return
     } else {
-      this.props.onHidden?.(this, event)
+      this.props.onHidden?.(event)
     }
     if (props.autoPauseWhenHidden === true && state.isPlaying === true) { this.tryStopPlayback() }
     if (props.autoMuteWhenHidden === true && state.isLoud === true) { this.trySetMute() }
@@ -447,9 +448,9 @@ export default class AudioQuote extends Component<Props, State> {
           controls
           muted
           playsInline
-          onLoad={e => { props.onAudioLoad?.(this, e) }}
-          onError={e => { props.onAudioError?.(this, e) }}
-          onPlay={e => { props.onPlay?.(this, e) }} />
+          onLoad={e => { props.onAudioLoad?.(e) }}
+          onError={e => { props.onAudioError?.(e) }}
+          onPlay={e => { props.onPlay?.(e) }} />
         <div
           className={subsContainerClasses.join(' ')}>
           {this.getDisplayedSubsContent()}

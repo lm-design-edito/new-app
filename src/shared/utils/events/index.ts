@@ -1,63 +1,40 @@
 import appConfig from '~/config'
 import { Apps } from '~/apps'
-
-import { State as AudioQuoteState } from '~/apps/audioquote'
-
 import { Globals } from '~/shared/globals'
 import isRecord from '~/utils/is-record'
+import delay from '~/utils/delay'
+import random from '~/utils/random'
 
 export namespace Events {
 
   export enum Type {
-    SOME_EVENT = 'some-event',
-    AUDIOQUOTE_ON_SUBS_LOAD = 'audioquote-on-subs-load',
-    AUDIOQUOTE_ON_SUBS_ERROR = 'audioquote-on-subs-error',
-    AUDIOQUOTE_ON_AUDIO_LOAD = 'audioquote-on-audio-load',
-    AUDIOQUOTE_ON_AUDIO_ERROR = 'audioquote-on-audio-error',
-    AUDIOQUOTE_ON_TIME_UPDATE = 'audioquote-on-time-update',
-    AUDIOQUOTE_ON_START = 'audioquote-on-start',
-    AUDIOQUOTE_ON_PLAY = 'audioquote-on-play',
-    AUDIOQUOTE_ON_STOP = 'audioquote-on-stop',
-    AUDIOQUOTE_ON_END = 'audioquote-on-end',
-    AUDIOQUOTE_ON_PAUSE = 'audioquote-on-pause',
-    AUDIOQUOTE_ON_LOUD = 'audioquote-on-loud',
-    AUDIOQUOTE_ON_MUTE = 'audioquote-on-mute',
-    AUDIOQUOTE_ON_PLAY_CLICK = 'audioquote-on-play-click',
-    AUDIOQUOTE_ON_PAUSE_CLICK = 'audioquote-on-pause-click',
-    AUDIOQUOTE_ON_LOUD_CLICK = 'audioquote-on-loud-click',
-    AUDIOQUOTE_ON_MUTE_CLICK = 'audioquote-on-mute-click',
-    AUDIOQUOTE_ON_VISIBLE = 'audioquote-on-visible',
+    /* Audioquote */
+    AUDIOQUOTE_SUBS_LOAD = 'audioquote-subs-load',
+    AUDIOQUOTE_SUBS_ERROR = 'audioquote-subs-error',
+    AUDIOQUOTE_AUDIO_LOAD = 'audioquote-audio-load',
+    AUDIOQUOTE_AUDIO_ERROR = 'audioquote-audio-error',
+    AUDIOQUOTE_TIME_UPDATE = 'audioquote-time-update',
+    AUDIOQUOTE_START = 'audioquote-start',
+    AUDIOQUOTE_PLAY = 'audioquote-play',
+    AUDIOQUOTE_STOP = 'audioquote-stop',
+    AUDIOQUOTE_END = 'audioquote-end',
+    AUDIOQUOTE_PAUSE = 'audioquote-pause',
+    AUDIOQUOTE_LOUD = 'audioquote-loud',
+    AUDIOQUOTE_MUTE = 'audioquote-mute',
+    AUDIOQUOTE_PLAY_CLICK = 'audioquote-play-click',
+    AUDIOQUOTE_PAUSE_CLICK = 'audioquote-pause-click',
+    AUDIOQUOTE_LOUD_CLICK = 'audioquote-loud-click',
+    AUDIOQUOTE_MUTE_CLICK = 'audioquote-mute-click',
+    AUDIOQUOTE_VISIBLE = 'audioquote-visible',
     AUDIOQUOTE_HIDDEN = 'audioquote-hidden',
-    SCRLLGNGN_ON_PAGE_CHANGE = 'scrllgngn-on-page-change',
-    RESIZE_OBSERVER_ON_RESIZE = 'resize-observer-on-resize',
+    /* Event Listener */
+    EVENT_LISTENER_EVENT = 'event-listener-event',
+    /* Intersection Observer */
     INTERSECTION_OBSERVER_CALLBACK = 'intersection-observer-callback',
-    EVENT_LISTENER_CALLBACK = 'event-listener-callback',
-  }
-
-  export type Payloads = {
-    [Type.SOME_EVENT]: any
-    [Type.AUDIOQUOTE_ON_SUBS_LOAD]: AudioQuoteState
-    [Type.AUDIOQUOTE_ON_SUBS_ERROR]: any
-    [Type.AUDIOQUOTE_ON_AUDIO_LOAD]: any
-    [Type.AUDIOQUOTE_ON_AUDIO_ERROR]: any
-    [Type.AUDIOQUOTE_ON_TIME_UPDATE]: any
-    [Type.AUDIOQUOTE_ON_START]: any
-    [Type.AUDIOQUOTE_ON_PLAY]: any
-    [Type.AUDIOQUOTE_ON_STOP]: any
-    [Type.AUDIOQUOTE_ON_END]: any
-    [Type.AUDIOQUOTE_ON_PAUSE]: any
-    [Type.AUDIOQUOTE_ON_LOUD]: any
-    [Type.AUDIOQUOTE_ON_MUTE]: any
-    [Type.AUDIOQUOTE_ON_PLAY_CLICK]: any
-    [Type.AUDIOQUOTE_ON_PAUSE_CLICK]: any
-    [Type.AUDIOQUOTE_ON_LOUD_CLICK]: any
-    [Type.AUDIOQUOTE_ON_MUTE_CLICK]: any
-    [Type.AUDIOQUOTE_ON_VISIBLE]: any
-    [Type.AUDIOQUOTE_HIDDEN]: any
-    [Type.SCRLLGNGN_ON_PAGE_CHANGE]: any
-    [Type.RESIZE_OBSERVER_ON_RESIZE]: any
-    [Type.INTERSECTION_OBSERVER_CALLBACK]: any
-    [Type.EVENT_LISTENER_CALLBACK]: any
+    /* Resize Observer */
+    RESIZE_OBSERVER_RESIZE = 'resize-observer-resize',
+    /* Scrllgngn */
+    SCRLLGNGN_PAGE_CHANGE = 'scrllgngn-page-change'
   }
 
   type HandlerName = string
@@ -82,19 +59,36 @@ export namespace Events {
       return schemeKeys.every(key => scheme[key] === fileUrl[key])
     })
     if (!urlSchemeMatches) {
-      logger?.error('Events', `%cHandlers file not loaded - ${url.toString()}`, 'font-weight: 800;', 'File url must be a string and match one of these URL schemes:', appConfig.eventHandlersAllowedUrlSchemes)
+      logger?.error(
+        'Events',
+        `%cHandlers file not loaded - ${url.toString()}`,
+        'font-weight: 800;',
+        'File url must be a string and match one of these URL schemes:',
+        appConfig.eventHandlersAllowedUrlSchemes
+      )
       return new Map()
     }
     let moduleDataLet: unknown = undefined
     try {
       moduleDataLet = await import(fileUrl.toString())
     } catch (err) {
-      logger?.error('Events', `%cHandlers file not loaded - ${url.toString()}`, 'font-weight: 800;', 'Something went wrong while fetching', err)
+      logger?.error(
+        'Events',
+        `%cHandlers file not loaded - ${url.toString()}`,
+        'font-weight: 800;',
+        'Something went wrong while fetching',
+        err
+      )
       return new Map()
     }
     const moduleData = moduleDataLet
     if (!isRecord(moduleData)) {
-      logger?.error('Events', `%cHandlers file not loaded - ${url.toString()}`, 'font-weight: 800;', 'Exports of file should be Record<string, HandlerFunc>')
+      logger?.error(
+        'Events',
+        `%cHandlers file not loaded - ${url.toString()}`,
+        'font-weight: 800;',
+        'Exports of file should be Record<string, HandlerFunc>'
+      )
       return new Map()
     }
     const handlerExportsMap = new Map(Object
@@ -104,7 +98,11 @@ export namespace Events {
         return typeof handler === 'function'
       }))
     Globals.dispatch(Globals.EventName.HANDLER_FILE_LOADED, { url: new URL(url), handlers: handlerExportsMap })
-    logger?.log('Events', `%cHandlers file loaded - ${url.toString().trim()}`, 'font-weight: 800;')
+    logger?.log(
+      'Events',
+      `%cHandlers file loaded - ${url.toString().trim()}`,
+      'font-weight: 800;'
+    )
     return handlerExportsMap
   }
 
@@ -156,56 +154,58 @@ export namespace Events {
     const calls: any[] = []
     const appDetails = Apps.rendered.find(rendered => rendered.id === payload.appId)
     const app = appDetails?.app ?? null
-    for (const handler of handlers) {
-      calls.push(handler({
-        ...payload,
-        globals: Globals.globalObj,
-        app
-      }))
-    }
+    for (const handler of handlers) calls.push(handler({
+      ...payload,
+      globals: Globals.globalObj,
+      app
+    }))
     await Promise.all(calls)
   }
 
   // [WIP] New events stuff
-  export type OtherHandlerPayload<T extends Type> = Payloads[T]
-  export type OtherHandlerDetails<T extends Type> = {
-    type: T
-    initiator: { id: NonNullable<(typeof Apps.rendered)[number]['id']> }
+  export type OtherHandlerDetails = {
+    type: Type
+    initiator: { id: string }
     globals: Globals.GlobalObj
   }
-  export type OtherHandlerFunc<T extends Type> = (payload: OtherHandlerPayload<T>, details: OtherHandlerDetails<T>) => any
+  export type OtherHandlerFunc = (payload: unknown, details: OtherHandlerDetails) => any
 
-  export async function otherSequentialHandlersCall<T extends Type> (
-    handlers: OtherHandlerFunc<T>[],
-    payload: OtherHandlerPayload<T>,
-    details: Omit<OtherHandlerDetails<T>, 'globals'>) {
-    const appData = Apps.rendered.find(rendered => rendered.id === details.initiator.id)
-    if (appData === undefined) return;
-    for (const handler of handlers) {
-      await handler(payload, {
+  export async function otherSequentialHandlersCall (
+    handlers: OtherHandlerFunc | string | Array<OtherHandlerFunc | string>,
+    payload: unknown,
+    details: Omit<OtherHandlerDetails, 'globals'>) {
+    const handlersAsArr = Array.isArray(handlers) ? handlers : [handlers]
+    for (const handler of handlersAsArr) {
+      const actualHandler = typeof handler === 'string'
+        ? otherGetRegisteredHandler(handler)
+        : handler
+      if (actualHandler === undefined) continue
+      await actualHandler(payload, {
         ...details,
         globals: { ...Globals.globalObj }
       })
     }
   }
 
-  export async function otherParallelHandlersCall<T extends Type> (
-    handlers: OtherHandlerFunc<T>[],
-    payload: OtherHandlerPayload<T>,
-    details: Omit<OtherHandlerDetails<T>, 'globals'>) {
-    const appData = Apps.rendered.find(rendered => rendered.id === details.initiator.id)
-    if (appData === undefined) return;
-    const calls = handlers.map(handler => {
-      return handler(payload, {
+  export async function otherParallelHandlersCall (
+    handlers: OtherHandlerFunc | string | Array<OtherHandlerFunc | string>,
+    payload: unknown,
+    details: Omit<OtherHandlerDetails, 'globals'>) {
+    const handlersAsArr = Array.isArray(handlers) ? handlers : [handlers]
+    await Promise.all(handlersAsArr.map(handler => {
+      const actualHandler = typeof handler === 'string'
+        ? otherGetRegisteredHandler(handler)
+        : handler
+      if (actualHandler === undefined) return;
+      return actualHandler(payload, {
         ...details,
         globals: { ...Globals.globalObj }
       })
-    })
-    await Promise.all(calls)
+    }))
   }
 
   export function otherGetRegisteredHandler (name: string) {
-    const found = registeredHandlers.get(name) as OtherHandlerFunc<Type> | undefined
+    const found = registeredHandlers.get(name) as OtherHandlerFunc | undefined
     return found
   }
 }

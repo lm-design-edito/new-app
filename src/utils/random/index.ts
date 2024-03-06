@@ -1,7 +1,8 @@
 export default function random (max: number = 1, min: number = 0) {
-  if (min === max || min > max) return NaN
-  const range = max - min
-  return (Math.random() * range) + min
+  const actualMin = Math.min(min, max)
+  const actualMax = Math.max(min, max)
+  const range = actualMax - actualMin
+  return (Math.random() * range) + actualMin
 }
 
 export function randomInt (max?: number, min?: number) {

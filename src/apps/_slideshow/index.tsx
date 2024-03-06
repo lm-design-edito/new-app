@@ -12,19 +12,19 @@ export default async function renderer (unknownProps: unknown, id: string): Retu
 async function toProps (input: unknown, id: string): Promise<Props> {
   if (!isRecord(input)) return {}
   return await recordFormat(input, {
-    customClass: (i: unknown) => i !== undefined ? toString(i) : undefined,
-    leftArrow: (i: unknown) => i !== undefined ? toBoolean(i) : undefined,
-    rightArrow: (i: unknown) => i !== undefined ? toBoolean(i) : undefined,
-    arrowsPosition: (i: unknown) => i !== undefined ? toString(i): undefined,
-    dots: (i: unknown) => i !== undefined ? toBoolean(i) : undefined,
-    loop: (i: unknown) => i !== undefined ? toBoolean(i) : undefined,
-    duration: (i: unknown) => i !== undefined ? toNumber(i) : undefined,
-    height: (i: unknown) => i !== undefined ? toString(i) : undefined,
-    imageFit: (i: unknown) => i !== undefined ? toString(i) : undefined,
-    toggleDescription: (i: unknown) => i !== undefined ? toBoolean(i) : undefined,
-    credits: (i: undefined) => i !== undefined ? Apps.toStringOrVNodeHelper(i) : undefined,
-    description: (i: undefined) => i !== undefined ? Apps.toStringOrVNodeHelper(i) : undefined,
-    images: async (i: unknown) => Array.isArray(i) ? await arrayToImages(i, id) : undefined
+    customClass: i => Apps.ifNotUndefinedHelper(i, toString),
+    leftArrow: i => Apps.ifNotUndefinedHelper(i, toBoolean),
+    rightArrow: i => Apps.ifNotUndefinedHelper(i, toBoolean),
+    arrowsPosition: i => Apps.ifNotUndefinedHelper(i, toString),
+    dots: i => Apps.ifNotUndefinedHelper(i, toBoolean),
+    loop: i => Apps.ifNotUndefinedHelper(i, toBoolean),
+    duration: i => Apps.ifNotUndefinedHelper(i, toNumber),
+    height: i => Apps.ifNotUndefinedHelper(i, toString),
+    imageFit: i => Apps.ifNotUndefinedHelper(i, toString),
+    toggleDescription: i => Apps.ifNotUndefinedHelper(i, toBoolean),
+    credits: i => Apps.ifNotUndefinedHelper(i, Apps.toStringOrVNodeHelper),
+    description: i => Apps.ifNotUndefinedHelper(i, Apps.toStringOrVNodeHelper),
+    images: async i => Array.isArray(i) ? await arrayToImages(i, id) : undefined
   })
 }
 
@@ -33,12 +33,12 @@ async function arrayToImages (array: unknown[], id: string): Promise<Media[]> {
   for (const imageData of array) {
     if (!isRecord(imageData)) continue
     const extractedImage: Media = await recordFormat(imageData, {
-      url: (i: unknown) => i !== undefined ? toString(i) : undefined,
-      mobileUrl: (i: unknown) => i !== undefined ? toString(i) : undefined,
-      type: (i: unknown) => i !== undefined ? toString(i) : undefined,
-      imageFit: (i: unknown) => i !== undefined ? toString(i) : undefined,
-      description: (i: unknown) => i !== undefined ? Apps.toStringOrVNodeHelper(i) : undefined,
-      credits: (i: unknown) => i !== undefined ? Apps.toStringOrVNodeHelper(i) : undefined
+      url: i => Apps.ifNotUndefinedHelper(i, toString),
+      mobileUrl: i => Apps.ifNotUndefinedHelper(i, toString),
+      type: i => Apps.ifNotUndefinedHelper(i, toString),
+      imageFit: i => Apps.ifNotUndefinedHelper(i, toString),
+      description: i => Apps.ifNotUndefinedHelper(i, Apps.toStringOrVNodeHelper),
+      credits: i => Apps.ifNotUndefinedHelper(i, Apps.toStringOrVNodeHelper)
     })
     extractedImages.push(extractedImage)
   }

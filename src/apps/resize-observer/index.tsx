@@ -23,7 +23,7 @@ async function toProps (input: unknown, id: string): Promise<Props> {
       return async (entries?: ResizeObserverEntry[]) => {
         Events.sequentialHandlersCall(handlers, {
           details: { entries },
-          type: Events.Type.RESIZE_OBSERVER_ON_RESIZE,
+          type: Events.Type.RESIZE_OBSERVER_RESIZE,
           appId: id
         })
       }

@@ -1,18 +1,16 @@
 import { Component, VNode } from 'preact'
 
 export type Props = {
-  // [@Léa] => possible de remplacer par customClass ? Il y a un customWrapperClass qui traine sur un autre composant, mais c'est une erreur
-  // Also, types => eventTypes, selector => targetSelector
-  customWrapperClass?: string;
-  types?: string[];
-  selector?: string;
-  content?: string | VNode,
-  options?: AddEventListenerOptions,
-  callback?: (e: Event) => void,
+  customClass?: string
+  eventTypes?: string | string[]
+  targetSelector?: string
+  content?: string | VNode
+  onEvent?: (e: Event) => void
+  // options?: AddEventListenerOptions // [WIP] ?
 }
 
 export default class EventListenerComponent extends Component<Props> {
-  $root: HTMLDivElement|null = null
+  $root: HTMLDivElement | null = null
 
   constructor (props: Props) {
     super(props)
@@ -21,56 +19,64 @@ export default class EventListenerComponent extends Component<Props> {
   }
 
   componentDidMount () {
-    this.addListeners(this.props.selector, this.props.types, this.props.callback)
+    const { targetSelector, eventTypes, onEvent } = this.props
+    this.addListeners(targetSelector, eventTypes, onEvent)
   }
 
   componentDidUpdate (previousProps: Readonly<Props>): void {
-    this.removeListeners(previousProps.selector, previousProps.types, previousProps.callback)
-    this.addListeners(this.props.selector, this.props.types, this.props.callback)
+    const { targetSelector: pTargetSelector, eventTypes: pEventTypes, onEvent: pOnEvent } = previousProps
+    const { targetSelector, eventTypes, onEvent } = this.props
+    this.removeListeners(pTargetSelector, pEventTypes, pOnEvent)
+    this.addListeners(targetSelector, eventTypes, onEvent)
   }
 
   componentWillUnmount (): void {
-    this.removeListeners(this.props.selector, this.props.types, this.props.callback)
+    const { targetSelector, eventTypes, onEvent } = this.props
+    this.removeListeners(targetSelector, eventTypes, onEvent)
   }
 
-  addListeners (selector: Props['selector'], types: Props['types'], callback: Props['callback']) {
-    if (callback === undefined
-      || types === undefined
-      || this.$root == undefined) return;
-    if (selector !== undefined) {
-      const elements = this.$root.querySelectorAll(selector);
-      elements.forEach(element => {
-        types.forEach(type => element.addEventListener(type, callback))
-      })
-      return;
-    }
-    Array.from(this.$root.children).forEach(child => {
-      types.forEach((type) => child.addEventListener(type, callback))
-    });
+  addListeners (
+    targetSelector: Props['targetSelector'],
+    eventTypes: Props['eventTypes'],
+    onEvent: Props['onEvent']) {
+    const { $root } = this
+    if (onEvent === undefined) return;
+    if (eventTypes === undefined) return;
+    if ($root === null) return;
+    const actualEventTypes = Array.isArray(eventTypes)
+      ? eventTypes
+      : [eventTypes]
+    Array.from(targetSelector === undefined
+      ? [$root]
+      : $root.querySelectorAll(targetSelector)
+    ).forEach(elt => actualEventTypes.forEach(type => {
+      elt.addEventListener(type, onEvent)
+    }))
   }
   
-  removeListeners (selector: Props['selector'], types: Props['types'], callback: Props['callback']) {
-    if (callback === undefined
-      || types === undefined
-      || this.$root == undefined) return;
-    if (selector !== undefined) {
-      const elements = this.$root.querySelectorAll(selector)
-      elements.forEach((element) => {
-        types.forEach((type) => element.removeEventListener(type, callback))
-      })
-      return
-    }
-    Array.from(this.$root.children).forEach((child) => {
-      types.forEach((type) => {
-        child.removeEventListener(type, callback)
-      })
-    });
+  removeListeners (
+    targetSelector: Props['targetSelector'],
+    eventTypes: Props['eventTypes'],
+    onEvent: Props['onEvent']) {
+    const { $root } = this
+    if (onEvent === undefined) return;
+    if (eventTypes === undefined) return;
+    if ($root === null) return;
+    const actualEventTypes = Array.isArray(eventTypes)
+      ? eventTypes
+      : [eventTypes]
+    Array.from(targetSelector === undefined
+      ? [$root]
+      : $root.querySelectorAll(targetSelector)
+    ).forEach(elt => actualEventTypes.forEach(type => {
+      elt.removeEventListener(type, onEvent)
+    }))
   }
 
   render () {
-    const { children, content, customWrapperClass } = this.props
+    const { children, content, customClass } = this.props
     const wrapperClasses = ['lm-event-listener']
-    if (customWrapperClass !== undefined) wrapperClasses.push(customWrapperClass)
+    if (customClass !== undefined) wrapperClasses.push(customClass)
     return <div  
       className={wrapperClasses.join(' ')}
       ref={(n) => this.$root = n}>

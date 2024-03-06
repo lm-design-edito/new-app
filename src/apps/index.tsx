@@ -119,6 +119,9 @@ export namespace Apps {
     const privateId = randomUUID().split('-')[0] ?? ''
     const publicName = _id ?? randomUUID().split('-')[0] ?? null
     const { props, Component } = await appRenderer(unknownProps, privateId)
+    console.log('App:', name)
+    console.log('In: ', unknownProps)
+    console.log('Out:', props)
     const appComponent = <App
       component={Component}
       props={props}
@@ -132,12 +135,12 @@ export namespace Apps {
     apps.forEach(app => app.updateProps(updater))
   }
 
-  export function getAppByName(name: string) {
+  export function getAppByName (name: string) {
     const foundAppDetail = Apps.rendered.find(appDetails => appDetails.name === name)
     return foundAppDetail?.app;
   } 
 
-  export function getAppById(id: string) {
+  export function getAppById (id: string) {
     const foundAppDetail = Apps.rendered.find(appDetails => appDetails.id === id)
     return foundAppDetail?.app;
   } 
@@ -152,27 +155,26 @@ export namespace Apps {
     return toString(input)
   }
 
-  export function eventsSyncHelper<T extends Events.Type> (options: {
-    names: unknown
-    appId: NonNullable<(typeof Apps.rendered)[number]['id']>
-    eventType: T,
-    syncProp: string
-  }) {
-    let names: string[]
-    if (options.names === undefined) names = []
-    else if (Array.isArray(options.names)) names = options.names.map(unknownName => toString(unknownName))
-    else names = [toString(options.names)]
+  export function ifNotUndefinedHelper<T extends any> (value: unknown, then: (value: unknown) => T) {
+    if (value === undefined) return undefined
+    return then(value)
+  }
 
-    // Here, some logic to listen the updates from loaded handlers, and update props of app
+  export function ifArrayHelper<T extends any> (value: unknown, then: (value: unknown[]) => T) {
+    if (Array.isArray(value)) return then(value)
+    return undefined
+  }
 
-    const foundHandlers = names
-      .map(name => Events.otherGetRegisteredHandler(name))
-      .filter((found): found is Events.OtherHandlerFunc<Events.Type> => typeof found === 'function')
-    return (payload: Events.Payloads[T]) => {
-      Events.otherSequentialHandlersCall(foundHandlers, payload, {
-        initiator: { id: options.appId },
-        type: options.eventType
-      })
-    }
+  export function toStringOrStringsHelper (value: unknown): string | string[] {
+    if (Array.isArray(value)) return value.map(toString)
+    return toString(value)
+  }
+
+  export function makeHandlerHelper<T> (type: Events.Type, input: unknown, id: string) {
+    if (input === undefined) return;
+    return Apps.ifNotUndefinedHelper(input, input => ((payload?: T) => {
+      const handlersNames = Apps.toStringOrStringsHelper(input)
+      return Events.otherSequentialHandlersCall(handlersNames, payload, { type, initiator: { id } })
+    }))
   }
 }

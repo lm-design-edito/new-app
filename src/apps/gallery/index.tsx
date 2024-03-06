@@ -12,14 +12,14 @@ export default async function renderer (unknownProps: unknown, id: string): Retu
 async function toProps (input: unknown, id: string): Promise<Props> {
   if (!isRecord(input)) return {}
   const props: Props = await recordFormat(input, {
-    customClass: (i: unknown) => i !== undefined ? toString(i) : undefined,
+    customClass: i => Apps.ifNotUndefinedHelper(i, toString),
     itemsContent: async (i: unknown) => Array.isArray(i)
       ? await Promise.all(i.map(e => Apps.toStringOrVNodeHelper(e)))
       : undefined,
     prevButtonContent: (i: unknown) => i !== undefined ? Apps.toStringOrVNodeHelper(i) : undefined,
     nextButtonContent: (i: unknown) => i !== undefined ? Apps.toStringOrVNodeHelper(i) : undefined,
     snapScroll: (i: unknown) => i !== undefined ? toBoolean(i) : undefined,
-    scrollerWidth: (i: unknown) => i !== undefined ? toString(i) : undefined
+    scrollerWidth: i => Apps.ifNotUndefinedHelper(i, toString)
   })
   return props
 }

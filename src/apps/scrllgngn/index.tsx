@@ -46,7 +46,7 @@ async function toProps (input: unknown, id: string): Promise<Props> {
       return async (state?: State) => {
         Events.sequentialHandlersCall(handlers, {
           details: { state },
-          type: Events.Type.SCRLLGNGN_ON_PAGE_CHANGE,
+          type: Events.Type.SCRLLGNGN_PAGE_CHANGE,
           appId: id
         })
       }

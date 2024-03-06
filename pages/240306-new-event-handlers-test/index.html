@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
+  <body>
+    <!-- Application -->
+    <script type="module" src="http://localhost:3000/shared/index.js"></script>
+
+    <h1>Apps</h1>
+    
+    <!-- DKDLL -->
+    <data class="dkdll" style="display: none;">
+      
+      <!-- Config -->
+      <array class="CONFIG">
+        <record>
+          <string class="name">handlersFile</string>
+          <string class="value">http://localhost:3000/pages/240306-new-event-handlers-test/handlers.js</string>
+        </record>
+        <record>
+          <string class="name">css</string>
+          <lm-html class="value">
+            <style>
+              .with-v-spacers {
+                margin: 160px 0;
+              }
+            </style>
+          </lm-html>
+        </record>
+      </array>
+
+      <!-- Slots -->
+      <array class="SLOTS">
+
+        <!-- CAROUSEL -->
+        <record>
+          <record class="destination">
+            <string class="selector">.carousel-slot</string>
+            <string class="position">endof</string>
+            <string class="reference">body</string>
+          </record>
+          <lm-html class="content">
+            <comp name="_carousel">
+              <string class="customClass">with-v-spacers</string>
+              <boolean class="leftArrow">true</boolean>
+              <boolean class="rightArrow">true</boolean>
+              <string class="arrowsPosition">bottom</string>
+              <boolean class="dots">true</boolean>
+              <boolean class="loop">false</boolean>
+              <number class="duration">4000</number>
+              <boolean class="fullscreen">true</boolean>
+              <number class="imageHeight">800</number>
+              <!-- <string class="imageFit">cover</string> -->
+              <number class="gapValue">10</number>
+              <!-- <string class="backgroundColor"></string>
+              <string class="imageBackgroundColor"></string>
+              <string class="titleColor"></string>
+              <string class="descriptionColor"></string>
+              <string class="creditsColor"></string>
+              <string class="dotColor"></string>
+              <string class="fullscreenButtonColor"></string>
+              <string class="arrowColor"></string>
+              <string class="arrowColorDisabled"></string>
+              <string class="arrowBackgroundColor"></string>
+              <string class="arrowBackgroundColorHover"></string> -->
+              <lm-html class="title">Titre</lm-html>
+              <lm-html class="credits">Crédits</lm-html>
+              <lm-html class="description">Description</lm-html>
+              <array class="images">
+                <record>
+                  <string class="url">https://freight.cargo.site/w/952/q/94/i/86fd74757b2bc9128f27b214b6eace62568fcd1192b43e3d7969b3d49dc439f0/HideoKobayashi02.jpg</string>
+                  <string class="mobileUrl">https://freight.cargo.site/w/952/q/94/i/86fd74757b2bc9128f27b214b6eace62568fcd1192b43e3d7969b3d49dc439f0/HideoKobayashi02.jpg</string>
+                  <string class="imageFit">cover</string>
+                  <lm-html class="description">Description</lm-html>
+                  <lm-html class="credits">Crédits</lm-html>
+                  <string class="type">à remplir si vidéo (video)</string>
+                </record>
+                <record>
+                  <string class="url">https://freight.cargo.site/w/956/q/94/i/9240753ee8a43c412f55c970842cd34ede2634b1b91a91f2cd26d5c5a86e4049/HideoKobayashi07.jpg</string>
+                  <string class="mobileUrl">https://freight.cargo.site/w/956/q/94/i/9240753ee8a43c412f55c970842cd34ede2634b1b91a91f2cd26d5c5a86e4049/HideoKobayashi07.jpg</string>
+                  <string class="imageFit">cover</string>
+                  <lm-html class="description">Description</lm-html>
+                  <lm-html class="credits">Crédits</lm-html>
+                  <string class="type">à remplir si vidéo (video)</string>
+                </record>
+                <record>
+                  <string class="url">https://freight.cargo.site/w/961/q/94/i/eb0801194de92ca8a706027288ef25958acdb17271c293dddcd2bfe3e9712b49/HideoKobayashi08.jpg</string>
+                  <string class="mobileUrl">https://freight.cargo.site/w/961/q/94/i/eb0801194de92ca8a706027288ef25958acdb17271c293dddcd2bfe3e9712b49/HideoKobayashi08.jpg</string>
+                  <string class="imageFit">cover</string>
+                  <lm-html class="description">Description</lm-html>
+                  <lm-html class="credits">Crédits</lm-html>
+                  <string class="type">à remplir si vidéo (video)</string>
+                </record>
+                <record>
+                  <string class="url">https://freight.cargo.site/w/951/q/94/i/8b8a4cf6802c9cf6f7c1284b804edaad49ef7b00dcc34c1848aba8faa0e99cc9/HideoKobayashi05.jpg</string>
+                  <string class="mobileUrl">https://freight.cargo.site/w/951/q/94/i/8b8a4cf6802c9cf6f7c1284b804edaad49ef7b00dcc34c1848aba8faa0e99cc9/HideoKobayashi05.jpg</string>
+                  <string class="imageFit">contain</string>
+                  <lm-html class="description">Description</lm-html>
+                  <lm-html class="credits">Crédits</lm-html>
+                  <string class="type">à remplir si vidéo (video)</string>
+                </record>
+              </array>
+            </comp>
+          </lm-html>
+        </record>
+
+        <!-- SLIDESHOW -->
+        <record>
+          <record class="destination">
+            <string class="selector">.slideshow-slot</string>
+            <string class="position">endof</string>
+            <string class="reference">body</string>
+          </record>
+          <lm-html class="content">
+            <comp name="_slideshow">
+              <string class="customClass">with-v-spacers</string>
+              <boolean class="leftArrow">true</boolean>
+              <boolean class="rightArrow">true</boolean>
+              <string class="arrowsPosition">bottom</string>
+              <boolean class="dots">true</boolean>
+              <boolean class="loop">false</boolean>
+              <number class="duration">40</number>
+              <number class="height">800</number>
+              <string class="imageFit">contain</string>
+              <boolean class="toggleDescription">true</boolean>
+              <lm-html class="credits">Credits TEST</lm-html>
+              <lm-html class="description">Description TEST</lm-html>
+              <array class="images">
+                <record>
+                  <string class="url">https://freight.cargo.site/w/952/q/94/i/86fd74757b2bc9128f27b214b6eace62568fcd1192b43e3d7969b3d49dc439f0/HideoKobayashi02.jpg</string>
+                  <string class="mobileUrl">https://freight.cargo.site/w/952/q/94/i/86fd74757b2bc9128f27b214b6eace62568fcd1192b43e3d7969b3d49dc439f0/HideoKobayashi02.jpg</string>
+                  <string class="imageFit">cover</string>
+                  <lm-html class="description">Description 1</lm-html>
+                  <lm-html class="credits">Crédits 1</lm-html>
+                  <string class="type">à remplir si vidéo (video)</string>
+                </record>
+                <record>
+                  <string class="url">https://freight.cargo.site/w/956/q/94/i/9240753ee8a43c412f55c970842cd34ede2634b1b91a91f2cd26d5c5a86e4049/HideoKobayashi07.jpg</string>
+                  <string class="mobileUrl">https://freight.cargo.site/w/956/q/94/i/9240753ee8a43c412f55c970842cd34ede2634b1b91a91f2cd26d5c5a86e4049/HideoKobayashi07.jpg</string>
+                  <string class="imageFit">cover</string>
+                  <lm-html class="description">Description 2</lm-html>
+                  <lm-html class="credits">Crédits 2</lm-html>
+                  <string class="type">à remplir si vidéo (video)</string>
+                </record>
+                <record>
+                  <string class="url">https://freight.cargo.site/w/961/q/94/i/eb0801194de92ca8a706027288ef25958acdb17271c293dddcd2bfe3e9712b49/HideoKobayashi08.jpg</string>
+                  <string class="mobileUrl">https://freight.cargo.site/w/961/q/94/i/eb0801194de92ca8a706027288ef25958acdb17271c293dddcd2bfe3e9712b49/HideoKobayashi08.jpg</string>
+                  <string class="imageFit">cover</string>
+                  <lm-html class="description">Description 3</lm-html>
+                  <lm-html class="credits">Crédits 3</lm-html>
+                  <string class="type">à remplir si vidéo (video)</string>
+                </record>
+                <record>
+                  <string class="url">https://freight.cargo.site/w/951/q/94/i/8b8a4cf6802c9cf6f7c1284b804edaad49ef7b00dcc34c1848aba8faa0e99cc9/HideoKobayashi05.jpg</string>
+                  <string class="mobileUrl">https://freight.cargo.site/w/951/q/94/i/8b8a4cf6802c9cf6f7c1284b804edaad49ef7b00dcc34c1848aba8faa0e99cc9/HideoKobayashi05.jpg</string>
+                  <string class="imageFit">contain</string>
+                  <lm-html class="description">Description 4</lm-html>
+                  <lm-html class="credits">Crédits 4</lm-html>
+                  <string class="type">à remplir si vidéo (video)</string>
+                </record>
+              </array>
+            </comp>
+          </lm-html>
+        </record>
+
+        <!-- AUDIOQUOTE -->
+        <record>
+          <record class="destination">
+            <string class="selector">.audioquote-slot</string>
+            <string class="position">endof</string>
+            <string class="reference">body</string>
+          </record>
+          <lm-html class="content">
+            <comp name="audioquote">
+              <string class="customClass">with-v-spacers</string>
+              <string class="audioSrc">https://assets-decodeurs.lemonde.fr/redacweb/2305-audio-quote-assets/helene.mp3</string>
+              <string class="subsSrc">https://assets-decodeurs.lemonde.fr/redacweb/2305-audio-quote-assets/helene.srt</string>
+              <array class="subsGroups">
+                <number>27</number>
+                <number>49</number>
+                <number>79</number>
+              </array>
+              <boolean class="autoPlayWhenVisible">false</boolean>
+              <boolean class="autoPauseWhenVisible">false</boolean>
+              <boolean class="autoLoudWhenVisible">false</boolean>
+              <boolean class="autoMuteWhenHidden">false</boolean>
+              <lm-html class="title"></lm-html>
+              <lm-html class="playButton">Play !</lm-html>
+              <lm-html class="pauseButton">Pause !</lm-html>
+              <lm-html class="loudButton">Loud !</lm-html>
+              <lm-html class="muteButton">Mute !</lm-html>
+              <string class="hidePauseButton">false</string>
+              <string class="onSubsLoad">audioquoteOnSubsLoad</string>
+              <string class="onSubsError">audioquoteOnSubsError</string>
+              <string class="onAudioLoad">audioquoteOnAudioLoad</string>
+              <string class="onAudioError">audioquoteOnAudioError</string>
+              <string class="onTimeUpdate">audioquoteOnTimeUpdate</string>
+              <string class="onStart">audioquoteOnStart</string>
+              <string class="onPlay">audioquoteOnPlay</string>
+              <string class="onStop">audioquoteOnStop</string>
+              <string class="onEnd">audioquoteOnEnd</string>
+              <string class="onPause">audioquoteOnPause</string>
+              <string class="onLoud">audioquoteOnLoud</string>
+              <string class="onMute">audioquoteOnMute</string>
+              <string class="onPlayClick">audioquoteOnPlayClick</string>
+              <string class="onPauseClick">audioquoteOnPauseClick</string>
+              <string class="onLoudClick">audioquoteOnLoudClick</string>
+              <string class="onMuteClick">audioquoteOnMuteClick</string>
+              <string class="onVisible">audioquoteOnVisible</string>
+              <string class="onHidden">audioquoteOnHidden</string>
+            </comp>
+          </lm-html>
+        </record>
+
+        <!-- DRAWER -->
+        <record>
+          <record class="destination">
+            <string class="selector">.drawer-slot</string>
+            <string class="position">endof</string>
+            <string class="reference">body</string>
+          </record>
+          <lm-html class="content">
+            <comp name="drawer">
+              <string class="customClass">with-v-spacers</string>
+              <string class="defaultState">opened</string>
+              <string class="content">I am the content of the drawer</string>
+              <string class="topBarContent">I am the top bar</string>
+              <string class="topBarClosedContent">I am the closed top bar</string>
+              <string class="togglerContent">Close</string>
+              <string class="togglerClosedContent">Open</string>
+              <string class="transitionDuration">800ms</string>
+              <string class="transitionCloseDuration">400ms</string>
+              <string class="transitionEase">ease-in</string>
+              <string class="transitionCloseEase">ease-out</string>
+            </comp>
+          </lm-html>
+        </record>
+
+        <!-- EVENT LISTENER -->
+        <record>
+          <record class="destination">
+            <string class="selector">.event-listener-slot</string>
+            <string class="position">endof</string>
+            <string class="reference">body</string>
+          </record>
+          <lm-html class="content">
+            <comp name="event-listener">
+              <string class="customClass">with-v-spacers</string>
+              <lm-html class="content">Click me !</lm-html>
+              <!-- <string class="selector"></string> -->
+              <array class="eventTypes">
+                <string>click</string>
+                <string>mouseenter</string>
+              </array>
+              <array class="onEvent">
+                <string>eventListenerOnClickOrMouseEnter</string>
+              </array>
+              <!--
+                customWrapperClass: (i: unknown) => i !== undefined ? toString(i) : undefined,
+                content: (i: unknown) => i !== undefined ? Apps.toStringOrVNodeHelper(i) : undefined,
+                selector: (i: unknown) => i !== undefined ? toString(i) : undefined,
+                types: (i: unknown) => i !== undefined ? (Array.isArray(i) ? i.map((_i) => toString(_i)) : [toString(i)]) : undefined,
+                // // Handlers
+                callback: (i: unknown) => {
+                  if (!Array.isArray(i)) return undefined
+                  const handlers = i
+                  .map(e => Events.getRegisteredHandler(toString(e)))
+                  .filter((handler): handler is Events.HandlerFunc => handler !== undefined)
+                  return async (e: Event) => {
+                    Events.sequentialHandlersCall(handlers, {
+                      details: { e },
+                      type: Events.Type.EVENT_LISTENER_CALLBACK,
+                      appId: id
+                    })
+                  }
+                } -->
+            </comp>
+          </lm-html>
+        </record>
+      </array>
+    </data>
+  </body>
+</html>
