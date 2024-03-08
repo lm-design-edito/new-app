@@ -68,7 +68,7 @@ export default class EventDispatcher extends Component<Props, {}> {
     this.handleIntersection = this.handleIntersection.bind(this)
   }
 
-  handleIntersection (ioEntry: IntersectionObserverEntry | undefined) {
+  handleIntersection (details: { ioEntry: IntersectionObserverEntry | undefined }) {
     const { props } = this
     const { trigger } = props
     const { ENTER_BOTTOM, ENTER_TOP, LEAVE_TOP, LEAVE_BOTTOM } = Trigger
@@ -105,7 +105,7 @@ export default class EventDispatcher extends Component<Props, {}> {
     if (customClass !== undefined) wrapperClasses.push(customClass)
     return <div className={wrapperClasses.join(' ')}>
       <IntersectionObserverComponent
-        callback={handleIntersection}>
+        onIntersection={handleIntersection}>
         {actualContent}
       </IntersectionObserverComponent>
     </div>

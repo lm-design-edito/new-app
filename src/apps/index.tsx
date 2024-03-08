@@ -6,7 +6,9 @@ import { LmHtml } from '~/shared/lm-html'
 import { Slots } from '~/shared/slots'
 import { toString } from '~/utils/cast'
 import isArrayOf from '~/utils/is-array-of'
+import isRecord from '~/utils/is-record'
 import randomUUID from '~/utils/random-uuid'
+import recordFormat, { FuncRecord, Formatted } from '~/utils/record-format'
 
 export namespace Apps {
   export enum Name {
@@ -119,9 +121,6 @@ export namespace Apps {
     const privateId = randomUUID().split('-')[0] ?? ''
     const publicName = _id ?? randomUUID().split('-')[0] ?? null
     const { props, Component } = await appRenderer(unknownProps, privateId)
-    console.log('App:', name)
-    console.log('In: ', unknownProps)
-    console.log('Out:', props)
     const appComponent = <App
       component={Component}
       props={props}
@@ -176,5 +175,11 @@ export namespace Apps {
       const handlersNames = Apps.toStringOrStringsHelper(input)
       return Events.otherSequentialHandlersCall(handlersNames, payload, { type, initiator: { id } })
     }))
+  }
+
+  export async function toPropsHelper<Format extends FuncRecord> (input: unknown, format: Format): Promise<Formatted<Format> | undefined> {
+    if (!isRecord(input)) return undefined
+    const props = await recordFormat(input, format)
+    return props
   }
 }

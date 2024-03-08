@@ -11,12 +11,11 @@ type ObserverOptions = {
 }
 
 type Props = {
-  // [@Léa] possible de : className > customClass, et exposer cette prop dans l'app ?
-  className?: string
-  style?: JSX.CSSProperties
-  callback?: (ioEntry: IOE | undefined, observer: IO) => void
-  render?: JSX.Element | ((ioEntry: IOE | null) => JSX.Element)
+  customClass?: string
+  style?: JSX.CSSProperties // [WIP] remove this
+  render?: JSX.Element | ((ioEntry: IOE | null) => JSX.Element) // [WIP] this is doable via onIntersection and render props
   content?: string | VNode
+  onIntersection?: (details: { ioEntry?: IOE | undefined, observer: IO }) => void
 } & ObserverOptions
 
 interface State {
@@ -82,7 +81,7 @@ class IntersectionObserverComponent extends Component<Props, State> {
   }
 
   observation (entries: IOE[], observer: IO): void {
-    if (this.props.callback !== undefined) this.props.callback(entries[0], observer)
+    if (this.props.onIntersection !== undefined) this.props.onIntersection({ ioEntry: entries[0], observer })
     this.setState({ io_entry: entries[0] })
   }
 
@@ -100,7 +99,7 @@ class IntersectionObserverComponent extends Component<Props, State> {
       : null
 
     // Classes
-    const classes = bem(this.mainClass).blk(props.className)
+    const classes = bem(this.mainClass).blk(props.customClass)
     const inlineStyle = { ...props.style }
 
     // Display

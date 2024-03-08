@@ -1,8 +1,6 @@
 import { Apps } from '~/apps'
 import { toString } from '~/utils/cast'
-import isRecord from '~/utils/is-record'
 import Drawer, { Props } from '~/components/Drawer'
-import recordFormat from '~/utils/record-format'
 
 export default async function renderer (unknownProps: unknown, id: string): ReturnType<Apps.AsyncRendererModule<Props>> {
   const props = await toProps(unknownProps, id)
@@ -10,8 +8,7 @@ export default async function renderer (unknownProps: unknown, id: string): Retu
 }
 
 async function toProps (input: unknown, id: string): Promise<Props> {
-  if (!isRecord(input)) return {}
-  const props: Props = await recordFormat(input, {
+  return await Apps.toPropsHelper(input, {
     customClass: i => Apps.ifNotUndefinedHelper(i, toString),
     defaultState: i => Apps.ifNotUndefinedHelper(i, i => {
       const strI = toString(i)
@@ -28,6 +25,5 @@ async function toProps (input: unknown, id: string): Promise<Props> {
     transitionCloseDuration: i => Apps.ifNotUndefinedHelper(i, i => typeof i === 'number' ? i : toString(i)),
     transitionEase: i => Apps.ifNotUndefinedHelper(i, toString),
     transitionCloseEase: i => Apps.ifNotUndefinedHelper(i, toString)
-  })
-  return props
+  })?? {}
 }

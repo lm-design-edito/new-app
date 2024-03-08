@@ -1,5 +1,5 @@
 import { render as preactRender, VNode } from 'preact'
-import getNodeAncestors from '~/utils/get-node-ancestors'
+import { Externals } from '~/shared/externals'
 import randomUUID from '~/utils/random-uuid'
 
 export namespace Slots {
@@ -82,28 +82,35 @@ export namespace Slots {
     })
   }
 
-  export function makeSlot (element: Element, content: VNode[] | string): Element | undefined {
-    if (created.has(element)) return;
-    element.classList.add('lm-slot')
-    // Create inner element
-    const contentElt = document.createElement('div')
-    contentElt.classList.add('lm-slot__content')
-    preactRender(<>{content}</>, contentElt)
+  export function makeSlot (slotRootElt: Element, content: VNode[] | string): Element | undefined {
+    if (created.has(slotRootElt)) return;
+    slotRootElt.classList.add('lm-slot')
+
     // Create styles element
     const stylesElt = document.createElement('div')
-    stylesElt.classList.add('lm-slot__styles')
+    stylesElt.classList.add('lm-slot-inner__styles')
     renderStylesInTarget(stylesElt)
-    // Look for data-color-mode attribute in slot parents
-    const ancestors = getNodeAncestors(element)
-    const firstThemedTargetAncestor = ancestors.find(elt => elt.getAttribute('data-color-mode') !== null)
-    if (firstThemedTargetAncestor !== undefined) {
-      const colorMode = firstThemedTargetAncestor.getAttribute('data-color-mode')
-      if (colorMode !== null) contentElt.setAttribute('data-color-mode', colorMode)
-    }
+
+    // Create content element
+    const contentElt = document.createElement('div')
+    contentElt.classList.add('lm-slot-inner__content')
+    preactRender(<>{content}</>, contentElt)
+
+    // Create slot inner element
+    const innerElt = document.createElement('div')
+    innerElt.classList.add('lm-slot-inner')
+    innerElt.append(stylesElt, contentElt)
+
     // Create shadow
-    const shadow = element.attachShadow({ mode: 'open' })
-    shadow.append(stylesElt, contentElt)
-    created.add(element)
+    const shadow = slotRootElt.attachShadow({ mode: 'open' })
+    shadow.append(innerElt)
+    created.add(slotRootElt)
+
+    // External context detection
+    Externals.setDeviceContextAttribute(innerElt)
+    Externals.setColorModeContextAttribute(innerElt)
+    Externals.setParentSnippetAttribute(innerElt)
+
     return contentElt
   }
 }

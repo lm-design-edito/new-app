@@ -4,14 +4,14 @@ export namespace Analytics {
   * TYPES
   * 
   * * * * * * * * * * * * * * * * * * * * * * */
-  type AmplitudeSdk = {
+  export type AmplitudeSdk = {
     logEvent: (
       eventName: string,
       payload?: { [key: string]: any }
     ) => void
   }
 
-  type AtInternetPayload = {
+  export type AtInternetPayload = {
     name: string
     type: string
     level2: number
@@ -20,7 +20,7 @@ export namespace Analytics {
     chapter3: string
   }
 
-  type AtInternetSdk = {
+  export type AtInternetSdk = {
     Utils?: {}
     Tracker?: {
       instances?: Array<{

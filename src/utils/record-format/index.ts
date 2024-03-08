@@ -1,11 +1,14 @@
-type FuncRecord = Record<string, (...args: any[]) => any>
-type UnwrapPromise<PromiseOrNot> = PromiseOrNot extends Promise<infer Resolved> ? Resolved : PromiseOrNot
+export type FuncRecord = Record<string, (...args: any[]) => any>
+export type UnwrapPromise<PromiseOrNot> = PromiseOrNot extends Promise<infer Resolved> ? Resolved : PromiseOrNot
+export type FormattedFieldPromise<Format extends FuncRecord, Key extends keyof Format> = ReturnType<Format[Key]>
+export type FormattedField<Format extends FuncRecord, Key extends keyof Format> = UnwrapPromise<FormattedFieldPromise<Format, Key>>
+export type Formatted<Format extends FuncRecord> = { [key in keyof Format]: FormattedField<Format, key> }
 
 export default async function recordFormat<Format extends FuncRecord> (
   input: Record<string, unknown>,
   format: Format
-): Promise<{ [Key in keyof Format]: UnwrapPromise<ReturnType<Format[Key]>> }> {
-  const output: Partial<{ [Key in keyof Format]: UnwrapPromise<ReturnType<Format[Key]>> }> = {}
+): Promise<Formatted<Format>> {
+  const output: Partial<Formatted<Format>> = {}
   const promises: Promise<any>[] = []
   Object.entries(format).forEach(async ([key, func]) => {
     const inputValue = input[key]
@@ -15,5 +18,5 @@ export default async function recordFormat<Format extends FuncRecord> (
     output[key as keyof Format] = result
   })
   await Promise.all(promises)
-  return output as { [Key in keyof Format]: UnwrapPromise<ReturnType<Format[Key]>> }
+  return output as Formatted<Format>
 }

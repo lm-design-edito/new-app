@@ -5,6 +5,7 @@ import { Analytics } from '~/shared/analytics'
 import { Config } from '~/shared/config'
 import { Darkdouille } from '~/shared/darkdouille'
 import { Events } from '~/shared/events'
+import { Externals } from '~/shared/externals'
 import { LmHtml } from '~/shared/lm-html'
 import { Slots } from '~/shared/slots'
 import Logger from '~/utils/silent-log'
@@ -20,11 +21,10 @@ export namespace Globals {
     [Globals.GlobalKey.HAS_AUTO_INITED]?: boolean
     [Globals.GlobalKey.ANALYTICS]?: typeof Analytics
     [Globals.GlobalKey.APPS]?: typeof Apps
-    // [WIP] pourquoi ~/shared/config n'est pas exporté ?
-    // ATTENTION, ~/shared/config === /src/shared/UTILS/config/index.ts,
-    // pas /src/shared/config.ts, qui est un fichier de config privé du projet
+    [Globals.GlobalKey.CONFIG]?: typeof Config
     [Globals.GlobalKey.DARKDOUILLE]?: typeof Darkdouille
     [Globals.GlobalKey.EVENTS]?: typeof Events
+    [Globals.GlobalKey.EXTERNALS]?: typeof Externals
     [Globals.GlobalKey.INIT]?: typeof init
     [Globals.GlobalKey.LM_HTML]?: typeof LmHtml
     [Globals.GlobalKey.LOGGER]?: Logger
@@ -47,8 +47,10 @@ export namespace Globals {
     HAS_AUTO_INITED = '_hasAutoInited',
     ANALYTICS = 'Analytics',
     APPS = 'Apps',
+    CONFIG = 'Config',
     DARKDOUILLE = 'Darkdouille',
     EVENTS = 'Events',
+    EXTERNALS = 'Externals',
     INIT = 'init',
     LM_HTML = 'LmHtml',
     LOGGER = 'logger',

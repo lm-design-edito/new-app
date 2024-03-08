@@ -10,8 +10,7 @@ import Scrollgneugneu, {
   PropsStickyBlockData,
   LayoutName,
   TransitionDescriptor,
-  isTransitionName,
-  State
+  isTransitionName
 } from '~/components/Scrllgngn'
 import recordFormat from '~/utils/record-format'
 
@@ -21,38 +20,26 @@ export default async function renderer (unknownProps: unknown, id: string): Retu
 }
 
 async function toProps (input: unknown, id: string): Promise<Props> {
-  if (!isRecord(input)) return {}
-  const props: Props = await recordFormat(input, {
-    customClass: (i: unknown) => i !== undefined ? toString(i) : undefined,
-    stickyBlocksLazyLoadDistance: (i: unknown) => i !== undefined ? toNumber(i) : undefined,
-    stickyBlocksViewportHeight: (i: unknown) => i !== undefined ? toString(i) : undefined,
-    stickyBlocksOffsetTop: (i: unknown) => i !== undefined ? toNumber(i) : undefined,
-    forceStickBlocks: (i: unknown) => {
-      if (i === undefined) return undefined
+  return await Apps.toPropsHelper(input, {
+    customClass: i => Apps.ifNotUndefinedHelper(i, toString),
+    stickyBlocksLazyLoadDistance: i => Apps.ifNotUndefinedHelper(i, toNumber),
+    stickyBlocksViewportHeight: i => Apps.ifNotUndefinedHelper(i, toString),
+    stickyBlocksOffsetTop: i => Apps.ifNotUndefinedHelper(i, toNumber),
+    forceStickBlocks: i => Apps.ifNotUndefinedHelper(i, i => {
       const strI = toString(i)
       if (strI === 'before') return 'before'
       if (strI === 'after') return 'after'
       if (strI === 'both') return 'both'
+      if (strI === 'none') return 'none'
       return undefined
-    },
-    thresholdOffset: (i: unknown) => i !== undefined ? toString(i) : undefined,
-    bgColorTransitionDuration: (i: unknown) => i !== undefined ? toNumber(i) : undefined,
-    pages: async (i: unknown) => Array.isArray(i) ? await arrayToPages(i, id) : undefined,
-    onPageChange: (i: unknown) => {
-      if (!Array.isArray(i)) return undefined
-      const handlers = i
-        .map(e => Events.getRegisteredHandler(toString(e)))
-        .filter((handler): handler is Events.HandlerFunc => handler !== undefined)
-      return async (state?: State) => {
-        Events.sequentialHandlersCall(handlers, {
-          details: { state },
-          type: Events.Type.SCRLLGNGN_PAGE_CHANGE,
-          appId: id
-        })
-      }
-    }
-  })
-  return props
+    }),
+    thresholdOffset: i => Apps.ifNotUndefinedHelper(i, toString),
+    bgColorTransitionDuration: i => Apps.ifNotUndefinedHelper(i, toNumber),
+    pages: i => Apps.ifArrayHelper(i, i => arrayToPages(i, id)),
+
+    // Handlers
+    onPageChange: i => Apps.makeHandlerHelper(Events.Type.SCRLLGNGN_PAGE_CHANGE, i, id)
+  }) ?? {}
 }
 
 /* * * * * * * * * * * * * * * * * * *
@@ -63,9 +50,9 @@ async function arrayToPages (array: unknown[], id: string): Promise<PropsPageDat
   for (const pageData of array) {
     if (!isRecord(pageData)) continue
     const extractedPage: PropsPageData = await recordFormat(pageData, {
-      id: (i: unknown) => i !== undefined ? toString(i) : undefined,
-      bgColor: (i: unknown) => i !== undefined ? toString(i) : undefined,
-      blocks: async (i: unknown) => Array.isArray(i) ? await arrayToBlocks(i, id) : undefined
+      id: i => Apps.ifNotUndefinedHelper(i, toString),
+      bgColor: i => Apps.ifNotUndefinedHelper(i, toString),
+      blocks: i => Apps.ifArrayHelper(i, i => arrayToBlocks(i, id))
     })
     extractedPages.push(extractedPage)
   }
@@ -79,25 +66,24 @@ async function arrayToBlocks (array: unknown[], id: string): Promise<PropsBlockD
   const extractedBlocks: PropsBlockData[] = []
   for (const blockData of array) {
     if (!isRecord(blockData)) continue
-    const strDepth = blockData.depth !== undefined ? toString(blockData.depth) : undefined
+    const strDepth = Apps.ifNotUndefinedHelper(blockData.depth, toString)
     
     // depth?: 'scroll'
     if (strDepth === 'scroll' || strDepth === undefined) {
       const extractedScrollBlock: PropsScrollBlockData = await recordFormat(blockData, {
         depth: () => strDepth,
-        id: (i: unknown) => i !== undefined ? toString(i) : undefined,
-        zIndex: (i: unknown) => i !== undefined ? toNumber(i) : undefined,
-        type: (i: unknown) => {
-          if (i === undefined) return undefined
+        id: i => Apps.ifNotUndefinedHelper(i, toString),
+        zIndex: i => Apps.ifNotUndefinedHelper(i, toNumber),
+        type: i => Apps.ifNotUndefinedHelper(i, i => {
           const strI = toString(i)
           if (strI === 'html') return 'html'
           if (strI === 'module') return 'module'
           return undefined
-        },
-        content: (i: unknown) => i !== undefined ? Apps.toStringOrVNodeHelper(i) : undefined, // [WIP] should be possible to have VNode if type === 'module'
-        trackScroll: (i: unknown) => i !== undefined ? toBoolean(i) : undefined,
-        layout: (i: unknown) => i !== undefined ? toString(i) as LayoutName : undefined,
-        mobileLayout: (i: unknown) => i !== undefined ? toString(i) as LayoutName : undefined
+        }),
+        content: i => Apps.ifNotUndefinedHelper(i, Apps.toStringOrVNodeHelper),
+        trackScroll: i => Apps.ifNotUndefinedHelper(i, toBoolean),
+        layout: i => Apps.ifNotUndefinedHelper(i, toString) as LayoutName | undefined,
+        mobileLayout: i => Apps.ifNotUndefinedHelper(i, toString) as LayoutName | undefined
       })
       extractedBlocks.push(extractedScrollBlock)
     
@@ -105,21 +91,19 @@ async function arrayToBlocks (array: unknown[], id: string): Promise<PropsBlockD
     } else if (strDepth === 'front' || strDepth === 'back') {
       const extractedStickyBlock: PropsStickyBlockData = await recordFormat(blockData, {
         depth: () => strDepth,
-        id: (i: unknown) => i !== undefined ? toString(i) : undefined,
-        zIndex: (i: unknown) => i !== undefined ? toNumber(i) : undefined,
-        type: (i: unknown) => {
-          if (i === undefined) return undefined
+        id: i => Apps.ifNotUndefinedHelper(i, toString),
+        zIndex: i => Apps.ifNotUndefinedHelper(i, toNumber),
+        type: i => Apps.ifNotUndefinedHelper(i, i => {
           const strI = toString(i)
           if (strI === 'html') return 'html'
           if (strI === 'module') return 'module'
           return undefined
-        },
-        content: (i: unknown) => i !== undefined ? Apps.toStringOrVNodeHelper(i) : undefined, // [WIP] should be possible to have VNode if type === 'module'
-        trackScroll: (i: unknown) => i !== undefined ? toBoolean(i) : undefined,
-        layout: (i: unknown) => i !== undefined ? toString(i) as LayoutName : undefined,
-        mobileLayout: (i: unknown) => i !== undefined ? toString(i) as LayoutName : undefined,
-        transitions: (i: unknown) => {
-          if (!Array.isArray(i)) return undefined
+        }),
+        content: i => Apps.ifNotUndefinedHelper(i, Apps.toStringOrVNodeHelper),
+        trackScroll: i => Apps.ifNotUndefinedHelper(i, toBoolean),
+        layout: i => Apps.ifNotUndefinedHelper(i, toString) as LayoutName | undefined,
+        mobileLayout: i => Apps.ifNotUndefinedHelper(i, toString) as LayoutName | undefined,
+        transitions: i => Apps.ifArrayHelper(i, i => {
           const transitionsArr: TransitionDescriptor[] = []
           i.forEach((transitionObj: unknown) => {
             if (!Array.isArray(transitionObj)) return;
@@ -130,9 +114,8 @@ async function arrayToBlocks (array: unknown[], id: string): Promise<PropsBlockD
             else transitionsArr.push([name])
           })
           return transitionsArr
-        },
-        mobileTransitions: (i: unknown) => {
-          if (!Array.isArray(i)) return undefined
+        }),
+        mobileTransitions: i => Apps.ifArrayHelper(i, i => {
           const mobileTransitionsArr: TransitionDescriptor[] = []
           i.forEach((transitionObj: unknown) => {
             if (!Array.isArray(transitionObj)) return;
@@ -143,7 +126,7 @@ async function arrayToBlocks (array: unknown[], id: string): Promise<PropsBlockD
             else mobileTransitionsArr.push([name])
           })
           return mobileTransitionsArr
-        }
+        })
       })
       extractedBlocks.push(extractedStickyBlock)
     }

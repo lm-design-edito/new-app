@@ -32,7 +32,7 @@ export function throttle <T extends BasicFunction = BasicFunction>(
   }
 
   /** The throttled function */
-  function throttled (...args: any[]) {
+  function throttled (...args: Parameters<T>) {
     const now = Date.now()
     lastArgs = args
     if (now - lastExecutedOn >= delayMs) {
@@ -104,7 +104,7 @@ export function debounce <T extends BasicFunction = BasicFunction>(
   }
   
   /** The debounced function */
-  function debounced (...args: any[]) {
+  function debounced (...args: Parameters<T>) {
     const now = Date.now()
     lastArgs = args
     if (now - lastCalledOn >= currentDelayMs) {

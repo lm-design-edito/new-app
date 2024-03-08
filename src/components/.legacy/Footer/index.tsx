@@ -1,6 +1,6 @@
 import { Component, VNode } from 'preact'
 import Thumbnail, { Props as ThumbnailProps } from '~/components/Thumbnail'
-import IntersectionObserverComponent, { Props as IOCompProps } from '~/components/IntersectionObserver'
+import IntersectionObserverComponent, { Props as IOCompProps, IOE, IO } from '~/components/IntersectionObserver'
 import Img from '~/components/Img'
 import bem from '~/utils/bem'
 import styles from './styles.module.scss'
@@ -26,10 +26,10 @@ export default class Footer extends Component<Props, {}> {
 
   bemClss = bem('lm-footer')
 
-  handleIntersection(...args: Parameters<NonNullable<IOCompProps['callback']>>) {
+  handleIntersection (details: { ioEntry?: IOE | undefined }) {
+    const { ioEntry } = details
     const { onVisible, onHidden } = this.props
-    const [ioEntry] = args
-    const isVisible = ioEntry.isIntersecting
+    const isVisible = ioEntry?.isIntersecting
     if (isVisible && onVisible !== undefined) return onVisible(ioEntry)
     if (!isVisible && onHidden !== undefined) return onHidden(ioEntry)
   }
@@ -63,7 +63,7 @@ export default class Footer extends Component<Props, {}> {
 
     return <IntersectionObserverComponent
       threshold={visibilityThreshold}
-      callback={handleIntersection}>
+      newOnIntersection={handleIntersection}>
       <div
         className={wrapperClasses.join(' ')}
         style={wrapperStyle}>

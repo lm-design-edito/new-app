@@ -1,7 +1,7 @@
 import { Component, VNode } from 'preact'
 
 export type Props = {
-  // [@Léa] customClass ici aussi plz 🙏
+  customClass?: string
   content?: string | VNode
   onResize?: (entries: ResizeObserverEntry[]) => void
 }
@@ -41,9 +41,11 @@ export default class ResizeObserverComponent extends Component<Props> {
   }
 
   render () {
-    const { children, content } = this.props
+    const { customClass, children, content } = this.props
+    const wrapperClasses = ['lm-resize-observer']
+    if (customClass !== undefined) wrapperClasses.push(customClass)
     return <div
-      className={`lm-resize-observer`}
+      className={wrapperClasses.join(' ')}
       ref={n => { this.$root = n }}>
       {children}
       {content}

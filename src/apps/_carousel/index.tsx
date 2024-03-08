@@ -10,8 +10,7 @@ export default async function renderer (unknownProps: unknown, id: string): Retu
 }
 
 async function toProps (input: unknown, id: string): Promise<Props> {
-  if (!isRecord(input)) return {}
-  return await recordFormat(input, {
+  return await Apps.toPropsHelper(input, {
     customClass: i => Apps.ifNotUndefinedHelper(i, toString),
     leftArrow: i => Apps.ifNotUndefinedHelper(i, toBoolean),
     rightArrow: i => Apps.ifNotUndefinedHelper(i, toBoolean),
@@ -38,7 +37,7 @@ async function toProps (input: unknown, id: string): Promise<Props> {
     credits: i => Apps.ifNotUndefinedHelper(i, Apps.toStringOrVNodeHelper),
     description: i => Apps.ifNotUndefinedHelper(i, Apps.toStringOrVNodeHelper),
     images: i => Apps.ifArrayHelper(i, i => arrayToImages(i, id))
-  })
+  }) ?? {}
 }
 
 async function arrayToImages (array: unknown[], id: string): Promise<Media[]> {

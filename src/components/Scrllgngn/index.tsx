@@ -78,8 +78,8 @@ export type Props = {
   customClass?: string
   stickyBlocksLazyLoadDistance?: number
   stickyBlocksViewportHeight?: string // [WIP] No relative units, maybe some regex checks here?
-  stickyBlocksOffsetTop?: number
-  forceStickBlocks?: 'before'|'after'|'both'
+  stickyBlocksOffsetTop?: number // [WIP] this does not work well
+  forceStickBlocks?: 'before'|'after'|'both'|'none'
   thresholdOffset?: string
   bgColorTransitionDuration?: string|number
   pages?: PropsPageData[]
@@ -1280,10 +1280,10 @@ export default class Scrollgneugneu extends Component<Props, State> {
         {/* TOP BOUND DETECTION */}
         <IntersectionObserverComponent
           render={<div ref={n => { this.topBoundRef = n }} />}
-          callback={throttledBoundsDetection} />
+          onIntersection={throttledBoundsDetection} />
         {/* CONTENT */}
         <IntersectionObserverComponent
-          callback={throttledBoundsDetection}>
+          onIntersection={throttledBoundsDetection}>
           <ResizeObserverComponent
             onResize={handlePaginatorResize}>
             <ScrollingBlocks />
@@ -1292,7 +1292,7 @@ export default class Scrollgneugneu extends Component<Props, State> {
         {/* BOTTOM BOUND DETECTION */}
         <IntersectionObserverComponent
           render={<div ref={n => { this.btmBoundRef = n }} />}
-          callback={throttledBoundsDetection} />
+          onIntersection={throttledBoundsDetection} />
       </div>
     </div>
   }

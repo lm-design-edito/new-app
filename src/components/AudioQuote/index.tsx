@@ -1,5 +1,5 @@
 import { Component, JSX, createRef, RefObject, VNode } from 'preact'
-import IntersectionObserverComponent from '~/components/IntersectionObserver'
+import IntersectionObserverComponent, { IO, IOE } from '~/components/IntersectionObserver'
 import bem from '~/utils/bem'
 import styles from './styles.module.scss'
 import { toError } from '~/utils/cast'
@@ -369,13 +369,14 @@ export default class AudioQuote extends Component<Props, State> {
     this.setState({ hasManuallyMuted: true })
   }
 
-  handleIntersection (event: IntersectionObserverEntry | undefined) {
-    if (event === undefined) return;
+  handleIntersection (details: { ioEntry?: IOE | undefined, observer: IO }) {
     // [WIP][ELSA] Si le fichier audio n'est pas encore chargé il faudrait
     // faire en sorte qu'il se lance au chargement (si conditions réunies)
+    const { ioEntry, observer } = details
+    if (ioEntry === undefined) return;
     const { props, state } = this
-    if (event.isIntersecting === true) {
-      this.props.onVisible?.(event)
+    if (ioEntry.isIntersecting === true) {
+      this.props.onVisible?.(ioEntry)
       if (props.autoPlayWhenVisible === true
         && state.hasManuallyPaused !== true
         && state.isPlaying !== true
@@ -389,7 +390,7 @@ export default class AudioQuote extends Component<Props, State> {
       }
       return
     } else {
-      this.props.onHidden?.(event)
+      this.props.onHidden?.(ioEntry)
     }
     if (props.autoPauseWhenHidden === true && state.isPlaying === true) { this.tryStopPlayback() }
     if (props.autoMuteWhenHidden === true && state.isLoud === true) { this.trySetMute() }
@@ -417,7 +418,9 @@ export default class AudioQuote extends Component<Props, State> {
     const pauseButtonClasses = [bemClss.elt('pause-button').value, styles['pause-button']]
     const loudButtonClasses = [bemClss.elt('loud-button').value, styles['loud-button']]
     const muteButtonClasses = [bemClss.elt('mute-button').value, styles['mute-button']]
-    return <IntersectionObserverComponent callback={this.handleIntersection} threshold={0.3}>
+    return <IntersectionObserverComponent
+      threshold={0.3}
+      onIntersection={this.handleIntersection}>
       <div className={wrapperClasses.join(' ')}>
         {props.title !== undefined && <div className={titleClasses.join(' ')}>{props.title}</div>}
         <button
@@ -448,9 +451,9 @@ export default class AudioQuote extends Component<Props, State> {
           controls
           muted
           playsInline
-          onLoad={e => { props.onAudioLoad?.(e) }}
-          onError={e => { props.onAudioError?.(e) }}
-          onPlay={e => { props.onPlay?.(e) }} />
+          onLoad={props.onAudioLoad}
+          onError={props.onAudioError}
+          onPlay={props.onPlay} />
         <div
           className={subsContainerClasses.join(' ')}>
           {this.getDisplayedSubsContent()}

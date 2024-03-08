@@ -1,13 +1,12 @@
-import appConfig from '~/config'
-import getHeaderElements from '~/shared/get-header-element'
 import { Analytics } from '~/shared/analytics'
 import { Darkdouille } from '~/shared/darkdouille'
+import { Events } from '~/shared/events'
+import { Externals } from '~/shared/externals'
+import { Globals } from '~/shared/globals'
 import { Slots } from '~/shared/slots'
 import { toString, toNumber, toBoolean } from '~/utils/cast'
 import interpolate, { ratio } from '~/utils/interpolate'
 import roundNumbers from '~/utils/round-numbers'
-import { Events } from '../events'
-import { Globals } from '../globals'
 
 export namespace Config {
   export enum InlineOnlyInstructionName {
@@ -35,30 +34,15 @@ export namespace Config {
     logger?.log('Apply config', '%cInput', 'font-weight: 800;', instructions)
     instructions.forEach(({ name, value }) => {
       // ID
-      if (name === InlineOnlyInstructionName.ID) return document.body.classList.add(toString(value))
+      if (name === InlineOnlyInstructionName.ID) {
+        return Externals.setPageIdAttribute(toString(value))
+      }
       
       // HIDE_HEADER
       if (name === RemoteInstructionName.HIDE_HEADER) {
-        const headerElements = getHeaderElements() ?? []
         const shouldHide = toBoolean(value)
-        headerElements.forEach(elt => {
-          const element = elt as HTMLElement
-          if (!shouldHide) {
-            element.style.opacity = ''
-            element.style.visibility = ''
-            element.style.display = ''
-            element.style.pointerEvents = ''
-            element.style.userSelect = ''
-          } else {
-            element.style.opacity = '0'
-            element.style.visibility = 'collapse'
-            element.style.display = 'none'
-            element.style.pointerEvents = 'none'
-            element.style.userSelect = 'none'
-          }
-        })
-        if (shouldHide) logger?.log('Apply config', '%cHeader hidden', 'font-weight: 800;', headerElements)
-        else logger?.log('Apply config', '%cHeader displayed', 'font-weight: 800;', headerElements)
+        const headerElements = Externals.setLeMondeHeaderVisibility(shouldHide)
+        logger?.log('Apply config', shouldHide ? '%cHeader hidden' : '%cHeader displayed', 'font-weight: 800', headerElements)
         return
       }
       
@@ -107,17 +91,8 @@ export namespace Config {
             logger?.log('Tracking', 'End reached')
           }
         }
-        logger?.log(
-          'Apply config',
-          '%cTracking',
-          'font-weight: 800;',
-          '– scroll listener attached'
-        )
-        return window.setTimeout(
-          // [WIP] maybe throttle this ?
-          () => window.addEventListener('scroll', scrollListener),
-          200
-        )
+        logger?.log('Apply config', '%cTracking', 'font-weight: 800;', '– scroll listener attached')
+        return window.setTimeout(() => window.addEventListener('scroll', scrollListener), 200) // [WIP] maybe throttle this ?
       }
       
       // CSS
@@ -126,14 +101,10 @@ export namespace Config {
         if (value instanceof NodeList) {
           const styleElements = [...value].filter((node): node is HTMLStyleElement => {
             if (!(node instanceof HTMLElement)) return false;
-            const element = node
-            if (element.tagName.toLowerCase() !== 'style') return false;
+            if (node.tagName.toLowerCase() !== 'style') return false;
             return true
           })
-          const styleStr = styleElements
-            .map(elt => elt.textContent?.trim())
-            .join('\n')
-          injected += styleStr
+          injected += styleElements.map(elt => elt.textContent?.trim()).join('\n')
         } else {
           injected += toString(value)
         }
@@ -141,12 +112,7 @@ export namespace Config {
           name: 'lm-page-config-css',
           position: Slots.StylesPositions.CUSTOM
         })
-        logger?.log(
-          'Apply config',
-          '%cCSS injected\n',
-          'font-weight: 800;',
-          injected
-        )
+        return logger?.log('Apply config', '%cCSS injected\n', 'font-weight: 800;', injected)
       }
 
       // STYLESHEET
@@ -156,12 +122,7 @@ export namespace Config {
           name: 'lm-page-config-stylesheet',
           position: Slots.StylesPositions.CUSTOM
         })
-        logger?.log(
-          'Apply config',
-          '%cStylesheet injected\n',
-          'font-weight: 800;',
-          strValue
-        )
+        return logger?.log('Apply config', '%cStylesheet injected\n', 'font-weight: 800;', strValue)
       }
       
       // SCALE

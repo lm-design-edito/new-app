@@ -15,17 +15,17 @@
       
       <!-- Config -->
       <array class="CONFIG">
+        <!-- Handlers -->
         <record>
           <string class="name">handlersFile</string>
           <string class="value">http://localhost:3000/pages/240306-new-event-handlers-test/handlers.js</string>
         </record>
+        <!-- Css -->
         <record>
           <string class="name">css</string>
           <lm-html class="value">
             <style>
-              .with-v-spacers {
-                margin: 160px 0;
-              }
+              .with-v-spacers { margin: 160px 0; }
             </style>
           </lm-html>
         </record>
@@ -39,7 +39,7 @@
           <record class="destination">
             <string class="selector">.carousel-slot</string>
             <string class="position">endof</string>
-            <string class="reference">body</string>
+            <string class="reference">.fake-snippet-slot</string>
           </record>
           <lm-html class="content">
             <comp name="_carousel">
@@ -111,7 +111,7 @@
           <record class="destination">
             <string class="selector">.slideshow-slot</string>
             <string class="position">endof</string>
-            <string class="reference">body</string>
+            <string class="reference">.fake-snippet-slot</string>
           </record>
           <lm-html class="content">
             <comp name="_slideshow">
@@ -170,7 +170,7 @@
           <record class="destination">
             <string class="selector">.audioquote-slot</string>
             <string class="position">endof</string>
-            <string class="reference">body</string>
+            <string class="reference">.fake-snippet-slot</string>
           </record>
           <lm-html class="content">
             <comp name="audioquote">
@@ -219,7 +219,7 @@
           <record class="destination">
             <string class="selector">.drawer-slot</string>
             <string class="position">endof</string>
-            <string class="reference">body</string>
+            <string class="reference">.fake-snippet-slot</string>
           </record>
           <lm-html class="content">
             <comp name="drawer">
@@ -243,7 +243,7 @@
           <record class="destination">
             <string class="selector">.event-listener-slot</string>
             <string class="position">endof</string>
-            <string class="reference">body</string>
+            <string class="reference">.fake-snippet-slot</string>
           </record>
           <lm-html class="content">
             <comp name="event-listener">
@@ -257,29 +257,203 @@
               <array class="onEvent">
                 <string>eventListenerOnClickOrMouseEnter</string>
               </array>
-              <!--
-                customWrapperClass: (i: unknown) => i !== undefined ? toString(i) : undefined,
-                content: (i: unknown) => i !== undefined ? Apps.toStringOrVNodeHelper(i) : undefined,
-                selector: (i: unknown) => i !== undefined ? toString(i) : undefined,
-                types: (i: unknown) => i !== undefined ? (Array.isArray(i) ? i.map((_i) => toString(_i)) : [toString(i)]) : undefined,
-                // // Handlers
-                callback: (i: unknown) => {
-                  if (!Array.isArray(i)) return undefined
-                  const handlers = i
-                  .map(e => Events.getRegisteredHandler(toString(e)))
-                  .filter((handler): handler is Events.HandlerFunc => handler !== undefined)
-                  return async (e: Event) => {
-                    Events.sequentialHandlersCall(handlers, {
-                      details: { e },
-                      type: Events.Type.EVENT_LISTENER_CALLBACK,
-                      appId: id
-                    })
-                  }
-                } -->
             </comp>
           </lm-html>
         </record>
+
+        <!-- GALLERY -->
+        <record>
+          <record class="destination">
+            <string class="selector">.gallery-slot</string>
+            <string class="position">endof</string>
+            <string class="reference">.fake-snippet-slot</string>
+          </record>
+          <lm-html class="content">
+            <comp name="gallery">
+              <string class="customClass">with-v-spacers</string>
+              <lm-html class="prevButtonContent">p button</lm-html>
+              <lm-html class="nextButtonContent">n button</lm-html>
+              <boolean class="snapScroll">true</boolean>
+              <string class="scrollerWidth">600px</string>
+              <array class="itemsContent">
+                <lm-html><div style="width: 360px; height: 200px; background-color: aquamarine;">Item 1</div></lm-html>
+                <lm-html><div style="width: 360px; height: 200px; background-color: coral;">Item 2</div></lm-html>
+                <lm-html><div style="width: 360px; height: 200px; background-color: violet;">Item 3</div></lm-html>
+              </array>
+            </comp>
+          </lm-html>
+        </record>
+
+        <!-- HEADER -->
+        <record>
+          <record class="destination">
+            <string class="selector">.header-slot</string>
+            <string class="position">endof</string>
+            <string class="reference">.fake-snippet-slot</string>
+          </record>
+          <lm-html class="content">
+            <comp name="header">
+              <string class="customClass">with-v-spacers</string>
+              <string class="logoHref">https://google.com</string>
+              <boolean class="hideLogo">false</boolean>
+              <boolean class="hideNav">false</boolean>
+              <boolean class="hideCta">false</boolean>
+              <string class="navItemsAlign">center</string>
+              <string class="navPosition">top</string>
+              <lm-html class="ctaContent">CTA</lm-html>
+              <string class="ctaActionType">toggle-panel</string>
+              <array class="navItems">
+                <record>
+                  <string class="value">1</string>
+                  <string class="content">Contenu de valeur=1</string>
+                  <string class="clickAction">scroll-to-chapter</string>
+                  <boolean class="isActive">true</boolean>
+                </record>
+                <record>
+                  <string class="value">2</string>
+                  <string class="content">Contenu de valeur=2</string>
+                  <string class="clickAction">scroll-to-chapter</string>
+                  <boolean class="isActive">false</boolean>
+                </record>
+              </array>
+              <lm-html class="subnavContent">I am the subnav content</lm-html>
+              <lm-html class="panelContent">I am the panel content</lm-html>
+            </comp>
+          </lm-html>
+        </record>
+
+        <!-- INTERSECTION OBSERVER -->
+        <record>
+          <record class="destination">
+            <string class="selector">.intersection-observer-slot</string>
+            <string class="position">endof</string>
+            <string class="reference">.fake-snippet-slot</string>
+          </record>
+          <lm-html class="content">
+            <comp name="intersection-observer">
+              <string class="customClass">with-v-spacers</string>
+              <lm-html class="content"><div style="width: 500px; aspect-ratio: 1; background-color: crimson;">I am in the intersection observer</div></lm-html>
+              <string class="rootMargin">0px</string>
+              <array class="threshold">
+                <number>0.1</number>
+                <number>0.5</number>
+                <number>1</number>
+              </array>
+              <array class="onIntersection">
+                <string>intersectionObserverOnIntersection</string>
+              </array>
+            </comp>
+          </lm-html>
+        </record>
+
+        <!-- RESIZE OBSERVER -->
+        <record>
+          <record class="destination">
+            <string class="selector">.resize-observer-slot</string>
+            <string class="position">endof</string>
+            <string class="reference">.fake-snippet-slot</string>
+          </record>
+          <lm-html class="content">
+            <comp name="resize-observer">
+              <string class="customClass">with-v-spacers</string>
+              <lm-html class="content">
+                <div style="width: 500px; max-width: 100%; height: 200px; background-color: goldenrod;">I am the resize observer content</div>
+              </lm-html>
+              <array class="onResize">
+                <string>resizeObserverOnResize</string>
+              </array>
+            </comp>
+          </lm-html>
+        </record>
+
+        <!-- SCRLLGNGN -->
+        <record>
+          <record class="destination">
+            <string class="selector">.scrllgngn-slot</string>
+            <string class="position">endof</string>
+            <string class="reference">.fake-snippet-slot</string>
+          </record>
+          <lm-html class="content">
+            <comp name="scrllgngn">
+              <string class="customClass">with-v-spacers</string>
+              <number class="stickyBlocksLazyLoadDistance">2</number>
+              <string class="stickyBlocksViewportHeight">100vh</string>
+              <number class="stickyBlocksOffsetTop">0</number>
+              <string class="forceStickBlocks">none</string>
+              <string class="thresholdOffset">80%</string>
+              <number class="bgColorTransitionDuration">400</number>
+              <array class="onPageChange">
+                <string>scrllgngnOnPageChange</string>
+              </array>
+              <array class="pages">
+                <record>
+                  <string class="id">first-page</string>
+                  <string class="bgColor">blue</string>
+                  <array class="blocks">
+                    <!-- SCROLL -->
+                    <record>
+                      <string class="depth">scroll</string>
+                      <string class="id">my-scroll-block</string>
+                      <string class="type">html</string>
+                      <boolean class="trackScroll">true</boolean>
+                      <!-- <number class="zIndex"></number> -->
+                      <!-- <string class="layout"></string> -->
+                      <!-- <string class="mobileLayout"></string> -->
+                      <lm-html class="content">
+                        <div style="height: 120vh; width: 100%; background-color: bisque; display: flex; align-items: center; justify-content: center;">
+                          Je suis une page de scrllgngn
+                        </div>
+                      </lm-html>
+                    </record>
+                    <!-- BACK -->
+                    <record>
+                      <string class="depth">front</string>
+                      <string class="id">my-back-block</string>
+                      <string class="type">html</string>
+                      <boolean class="trackScroll">true</boolean>
+                      <!-- <string class="zIndex"></string> -->
+                      <!-- <string class="layout"></string>
+                      <string class="mobileLayout"></string> -->
+                      <lm-html class="content">
+                        <div style="width: 200px; aspect-ratio: 1; border-radius: 200px; background-color: burlywood; margin: 100px;">Je suis le bloc fixe</div>
+                      </lm-html>
+                      <array class="transitions">
+                        <array>
+                          <string>whirl</string>
+                          <number>400</number>
+                        </array>
+                      </array>
+                      <array class="mobileTransitions">
+                        <array>
+                          <string>whirl</string>
+                          <number>400</number>
+                        </array>
+                      </array>
+                    </record>
+                  </array>
+                </record>
+              </array>
+            </comp>
+          </lm-html>
+        </record>
+
+        <!-- UI -->
+        <!-- [WIP] wait for lm-ui to be ready -->
+        <!-- <record>
+          <record class="destination">
+            <string class="selector">.header-slot</string>
+            <string class="position">endof</string>
+            <string class="reference">.fake-snippet-slot</string>
+          </record>
+          <lm-html class="content">
+            <comp name="header">
+              <string class="customClass">with-v-spacers</string>
+            </comp>
+          </lm-html>
+        </record> -->
       </array>
     </data>
+
+    <div class="fake-snippet-slot multimedia-embed" data-color-mode="dark"></div>
   </body>
 </html>

@@ -4,7 +4,7 @@ import { Analytics } from '~/shared/analytics'
 import { Config } from '~/shared/config'
 import { Darkdouille } from '~/shared/darkdouille'
 import { Events } from '~/shared/events'
-import getHeaderElements from '~/shared/get-header-element'
+import { Externals } from '~/shared/externals'
 import { Globals } from '~/shared/globals'
 import { LmHtml } from '~/shared/lm-html'
 import { Slots } from '~/shared/slots'
@@ -48,25 +48,20 @@ const meta: Globals.GlobalObj[Globals.GlobalKey.META] = {
   paths: appConfig.paths
 }
 const logger = new Logger()
-const utils = {
-  absoluteModulo,         arrayRandomPick,          bem,                    Cast,
-  clamp,                  generateNiceColor,        getCurrentDownlink,     getNodeAncestors,          getHeaderElements,
-  insertNode,             interpolate,              isArrayOf,              isConstructorFunction,     isFalsy,
-  isInEnum,               isNullish,                isRecord,               isValidClassName,
-  memoize,                randomUUID,               recordFormat,           replaceAll,                roundNumbers,
-  selectorToElement,      throttle,                 debounce,               transition
-}
+const utils = { absoluteModulo, arrayRandomPick, bem, Cast, clamp, generateNiceColor, getCurrentDownlink, getNodeAncestors, insertNode, interpolate, isArrayOf, isConstructorFunction, isFalsy, isInEnum, isNullish, isRecord, isValidClassName, memoize, randomUUID, recordFormat, replaceAll, roundNumbers, selectorToElement, throttle, debounce, transition }
 Globals.expose(Globals.GlobalKey.META, meta)
 Globals.expose(Globals.GlobalKey.ANALYTICS, Analytics)
 Globals.expose(Globals.GlobalKey.APPS, Apps)
+Globals.expose(Globals.GlobalKey.CONFIG, Config)
 Globals.expose(Globals.GlobalKey.DARKDOUILLE, Darkdouille)
 Globals.expose(Globals.GlobalKey.EVENTS, Events)
+Globals.expose(Globals.GlobalKey.EXTERNALS, Externals)
 Globals.expose(Globals.GlobalKey.LM_HTML, LmHtml)
 Globals.expose(Globals.GlobalKey.SLOTS, Slots)
 Globals.expose(Globals.GlobalKey.LOGGER, logger)
 Globals.expose(Globals.GlobalKey.INIT, init)
 Globals.expose(Globals.GlobalKey.UTILS, utils)
-export { meta, Analytics, Apps, Darkdouille, Events, LmHtml, Slots, Logger, logger, init, utils }
+export { meta, Analytics, Apps, Config, Darkdouille, Events, Externals, LmHtml, Slots, Logger, logger, init, utils }
 
 /* * * * * * * * * * * * * * * * * * * * * *
  * INIT ON LOAD
@@ -86,7 +81,7 @@ async function autoInit () {
  * INIT
  * * * * * * * * * * * * * * * * * * * * * */
 async function init () {
-  logger.log('Page initialization',
+  logger.log('Init',
     '%cStart init', 'font-weight: 800;',
     '\nenv:', appConfig.env,
     '\nport:', appConfig.port,

@@ -1,9 +1,7 @@
 import { Apps } from '~/apps'
 import { Events } from '~/shared/events'
 import { toString, toBoolean, toNumberArr } from '~/utils/cast'
-import isRecord from '~/utils/is-record'
 import AudioQuote, { Props, State } from '~/components/AudioQuote'
-import recordFormat from '~/utils/record-format'
 
 export { Props, State }
 
@@ -13,8 +11,7 @@ export default async function renderer (unknownProps: unknown, id: string): Retu
 }
  
 async function toProps (input: unknown, id: string): Promise<Props> {
-  if (!isRecord(input)) return {}
-  const props: Props = await recordFormat(input, {
+  return await Apps.toPropsHelper(input, {
     customClass: i => Apps.ifNotUndefinedHelper(i, toString),
     audioSrc: i => Apps.ifNotUndefinedHelper(i, toString),
     subsSrc: i => Apps.ifNotUndefinedHelper(i, toString),
@@ -49,6 +46,5 @@ async function toProps (input: unknown, id: string): Promise<Props> {
     onMuteClick: i => Apps.makeHandlerHelper<Event | undefined>(Events.Type.AUDIOQUOTE_MUTE_CLICK, i, id),
     onVisible: i => Apps.makeHandlerHelper<IntersectionObserverEntry | undefined>(Events.Type.AUDIOQUOTE_VISIBLE, i, id),
     onHidden: i => Apps.makeHandlerHelper<IntersectionObserverEntry | undefined>(Events.Type.AUDIOQUOTE_HIDDEN, i, id)
-  })
-  return props
+  }) ?? {}
 }
