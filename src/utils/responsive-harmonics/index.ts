@@ -59,8 +59,8 @@ export function createScale (descriptor: ScaleDescriptor) {
   } = descriptor
   return function scale (level: number) {
     if (steps < 2) return
-    const loBoundRange = [loLevelMin, hiLevelMin]
-    const hiBoundRange = [loLevelMax, hiLevelMax]
+    const loBoundRange: [number, number] = [loLevelMin, hiLevelMin]
+    const hiBoundRange: [number, number] = [loLevelMax, hiLevelMax]
     const loBoundVal = getHarmonic(loBoundRange[0], loBoundRange[1], level - 1, steps - 1)
     const hiBoundVal = getHarmonic(hiBoundRange[0], hiBoundRange[1], level - 1, steps - 1)
     if (loBoundVal === undefined) return

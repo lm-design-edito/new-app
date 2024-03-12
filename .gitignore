@@ -1,5 +1,9 @@
-### Custom ###
+### THIS PROJECT ###
 .temp
+dist
+lib
+node_modules
+scripts/dist
 
 # Created by https://www.toptal.com/developers/gitignore/api/node,react,osx,windows,linux
 # Edit at https://www.toptal.com/developers/gitignore?templates=node,react,osx,windows,linux

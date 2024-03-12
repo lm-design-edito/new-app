@@ -39,27 +39,27 @@ export default class TransitionsWrapper extends Component<Props> {
     if (hasTransitions) {
       const transitions = _transitions as TransitionDescriptor[]
       transitions.forEach(([name, _duration]) => unifiedTransitionsData.push({
-        className: styles[`t-${name}`],
+        className: styles[`t-${name}`] ?? '',
         duration: this.stringifyDuration(_duration)
       }))
     }
     if (hasTransitions && !hasMobileTransitions) {
       const transitions = _transitions as TransitionDescriptor[]
       transitions.forEach(([name, _duration]) => unifiedTransitionsData.push({
-        className: styles[`t-mob-${name}`],
+        className: styles[`t-mob-${name}`] ?? '',
         duration: this.stringifyDuration(_duration)
       }))
     }
     if (hasMobileTransitions) {
       const mobileTransitions = _mobileTransitions as TransitionDescriptor[]
       mobileTransitions.forEach(([name, _duration]) => unifiedTransitionsData.push({
-        className: styles[`t-mob-${name}`],
+        className: styles[`t-mob-${name}`] ?? '',
         duration: this.stringifyDuration(_duration)
       }))
     }
     if (unifiedTransitionsData.length === 0) unifiedTransitionsData.push(
-      { className: styles['t-default'] },
-      { className: styles['t-mob-default'] },
+      { className: styles['t-default'] ?? '' },
+      { className: styles['t-mob-default'] ?? '' },
     )
     return unifiedTransitionsData
   }

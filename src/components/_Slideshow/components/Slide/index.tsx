@@ -127,7 +127,7 @@ class Slide extends Component<Props, {}> {
                 onClick={props.toggleDescription}
               />
               {credits && creditsContent}
-              <Drawer opened={props.descriptionOpen}>
+              <Drawer defaultState={props.descriptionOpen ? 'opened': 'closed'}>
                 {description && descriptionContent}
               </Drawer>
             </>

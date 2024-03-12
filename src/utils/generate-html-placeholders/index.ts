@@ -20,6 +20,7 @@ export const generateParagraph = () => {
   const sentencesArr: string[] = new Array(length)
     .fill(null)
     .map(generateSentence)
+    .filter((e): e is string => e !== undefined)
   return `<p class="paragraph">${sentencesArr.join('. ')}</p>`
 }
 

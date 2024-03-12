@@ -1,7 +1,34 @@
 {
+  "name": "truc",
+  "version": "11.0.1",
+  "main": "lib",
+  "files": ["lib"],
+  "type": "module",
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "scripts": {
+    "remove-ds-stores": "find . -name \".DS_Store\" -type f -delete",
+    "build-lib": "tsc --project scripts/tsconfig.json && node scripts/dist/build.lib.js",
+    "build-dist:dev": "tsc --project scripts/tsconfig.json && node scripts/dist/build.dist.dev.js",
+    "build-dist:prod": "tsc --project scripts/tsconfig.json && NODE_ENV=production node scripts/dist/build.dist.prod.js",
+    "build-server:dev": "tsc --project server/tsconfig.json --watch",
+    "build-server:prod": "tsc --project server/tsconfig.json",
+    "start-server:dev": "nodemon server/dist/app.js",
+    "start-server:prod": "NODE_ENV=production node server/dist/app.js",
+    "dev": "npm run remove-ds-stores && concurrently -n 'build-src,build-srv,serve    ' 'npm run build-dist:dev' 'npm run build-server:dev' 'npm run start-server:dev'",
+    "prod": "npm run remove-ds-stores && npm run build-dist:prod && npm run build-server:prod && npm run start-server:prod",
+    "start": "npm run dev",
+    "predeploy": "npm run remove-ds-stores",
+    "deploy": "tsc --project scripts/tsconfig.json && node scripts/dist/deploy.js",
+    "log": "git log --pretty=format:\"%h%x09%an%x09%ad%x09%s\""
+  },
   "dependencies": {
     "d3": "^7.8.5",
     "p5": "^1.8.0",
+    "preact": "^10.18.1"
+  },
+  "peerDependencies": {
     "preact": "^10.18.1"
   },
   "devDependencies": {
@@ -44,27 +71,5 @@
     "throttle-debounce": "^5.0.0",
     "tree-cli": "^0.6.7",
     "typescript": "^5.2.2"
-  },
-  "name": "esbuild-test",
-  "version": "1.0.0",
-  "main": "index.js",
-  "type": "module",
-  "scripts": {
-    "remove-ds-stores": "find . -name \".DS_Store\" -type f -delete",
-    "build-source:dev": "tsc --project scripts/tsconfig.json && node scripts/dist/build.js",
-    "build-source:prod": "tsc --project scripts/tsconfig.json && NODE_ENV=production node scripts/dist/build.js",
-    "build-server:dev": "tsc --project server/tsconfig.json --watch",
-    "build-server:prod": "tsc --project server/tsconfig.json",
-    "start-server:dev": "nodemon server/dist/app.js",
-    "start-server:prod": "NODE_ENV=production node server/dist/app.js",
-    "dev": "npm run remove-ds-stores && concurrently -n 'build-src,build-srv,serve    ' 'npm run build-source:dev' 'npm run build-server:dev' 'npm run start-server:dev'",
-    "prod": "npm run remove-ds-stores && npm run build-source:prod && npm run build-server:prod && npm run start-server:prod",
-    "start": "npm run dev",
-    "predeploy": "npm run remove-ds-stores",
-    "deploy": "tsc --project scripts/tsconfig.json && node scripts/dist/deploy.js",
-    "log": "git log --pretty=format:\"%h%x09%an%x09%ad%x09%s\""
-  },
-  "author": "",
-  "license": "ISC",
-  "description": ""
+  }
 }

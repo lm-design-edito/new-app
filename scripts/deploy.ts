@@ -6,7 +6,7 @@ import prompts from 'prompts'
 import semver from 'semver'
 import tree from 'tree-cli'
 import * as config from './config.js'
-import { styles } from './_logging.js'
+import { styles } from './utils/logging/index.js'
 
 const STATE = {
   git_status_seems_clean: false,
@@ -376,7 +376,12 @@ async function buildSource () {
     STATE.deployed_on = new Date()
     const deployedOnReadable = STATE.deployed_on.toUTCString()
     await new Promise(resolve => exec(
-      `NODE_ENV=production VERSION="${STATE.target_version_number}" ROOT="${STATE.target_url}" DEPLOYED_ON="${STATE.deployed_on}" DEPLOYED_ON_READABLE="${deployedOnReadable}" npm run build-source:prod`,
+      'NODE_ENV=production'
+      + ` VERSION="${STATE.target_version_number}"`
+      + ` ROOT="${STATE.target_url}"`
+      + ` DEPLOYED_ON="${STATE.deployed_on}"`
+      + ` DEPLOYED_ON_READABLE="${deployedOnReadable}"`
+      + ` npm run build-dist:prod`,
       (err, stdout, stderr) => {
         if (err !== null) console.error(styles.error(err.message))
         if (stderr !== '' && err === null) console.log(styles.regular(stderr))
