@@ -4,8 +4,8 @@ import { watch } from 'chokidar'
 import { debounce } from 'throttle-debounce'
 import * as config from './config.js'
 import rmDist from './utils/rm-dist/index.js'
-import makeDist from './utils/make-dist/index.js'
-import buildOnce from './utils/build-once/index.js'
+import makeDist from './utils/mk-dist/index.js'
+import buildAllOnceForDist from './utils/build-all-once-for-dist/index.js'
 
 await rmDist()
 await makeDist()
@@ -21,7 +21,7 @@ const pathsToBuild = {
 }
 
 const debouncedBuilder = debounce(50, async () => {
-  const buildTimes = await buildOnce(pathsToBuild)
+  const buildTimes = await buildAllOnceForDist(pathsToBuild)
   pathsToBuild.fonts = false
   pathsToBuild.assets = false
   pathsToBuild.styles = false

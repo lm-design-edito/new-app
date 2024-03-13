@@ -1,7 +1,7 @@
 import { promises as fs } from 'node:fs'
 import * as config from '../../config.js'
 
-export default async function makeDist () {
+export default async function mkDist () {
   const { mkdir } = fs
-  return await mkdir(config.LIB, { recursive: true })
+  return await mkdir(config.DST, { recursive: true })
 }

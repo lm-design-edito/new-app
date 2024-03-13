@@ -1,7 +1,7 @@
 import chalk from 'chalk'
 import { build as esbuild, BuildOptions } from 'esbuild'
 import inlineImageModule from 'esbuild-plugin-inline-image'
-import lmScssModulesPlugin from '../../plugins/scss-modules-esbuild-plugin/index.js'
+import lmScssModulesToLmSlotPlugin from '../../esbuild-plugins/scss-modules-lm-slot-injection-esbuild-plugin/index.js'
 import * as config from '../../config.js'
 
 const inlineImagePulgin = inlineImageModule as unknown as typeof inlineImageModule.default
@@ -31,7 +31,7 @@ const bundleOptions = (otherEntries: BuildOptions['entryPoints'] = {}): BuildOpt
   ],
   plugins: [
     inlineImagePulgin({ limit: -1 }),
-    lmScssModulesPlugin
+    lmScssModulesToLmSlotPlugin
   ],
   assetNames: 'assets/[name].[hash]',
   loader: {
@@ -50,7 +50,7 @@ const bundleOptions = (otherEntries: BuildOptions['entryPoints'] = {}): BuildOpt
   }
 })
 
-export default async function bundleApp () {
+export default async function bundleAppForDist () {
   try { return await esbuild(bundleOptions({})) }
   catch (err) { console.log(chalk.red.bold(err)) }
 }

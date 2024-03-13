@@ -2,14 +2,14 @@ import { build } from 'esbuild'
 import inlineImageModule from 'esbuild-plugin-inline-image'
 import * as config from '../../config.js'
 import listTsFiles from '../list-ts-files/index.js'
-import lmScssModulesPlugin from '../../plugins/scss-modules-esbuild-plugin/index.js'
+import lmScssModulesToHeadPlugin from '../../esbuild-plugins/scss-modules-head-injection-esbuild-plugin/index.js'
 
 const inlineImagePulgin = inlineImageModule as unknown as typeof inlineImageModule.default
 
 const componentsFiles = await listTsFiles(config.SRC_COMPONENTS, config.SRC)
 const utilsFiles = await listTsFiles(config.SRC_UTILS, config.SRC)
 
-export default async function bundleLibApp (): Promise<void> {
+export default async function bundleAppForLib (): Promise<void> {
   try {
     const entryPoints = Object
       .entries({ ...componentsFiles, ...utilsFiles })
@@ -40,7 +40,7 @@ export default async function bundleLibApp (): Promise<void> {
       ],
       plugins: [
         inlineImagePulgin({ limit: -1 }),
-        lmScssModulesPlugin
+        lmScssModulesToHeadPlugin
       ],
       assetNames: 'assets/[name].[hash]',
       loader: {

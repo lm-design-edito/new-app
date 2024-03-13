@@ -95,7 +95,7 @@ export default class Gallery extends Component<Props, State> {
     const scrollerScrolled = $scroller?.scrollLeft ?? 0
     const scrollerScrollWidth = $scroller?.scrollWidth ?? 0
     const scrollerWidth = $scroller?.clientWidth ?? 0
-    const scrollerScrollMax = scrollerScrollWidth - scrollerWidth ?? 0
+    const scrollerScrollMax = scrollerScrollWidth - scrollerWidth
     const isAtStart = scrollerScrolled <= 2
     const isAtEnd = (scrollerScrollMax - scrollerScrolled) <= 2
     this.setState(curr => {

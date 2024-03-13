@@ -35,7 +35,8 @@ async function deploy () {
   await selectTarget()
   await retreiveVersions()
   await selectVersionNumber()
-  await buildSource()
+  await buildSourceForDist()
+  // await buildSourceForLib()
   await writeVersionCommentInBundle()
   await checkDistDirTree()
   await dryRunRsync()
@@ -370,8 +371,11 @@ async function selectVersionNumber () {
   console.log('')
 }
 
-async function buildSource () {
-  console.log(styles.title(`Building source`))
+/* * * * * * * * * * * * * * * * * * * * *
+ * Build source for Dist
+ * * * * * * * * * * * * * * * * * * * * */
+async function buildSourceForDist () {
+  console.log(styles.title(`Building source for dist`))
   try {
     STATE.deployed_on = new Date()
     const deployedOnReadable = STATE.deployed_on.toUTCString()
@@ -382,6 +386,29 @@ async function buildSource () {
       + ` DEPLOYED_ON="${STATE.deployed_on}"`
       + ` DEPLOYED_ON_READABLE="${deployedOnReadable}"`
       + ` npm run build-dist:prod`,
+      (err, stdout, stderr) => {
+        if (err !== null) console.error(styles.error(err.message))
+        if (stderr !== '' && err === null) console.log(styles.regular(stderr))
+        if (stdout !== '') console.log(styles.regular(stdout))
+        resolve(true)
+      }
+    ))
+  } catch (err) {
+    return abort()
+  }
+  console.log('')
+}
+
+/* * * * * * * * * * * * * * * * * * * * *
+ * Build source for Lib
+ * * * * * * * * * * * * * * * * * * * * */
+async function buildSourceForLib () {
+  console.log(styles.title(`Building source for lib`))
+  try {
+    STATE.deployed_on = new Date()
+    const deployedOnReadable = STATE.deployed_on.toUTCString()
+    await new Promise(resolve => exec(
+      `VERSION="${STATE.target_version_number}" npm run build-lib`,
       (err, stdout, stderr) => {
         if (err !== null) console.error(styles.error(err.message))
         if (stderr !== '' && err === null) console.log(styles.regular(stderr))

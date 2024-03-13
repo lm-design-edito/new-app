@@ -1,11 +1,11 @@
 import buildAssets from '../build-assets/index.js'
 import buildFonts from '../build-fonts/index.js'
 import buildStyles from '../build-styles/index.js'
-import bundleApp from '../bundle-dist-app/index.js'
+import bundleAppForDist from '../bundle-app-for-dist/index.js'
 import typecheck from '../typecheck/index.js'
 import rmDsStores from '../remove-ds-stores/index.js'
 
-export default async function buildOnce (_toBuild: {
+export default async function buildAllOnceForDist (_toBuild: {
   fonts?: boolean,
   assets?: boolean,
   scripts?: boolean,
@@ -39,7 +39,7 @@ export default async function buildOnce (_toBuild: {
   stylesPromise.then(() => { times.styles = Date.now() - times.styles })
   
   // JS
-  const scriptsPromise = toBuild.scripts === true ? bundleApp() : new Promise(r => r(true))
+  const scriptsPromise = toBuild.scripts === true ? bundleAppForDist() : new Promise(r => r(true))
   scriptsPromise.then(() => { times.scripts = Date.now() - times.scripts })
   
   // Await everything

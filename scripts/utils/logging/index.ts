@@ -22,6 +22,6 @@ export const styles = {
   important: (text: string) => chalk.bold(text),
   title: (text: string) => `# ${chalk.bold.underline(`${text}\n`)}`,
   info: (text: string) => chalk.blueBright(text),
-  error: (text: string) => chalk.red(text),
-  warning: (text: string) => chalk.yellow(text)
+  error: (text: string) => chalk.bold.red(`Error: ${text}`),
+  warning: (text: string) => chalk.bold.yellow(text)
 }

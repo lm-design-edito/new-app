@@ -1,12 +1,12 @@
 import chalk from 'chalk'
 import rmDist from './utils/rm-dist/index.js'
-import makeDist from './utils/make-dist/index.js'
-import buildOnce from './utils/build-once/index.js'
+import makeDist from './utils/mk-dist/index.js'
+import buildAllOnceForDist from './utils/build-all-once-for-dist/index.js'
 
 await rmDist()
 await makeDist()
 
-const buildTimes = await buildOnce({
+const buildTimes = await buildAllOnceForDist({
   fonts: true,
   assets: true,
   styles: true,
