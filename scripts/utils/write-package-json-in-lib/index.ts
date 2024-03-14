@@ -4,7 +4,7 @@ import semver from 'semver'
 import * as config from '../../config.js'
 import { styles } from '../../utils/logging/index.js'
 
-const targetVersion = semver.valid(process.env.VERSION)
+const targetVersion = semver.valid(process.env.VERSION) ?? `42316.72572.523`
 if (targetVersion === null) {
   console.log(styles.error('GIVE VERSION PLZ'))
   process.exit(1)

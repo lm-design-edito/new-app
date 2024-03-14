@@ -16,10 +16,7 @@ const CWD = process.cwd()
 const abs = (...paths: string[]) => join(CWD, ...paths)
 
 const FAVICON = abs('server/favicon.ico')
-const ASSETS = process.env.NODE_ENV === 'production'
-  ? abs('dist/prod')
-  : abs('dist/dev')
-const PUBLIC = abs('public')
+const ASSETS = process.env.NODE_ENV === 'production' ? abs('.dist/prod') : abs('.dist/dev')
 const PAGES = abs('pages')
 
 const app = express()
@@ -37,7 +34,6 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
 app.use(cookieParser())
 app.use(express.static(ASSETS))
-app.use(express.static(PUBLIC))
 
 app.use('/favicon.ico', async (_, res) => {
   const fileContent = await readFile(FAVICON)
@@ -48,19 +44,6 @@ app.use('/favicon.ico', async (_, res) => {
 const listPages = async () => {
   const pagesFiles = await readdir(PAGES)
   return pagesFiles
-}
-
-const listPublic = async () => {
-  const publicFiles = (await glob(`${PUBLIC}/**/*`))
-    .filter(absPath => {
-      const stats = fs.lstatSync(absPath)
-      const isDir = stats.isDirectory()
-      return !isDir
-    })
-    .map(absPath => absPath.replace(PUBLIC, ''))
-    .sort()
-    .reverse()
-  return publicFiles
 }
 
 const listAssets = async () => {
@@ -104,11 +87,6 @@ const generateHomePage = async () => `<html class="lm-page">
       <h2>Pages</h2><br />
       ${(await listPages()).sort().reverse().map(name => (
         `<a href="/pages/${name}/">/pages/${name}/</a>`
-      )).join('<br /><br />')}
-      <br /><br /><br />
-      <h2>Public</h2><br />
-      ${(await listPublic()).map(name => (
-        `<a href="${name}">${name}</a>`
       )).join('<br /><br />')}
       <br /><br /><br />
       <h2>Assets</h2><br />

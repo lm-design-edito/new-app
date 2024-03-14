@@ -28,15 +28,15 @@ export const SRC_FONTS          = join(SRC_SHARED, 'fonts')
 export const SRC_ASSETS         = join(SRC_SHARED, 'assets')
 export const SRC_STYLES         = join(SRC_SHARED, 'styles')
 // Dist
-export const DST_DEV            = join(CWD,        'dist/dev')
-export const DST_PROD           = join(CWD,        'dist/prod')
+export const DST_DEV            = join(CWD,        '.dist/dev')
+export const DST_PROD           = join(CWD,        '.dist/prod')
 export const DST                = isProd ? DST_PROD : DST_DEV
 export const DST_SHARED         = join(DST,        'shared')
 export const DST_FONTS          = join(DST_SHARED, 'fonts')
 export const DST_ASSETS         = join(DST_SHARED, 'assets')
 export const DST_STYLES         = join(DST_SHARED, 'styles')
 // Lib
-export const LIB                = join(CWD,        'lib')
+export const LIB                = join(CWD,        '.lib')
 // Published
 export const PUBLISHED          = join(CWD,        'published')
 // Temp

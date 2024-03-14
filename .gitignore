@@ -1,9 +1,14 @@
 ### THIS PROJECT ###
 .temp
-dist
-lib
+.dist
+.lib
+.scripts.dist
+.server.dist
 node_modules
+
+# Old
 scripts/dist
+server/dist
 
 # Created by https://www.toptal.com/developers/gitignore/api/node,react,osx,windows,linux
 # Edit at https://www.toptal.com/developers/gitignore?templates=node,react,osx,windows,linux
