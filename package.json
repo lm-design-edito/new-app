@@ -22,9 +22,9 @@
     "dev": "npm run remove-ds-stores && concurrently -n 'build-src,build-srv,serve    ' 'npm run build-dist:dev' 'npm run build-server:dev' 'npm run start-server:dev'",
     "prod": "npm run remove-ds-stores && npm run build-dist:prod && npm run build-server:prod && npm run start-server:prod",
     "start": "npm run dev",
+    "publish-lib": "cd ./.lib && npm publish && cd ../",
     "predeploy": "npm run remove-ds-stores",
-    "deploy": "tsc --project scripts/tsconfig.json && node .scripts.dist/deploy.js",
-    "publish-lib": "cd ./.lib && npm publish && cd ../"
+    "deploy": "tsc --project scripts/tsconfig.json && node .scripts.dist/deploy.js"
   },
   "peerDependencies": {
     "preact": "^10.18.1"

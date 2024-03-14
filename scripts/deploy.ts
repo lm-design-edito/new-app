@@ -1,46 +1,54 @@
-import { join } from 'node:path'
+import path from 'node:path'
 import { promises as fs } from 'node:fs'
 import { exec } from 'node:child_process'
-import { randomUUID } from 'node:crypto'
+import crypto from 'node:crypto'
 import prompts from 'prompts'
 import semver from 'semver'
 import tree from 'tree-cli'
 import * as config from './config.js'
 import { styles } from './utils/logging/index.js'
+import promptIncrementVersion, { promptCustomVersion } from './utils/increment-version/index.js'
+import unknownErrToString from './utils/unknown-err-to-string/index.js'
 
 const STATE = {
-  git_status_seems_clean: false,
-  git_branch_seems_master: false,
-  deploy_from_outside_master: false,
-  deploy_with_uncommited_changes: false,
-  user_confirms_git_status_is_clean: false,
+  git_status_seems_clean: false as boolean,
+  deploy_with_uncommited_changes: false as boolean,
+  user_confirms_git_status_is_clean: false as boolean,
   latest_commit_number: null as null | string,
   target_name: null as null | string,
   target_url: null as null | string,
-  create_new_versions_json: false,
+  create_new_versions_json: false as boolean,
   versions_json_content: null as null | string,
   versions_json_obj: {} as Record<string, unknown>,
-  previous_version_numbers: [] as string[],
-  latest_version_number: null as null | string,
+  latest_local_version_number: null as null | string,
+  latest_bucket_version_number: null as null | string,
+  target_npm_registry_lookup_error: false as boolean,
+  target_npm_registry: null as null | string,
+  published_to_npm: false as boolean,
+  published_to_bucket: false as boolean,
+  local_version_file_written: false as boolean,
   target_version_number: null as null | string,
   target_version_description: null as null | string,
   deployed_on: null as null | Date,
-  deploy_mixed_versions_in_target: false
+  milestone_commit_created: false as boolean
 }
 
 deploy ()
 
 async function deploy () {
   await checkGitStatus()
-  await selectTarget()
-  await retreiveVersions()
-  await selectVersionNumber()
+  await getLatestLocalVersionFound()
+  await askForTargetVersion()
+  await chooseAvailableBucket()
+  await retreiveBucketVersions()
+  await buildSourceForLib()
   await buildSourceForDist()
-  // await buildSourceForLib()
+  await npmPublishLib()
   await writeVersionCommentInBundle()
   await checkDistDirTree()
   await dryRunRsync()
   await actualRsync()
+  await createLocalVersionFile()
   await createMilestoneCommit()
   await makeFilesPublic()
 }
@@ -49,8 +57,32 @@ async function deploy () {
  * Process abortion
  * * * * * * * * * * * * * * * * * * * * */
 function abort () {
+  if (STATE.published_to_npm && !STATE.published_to_bucket) {
+    console.error(styles.danger(
+      `This version has already been published\n`
+      + `to ${STATE.target_npm_registry}.\n\n`
+      + `You might consider unpublishing it quick.`
+    ))
+  } else if (STATE.published_to_npm
+    && STATE.published_to_bucket
+    && !STATE.local_version_file_written) {
+    console.error(styles.danger(
+      `This version has already been published\n`
+      + `to both destinations:\n\n`
+      + `- ${STATE.target_npm_registry}\n`
+      + `- ${STATE.target_name}\n\n`
+      + `Version file has not been written in .versions/\n\n`
+      + `You might consider unpublishing the files quick.\n\n`
+      + `Alternatively, you can write the version file yourself\n`
+      + `and create a milestone commit manually.`
+    ))
+    console.log('')
+    console.log(styles.important('Here is the current deployment process state:'))
+    console.log(JSON.stringify(STATE, null, 2))
+  }
   console.log('')
-  console.log(styles.important('Deployment aborted.'))
+  console.log(styles.danger('Deployment aborted.'))
+  console.log('')
   return process.exit(0)
 }
 
@@ -75,28 +107,6 @@ async function checkGitStatus () {
   console.log(styles.title('Git status'))
   console.log(styles.regular(gitStatus as string))
   STATE.git_status_seems_clean = typeof gitStatus === 'string' && gitStatus.match(/nothing\sto\scommit/igm) !== null
-  STATE.git_branch_seems_master = typeof gitStatus === 'string' && gitStatus.match(/On branch master/igm) !== null
-  
-  // Not in master
-  if (!STATE.git_branch_seems_master) {
-    const response = (await prompts({
-      name: 'response',
-      type: 'confirm',
-      message: `\n${styles.danger(
-        'You are not in the master branch.\n\n'
-        + 'The files you are trying to deploy\n'
-        + 'may be overwritten by future deployments.\n'
-        + 'Are you really sure you want to deploy anyway?'
-      )}`
-    })).response
-    if (response !== true) {
-      console.log('')
-      console.log(styles.important('Deployment aborted.'))
-      return process.exit(0)
-    } else {
-      STATE.deploy_from_outside_master = true
-    }
-  }
   
   // Git status not clean
   if (!STATE.git_status_seems_clean) {
@@ -108,8 +118,10 @@ async function checkGitStatus () {
         + `changes and you probably shouldn't.\n\n`
         + `The deployment process implies adding\n`
         + `a milestone empty commit to your git\n`
-        + `history. This operation will git reset *\n`
-        + `before commiting the deployment event.\n\n`
+        + `history.\n\n`
+        + `This operation will:\n\n`
+        + `- git reset *\n`
+        + `- commit the deployment event.\n\n`
         + `Are you perfectly sure?`.toUpperCase()
       )}`
     })).response
@@ -125,15 +137,6 @@ async function checkGitStatus () {
     console.log('')
     
     STATE.deploy_with_uncommited_changes = true
-    
-    if (STATE.deploy_from_outside_master) {
-      const response3 = (await prompts({
-        name: 'response',
-        type: 'confirm',
-        message: `\n${styles.danger(`No commits, not in master...\n\nWell actually if you see this,\nyou're about to get fired.\n\nLet's go?`)}`
-      })).response
-      if (response3 !== true) return abort()
-    }
     console.log('')
 
   // Git status clean
@@ -167,9 +170,90 @@ async function checkGitStatus () {
 }
 
 /* * * * * * * * * * * * * * * * * * * * *
- * Select target destination
+ * Getting latest local version found
  * * * * * * * * * * * * * * * * * * * * */
-async function selectTarget () {
+async function getLatestLocalVersionFound () {
+  console.log(styles.title(`Retrieving version history`))
+  try {
+    const versionsFileNames = await fs.readdir(config.VERSIONS)
+    const versionsList = versionsFileNames.map(fileName => path.parse(fileName).name)
+    const validated = versionsList.filter(fileName => semver.valid(fileName) !== null)
+    const sorted = semver.sort(validated)
+    const latest = sorted.at(-1)
+    STATE.latest_local_version_number = latest ?? null
+    if (latest === undefined) console.log(styles.warning(`No previous version data found in .versions, you will be asked to enter the target version number manually`))
+    else console.log(styles.regular(`Latest version found: ${latest}`))
+    console.log('')
+  } catch (err) {
+    const errStr = unknownErrToString(err)
+    console.error(styles.error(`Something went wrong while getting latest version:\n${errStr}`))
+    return abort()
+  }
+}
+
+/* * * * * * * * * * * * * * * * * * * * *
+ * Ask for target version
+ * * * * * * * * * * * * * * * * * * * * */
+async function askForTargetVersion () {
+  console.log(styles.title(`Select target version`))
+  try {
+    let targetVersionNumber: string | undefined = undefined
+    if (STATE.latest_local_version_number === null) { targetVersionNumber = await promptCustomVersion() }
+    else { targetVersionNumber = await promptIncrementVersion(STATE.latest_local_version_number) }
+    if (targetVersionNumber === undefined) throw new Error('Target version number cannot be undefined')
+    STATE.target_version_number = targetVersionNumber ?? null
+    STATE.target_version_description = (await prompts({
+      type: 'text',
+      name: 'versionDescription',
+      message: 'Description for this version:'
+    })).versionDescription
+    console.log('')
+    console.log(styles.regular(`Target version: ${targetVersionNumber} - ${STATE.target_version_description}`))
+    console.log('')
+  } catch (err) {
+    const errStr = unknownErrToString(err)
+    console.error(styles.error(`Something went wrong while selecting target version:\n${errStr}`))
+    return abort()
+  }
+}
+
+/* * * * * * * * * * * * * * * * * * * * *
+ * Choose available bucket
+ * * * * * * * * * * * * * * * * * * * * */
+async function chooseAvailableBucket () {
+  console.log(styles.title(`Destination bucket selection`))
+  const targetVersionNumber = STATE.target_version_number as string // Previous step throws if null
+  const availableBuckets = Array.from(config.bucketsMetadataMap.entries()).filter(([_, bucketData]) => {
+    const { versionRange } = bucketData
+    return semver.satisfies(targetVersionNumber, versionRange)
+  })
+  if (availableBuckets.length <= 0) {
+    console.error(styles.error(`No buckets are available for target version ${targetVersionNumber}. See config file at ${config.SCRIPTS_CONFIG}`))
+    return abort()
+  }
+  const { targetBucket } = await prompts({
+    name: 'targetBucket',
+    type: 'select',
+    message: `Select target destination for dist deployment`,
+    choices: availableBuckets.map(([bucketName, bucketData]) => {
+      return {
+        title: bucketName,
+        description: `${bucketData.versionRange} - ${bucketData.publicUrl}`,
+        value: bucketName
+      }
+    })
+  }) as { targetBucket: config.Bucket }
+  STATE.target_name = targetBucket
+  const targetBucketData = config.bucketsMetadataMap.get(targetBucket) as config.BucketMetaData
+  STATE.target_url = targetBucketData.publicUrl
+  console.log('')
+}
+
+/* * * * * * * * * * * * * * * * * * * * *
+ * Select target bucket
+ * * * * * * * * * * * * * * * * * * * * */
+/*
+async function selectTargetBucket () {
   enum Targets {
     V1_BETA = 'gs://decodeurs/design-edito/v1.beta'
   }
@@ -193,13 +277,14 @@ async function selectTarget () {
   }
   console.log('')
 }
+*/
 
 /* * * * * * * * * * * * * * * * * * * * *
  * Retrieving versionning info
  * * * * * * * * * * * * * * * * * * * * */
-async function retreiveVersions () {
+async function retreiveBucketVersions () {
   console.log(styles.title(`Retrieving versionning info from ${STATE.target_name}/versions.json`))
-  const VERSIONS_JSON_DIR = join(config.TEMP, `${Date.now()}-${randomUUID()}`)
+  const VERSIONS_JSON_DIR = path.join(config.TEMP, `${Date.now()}-${crypto.randomUUID()}`)
   await fs.mkdir(VERSIONS_JSON_DIR, { recursive: true })
   let versionsJsonExists = false
   await new Promise(resolve => exec(
@@ -227,20 +312,28 @@ async function retreiveVersions () {
 
   // versions.json file found
   } else {
-    const VERSIONS_JSON = join(VERSIONS_JSON_DIR, 'versions.json')
+    const VERSIONS_JSON = path.join(VERSIONS_JSON_DIR, 'versions.json')
     try {
       const versionsJsonStr = await fs.readFile(VERSIONS_JSON, { encoding: 'utf-8' })
       const versionsJsonParsed = JSON.parse(versionsJsonStr)
       STATE.versions_json_obj = versionsJsonParsed
+      const targetVersionAlreadyExists = Object.keys(versionsJsonParsed).some(version => version === STATE.target_version_number)
+      if (targetVersionAlreadyExists) {
+        console.error(styles.error(`The target version selected (${STATE.target_version_number}) already exist in target destination ${STATE.target_name}. Please choose an other version number or bucket.`))
+        return abort()
+      }
       const versionNumbers = semver.sort(
         Object.keys(versionsJsonParsed as any)
           .map(versionNbr => semver.clean(versionNbr))
           .map(versionNbr => semver.valid(versionNbr) !== null ? versionNbr : null)
           .filter((versionNbr): versionNbr is string => versionNbr !== null)
       )
-      STATE.previous_version_numbers = versionNumbers
-      STATE.latest_version_number = versionNumbers.at(-1) ?? null
-      if (STATE.latest_version_number !== undefined) console.log(styles.regular(`Latest version found: ${STATE.latest_version_number}\n`))
+
+      STATE.latest_local_version_number = versionNumbers.at(-1) ?? null
+      if (STATE.latest_local_version_number !== undefined) {
+        console.log(styles.regular(`Latest dist version found in bucket ${STATE.target_name}: ${STATE.latest_local_version_number}\n`))
+
+      }
       else throw false
     } catch (err) {
       console.error(styles.error(`Something went wrong while parsing ${VERSIONS_JSON}. Contents:\n\n${STATE.versions_json_content}\n`))
@@ -252,6 +345,7 @@ async function retreiveVersions () {
 /* * * * * * * * * * * * * * * * * * * * *
  * Selecting target version
  * * * * * * * * * * * * * * * * * * * * */
+/*
 async function selectVersionNumber () {
   console.log(styles.title('Select the target version'))
   const prereleaseFlags = ['alpha', 'beta', 'rc']
@@ -266,17 +360,17 @@ async function selectVersionNumber () {
   }
 
   // If previous versions detected, ask for upgrade type
-  if (STATE.latest_version_number !== null) {
-    const latestVersionNbrPrerelease = semver.prerelease(STATE.latest_version_number) ?? []
+  if (STATE.latest_local_version_number !== null) {
+    const latestVersionNbrPrerelease = semver.prerelease(STATE.latest_local_version_number) ?? []
     const [latestVerFlag, latestVerPrereleaseNbr] = latestVersionNbrPrerelease
     const isPrerelease = prereleaseFlags.includes(latestVerFlag as string)
       && typeof latestVerPrereleaseNbr === 'number'
-    const newPrereleaseNbr = isPrerelease ? semver.inc(STATE.latest_version_number, 'prerelease') : null
-    const newPrereleaseFlag = isPrerelease ? (riseFlagOnVersionNumber(STATE.latest_version_number) ?? null) : null
+    const newPrereleaseNbr = isPrerelease ? semver.inc(STATE.latest_local_version_number, 'prerelease') : null
+    const newPrereleaseFlag = isPrerelease ? (riseFlagOnVersionNumber(STATE.latest_local_version_number) ?? null) : null
     // [WIP] should be possible to jump from alpha to rc here
-    const newPatchVersionNbr = semver.inc(STATE.latest_version_number, 'patch')
-    const newMinorVersionNbr = semver.inc(STATE.latest_version_number, 'minor')
-    const newMajorVersionNbr = semver.inc(STATE.latest_version_number, 'major')
+    const newPatchVersionNbr = semver.inc(STATE.latest_local_version_number, 'patch')
+    const newMinorVersionNbr = semver.inc(STATE.latest_local_version_number, 'minor')
+    const newMajorVersionNbr = semver.inc(STATE.latest_local_version_number, 'major')
     const newMajorVersionAlphaNbr = (newMajorVersionNbr !== null && !isPrerelease) ? `${newMajorVersionNbr}-alpha.0` : null
     const newMajorVersionBetaNbr = (newMajorVersionNbr !== null && !isPrerelease) ? `${newMajorVersionNbr}-beta.0` : null
     const newMajorVersionRcNbr = (newMajorVersionNbr !== null && !isPrerelease) ? `${newMajorVersionNbr}-rc.0` : null
@@ -370,6 +464,7 @@ async function selectVersionNumber () {
   })).versionDescription
   console.log('')
 }
+*/
 
 /* * * * * * * * * * * * * * * * * * * * *
  * Build source for Dist
@@ -394,6 +489,8 @@ async function buildSourceForDist () {
       }
     ))
   } catch (err) {
+    const errStr = unknownErrToString(err)
+    console.error(styles.error(`Something went wrong while building source for dist:\n${errStr}`))
     return abort()
   }
   console.log('')
@@ -415,45 +512,128 @@ async function buildSourceForLib () {
       }
     ))
   } catch (err) {
+    const errStr = unknownErrToString(err)
+    console.error(styles.error(`Something went wrong while building source for lib:\n${errStr}`))
     return abort()
   }
   console.log('')
 }
 
 /* * * * * * * * * * * * * * * * * * * * *
+ * NPM publish lib
+ * * * * * * * * * * * * * * * * * * * * */
+async function npmPublishLib () {
+  console.log(styles.title(`Publishing lib to npm`))
+  try {
+    console.log(styles.regular(`Current npm registry lookup...\n`))
+    await new Promise(resolve => exec(
+      'npm config get registry',
+      (err, stdout, stderr) => {
+        if (err !== null) {
+          STATE.target_npm_registry_lookup_error = true
+          console.error(styles.error(err.message))
+        }
+        if (stderr !== '' && err === null) {
+          STATE.target_npm_registry_lookup_error = true
+          console.log(styles.regular(stderr))
+        }
+        if (stdout !== '') {
+          STATE.target_npm_registry = stdout.trim()
+          console.log(styles.regular(stdout))
+        }
+        resolve(true)
+      }
+    ))
+    if (!config.allowedNpmRegistries.includes(new URL(STATE.target_npm_registry as string).toString())) {
+      console.error(styles.error(`The target npm registry ${STATE.target_npm_registry} is not allowed (see config file at ${config.SCRIPTS_CONFIG})`))
+      abort()
+    }
+    if (new URL(STATE.target_npm_registry ?? '').toString() !== config.preferredNpmRegistry) {
+      console.log(styles.danger(
+        `You are about to publish this npm package\n`
+        + `to a non official npm registry,\n`
+        + `and YOU SHOULD NOT.`
+      ))
+      console.log('')
+      const { confirmWrongNpmRegistry } = await prompts({
+        name: 'confirmWrongNpmRegistry',
+        type: 'confirm',
+        message: 'Are you sure?'
+      }) as { confirmWrongNpmRegistry: boolean }
+      if (!confirmWrongNpmRegistry) {
+        console.error(styles.error(`You can set the npm registry you want via: 'npm set registry <https://registry.url>'`))
+        return abort()
+      }
+      const { confirmWrongNpmRegistryBis } = await prompts({
+        name: 'confirmWrongNpmRegistryBis',
+        type: 'confirm',
+        message: 'That is very wrong. Last call: sure?'
+      }) as { confirmWrongNpmRegistryBis: boolean }
+      if (!confirmWrongNpmRegistryBis) {
+        console.error(styles.error(`You can set the npm registry you want via: 'npm set registry <https://registry.url>'`))
+        return abort()
+      }
+    }
+    await new Promise(resolve => exec(
+      `npm run publish-lib`,
+      (err, stdout, stderr) => {
+        if (err !== null) throw err
+        if (stderr !== '' && err === null) console.log(styles.regular(stderr))
+        if (stdout !== '') console.log(styles.regular(stdout)) // It seems every text output is in stderr
+        resolve(true)
+      }
+    ))
+    STATE.published_to_npm = true
+    console.log(styles.info(`Published ${STATE.target_version_number} to npm registry: ${STATE.target_npm_registry}`))
+    console.log('')
+  } catch (err) {
+    const errStr = unknownErrToString(err)
+    console.error(styles.error(`Something went wrong while publishing lib to npm:\n\n${errStr}`))
+    return abort()
+  }
+}
+
+/* * * * * * * * * * * * * * * * * * * * *
  * Write version comment in bundle
  * * * * * * * * * * * * * * * * * * * * */
 async function writeVersionCommentInBundle () {
-  const deployedOn = STATE.deployed_on ?? new Date()
-  const deployedOnReadable = deployedOn.toUTCString()
-  const thisVersionJsonData = {
-    description: (STATE.target_version_description ?? '') as string,
-    deployedOn: deployedOn.valueOf(),
-    deployedOnReadable: deployedOnReadable,
-    commit: STATE.git_status_seems_clean
-      ? STATE.latest_commit_number
-      : `${STATE.latest_commit_number} (with uncommited changes)`
-  }
-  if (STATE.target_version_number === null) {
-    console.log(styles.error(`Target version number is null and should not be at this point.`))
+  try {
+    const deployedOn = STATE.deployed_on ?? new Date()
+    const deployedOnReadable = deployedOn.toUTCString()
+    const thisVersionJsonData = {
+      description: (STATE.target_version_description ?? '') as string,
+      deployedOn: deployedOn.valueOf(),
+      deployedOnReadable: deployedOnReadable,
+      commit: STATE.git_status_seems_clean
+        ? STATE.latest_commit_number
+        : `${STATE.latest_commit_number} (with uncommited changes)`
+    }
+    if (STATE.target_version_number === null) {
+      console.log(styles.error(`Target version number is null and should not be at this point.`))
+      return abort()
+    }
+    const newVersionsJsonObj = {
+      ...STATE.versions_json_obj,
+      [STATE.target_version_number]: thisVersionJsonData
+    }
+    await fs.writeFile(
+      path.join(config.DST_PROD, 'versions.json'),
+      JSON.stringify(newVersionsJsonObj, null, 2),
+      { encoding: 'utf-8' }
+    )
+    const DST_PROD_SHARED_INDEX = path.join(config.DST_PROD, 'shared', 'index.js')
+    const dstProdSharedContent = await fs.readFile(DST_PROD_SHARED_INDEX, { encoding: 'utf-8' })
+    const dstProdSharedAppendedContent = `/* v.${STATE.target_version_number} */`
+    await fs.writeFile(DST_PROD_SHARED_INDEX, `${dstProdSharedAppendedContent} ${dstProdSharedContent}`)
+    const DST_PROD_SHARED_INDEX_VERSIONNED = path.join(config.DST_PROD, 'shared', `index.v${STATE.target_version_number}.js`)
+    await fs.copyFile(DST_PROD_SHARED_INDEX, DST_PROD_SHARED_INDEX_VERSIONNED)
+    console.log('')
+  } catch (err) {
+    const errStr = unknownErrToString(err)
+    console.error(styles.error(`Something went wrong while writing the version comment in the dist bundle:\n\n${errStr}`))
+    console.log('')
     return abort()
   }
-  const newVersionsJsonObj = {
-    ...STATE.versions_json_obj,
-    [STATE.target_version_number]: thisVersionJsonData
-  }
-  await fs.writeFile(
-    join(config.DST_PROD, 'versions.json'),
-    JSON.stringify(newVersionsJsonObj, null, 2),
-    { encoding: 'utf-8' }
-  )
-  const DST_PROD_SHARED_INDEX = join(config.DST_PROD, 'shared', 'index.js')
-  const dstProdSharedContent = await fs.readFile(DST_PROD_SHARED_INDEX, { encoding: 'utf-8' })
-  const dstProdSharedAppendedContent = `/* v.${STATE.target_version_number} */`
-  await fs.writeFile(DST_PROD_SHARED_INDEX, `${dstProdSharedAppendedContent} ${dstProdSharedContent}`)
-  const DST_PROD_SHARED_INDEX_VERSIONNED = join(config.DST_PROD, 'shared', `index.v${STATE.target_version_number}.js`)
-  await fs.copyFile(DST_PROD_SHARED_INDEX, DST_PROD_SHARED_INDEX_VERSIONNED)
-  console.log('')
 }
 
 /* * * * * * * * * * * * * * * * * * * * *
@@ -514,7 +694,7 @@ async function actualRsync () {
     }
   ))
   await new Promise(resolve => exec(
-    `gsutil cp ${join(config.DST_PROD, 'versions.json')} ${STATE.target_name}/versions.json`,
+    `gsutil cp ${path.join(config.DST_PROD, 'versions.json')} ${STATE.target_name}/versions.json`,
     (err, stdout, stderr) => {
       if (err !== null) console.error(styles.error(err.message))
       if (stderr !== '' && err === null) console.log(styles.regular(stderr))
@@ -522,7 +702,61 @@ async function actualRsync () {
       resolve(true)
     }
   ))
+  STATE.published_to_bucket = true
   console.log('')
+}
+
+/* * * * * * * * * * * * * * * * * * * * *
+ * Create local version file
+ * * * * * * * * * * * * * * * * * * * * */
+async function createLocalVersionFile () {
+  console.log(styles.title(`Create local version file`))
+  const targetVersionNumber = STATE.target_version_number as string
+  const filePath = path.join(config.VERSIONS, `${targetVersionNumber}.json`)
+  try {
+    let alreadyExists = false
+    try {
+      await fs.access(filePath)
+      alreadyExists = true
+    } catch {}
+    if (alreadyExists) throw new Error(`A file already exists at path ${filePath}`)
+    const versionData = {
+      build: {
+        version_number: STATE.target_version_number,
+        version_description: STATE.target_version_description,
+        timestamp: STATE.deployed_on,
+        previous_local_version: STATE.latest_local_version_number,
+      },
+      git: {
+        has_uncommited_changes: STATE.deploy_with_uncommited_changes,
+        latest_commit_number: STATE.latest_commit_number,
+      },
+      bucket: {
+        name: STATE.target_name,
+        url: STATE.target_url,
+        current_versions_json: STATE.create_new_versions_json ? null : STATE.versions_json_obj,
+        create_versions_json: STATE.create_new_versions_json,
+        latest_version_found: STATE.latest_bucket_version_number,
+        published: STATE.published_to_bucket
+      },
+      npm: {
+        registry: STATE.target_npm_registry,
+        published: STATE.published_to_npm
+      }
+    }
+    await fs.writeFile(
+      filePath,
+      JSON.stringify(versionData, null, 2),
+      { encoding: 'utf-8' }
+    )
+    console.log(styles.regular(`Written ${filePath}`))
+    console.log('')
+  } catch (err) {
+    const errStr = unknownErrToString(err)
+    console.error(styles.error(`Something went wrong while writing the local version file:\n\n${errStr}`))
+    console.log('')
+    return abort()
+  }
 }
 
 /* * * * * * * * * * * * * * * * * * * * *
@@ -531,7 +765,7 @@ async function actualRsync () {
 async function createMilestoneCommit () {
   console.log(styles.title(`Creating a milestone empty commit`))
   await new Promise(resolve => exec(
-    `git reset * && git commit --allow-empty -m "[deployment] - v.${STATE.target_version_number} - ${STATE.target_name}"`,
+    `git reset * && git add .versions && git commit --allow-empty -m "[deployment] - v.${STATE.target_version_number} - ${STATE.target_name}"`,
     (err, stdout, stderr) => {
       if (err !== null || stderr !== '') {
         const errorMessage = 'Something went wrong while creating the milestone commit'
@@ -547,6 +781,7 @@ async function createMilestoneCommit () {
       resolve(stdout)
     }
   ))
+  STATE.milestone_commit_created = true
   console.log(styles.regular(`[deployment] - v.${STATE.target_version_number} - ${STATE.target_name}`))
   console.log('')
 }
