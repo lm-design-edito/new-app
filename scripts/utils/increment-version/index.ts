@@ -16,31 +16,22 @@ enum PrereleaseFlag {
 
 const prereleaseFlagsToPosition = new Map(Object
   .values(PrereleaseFlag)
-  .map((flag, flagPos, flags) => [
-    flag,
-    1 + flagPos - flags.length
-  ])
-)
+  .map((flag, flagPos, flags) => [flag, 1 + flagPos - flags.length]))
 
-const getPrereleaseFlagPosition = (flag: PrereleaseFlag) => {
-  const pos = prereleaseFlagsToPosition.get(flag) as number
-  return pos
-}
+const getPrereleaseFlagPosition = (flag: PrereleaseFlag) => prereleaseFlagsToPosition.get(flag) as number
 
 const getPrereleaseFlagByPosition = (position: number) => {
-  const found = [...prereleaseFlagsToPosition.entries()].find(([_, pos]) => pos === position)
+  const found = [...prereleaseFlagsToPosition.entries()].find(([, pos]) => pos === position)
   if (found === undefined) return;
   const [flag] = found
   return flag
 }
 
-const isValidPrereleaseFlag = (flag: unknown): flag is PrereleaseFlag => {
-  return Object
-    .values(PrereleaseFlag)
-    .includes(flag as any)
-}
+const isValidPrereleaseFlag = (flag: unknown): flag is PrereleaseFlag => Object
+  .values(PrereleaseFlag)
+  .includes(flag as any)
 
-//                       major,  minor,  patch, flag,    build
+//                       major,  minor,  patch,  flag,   build
 type VersionNumberArr = [number, number, number, number, number]
 const versionNumberToVersionNumberArr = (input: string): VersionNumberArr | undefined => {
   const parsed = semver.parse(input)
@@ -49,13 +40,13 @@ const versionNumberToVersionNumberArr = (input: string): VersionNumberArr | unde
   const [flag = PrereleaseFlag.STABLE, build = 0] = prerelease
   if (!isValidPrereleaseFlag(flag)) return;
   if (typeof build !== 'number') return;
-  const isPrerelease = prerelease.length > 0
   const flagPos = getPrereleaseFlagPosition(flag)
   return [major, minor, patch, flagPos, build]
 }
 
 const versionNumberArrToVersionNumber = (input: VersionNumberArr) => {
   const [major, minor, patch, flagPos, build] = input
+  if (major < 0 || minor < 0 || patch < 0 || flagPos > 0 || build < 0) return;
   const flag = getPrereleaseFlagByPosition(flagPos)
   if (flagPos === 0 || flag === undefined) return `${major}.${minor}.${patch}`
   return `${major}.${minor}.${patch}-${flag}.${build}`
@@ -95,6 +86,13 @@ const setLevel = (input: string, level: IncrementLevel, newValue: number) => {
   else return versionNumberArrToVersionNumber([major, minor, patch, flagPos, newValue])
 }
 
+const getComponentValue = (input: string, component: IncrementLevel) => {
+  const versionNbrArr = versionNumberToVersionNumberArr(input)
+  if (versionNbrArr === undefined) return;
+  const posInVersionNbrArr = Object.values(IncrementLevel).reverse().indexOf(component)
+  return versionNbrArr[posInVersionNbrArr]
+}
+
 const isPrerelease = (input: string) => {
   const versionNbrArr = versionNumberToVersionNumberArr(input)
   if (versionNbrArr === undefined) return false
@@ -103,186 +101,150 @@ const isPrerelease = (input: string) => {
   return flagPos !== 0 && flag !== undefined
 }
 
-export default async function incrementVersion (inputVersion: string) {
-  console.log(styles.info(`Increment from ${inputVersion}`))
+export async function promptCustomVersion () {
+  const { major, minor, patch, flagPos, build } = await prompts([{
+    name: 'major',
+    type: 'number',
+    message: 'Major'
+  }, {
+    name: 'minor',
+    type: 'number',
+    message: 'Minor'
+  }, {
+    name: 'patch',
+    type: 'number',
+    message: 'Patch'
+  }, {
+    name: 'flagPos',
+    type: 'select',
+    message: 'Choose prerelease flag',
+    choices: Object
+      .values(PrereleaseFlag)
+      .reverse()
+      .map(flag => ({
+        title: flag === PrereleaseFlag.STABLE 
+          ? 'Not a prerelease'
+          : flag,
+        value: getPrereleaseFlagPosition(flag)
+      }))
+  }, {
+    name: 'build',
+    type: 'number',
+    message: 'Build'
+  }]) as {
+    major: number,
+    minor: number,
+    patch: number,
+    flagPos: number,
+    build: number
+  }
+  const versionNbrArr: VersionNumberArr = [major, minor, patch, flagPos, build]
+  return versionNumberArrToVersionNumber(versionNbrArr)
+}
 
-  const incrementTypeChoices: prompts.Choice[] = [
-    { title: 'Major', description: `New major version (or prerelase, ${incrementBy(inputVersion, IncrementLevel.MAJOR)}-...)`, value: 'major' },
-    { title: 'Minor', description: `New minor version (or prerelase, ${incrementBy(inputVersion, IncrementLevel.MINOR)}-...)`, value: 'minor' },
-    { title: 'Patch', description: `New patch version (or prerelase, ${incrementBy(inputVersion, IncrementLevel.PATCH)}-...)`, value: 'patch' }
-  ]
-
+export default async function promptIncrementVersion (inputVersion: string) {
+  console.log(styles.regular(`Increment from ${inputVersion}`))
+  
+  // Choose increment type
   const inputIsPrerelease = isPrerelease(inputVersion)
+  const incrementTypeChoices: prompts.Choice[] = []
   if (inputIsPrerelease) {
     incrementTypeChoices.push(
-      { title: 'Flag', description: `New prerelease version flag (${incrementBy(inputVersion, IncrementLevel.FLAG)} or above)`, value: 'flag' },
       { title: 'Build', description: `New build version (${incrementBy(inputVersion, IncrementLevel.BUILD)} or above)`, value: 'build' },
+      { title: 'Flag', description: `New prerelease version flag (${incrementBy(inputVersion, IncrementLevel.FLAG)} or above)`, value: 'flag' }
     )
   }
-
-  await prompts({
+  incrementTypeChoices.push(
+    { title: 'Patch', description: `New patch version (or prerelase, ${incrementBy(inputVersion, IncrementLevel.PATCH)}-...)`, value: 'patch' },
+    { title: 'Minor', description: `New minor version (or prerelase, ${incrementBy(inputVersion, IncrementLevel.MINOR)}-...)`, value: 'minor' },
+    { title: 'Major', description: `New major version (or prerelase, ${incrementBy(inputVersion, IncrementLevel.MAJOR)}-...)`, value: 'major' },
+    { title: 'Custom', description: `Enter a version number manually`, value: 'custom' }
+  )
+  const { incrementType } = await prompts({
     name: 'incrementType',
     type: 'select',
     message: `\n${styles.important(`Choose the type of increment`)}`,
     choices: incrementTypeChoices
-  })
-
-
-
-  // Input check
-  // const inputVersion = semver.valid(rawInputVersion)
-  // const parsedInputVersion = semver.parse(inputVersion)
-  // if (inputVersion === null || parsedInputVersion === null) {
-  //   const errorMessage = `Invalid input version: ${rawInputVersion}`
-  //   console.log(styles.error(errorMessage))
-  //   return new Error(errorMessage)
-  // }
-  // console.log(styles.info(`Increment from ${rawInputVersion}`))
-
-  // Input data extraction
-  // const { major, minor, patch, prerelease } = parsedInputVersion
-  // const [flag, build] = prerelease
-  // const inputIsPrerelease = prerelease.length > 0
-  // const inputFlagIsInvalid = inputIsPrerelease && !isValidCommonPrereleaseFlag(flag)
-  // const inputBuildIsInvalid = inputIsPrerelease && typeof build !== 'number'
-  // if (inputFlagIsInvalid || inputBuildIsInvalid) {
-  //   const errorMessage = `Invalid input version: ${rawInputVersion}`
-  //   console.log(styles.error(errorMessage))
-  //   return new Error(errorMessage)
-  // }
-
-  // Infer next stable versions
-  // const stableTargetVersions = {
-  //   major: semver.inc(inputVersion, 'major') as string,
-  //   minor: semver.inc(inputVersion, 'minor') as string,
-  //   patch: semver.inc(inputVersion, 'patch') as string
-  // }
-  // const stableTargetVersionsHasAProblem = Object.values(stableTargetVersions).some(val => typeof val !== 'string')
-  // if (stableTargetVersionsHasAProblem) {
-  //   const errorMessage = `Invalid infered stable versions: ${Object.values(stableTargetVersions).join(', ')}`
-  //   console.log(styles.error(errorMessage))
-  //   return new Error(errorMessage)
-  // }
+  }) as { incrementType: IncrementLevel | 'custom' }
   
-  // Ask for increment type
-  // const incrementTypeChoices: prompts.Choice[] = [
-  //   { title: 'Major', description: stableTargetVersions.major, value: stableTargetVersions.major },
-  //   { title: 'Minor', description: stableTargetVersions.minor, value: stableTargetVersions.minor },
-  //   { title: 'Patch', description: stableTargetVersions.patch, value: stableTargetVersions.patch }
-  // ]
-  // if (inputIsPrerelease) {
-  //   const nextPrereleaseCommonFlag = incrementPrereleaseCommonFlag(inputVersion)
-  //   const nextPrereleaseFlag = incrementPrereleaseFlag(inputVersion)
-  //   const nextPrereleaseBuild = incrementPrereleaseBuild(inputVersion)
-  //   if (nextPrereleaseCommonFlag === undefined
-  //     || nextPrereleaseFlag === undefined
-  //     || nextPrereleaseBuild === undefined) {
-  //     const errorMessage = `Invalid infered prerelease versions: ${nextPrereleaseCommonFlag}, ${nextPrereleaseFlag}, ${nextPrereleaseBuild}`
-  //     console.log(styles.error(errorMessage))
-  //     return new Error(errorMessage)
-  //   }
-  //   incrementTypeChoices.push(
-  //     { title: 'Prerelease common flag', description:  }
-  //   )
-  // }
-  // const incrementType = (await prompts({
-  //   name: 'incrementType',
-  //   type: 'select',
-  //   message: `\n${styles.important(`Choose the type of increment`)}`,
-  //   choices: [
-  //     { title: 'Major', description: stableTargetVersions.major, value: stableTargetVersions.major },
-  //     { title: 'Minor', description: stableTargetVersions.minor, value: stableTargetVersions.minor },
-  //     { title: 'Patch', description: stableTargetVersions.patch, value: stableTargetVersions.patch },
-  //   ]
-  // })).incrementType
+  // Provide custom version number
+  if (incrementType === 'custom') return await promptCustomVersion()
+
+  const targetStableVersion = incrementBy(inputVersion, incrementType)
+  const targetStableVersionArr = versionNumberToVersionNumberArr(targetStableVersion ?? '<invalid-version-nbr>')
+  if (targetStableVersion === undefined || targetStableVersionArr === undefined) return;
+
+  // Increment prerelease flag
+  if (incrementType === IncrementLevel.FLAG) {
+    const minimumFlagPos = targetStableVersionArr[3]
+    const { incrementAmount } = await prompts({
+      name: 'incrementAmount',
+      type: 'select',
+      message: `Specify the target prerelease flag`,
+      choices: [...new Array(1 - minimumFlagPos).fill(null).map((_, pos) => {
+        const flagPos = pos + minimumFlagPos
+        const flag = getPrereleaseFlagByPosition(flagPos)
+        if (flag === undefined) return;
+        const targetVersion = setLevel(targetStableVersion, IncrementLevel.FLAG, flagPos)
+        return {
+          title: flag,
+          description: targetVersion,
+          value: targetVersion
+        }
+      }).filter(e => e !== undefined) as prompts.Choice[]]
+    }) as { incrementAmount: string }
+    return incrementAmount
+  }
+
+  // Select increment amount for major, minor, patch, or build number
+  const { incrementAmount } = await prompts({
+    name: 'incrementAmount',
+    type: 'select',
+    message: `Specify the increment amount for the ${incrementType} field of the version number`,
+    choices: [...new Array(4).fill(null).map((_, pos) => {
+      const description = incrementBy(targetStableVersion, incrementType, pos)
+      return {
+        title: `+${pos + 1}`,
+        description,
+        value: description
+      }
+    }), {
+      title: 'Other',
+      description: 'Enter an increment manually',
+      value: 'custom'
+    }]
+  }) as { incrementAmount: string | undefined }
   
-  // console.log(incrementType)
+  if (incrementAmount === undefined) return;
+  if (incrementAmount === 'custom') {
+    const lowestTargetPositionNumber = getComponentValue(targetStableVersion, incrementType)
+    if (lowestTargetPositionNumber === undefined) return;
+    const { targetPositionNumber } = await prompts({
+      name: 'targetPositionNumber',
+      type: 'number',
+      message: `Specify the target ${incrementType} version number (${lowestTargetPositionNumber} or above)`
+    }) as { targetPositionNumber: number }
+    if (targetPositionNumber < lowestTargetPositionNumber) return;
+    return setLevel(targetStableVersion, incrementType, targetPositionNumber)
+  }
 
+  // If upgrade type is not major, minor, or patch, no need to ask for a prerelease flag
+  if (incrementType === IncrementLevel.BUILD) return incrementAmount
 
-
-
-
-
-
-
-  // if (incrementType !== true) {
-  //   console.log('')
-  //   console.log(styles.important('Deployment aborted.'))
-  //   return process.exit(0)
-  // } else {
-  //   STATE.deploy_from_outside_master = true
-  // }
-
-  // Major ?
-    // - with prerelease flag ?
-      // - choose flag
-      // - choose build ?
-
-  // Minor ?
-    // - with prerelease flag ?
-      // - choose flag
-      // - choose number ?
-
-  // Patch ?
-    // - with prerelease flag ?
-      // - choose flag
-      // - choose build ?
-
-  // Flag ?
-    // - choose flag
-    // - choose build if not STABLE
-
-  // Current Prerelease build
+  // For major, minor or patch upgrades, ask for an optional prerelease flag
+  const { prereleaseFlag } = await prompts({
+    name: 'prereleaseFlag',
+    type: 'select',
+    message: `Select an optional prerelease flag for this version`,
+    choices: Object.values(PrereleaseFlag).reverse().map(flag => {
+      const flagPos = getPrereleaseFlagPosition(flag)
+      const targetValue = setLevel(incrementAmount, IncrementLevel.FLAG, flagPos)
+      return {
+        title: flag,
+        description: targetValue,
+        value: targetValue
+      }
+    })
+  }) as { prereleaseFlag: string }
+  return prereleaseFlag
 }
-
-// enum CommonPrereleaseFlag {
-//   ALPHA = PrereleaseFlag.ALPHA,
-//   BETA = PrereleaseFlag.BETA,
-//   DELTA = PrereleaseFlag.DELTA,
-//   RC = PrereleaseFlag.RC,
-//   STABLE = PrereleaseFlag.STABLE
-// }
-
-// const sortedPrereleaseFlags = Object.values(PrereleaseFlag).sort((a, b) => a.localeCompare(b))
-// const prereleaseFlagNameToVersionNumberArrPositionMap = new Map<PrereleaseFlag, number>(sortedPrereleaseFlags.map((flag, flagPos) => ([flag, 1 + flagPos - sortedPrereleaseFlags.length])))
-
-// const sortedCommonPrereleaseFlags = Object.values(CommonPrereleaseFlag).sort((a, b) => a.localeCompare(b))
-// const isValidPrereleaseFlag = (input: unknown): input is PrereleaseFlag => sortedPrereleaseFlags.includes(input as any)
-// const isValidCommonPrereleaseFlag = (input: unknown): input is CommonPrereleaseFlag => sortedCommonPrereleaseFlags.includes(input as any)
-
-// const incrementPrereleaseFlag = (input: string) => {
-//   const parsed = semver.parse(input)
-//   if (parsed === null) return;
-//   const { major, minor, patch, prerelease } = parsed
-//   const [flag] = prerelease
-//   if (!isValidPrereleaseFlag(flag)) return;
-//   const flagPos = sortedPrereleaseFlags.indexOf(flag)
-//   if (flagPos === -1) return;
-//   const newFlag = sortedPrereleaseFlags[flagPos]
-//   if (newFlag === undefined) return;
-//   return `${major}.${minor}.${patch}-${newFlag}.0`
-// }
-
-// const incrementPrereleaseCommonFlag = (input: string) => {
-//   const parsed = semver.parse(input)
-//   if (parsed === null) return;
-//   const { major, minor, patch, prerelease } = parsed
-//   const [flag] = prerelease
-//   if (!isValidCommonPrereleaseFlag(flag)) return;
-//   const flagPos = sortedCommonPrereleaseFlags.indexOf(flag)
-//   if (flagPos === -1) return;
-//   const newFlag = sortedPrereleaseFlags[flagPos]
-//   if (newFlag === undefined) return;
-//   return `${major}.${minor}.${patch}-${newFlag}.0`
-// }
-
-// const incrementPrereleaseBuild = (input: string) => {
-//   const parsed = semver.parse(input)
-//   if (parsed === null) return;
-//   const { major, minor, patch, prerelease } = parsed
-//   const [flag, build] = prerelease
-//   if (!isValidCommonPrereleaseFlag(flag)) return;
-//   if (typeof build !== 'number') return;
-//   return `${major}.${minor}.${patch}-${flag}.${build + 1}`
-// }
-

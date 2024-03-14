@@ -405,10 +405,8 @@ async function buildSourceForDist () {
 async function buildSourceForLib () {
   console.log(styles.title(`Building source for lib`))
   try {
-    STATE.deployed_on = new Date()
-    const deployedOnReadable = STATE.deployed_on.toUTCString()
     await new Promise(resolve => exec(
-      `VERSION="${STATE.target_version_number}" npm run build-lib`,
+      `NODE_ENV=production VERSION="${STATE.target_version_number}" npm run build-lib`,
       (err, stdout, stderr) => {
         if (err !== null) console.error(styles.error(err.message))
         if (stderr !== '' && err === null) console.log(styles.regular(stderr))

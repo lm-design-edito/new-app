@@ -1,6 +1,13 @@
 import { join } from 'node:path'
 
 export const isProd = process.env.NODE_ENV === 'production'
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ *
+ * PATHS
+ * 
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 // Root
 export const CWD = process.cwd()
 // Package.json
@@ -23,7 +30,7 @@ export const SRC_STYLES         = join(SRC_SHARED, 'styles')
 // Dist
 export const DST_DEV            = join(CWD,        'dist/dev')
 export const DST_PROD           = join(CWD,        'dist/prod')
-export const DST = isProd ? DST_PROD : DST_DEV
+export const DST                = isProd ? DST_PROD : DST_DEV
 export const DST_SHARED         = join(DST,        'shared')
 export const DST_FONTS          = join(DST_SHARED, 'fonts')
 export const DST_ASSETS         = join(DST_SHARED, 'assets')
