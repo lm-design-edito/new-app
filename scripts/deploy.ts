@@ -120,7 +120,7 @@ async function checkGitStatus () {
         + `a milestone empty commit to your git\n`
         + `history.\n\n`
         + `This operation will:\n\n`
-        + `- git reset *\n`
+        + `- git reset .\n`
         + `- commit the deployment event.\n\n`
         + `Are you perfectly sure?`.toUpperCase()
       )}`
@@ -765,7 +765,7 @@ async function createLocalVersionFile () {
 async function createMilestoneCommit () {
   console.log(styles.title(`Creating a milestone empty commit`))
   await new Promise(resolve => exec(
-    `git reset * && git add .versions && git commit --allow-empty -m "[deployment] - v.${STATE.target_version_number} - ${STATE.target_name}"`,
+    `git reset . && git add .versions && git commit --allow-empty -m "[deployment] - v.${STATE.target_version_number} - ${STATE.target_name}"`,
     (err, stdout, stderr) => {
       if (err !== null || stderr !== '') {
         const errorMessage = 'Something went wrong while creating the milestone commit'
@@ -775,7 +775,7 @@ async function createMilestoneCommit () {
         console.log(styles.error(errorMessage))
         console.log('')
         console.log(styles.important('You should do this by hand since the deployment has already been done.'))
-        console.log(styles.regular(`git reset * && git commit --allow-empty -m "[deployment] v.${STATE.target_version_number} / ${STATE.target_name}"`))
+        console.log(styles.regular(`git reset . && git add .versions && git commit --allow-empty -m "[deployment] - v.${STATE.target_version_number} - ${STATE.target_name}"`))
         console.log('')
       }
       resolve(stdout)

@@ -5,6 +5,7 @@ import { join } from 'node:path'
  * ENV
  *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 export const isProd = process.env.NODE_ENV === 'production'
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
@@ -12,9 +13,11 @@ export const isProd = process.env.NODE_ENV === 'production'
  * DEPLOYMENT
  *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 export enum Bucket {
   V1_ALPHA = 'gs://decodeurs/design-edito/v1.alpha',
   V1_BETA = 'gs://decodeurs/design-edito/v1.beta',
+  V1_DELTA = 'gs://decodeurs/design-edito/v1.delta',
   TEST = 'gs://decodeurs/design-edito/240314-delete-me-im-a-test'
 }
 
@@ -32,13 +35,20 @@ export const bucketsMetadataMap = new Map<Bucket, BucketMetaData>([
     publicUrl: 'https://assets-decodeurs.lemonde.fr/design-edito/v1.beta',
     versionRange: '>=1.0.0-beta <=1.0.0-beta.999999999'
   }],
+  [Bucket.V1_DELTA, {
+    publicUrl: 'https://assets-decodeurs.lemonde.fr/design-edito/v1.delta',
+    versionRange: '>=1.0.0-delta <=1.0.0-delta.999999999'
+  }],
   [Bucket.TEST, {
     publicUrl: 'https://assets-decodeurs.lemonde.fr/design-edito/240314-delete-me-im-a-test',
     versionRange: '>=0.0.0-a'
   }]
 ])
 
-// [WIP] Check and throw if bucketsMetadataMap does not contain all bucket names ?
+const bucketsAllHaveMetadata = Object
+  .values(Bucket)
+  .every(bucketName => bucketsMetadataMap.get(bucketName) !== undefined)
+if (!bucketsAllHaveMetadata) throw new Error(`Please ensure all buckets defined have metadata in /scripts/config.ts`)
 
 export const allowedNpmRegistries: [string, string] = [
   new URL('https://registry.npmjs.org/').toString(),
