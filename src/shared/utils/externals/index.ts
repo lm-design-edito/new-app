@@ -70,6 +70,7 @@ export namespace Externals {
   export const snippetChildAttribute = 'data-lm-snippet-child'
   export const setParentSnippetAttribute = (elt: Element) => {
     const snippetParent = getSnippetParent(elt)
+    // [WIP] or get all snippet parents ?
     if (snippetParent === undefined) return
     snippetParent.setAttribute(snippetWrapperAttribute, '')
     elt.setAttribute(snippetChildAttribute, '')
