@@ -1,0 +1,24 @@
+{
+  "build": {
+    "version_number": "1.0.0-delta.0",
+    "version_description": "First v1.delta version, to Verdaccio, for lm-ui dev purpose",
+    "timestamp": "2024-03-19T10:05:31.804Z",
+    "previous_local_version": "1.0.0-beta.12"
+  },
+  "git": {
+    "has_uncommited_changes": false,
+    "latest_commit_number": "753ddc23548622090082133541d05b1e59f67a1b"
+  },
+  "bucket": {
+    "name": "gs://decodeurs/design-edito/v1.delta",
+    "url": "https://assets-decodeurs.lemonde.fr/design-edito/v1.delta",
+    "current_versions_json": null,
+    "create_versions_json": true,
+    "latest_version_found": null,
+    "published": true
+  },
+  "npm": {
+    "registry": "http://localhost:4873/",
+    "published": true
+  }
+}
