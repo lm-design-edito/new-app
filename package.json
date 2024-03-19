@@ -1,5 +1,5 @@
 {
-  "name": "new-app",
+  "name": "@design-edito/new-app",
   "version": "1.0.0",
   "type": "module",
   "author": "Le Monde - Service Design Éditorial, Elsa Delmas, Maxime Fabas, Thomas Steffen, Léa Tanda",
@@ -22,7 +22,7 @@
     "dev": "npm run remove-ds-stores && concurrently -n 'build-src,build-srv,serve    ' 'npm run build-dist:dev' 'npm run build-server:dev' 'npm run start-server:dev'",
     "prod": "npm run remove-ds-stores && npm run build-dist:prod && npm run build-server:prod && npm run start-server:prod",
     "start": "npm run dev",
-    "publish-lib": "cd ./.lib && npm publish && cd ../",
+    "publish-lib": "cd ./.lib && npm publish --access public && cd ../",
     "predeploy": "npm run remove-ds-stores",
     "deploy": "tsc --project scripts/tsconfig.json && node .scripts.dist/deploy.js"
   },
