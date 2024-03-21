@@ -34,7 +34,9 @@ export namespace Events {
     /* Resize Observer */
     RESIZE_OBSERVER_RESIZE = 'resize-observer-resize',
     /* Scrllgngn */
-    SCRLLGNGN_PAGE_CHANGE = 'scrllgngn-page-change'
+    SCRLLGNGN_PAGE_CHANGE = 'scrllgngn-page-change',
+    /* Toggle */
+    TOGGLE_TOGGLED = 'toggle-toggled'
   }
 
   type HandlerName = string

@@ -6,7 +6,8 @@ import randomUUID from '~/utils/random-uuid'
 export type Props = {
   customClass?: string
   labelContent?: string | VNode
-  size?: 'large' | 'small'
+  size?: 'large' | 'small',
+  onToggle?: (checked: boolean) => void
 }
 
 const Toggle: FunctionalComponent<Props> = function (props: Props) {
@@ -28,7 +29,16 @@ const Toggle: FunctionalComponent<Props> = function (props: Props) {
   const fakeClasses = bem(rootClass).elt('fake')
   return <div className={wrapperClasses.join(' ')}>
     <label className={labelClasses.value}>{props.labelContent}</label>
-    <input className={inputClasses.value} id={randomId} type="checkbox" />
+    <input
+      className={inputClasses.value}
+      id={randomId}
+      type="checkbox"
+      onChange={e => {
+        if (props.onToggle === undefined) return;
+        const input = e.target as HTMLInputElement
+        const { checked } = input
+        props.onToggle(checked)
+      }} />
     <label className={fakeClasses.value} for={randomId}></label>
   </div>
 }

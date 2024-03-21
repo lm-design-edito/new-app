@@ -1,5 +1,6 @@
 import { VNode, isValidElement } from 'preact'
 import { Apps } from '~/apps'
+import { Events } from '~/shared/events'
 import iconsData from '~/theme/icons'
 import isRecord from '~/utils/is-record'
 import { toBoolean, toString } from '~/utils/cast'
@@ -109,7 +110,8 @@ async function toProps (input: unknown, id: string): Promise<Props> {
         const strI = toString(i)
         if (strI === 'large' || strI === 'small') return strI
         return undefined
-      }
+      },
+      onToggle: i => Apps.makeHandlerHelper(Events.Type.TOGGLE_TOGGLED, i, id)
     })
     return { component, ...props }
 
