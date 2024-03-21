@@ -8,6 +8,7 @@ export type Props = {
   labelContent?: string | VNode
   size?: 'large' | 'small',
   onToggle?: (checked: boolean) => void
+  defaultChecked?: boolean
 }
 
 const Toggle: FunctionalComponent<Props> = function (props: Props) {
@@ -32,7 +33,8 @@ const Toggle: FunctionalComponent<Props> = function (props: Props) {
     <input
       className={inputClasses.value}
       id={randomId}
-      type="checkbox"
+      type='checkbox'
+      defaultChecked={props.defaultChecked}
       onChange={e => {
         if (props.onToggle === undefined) return;
         const input = e.target as HTMLInputElement

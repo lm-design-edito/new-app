@@ -111,7 +111,8 @@ async function toProps (input: unknown, id: string): Promise<Props> {
         if (strI === 'large' || strI === 'small') return strI
         return undefined
       },
-      onToggle: i => Apps.makeHandlerHelper(Events.Type.TOGGLE_TOGGLED, i, id)
+      onToggle: i => Apps.makeHandlerHelper(Events.Type.TOGGLE_TOGGLED, i, id),
+      defaultChecked: i => i !== undefined ? toBoolean(i) : undefined
     })
     return { component, ...props }
 
