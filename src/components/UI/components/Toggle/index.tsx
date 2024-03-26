@@ -1,5 +1,5 @@
 import { VNode, FunctionalComponent } from 'preact'
-import { useState, useEffect } from 'preact/hooks'
+import { useState } from 'preact/hooks'
 import bem from '~/utils/bem'
 import randomUUID from '~/utils/random-uuid'
 
