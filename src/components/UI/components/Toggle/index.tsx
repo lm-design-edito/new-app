@@ -12,12 +12,7 @@ export type Props = {
 }
 
 const Toggle: FunctionalComponent<Props> = function (props: Props) {
-  const [randomId, setRandomId] = useState('')
-  useEffect(() => {
-    const fullId = randomUUID()
-    const shortId = fullId.split('-')[0] ?? ''
-    setRandomId(shortId)
-  }, [])
+  const [randomId] = useState(randomUUID().split('-')[0] ?? '')
   const rootClass = 'lmui-toggle'
   const bemClss = bem(rootClass).mod({
     s: props.size === 'small',
