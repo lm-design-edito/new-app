@@ -484,14 +484,14 @@ export namespace Darkdouille {
     }
 
     getTransformerFromTypeName (this: Tree, type: Type): Transformer {
-      if (type === Type.STRING) return toString()
-      if (type === Type.NUMBER) return toNumber()
-      if (type === Type.BOOLEAN) return toBoolean()
-      if (type === Type.NULL) return toNull()
-      if (type === Type.HTML) return toHtml()
+      if (type === Type.STRING || type === Type.STR) return toString()
+      if (type === Type.NUMBER || type === Type.NBR) return toNumber()
+      if (type === Type.BOOLEAN || type === Type.BOL) return toBoolean()
+      if (type === Type.NULL || type === Type.NUL) return toNull()
+      if (type === Type.HTML || type === Type.HTM) return toHtml()
       if (type === Type.REF) return toRef(this.resolve.bind(this))()
-      if (type === Type.ARRAY) return toArray()
-      if (type === Type.RECORD) return toRecord()
+      if (type === Type.ARRAY || type === Type.ARR) return toArray()
+      if (type === Type.RECORD || type === Type.REC) return toRecord()
       return input => input
     }
 
@@ -585,6 +585,15 @@ export namespace Darkdouille {
     RECORD = 'record',
     DATA = 'data',
     TRANSFORMER = 'transformer',
+    STR = 'str',
+    NBR = 'nbr',
+    BOL = 'bol',
+    NUL = 'nul',
+    HTM = 'htm',
+    ARR = 'arr',
+    REC = 'rec',
+    DAT = 'dat',
+    TRN = 'trn'
   }
 
   export const Types = Object.values(Type)
