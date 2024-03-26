@@ -85,6 +85,7 @@ async function toProps (input: unknown, id: string): Promise<Props> {
         const tabsPromise = i.map(async tab => {
           if (isValidElement(tab)) return tab
           if (tab instanceof NodeList) return await Apps.toStringOrVNodeHelper(tab)
+          if (isRecord(tab)) return await Apps.render(Apps.Name.UI, null, { component: 'tab', ...tab })
           return undefined
         }).filter((elt): elt is Promise<VNode> => elt !== undefined)
         return await Promise.all(tabsPromise)
