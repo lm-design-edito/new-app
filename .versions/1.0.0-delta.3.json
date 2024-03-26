@@ -1,0 +1,43 @@
+{
+  "build": {
+    "version_number": "1.0.0-delta.3",
+    "version_description": "Shorthand types in dkdll parsing (str, nbr, htm, etc, ...) - Slight changes in UI comps props for lm-ui purpose",
+    "timestamp": "2024-03-26T17:14:06.636Z",
+    "previous_local_version": "1.0.0-delta.2"
+  },
+  "git": {
+    "has_uncommited_changes": false,
+    "latest_commit_number": "21388d4fc96686a47e6875c8a83f77ecd1d7bb3c"
+  },
+  "bucket": {
+    "name": "gs://decodeurs/design-edito/v1.delta",
+    "url": "https://assets-decodeurs.lemonde.fr/design-edito/v1.delta",
+    "current_versions_json": {
+      "1.0.0-delta.0": {
+        "description": "First v1.delta version, to Verdaccio, for lm-ui dev purpose",
+        "deployedOn": 1710842731804,
+        "deployedOnReadable": "Tue, 19 Mar 2024 10:05:31 GMT",
+        "commit": "753ddc23548622090082133541d05b1e59f67a1b"
+      },
+      "1.0.0-delta.1": {
+        "description": "~/components/UI/components/Toggle - add onToggle prop",
+        "deployedOn": 1711017964960,
+        "deployedOnReadable": "Thu, 21 Mar 2024 10:46:04 GMT",
+        "commit": "39d1b5e8230db9aa105d0fdacb943176331861c2"
+      },
+      "1.0.0-delta.2": {
+        "description": "~/components/UI/components/Toggle - add defaultChecked prop",
+        "deployedOn": 1711018513592,
+        "deployedOnReadable": "Thu, 21 Mar 2024 10:55:13 GMT",
+        "commit": "32174a7e0251cf6b051bb5587acfee6cf655f5f3"
+      }
+    },
+    "create_versions_json": false,
+    "latest_version_found": null,
+    "published": true
+  },
+  "npm": {
+    "registry": "http://localhost:4873/",
+    "published": true
+  }
+}
