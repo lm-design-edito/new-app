@@ -6,7 +6,7 @@ import randomUUID from '~/utils/random-uuid'
 export type Props = {
   customClass?: string
   labelContent?: string | VNode
-  size?: 'large' | 'small',
+  size?: 'medium' | 'small',
   onToggle?: (checked: boolean) => void
   defaultChecked?: boolean
 }

@@ -109,7 +109,7 @@ async function toProps (input: unknown, id: string): Promise<Props> {
       size: (i: unknown) => {
         if (i === undefined) return undefined
         const strI = toString(i)
-        if (strI === 'large' || strI === 'small') return strI
+        if (strI === 'medium' || strI === 'small') return strI
         return undefined
       },
       onToggle: i => Apps.makeHandlerHelper(Events.Type.TOGGLE_TOGGLED, i, id),
