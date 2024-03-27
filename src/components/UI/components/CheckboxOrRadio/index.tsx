@@ -12,12 +12,8 @@ export type Props = {
 }
 
 const Checkbox: FunctionalComponent<Props> = (props: Props) => {
-  const [randomId, setRandomId] = useState('')
-  useEffect(() => {
-    const fullId = randomUUID()
-    const shortId = fullId.split('-')[0] ?? ''
-    setRandomId(shortId)
-  }, [])
+  const shortId = randomUUID().split('-')[0] ?? ''
+  const [randomId] = useState(shortId)
   const rootClass = props.type === 'radio' ? 'lmui-radio' : 'lmui-checkbox'
   const bemClss = bem(rootClass).mod({ error: props.error === true })
   const wrapperClasses = [bemClss.value]
