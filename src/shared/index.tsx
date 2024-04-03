@@ -179,6 +179,7 @@ async function init () {
   /* FULL CONFIG * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
   const pageRemoteDataStrings = await Promise.all(pageInlineDataConfigSourcesPromises)
+  console.log('~~~')
   const pageRemoteDataNodes = pageRemoteDataStrings
     .filter((data): data is string => data !== undefined)
     .map(data => {
