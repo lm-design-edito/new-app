@@ -179,24 +179,17 @@ async function init () {
 
   /* FULL CONFIG * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-  logger.log('TEST', '1')
   const pageRemoteDataStrings = await Promise.all(pageInlineDataConfigSourcesPromises)
-  logger.log('TEST', '2')
   const pageRemoteDataNodes = pageRemoteDataStrings
     .filter((data): data is string => data !== undefined)
     .map((data, pos) => {
-      logger.log('TEST', `3.${pos}`)
       const wrapper = document.createElement('data')
       wrapper.innerHTML += data
       return wrapper
     })
-  logger.log('TEST', `4`)
   const pageFullDataTree = Darkdouille.tree([...pageInlineDataNodesCopy, ...pageRemoteDataNodes])
-  logger.log('TEST', `5`)
   Globals.expose(Globals.GlobalKey.TREE, pageFullDataTree)
-  logger.log('TEST', `6`)
   const pageFullDataValue = pageFullDataTree.value
-  logger.log('TEST', `7`)
   logger.log('Full data', pageFullDataValue)
   const pageFullDataValueIsRecord = Darkdouille.valueIsRecord(pageFullDataValue)
   const pageDataSlotsCollectionName = appConfig.dataSourcesReservedNames.slots

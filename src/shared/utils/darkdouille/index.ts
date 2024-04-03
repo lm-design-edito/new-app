@@ -39,6 +39,8 @@ import print from './transformers/print'
 import { set, get } from './transformers/variables'
 import cond from './transformers/cond'
 import loop from './transformers/loop'
+import { logger } from '~/shared'
+import { Globals } from '../globals'
 
 export namespace Darkdouille {
   export type TreeConstructorOptions = { node: Node, parent: Tree | undefined }
@@ -544,8 +546,14 @@ export namespace Darkdouille {
     }
 
     get value (): TreeValue {
+      const logger = Globals.retrieve(Globals.GlobalKey.LOGGER)
+      logger?.log('TEST', 'get value', this, this.shortName)
       const { pretransformed, masterTransformer } = this
+      logger?.log('TEST', 'destructure this', this.shortName)
+      logger?.log('TEST', 'pretransformed', pretransformed)
+      logger?.log('TEST', 'masterTransformer', masterTransformer)
       const transformed = masterTransformer(pretransformed)
+      logger?.log('TEST', 'transformed', transformed)
       return transformed
     }
 
