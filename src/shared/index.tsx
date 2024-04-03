@@ -182,14 +182,17 @@ async function init () {
   const pageRemoteDataStrings = await Promise.all(pageInlineDataConfigSourcesPromises)
   const pageRemoteDataNodes = pageRemoteDataStrings
     .filter((data): data is string => data !== undefined)
-    .map((data, pos) => {
+    .map(data => {
       const wrapper = document.createElement('data')
       wrapper.innerHTML += data
       return wrapper
     })
   const pageFullDataTree = Darkdouille.tree([...pageInlineDataNodesCopy, ...pageRemoteDataNodes])
   Globals.expose(Globals.GlobalKey.TREE, pageFullDataTree)
+  const NOW = Date.now()
   const pageFullDataValue = pageFullDataTree.value
+  const THEN = Date.now()
+  console.log('%cELAPSED', 'font-weight: 800; color: white; background: coral; padding: 8px;', `${(THEN - NOW) / 1000}s`)
   logger.log('Full data', pageFullDataValue)
   const pageFullDataValueIsRecord = Darkdouille.valueIsRecord(pageFullDataValue)
   const pageDataSlotsCollectionName = appConfig.dataSourcesReservedNames.slots

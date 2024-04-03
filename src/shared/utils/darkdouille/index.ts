@@ -39,11 +39,16 @@ import print from './transformers/print'
 import { set, get } from './transformers/variables'
 import cond from './transformers/cond'
 import loop from './transformers/loop'
-import { logger } from '~/shared'
 import { Globals } from '../globals'
+import { randomHash } from '~/utils/random-uuid'
 
 export namespace Darkdouille {
-  export type TreeConstructorOptions = { node: Node, parent: Tree | undefined }
+  export type TreeConstructorOptions = {
+    node: Node
+    parent: Tree | undefined
+    root: Tree | undefined
+    path: string | undefined
+  }
   export type TreeResolver = (path: string) => Tree | undefined
   export type Transformer<T extends TreeValue = TreeValue> = (input: TreeValue) => T
   export type TransformerFunctionGenerator<T extends TreeValue = TreeValue> = (...args: (TreeValue | Transformer)[]) => Transformer<T>
@@ -53,9 +58,13 @@ export namespace Darkdouille {
   export class Tree {
     node: Node
     parent: Tree | undefined
+    root: Tree
+    path: string | undefined
     constructor (options: TreeConstructorOptions) {
       this.node = options.node
       this.parent = options.parent
+      this.root = options.root ?? this
+      this.path = options.path
       this.getNodeLocalPath = this.getNodeLocalPath.bind(this)
       this.getFunctionElementRawArgs = this.getFunctionElementRawArgs.bind(this)
       this.resolve = this.resolve.bind(this)
@@ -177,11 +186,22 @@ export namespace Darkdouille {
       const { raw } = this
       if (raw === undefined) return undefined
       if (typeof raw === 'string') return raw
-      if (Array.isArray(raw)) return raw.map(node => new Tree({ node, parent: this }))
+      const thisPath = this.path
+      if (Array.isArray(raw)) return raw.map((node, pos) => new Tree({
+        node,
+        parent: this,
+        root: this.root,
+        path: thisPath === undefined ? `/${pos}` : `${thisPath}/${pos}`
+      }))
       return Object.keys(raw).reduce((reduced, key) => {
         const node = raw[key]
         if (node === undefined) return reduced
-        return { ...reduced, [key]: new Tree({ node, parent: this }) }
+        return { ...reduced, [key]: new Tree({
+          node,
+          parent: this,
+          root: this.root,
+          path: thisPath === undefined ? `/${key}` : `${thisPath}/${key}`
+        }) }
       }, {} as { [key: string]: Tree })
     }
 
@@ -337,22 +357,6 @@ export namespace Darkdouille {
       return parent.getNodeLocalPath(node)
     }
 
-    get path (): string | undefined {
-      const { parents } = this
-      return parents.reduce((path, parent) => {
-        const parentPath = parent.pathFromParent
-        if (parentPath === undefined) return `/${path}`
-        return `${parent.pathFromParent}/${path}`
-      }, this.pathFromParent)
-    }
-
-    get root (): Tree {
-      const { parents } = this
-      const lastParent = parents[parents.length - 1]
-      if (lastParent === undefined) return this
-      return lastParent
-    }
-
     resolve: TreeResolver = function (this: Tree, path: string) {
       const pathChunks = path.split('/').filter(e => e.trim() !== '')
       const startFromRoot = path[0] === '/'
@@ -478,7 +482,12 @@ export namespace Darkdouille {
           return newArgs
         }
         if (kind === 'named' || kind === 'positionned') {
-          const elementTree = new Tree({ node: argElement, parent: this })
+          const elementTree = new Tree({
+            node: argElement,
+            parent: this,
+            root: this.root,
+            path: `${this.path}/transformer-${randomHash(8)}`
+          })
           newArgs.push(elementTree.value)
         }
         return newArgs
@@ -846,7 +855,9 @@ export namespace Darkdouille {
     const reduced = reduce(merged)
     const tree = new Tree({
       node: reduced,
-      parent: parentTree
+      parent: parentTree,
+      root: undefined,
+      path: undefined
     })
     return tree
   }
