@@ -167,8 +167,9 @@ async function init () {
     try {
       const res = await window.fetch(value)
       if (res.ok) {
+        const text = await res.text()
         logger.log('Remote sources', '%cLOADED', 'font-weight: 800;', `\n${value}`, res)
-        return await res.text()
+        return text
       }
       throw new Error(res.statusText)
     } catch (err) {
@@ -178,18 +179,24 @@ async function init () {
 
   /* FULL CONFIG * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+  logger.log('TEST', '1')
   const pageRemoteDataStrings = await Promise.all(pageInlineDataConfigSourcesPromises)
-  console.log('~~~')
+  logger.log('TEST', '2')
   const pageRemoteDataNodes = pageRemoteDataStrings
     .filter((data): data is string => data !== undefined)
-    .map(data => {
+    .map((data, pos) => {
+      logger.log('TEST', `3.${pos}`)
       const wrapper = document.createElement('data')
       wrapper.innerHTML += data
       return wrapper
     })
+  logger.log('TEST', `4`)
   const pageFullDataTree = Darkdouille.tree([...pageInlineDataNodesCopy, ...pageRemoteDataNodes])
+  logger.log('TEST', `5`)
   Globals.expose(Globals.GlobalKey.TREE, pageFullDataTree)
+  logger.log('TEST', `6`)
   const pageFullDataValue = pageFullDataTree.value
+  logger.log('TEST', `7`)
   logger.log('Full data', pageFullDataValue)
   const pageFullDataValueIsRecord = Darkdouille.valueIsRecord(pageFullDataValue)
   const pageDataSlotsCollectionName = appConfig.dataSourcesReservedNames.slots
