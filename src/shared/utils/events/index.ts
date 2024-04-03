@@ -27,6 +27,10 @@ export namespace Events {
     AUDIOQUOTE_MUTE_CLICK = 'audioquote-mute-click',
     AUDIOQUOTE_VISIBLE = 'audioquote-visible',
     AUDIOQUOTE_HIDDEN = 'audioquote-hidden',
+    /* Button */
+    BUTTON_CLICK = 'button-click',
+    /* Checkbox or radio */
+    CHECKBOX_OR_RADIO_CHANGE = 'checkbox-or-radio-change',
     /* Event Listener */
     EVENT_LISTENER_EVENT = 'event-listener-event',
     /* Intersection Observer */

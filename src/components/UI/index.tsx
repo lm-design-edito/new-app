@@ -30,14 +30,15 @@ export type Props =
 
 export default class UI extends PreactComponent<Props> {
   render () {
-    if (this.props.component === Component.BUTTON) return <Button {...this.props} />
-    if (this.props.component === Component.CHECKBOX) return <CheckboxOrRadio {...this.props} type='checkbox' />
-    if (this.props.component === Component.RADIO) return <CheckboxOrRadio {...this.props} type='radio' />
-    if (this.props.component === Component.ICON) return <Icon {...this.props} />
-    if (this.props.component === Component.TAB) return <Tab {...this.props} />
-    if (this.props.component === Component.TABS) return <Tabs {...this.props} />
-    if (this.props.component === Component.TEXT_BOX) return <TextBox {...this.props} />
-    if (this.props.component === Component.TOGGLE) return <Toggle {...this.props} />
+    const { props } = this
+    if (props.component === Component.BUTTON) return <Button {...props} />
+    if (props.component === Component.CHECKBOX) return <CheckboxOrRadio {...props} type='checkbox' />
+    if (props.component === Component.RADIO) return <CheckboxOrRadio {...props} type='radio' />
+    if (props.component === Component.ICON) return <Icon {...props} />
+    if (props.component === Component.TAB) return <Tab {...props} />
+    if (props.component === Component.TABS) return <Tabs {...props} />
+    if (props.component === Component.TEXT_BOX) return <TextBox {...props} />
+    if (props.component === Component.TOGGLE) return <Toggle {...props} />
     return <></>
   }
 }

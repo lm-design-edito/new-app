@@ -7,8 +7,8 @@ export type Props = {
   customClass?: string
   labelContent?: string | VNode
   size?: 'medium' | 'small',
+  defaultChecked?: boolean,
   onToggle?: (checked: boolean) => void
-  defaultChecked?: boolean
 }
 
 const Toggle: FunctionalComponent<Props> = function (props: Props) {

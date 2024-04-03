@@ -1,5 +1,5 @@
 import { VNode, FunctionalComponent } from 'preact'
-import { useState, useEffect } from 'preact/hooks'
+import { useState } from 'preact/hooks'
 import bem from '~/utils/bem'
 import randomUUID from '~/utils/random-uuid'
 
@@ -9,6 +9,8 @@ export type Props = {
   labelContent?: string | VNode
   disabled?: boolean
   error?: boolean
+  defaultChecked?: boolean
+  onChange?: (e: Event) => void
 }
 
 const Checkbox: FunctionalComponent<Props> = (props: Props) => {
@@ -21,9 +23,19 @@ const Checkbox: FunctionalComponent<Props> = (props: Props) => {
   const inputClasses = bem(rootClass).elt('input')
   const fakeClasses = bem(rootClass).elt('fake')
   const type = props.type ?? 'checkbox'
-  return <div class={wrapperClasses.join(' ')}>
-    <input id={randomId} class={inputClasses.value} type={type} disabled={props.disabled} />
-    <label for={randomId} class={fakeClasses.value}>{props.labelContent}</label>
+  return <div className={wrapperClasses.join(' ')}>
+    <input
+      id={randomId}
+      className={inputClasses.value}
+      type={type}
+      disabled={props.disabled}
+      defaultChecked={props.defaultChecked}
+      onChange={props.onChange} />
+    <label
+      for={randomId}
+      className={fakeClasses.value}>
+      {props.labelContent}
+    </label>
   </div>
 }
 

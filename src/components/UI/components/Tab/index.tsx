@@ -20,7 +20,7 @@ const Tab: FunctionalComponent<Props> = (props: Props) => {
   const iconClss = bem(rootClass).elt('icon')
   return <button className={wrapperClasses.join(' ')}>
     {props.content}
-    {props.iconContent !== undefined && <div class={iconClss.value}>
+    {props.iconContent !== undefined && <div className={iconClss.value}>
       {props.iconContent}
     </div>}
   </button>

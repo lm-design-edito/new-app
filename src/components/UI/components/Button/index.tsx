@@ -10,6 +10,7 @@ export type Props = {
   secondary?: boolean
   iconContent?: VNode | string
   iconFirst?: boolean
+  onClick?: (e: MouseEvent) => void
 }
 
 const Button: FunctionalComponent<Props> = (props: Props) => {
@@ -26,8 +27,9 @@ const Button: FunctionalComponent<Props> = (props: Props) => {
   if (props.customClass !== undefined) wrapperClasses.push(props.customClass)
   const iconWrapperClass = bem(rootClass).elt('icon')
   return <button
-    class={wrapperClasses.join(' ')}
-    disabled={props.disabled}>
+    className={wrapperClasses.join(' ')}
+    disabled={props.disabled}
+    onClick={props.onClick}>
     {props.content}
     {props.iconContent !== undefined && <div className={iconWrapperClass.value}>
       {props.iconContent}
