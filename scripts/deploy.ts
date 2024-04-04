@@ -250,36 +250,6 @@ async function chooseAvailableBucket () {
 }
 
 /* * * * * * * * * * * * * * * * * * * * *
- * Select target bucket
- * * * * * * * * * * * * * * * * * * * * */
-/*
-async function selectTargetBucket () {
-  enum Targets {
-    V1_BETA = 'gs://decodeurs/design-edito/v1.beta'
-  }
-  const targetToRootUrlMap = new Map<Targets, string>([
-    [Targets.V1_BETA, 'https://assets-decodeurs.lemonde.fr/design-edito/v1.beta']
-  ])
-  console.log(styles.title('Select a target destination'))
-  STATE.target_name = (await prompts({
-    name: 'response',
-    type: 'select',
-    message: 'destination',
-    choices: Object
-      .entries(Targets)
-      .reverse()
-      .map(([, value]) => ({ title: value, value }))
-  })).response as Targets
-  STATE.target_url = targetToRootUrlMap.get(STATE.target_name as Targets) ?? null
-  if (STATE.target_url === null) {
-    console.log(styles.error(`Something went wrong while retrieving target's url (${STATE.target_name})`))
-    return abort()
-  }
-  console.log('')
-}
-*/
-
-/* * * * * * * * * * * * * * * * * * * * *
  * Retrieving versionning info
  * * * * * * * * * * * * * * * * * * * * */
 async function retreiveBucketVersions () {
@@ -329,9 +299,9 @@ async function retreiveBucketVersions () {
           .filter((versionNbr): versionNbr is string => versionNbr !== null)
       )
 
-      STATE.latest_local_version_number = versionNumbers.at(-1) ?? null
-      if (STATE.latest_local_version_number !== undefined) {
-        console.log(styles.regular(`Latest dist version found in bucket ${STATE.target_name}: ${STATE.latest_local_version_number}\n`))
+      STATE.latest_bucket_version_number = versionNumbers.at(-1) ?? null
+      if (STATE.latest_bucket_version_number !== undefined) {
+        console.log(styles.regular(`Latest dist version found in bucket ${STATE.target_name}: ${STATE.latest_bucket_version_number}\n`))
 
       }
       else throw false
@@ -341,130 +311,6 @@ async function retreiveBucketVersions () {
     }
   }
 }
-
-/* * * * * * * * * * * * * * * * * * * * *
- * Selecting target version
- * * * * * * * * * * * * * * * * * * * * */
-/*
-async function selectVersionNumber () {
-  console.log(styles.title('Select the target version'))
-  const prereleaseFlags = ['alpha', 'beta', 'rc']
-  const riseFlagOnVersionNumber = (versionNumber: string) => {
-    const alphaRegexp = /-alpha\.[0-9]+$/igm
-    const betaRegexp = /-beta\.[0-9]+$/igm
-    const isAlpha = versionNumber.match(alphaRegexp)
-    const isBeta = versionNumber.match(betaRegexp)
-    if (isAlpha) return versionNumber.replace(alphaRegexp, '-beta.0')
-    if (isBeta) return versionNumber.replace(alphaRegexp, '-rc.0')
-    return undefined
-  }
-
-  // If previous versions detected, ask for upgrade type
-  if (STATE.latest_local_version_number !== null) {
-    const latestVersionNbrPrerelease = semver.prerelease(STATE.latest_local_version_number) ?? []
-    const [latestVerFlag, latestVerPrereleaseNbr] = latestVersionNbrPrerelease
-    const isPrerelease = prereleaseFlags.includes(latestVerFlag as string)
-      && typeof latestVerPrereleaseNbr === 'number'
-    const newPrereleaseNbr = isPrerelease ? semver.inc(STATE.latest_local_version_number, 'prerelease') : null
-    const newPrereleaseFlag = isPrerelease ? (riseFlagOnVersionNumber(STATE.latest_local_version_number) ?? null) : null
-    // [WIP] should be possible to jump from alpha to rc here
-    const newPatchVersionNbr = semver.inc(STATE.latest_local_version_number, 'patch')
-    const newMinorVersionNbr = semver.inc(STATE.latest_local_version_number, 'minor')
-    const newMajorVersionNbr = semver.inc(STATE.latest_local_version_number, 'major')
-    const newMajorVersionAlphaNbr = (newMajorVersionNbr !== null && !isPrerelease) ? `${newMajorVersionNbr}-alpha.0` : null
-    const newMajorVersionBetaNbr = (newMajorVersionNbr !== null && !isPrerelease) ? `${newMajorVersionNbr}-beta.0` : null
-    const newMajorVersionRcNbr = (newMajorVersionNbr !== null && !isPrerelease) ? `${newMajorVersionNbr}-rc.0` : null
-    const choices: Array<{ title: string, value: string | null }> = []
-    if (newPrereleaseNbr !== null) choices.push({ title:        `New prerelease ${newPrereleaseNbr}`, value: newPrereleaseNbr })
-    if (newPrereleaseFlag !== null) choices.push({ title:       `New prerelease flag ${newPrereleaseFlag}`, value: newPrereleaseFlag })
-    if (newPatchVersionNbr !== null) choices.push({ title:      `New patch ${newPatchVersionNbr}`, value: newPatchVersionNbr })
-    if (newMinorVersionNbr !== null) choices.push({ title:      `New minor ${newMinorVersionNbr}`, value: newMinorVersionNbr })
-    if (newMajorVersionAlphaNbr !== null) choices.push({ title: `New alpha ${newMajorVersionAlphaNbr}`, value: newMajorVersionAlphaNbr })
-    if (newMajorVersionBetaNbr !== null) choices.push({ title:  `New beta ${newMajorVersionBetaNbr}`, value: newMajorVersionBetaNbr })
-    if (newMajorVersionRcNbr !== null) choices.push({ title:    `New rc ${newMajorVersionRcNbr}`, value: newMajorVersionRcNbr })
-    if (newMajorVersionNbr !== null) choices.push({ title:      `New major ${newMajorVersionNbr}`, value: newMajorVersionNbr })
-    choices.push({ title: `Custom version number`, value: null })
-    const response = (await prompts({
-      name: 'response',
-      message: 'Target version',
-      type: 'select',
-      choices
-    })).response
-    STATE.target_version_number = response
-  } else {
-    console.log(styles.regular('No previous version detected in this target destination, you will have to manually choose the target version number:\n'))
-    STATE.target_version_number = null
-  }
-
-  // Set a custom target version
-  if (STATE.target_version_number === null) {
-    const { prereleaseFlag } = await prompts({
-      name: 'prereleaseFlag',
-      message: 'Version is a prerelease?',
-      type: 'select',
-      choices: [
-        { title: 'No', value: null },
-        { title: 'Alpha', value: 'alpha' },
-        { title: 'Beta', value: 'beta' },
-        { title: 'RC', value: 'rc' }
-      ]
-    })
-    let prereleaseNbr: null | number = null
-    if (prereleaseFlag !== null) {
-      prereleaseNbr = (await prompts({
-        name: 'prereleaseNbr',
-        message: `${prereleaseFlag} number`,
-        type: 'number'
-      })).prereleaseNbr
-    }
-    const { majorNbr, minorNbr, patchNbr } = await prompts([
-      { name: 'majorNbr', message: 'major:', type: 'number' },
-      { name: 'minorNbr', message: 'minor:', type: 'number' },
-      { name: 'patchNbr', message: 'patch:', type: 'number' }
-    ])
-    let customTargetVersion = `${majorNbr}.${minorNbr}.${patchNbr}`
-    if (prereleaseFlag !== null && prereleaseNbr !== null) { customTargetVersion += `-${prereleaseFlag}.${prereleaseNbr}` }
-    if (semver.valid(customTargetVersion) === null) {
-      console.log(styles.error(`Custom version number ${customTargetVersion} is not valid.`))
-      return abort()
-    }
-    STATE.target_version_number = customTargetVersion
-  }
-  console.log(styles.important(`\nTarget version: ${STATE.target_version_number}\n`))
-
-  // Multiple majors in target
-  const targetHasMultipleMajors = STATE.previous_version_numbers.some(prevVersionNbr => {
-    const prevMajor = semver.major(prevVersionNbr)
-    if (STATE.target_version_number === null) return true
-    const currMajor = semver.major(STATE.target_version_number)
-    return prevMajor !== currMajor
-  })
-  if (targetHasMultipleMajors) {
-    const message = `It seems that you want to deploy a build for major version ${STATE.target_version_number}\n`
-                  + `in a target that contains builds for other major versions.\n\n`
-                  + `You may want to change the target destination in order to avoid\n`
-                  + `deploying breaking changes to projects that are already live.`
-    console.log(styles.danger(message))
-    console.log('')
-    const { continueAnyway } = await prompts({
-      name: 'continueAnyway',
-      type: 'confirm',
-      message: 'Continue anyway? (Definitely NOT recommended)'
-    })
-    console.log('')
-    if (continueAnyway !== true) return abort()
-    STATE.deploy_mixed_versions_in_target = true
-  }
-
-  // Description
-  STATE.target_version_description = (await prompts({
-    type: 'text',
-    name: 'versionDescription',
-    message: 'Description for this version:'
-  })).versionDescription
-  console.log('')
-}
-*/
 
 /* * * * * * * * * * * * * * * * * * * * *
  * Build source for Dist
@@ -725,7 +571,7 @@ async function createLocalVersionFile () {
         version_number: STATE.target_version_number,
         version_description: STATE.target_version_description,
         timestamp: STATE.deployed_on,
-        previous_local_version: STATE.latest_local_version_number,
+        latest_local_version_found: STATE.latest_local_version_number,
       },
       git: {
         has_uncommited_changes: STATE.deploy_with_uncommited_changes,
