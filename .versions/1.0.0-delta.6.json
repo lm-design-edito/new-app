@@ -1,0 +1,61 @@
+{
+  "build": {
+    "version_number": "1.0.0-delta.6",
+    "version_description": "~/shared/darkdouille - performance optimization in new Tree(...).path calculation (optimizes new Tree(...).resolve)",
+    "timestamp": "2024-04-04T09:19:53.005Z",
+    "previous_local_version": "1.0.0-delta.5"
+  },
+  "git": {
+    "has_uncommited_changes": false,
+    "latest_commit_number": "10152b13cbbe6351d33e98c9f41a286143ee457f"
+  },
+  "bucket": {
+    "name": "gs://decodeurs/design-edito/v1.delta",
+    "url": "https://assets-decodeurs.lemonde.fr/design-edito/v1.delta",
+    "current_versions_json": {
+      "1.0.0-delta.0": {
+        "description": "First v1.delta version, to Verdaccio, for lm-ui dev purpose",
+        "deployedOn": 1710842731804,
+        "deployedOnReadable": "Tue, 19 Mar 2024 10:05:31 GMT",
+        "commit": "753ddc23548622090082133541d05b1e59f67a1b"
+      },
+      "1.0.0-delta.1": {
+        "description": "~/components/UI/components/Toggle - add onToggle prop",
+        "deployedOn": 1711017964960,
+        "deployedOnReadable": "Thu, 21 Mar 2024 10:46:04 GMT",
+        "commit": "39d1b5e8230db9aa105d0fdacb943176331861c2"
+      },
+      "1.0.0-delta.2": {
+        "description": "~/components/UI/components/Toggle - add defaultChecked prop",
+        "deployedOn": 1711018513592,
+        "deployedOnReadable": "Thu, 21 Mar 2024 10:55:13 GMT",
+        "commit": "32174a7e0251cf6b051bb5587acfee6cf655f5f3"
+      },
+      "1.0.0-delta.3": {
+        "description": "Shorthand types in dkdll parsing (str, nbr, htm, etc, ...) - Slight changes in UI comps props for lm-ui purpose",
+        "deployedOn": 1711473246636,
+        "deployedOnReadable": "Tue, 26 Mar 2024 17:14:06 GMT",
+        "commit": "21388d4fc96686a47e6875c8a83f77ecd1d7bb3c"
+      },
+      "1.0.0-delta.4": {
+        "description": "~/apps/ui - Toggle - Generate ids during first render, not on didMount",
+        "deployedOn": 1711475316690,
+        "deployedOnReadable": "Tue, 26 Mar 2024 17:48:36 GMT",
+        "commit": "b8726ac816f8e0fcad14c6fb31f2bc4cedd3b207"
+      },
+      "1.0.0-delta.5": {
+        "description": "~/components/UI - CheckboxOrRadio - same as Toggle, ids are generated on first render",
+        "deployedOn": 1711530896813,
+        "deployedOnReadable": "Wed, 27 Mar 2024 09:14:56 GMT",
+        "commit": "261dd5515f2e5f6b7434af4d4f93b9c79528844a"
+      }
+    },
+    "create_versions_json": false,
+    "latest_version_found": null,
+    "published": true
+  },
+  "npm": {
+    "registry": "http://localhost:4873",
+    "published": true
+  }
+}
