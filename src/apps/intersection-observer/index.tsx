@@ -14,6 +14,7 @@ async function toProps (input: unknown, id: string): Promise<Props> {
     content: i => Apps.ifNotUndefinedHelper(i, Apps.toStringOrVNodeHelper),
     rootMargin: i => Apps.ifNotUndefinedHelper(i, toString),
     threshold: i => Apps.ifNotUndefinedHelper(i, i => toArray(i).map(toNumber)),
+
     // Handlers
     onIntersection: i => Apps.makeHandlerHelper<{
       ioEntry?: IOE | undefined

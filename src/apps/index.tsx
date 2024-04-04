@@ -173,7 +173,7 @@ export namespace Apps {
     if (input === undefined) return;
     return Apps.ifNotUndefinedHelper(input, input => ((payload?: T) => {
       const handlersNames = Apps.toStringOrStringsHelper(input)
-      return Events.otherSequentialHandlersCall(handlersNames, payload, { type, initiator: { id } })
+      return Events.sequentialHandlersCall(handlersNames, payload, { type, initiator: { id } })
     }))
   }
 

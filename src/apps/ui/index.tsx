@@ -32,6 +32,8 @@ async function toProps (input: unknown, id: string): Promise<Props> {
       secondary: i => Apps.ifNotUndefinedHelper(i, toBoolean),
       iconContent: i => Apps.ifNotUndefinedHelper(i, Apps.toStringOrVNodeHelper),
       iconFirst: i => Apps.ifNotUndefinedHelper(i, toBoolean),
+      
+      // Handlers
       onClick: i => Apps.makeHandlerHelper(Events.Type.BUTTON_CLICK, i, id)
     }) ?? {}
 
@@ -46,6 +48,8 @@ async function toProps (input: unknown, id: string): Promise<Props> {
       disabled: i => Apps.ifNotUndefinedHelper(i, toBoolean),
       error: i => Apps.ifNotUndefinedHelper(i, toBoolean),
       defaultchecked: i => Apps.ifNotUndefinedHelper(i, toBoolean),
+
+      // Handlers
       onChange: i => Apps.makeHandlerHelper(Events.Type.CHECKBOX_OR_RADIO_CHANGE, i, id)
     }) ?? {}
 
@@ -68,7 +72,10 @@ async function toProps (input: unknown, id: string): Promise<Props> {
       content: i => Apps.ifNotUndefinedHelper(i, Apps.toStringOrVNodeHelper),
       active: i => Apps.ifNotUndefinedHelper(i, toBoolean),
       iconContent: i => Apps.ifNotUndefinedHelper(i, Apps.toStringOrVNodeHelper),
-      iconFirst: i => Apps.ifNotUndefinedHelper(i, toBoolean)
+      iconFirst: i => Apps.ifNotUndefinedHelper(i, toBoolean),
+
+      // Handlers
+      onClick: i => Apps.makeHandlerHelper(Events.Type.TAB_CLICK, i, id)
     }) ?? {}
 
   // Tabs
@@ -83,7 +90,10 @@ async function toProps (input: unknown, id: string): Promise<Props> {
           if (isRecord(tab)) return await Apps.render(Apps.Name.UI, null, { component: 'tab', ...tab })
           return undefined    
         }).filter((elt): elt is Promise<VNode> => elt !== undefined)
-      ))
+      )),
+
+      // Handlers
+      onTabsClick: i => Apps.makeHandlerHelper(Events.Type.TABS_TAB_CLICK, i, id)
     }) ?? {}
 
   // Text box
@@ -106,6 +116,8 @@ async function toProps (input: unknown, id: string): Promise<Props> {
         return undefined
       }),
       defaultChecked: i => Apps.ifNotUndefinedHelper(i, toBoolean),
+
+      // Handlers
       onToggle: i => Apps.makeHandlerHelper(Events.Type.TOGGLE_TOGGLED, i, id),
     }) ?? {}
 

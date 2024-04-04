@@ -12,6 +12,7 @@ async function toProps (input: unknown, id: string): Promise<Props> {
   return await Apps.toPropsHelper(input, {
     customClass: i => Apps.ifNotUndefinedHelper(i, toString),
     content: i => Apps.ifNotUndefinedHelper(i, Apps.toStringOrVNodeHelper),
+
     // Handlers
     onResize: i => Apps.makeHandlerHelper<ResizeObserverEntry[]>(Events.Type.RESIZE_OBSERVER_RESIZE, i, id)
   }) ?? {}

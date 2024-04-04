@@ -1,9 +1,6 @@
 import appConfig from '~/config'
-import { Apps } from '~/apps'
 import { Globals } from '~/shared/globals'
 import isRecord from '~/utils/is-record'
-import delay from '~/utils/delay'
-import random from '~/utils/random'
 
 export namespace Events {
 
@@ -39,21 +36,23 @@ export namespace Events {
     RESIZE_OBSERVER_RESIZE = 'resize-observer-resize',
     /* Scrllgngn */
     SCRLLGNGN_PAGE_CHANGE = 'scrllgngn-page-change',
+    /* Tab */
+    TAB_CLICK = 'tab-click',
+    /* Tabs */
+    TABS_TAB_CLICK = 'tabs-tab-click',
     /* Toggle */
     TOGGLE_TOGGLED = 'toggle-toggled'
   }
 
-  type HandlerName = string
+  export type HandlerName = string
   
-  export type HandlerPayload = { // [WIP] reorganize the payload
-    details: any
+  export type HandlerDetails = {
     type: Type
+    initiator: { id: string }
     globals: Globals.GlobalObj
-    appId: string
-    app: Apps.App | null
   }
-
-  export type HandlerFunc = (payload: HandlerPayload) => any
+  
+  export type HandlerFunc = (payload: unknown, details: HandlerDetails) => any
 
   export type HandlersModuleExports = Record<string, HandlerFunc>
 
@@ -132,58 +131,14 @@ export namespace Events {
     return handlerExports
   }
 
-  export function getRegisteredHandler (name: string) {
-    return registeredHandlers.get(name)
-  }
-
-  export function getRegisteredHandlerPromise (name: string): Promise<HandlerFunc> {
-    return new Promise(resolve => resolve(() => {}))
-  }
-
   export async function sequentialHandlersCall (
-    handlers: HandlerFunc[],
-    payload: Omit<HandlerPayload, 'globals' | 'app'>) {
-    const appDetails = Apps.rendered.find(rendered => rendered.id === payload.appId)
-    const app = appDetails?.app ?? null
-    for (const handler of handlers) {
-      await handler({
-        ...payload,
-        globals: Globals.globalObj,
-        app
-      })
-    }
-  }
-
-  export async function parallelHandlersCall (
-    handlers: HandlerFunc[],
-    payload: Omit<HandlerPayload, 'globals' | 'app'>) {
-    const calls: any[] = []
-    const appDetails = Apps.rendered.find(rendered => rendered.id === payload.appId)
-    const app = appDetails?.app ?? null
-    for (const handler of handlers) calls.push(handler({
-      ...payload,
-      globals: Globals.globalObj,
-      app
-    }))
-    await Promise.all(calls)
-  }
-
-  // [WIP] New events stuff
-  export type OtherHandlerDetails = {
-    type: Type
-    initiator: { id: string }
-    globals: Globals.GlobalObj
-  }
-  export type OtherHandlerFunc = (payload: unknown, details: OtherHandlerDetails) => any
-
-  export async function otherSequentialHandlersCall (
-    handlers: OtherHandlerFunc | string | Array<OtherHandlerFunc | string>,
+    handlers: HandlerFunc | string | Array<HandlerFunc | string>,
     payload: unknown,
-    details: Omit<OtherHandlerDetails, 'globals'>) {
+    details: Omit<HandlerDetails, 'globals'>) {
     const handlersAsArr = Array.isArray(handlers) ? handlers : [handlers]
     for (const handler of handlersAsArr) {
       const actualHandler = typeof handler === 'string'
-        ? otherGetRegisteredHandler(handler)
+        ? getRegisteredHandler(handler)
         : handler
       if (actualHandler === undefined) continue
       await actualHandler(payload, {
@@ -193,14 +148,14 @@ export namespace Events {
     }
   }
 
-  export async function otherParallelHandlersCall (
-    handlers: OtherHandlerFunc | string | Array<OtherHandlerFunc | string>,
+  export async function parallelHandlersCall (
+    handlers: HandlerFunc | string | Array<HandlerFunc | string>,
     payload: unknown,
-    details: Omit<OtherHandlerDetails, 'globals'>) {
+    details: Omit<HandlerDetails, 'globals'>) {
     const handlersAsArr = Array.isArray(handlers) ? handlers : [handlers]
     await Promise.all(handlersAsArr.map(handler => {
       const actualHandler = typeof handler === 'string'
-        ? otherGetRegisteredHandler(handler)
+        ? getRegisteredHandler(handler)
         : handler
       if (actualHandler === undefined) return;
       return actualHandler(payload, {
@@ -210,8 +165,8 @@ export namespace Events {
     }))
   }
 
-  export function otherGetRegisteredHandler (name: string) {
-    const found = registeredHandlers.get(name) as OtherHandlerFunc | undefined
+  export function getRegisteredHandler (name: string) {
+    const found = registeredHandlers.get(name) as HandlerFunc | undefined
     return found
   }
 }
