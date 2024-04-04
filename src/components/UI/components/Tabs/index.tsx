@@ -28,7 +28,7 @@ const Tabs: FunctionalComponent<Props> = (props: Props) => {
         onClick={handler}>
         {tab}
       </div>
-    )}
+    })}
   </div>
 }
 
