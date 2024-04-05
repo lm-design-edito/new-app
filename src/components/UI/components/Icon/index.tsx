@@ -16,8 +16,14 @@ const Icon: FunctionalComponent<Props> = (props: Props) => {
   const found = props.registry.get(props.name ?? '')
   if (found === undefined) return null
   const { url, description } = found
-  if (props.inline !== true) return <img className={wrapperClasses.join(' ')} src={url.toString()} alt={description} />
-  return <Svg className={wrapperClasses.join(' ')} src={url.toString()} desc={description} />
+  if (props.inline === false) return <img
+    className={wrapperClasses.join(' ')}
+    src={url.toString()}
+    alt={description} />
+  return <Svg
+    className={wrapperClasses.join(' ')}
+    src={url.toString()}
+    desc={description} />
 }
 
 export default Icon
