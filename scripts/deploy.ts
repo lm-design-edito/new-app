@@ -421,7 +421,7 @@ async function npmPublishLib () {
       }
     }
     await new Promise(resolve => exec(
-      `OTP=${process.env.OTP} npm run publish-lib`,
+      `npm run publish-lib --otp=${process.env.OTP}`,
       (err, stdout, stderr) => {
         if (err !== null) throw err
         if (stderr !== '' && err === null) console.log(styles.regular(stderr))
