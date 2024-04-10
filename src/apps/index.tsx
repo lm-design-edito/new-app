@@ -1,6 +1,6 @@
 import { Component, ComponentClass, VNode } from 'preact'
 import appConfig from '~/config'
-import { Darkdouille, Events } from '~/shared'
+import {  Events } from '~/shared/events'
 import { Globals } from '~/shared/globals'
 import { LmHtml } from '~/shared/lm-html'
 import { Slots } from '~/shared/slots'

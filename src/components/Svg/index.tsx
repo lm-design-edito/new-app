@@ -14,13 +14,13 @@ interface Props {
 interface State {
   loading: boolean
   error: any
-  contents: string|null
-  attributes: JSX.SVGAttributes<SVGElement>|null
+  contents: string | null
+  attributes: JSX.SVGAttributes<SVGElement> | null
 }
 
 class Svg extends Component<Props, State> {
   bem: BEM = bem('lm-svg')
-  $root: HTMLDivElement|null = null
+  $root: HTMLDivElement | null = null
   state: State = {
     loading: false,
     error: null,
@@ -59,8 +59,8 @@ class Svg extends Component<Props, State> {
     })
     this.setState({ loading: true, error: null })
     try {
-      let svgData: string|null = null
-      // [WIP] fix this, this is not cleau (because of content security policy from lemonde.fr)
+      let svgData: string | null = null
+      // [WIP] fix this, this is not clean (because of content security policy from lemonde.fr)
       if (src.match(/^data:image\/svg/)) {
         const data = src.split(',')
         const [, ...imageDataChunks] = data
@@ -86,7 +86,7 @@ class Svg extends Component<Props, State> {
     }
   }
 
-  stringToCSS(string: string): JSX.CSSProperties {
+  stringToCSS (string: string): JSX.CSSProperties {
     const properties = string.trim().split(';')
     const cleanProperties: JSX.CSSProperties = {}
     properties

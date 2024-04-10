@@ -19,6 +19,11 @@ const STYLES_FONTS_URL = new URL(`${STYLES_URL.href.replace(/\/$/, '')}/fonts.cs
 const STYLES_INDEX_URL = new URL(`${STYLES_URL.href.replace(/\/$/, '')}/index.css`)                     // shared/styles/index.css
 const STYLES_UI_URL = new URL(`${STYLES_URL.href.replace(/\/$/, '')}/ui.css`)                           // shared/styles/ui.css.css
 
+// THEME
+const THEME_ICONS_DIR_REL_PATH = '/icons'
+const THEME_ICONS_REGISTRY_REL_PATH = '/icons/registry.json'
+const THEME_ICONS_ASSETS_DIR_PATH = '/icons/assets'
+
 // OTHER
 const eventHandlersAllowedUrlSchemes: Array<Partial<URL>> = [
   { protocol: 'http:', hostname: 'localhost' },
@@ -46,6 +51,11 @@ export default {
     STYLES_FONTS_URL,
     STYLES_INDEX_URL,
     STYLES_UI_URL
+  },
+  theme: {
+    THEME_ICONS_DIR_REL_PATH,
+    THEME_ICONS_REGISTRY_REL_PATH,
+    THEME_ICONS_ASSETS_DIR_PATH
   },
   dataSourceSelector: 'data.dkdll',
   dataSourcesReservedNames: {

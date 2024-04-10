@@ -5,6 +5,7 @@ import iconsData from '~/theme/icons'
 import isRecord from '~/utils/is-record'
 import { toBoolean, toString } from '~/utils/cast'
 import UI, { Component, Props } from '~/components/UI'
+import { Theme } from '~/shared/theme'
 
 export default async function renderer (unknownProps: unknown, id: string): ReturnType<Apps.AsyncRendererModule<Props>> {
   const props = await toProps(unknownProps, id)
@@ -55,15 +56,15 @@ async function toProps (input: unknown, id: string): Promise<Props> {
 
   // Icon
   } else if (component === Component.ICON) {
+    const iconName = Apps.ifNotUndefinedHelper(input.name, toString)
+    const iconData = iconName !== undefined ? Theme.getIconData(iconName) : undefined
     return await Apps.toPropsHelper(input, {
       component: () => component as Component.ICON,
-      registry: () => iconsData,
       customClass: i => Apps.ifNotUndefinedHelper(i, toString),
-      name: i => Apps.ifNotUndefinedHelper(i, toString),
-      inline: i => Apps.ifNotUndefinedHelper(i, toBoolean)
+      url: () => iconData?.url,
+      description: () => iconData?.description
     }) ?? {}
     
-
   // Tab
   } else if (component === Component.TAB) {
     return await Apps.toPropsHelper(input, {
@@ -88,7 +89,7 @@ async function toProps (input: unknown, id: string): Promise<Props> {
           if (isValidElement(tab)) return tab
           if (tab instanceof NodeList) return await Apps.toStringOrVNodeHelper(tab)
           if (isRecord(tab)) return await Apps.render(Apps.Name.UI, null, { component: 'tab', ...tab })
-          return undefined    
+          return undefined
         }).filter((elt): elt is Promise<VNode> => elt !== undefined)
       )),
 

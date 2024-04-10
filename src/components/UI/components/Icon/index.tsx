@@ -3,19 +3,18 @@ import bem from '~/utils/bem'
 import Svg from '~/components/Svg'
 
 export type Props = {
-  registry: Map<string, { url: URL, description: string }>
   customClass?: string
+  url?: URL
+  description?: string
   inline?: boolean
-  name?: string
 }
 
 const Icon: FunctionalComponent<Props> = (props: Props) => {
   const bemClss = bem('lmui-icon').mod({ inline: props.inline })
   const wrapperClasses = [bemClss.value]
   if (props.customClass !== undefined) wrapperClasses.push(props.customClass)
-  const found = props.registry.get(props.name ?? '')
-  if (found === undefined) return null
-  const { url, description } = found
+  const { url, description } = props
+  if (url === undefined) return null
   if (props.inline === false) return <img
     className={wrapperClasses.join(' ')}
     src={url.toString()}
