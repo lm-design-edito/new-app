@@ -4,7 +4,7 @@ import Svg from '~/components/Svg'
 
 export type Props = {
   customClass?: string
-  url?: URL
+  url?: URL | string
   description?: string
   inline?: boolean
 }

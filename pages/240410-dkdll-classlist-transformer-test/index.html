@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head>
+  <body>
+    <!-- Application -->
+    <script type="module" src="http://localhost:3000/shared/index.js"></script>
+    
+    <!-- Config -->
+    <data class="dkdll" style="display: none;">
+      <array class="SLOTS">
+        <record>
+          <record class="destination">
+            <string class="selector">.slot</string>
+            <string class="position">endof</string>
+            <string class="reference">body</string>
+          </record>
+          <lm-html class="content">
+
+            <div class="my-wrapper other-class">
+              <div class="select-me">Select me !</div>
+              <div class="select-me">Select me !
+                <div class="select-me">Select me !
+                  <div class="select-me">Select me !</div>
+                </div>
+              </div>
+            </div>
+
+            <transformer>
+              
+              <classList>
+                <!-- add | remove | toggle -->
+                <string>remove</string>
+                <!-- <string>additional-class</string> -->
+                <!-- Subsélecteur optionnel -->
+                <!-- <string>.select-me</string> -->
+              </classList>
+
+            </transformer>
+
+
+          </lm-html>
+        </record>
+      </array>
+    </data>
+  </body>
+</html>

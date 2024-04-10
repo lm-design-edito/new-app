@@ -32,6 +32,8 @@ import join from './transformers/join'
 import at from './transformers/at'
 import map from './transformers/map'
 import push from './transformers/push'
+/* NodeList transformers */
+import classList from './transformers/classList'
 /* Utility transformers */
 import that from './transformers/this'
 import clone from './transformers/clone'
@@ -441,6 +443,9 @@ export namespace Darkdouille {
       if (name === FunctionName.MAP) return map
       if (name === FunctionName.PUSH) return push
 
+      /* NodeList */
+      if (name === FunctionName.CLASSLIST) return classList
+
       /* Utils */
       if (name === FunctionName.THIS) return that
       if (name === FunctionName.CLONE) return clone
@@ -668,6 +673,8 @@ export namespace Darkdouille {
     AT = 'at',
     MAP = 'map',
     PUSH = 'push',
+    /* NodeList */
+    CLASSLIST = 'classlist',
     /* Utility */
     THIS = 'this',
     CLONE = 'clone',
@@ -688,12 +695,13 @@ export namespace Darkdouille {
   if (functionsAndTypesNamesOverlap) throw `A function cannot share its name with a type`
 
   export const transformers = {
-    /* Cast    */ toString, toNumber, toBoolean, toNull, toHtml, toRef, toArray, toRecord,
-    /* Any     */ length,
-    /* Number  */ add, subtract, multiply, pow, divide, max, min, clamp, greater, smaller, equals,
-    /* String  */ append, prepend, replace, trim, split,
-    /* Array   */ join, at, map, push,
-    /* Utility */ that, clone, print, set, get, cond, loop
+    /* Cast     */ toString, toNumber, toBoolean, toNull, toHtml, toRef, toArray, toRecord,
+    /* Any      */ length,
+    /* Number   */ add, subtract, multiply, pow, divide, max, min, clamp, greater, smaller, equals,
+    /* String   */ append, prepend, replace, trim, split,
+    /* Array    */ join, at, map, push,
+    /* NodeList */ classList,
+    /* Utility  */ that, clone, print, set, get, cond, loop
   }
 
   /* ========== HELPERS ========== */

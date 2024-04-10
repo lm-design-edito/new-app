@@ -1,8 +1,13 @@
-const nullishValues = [null, undefined]
+export const nullishValues = [null, undefined]
 
-function isNullish (val: any): boolean {
-  return nullishValues.includes(val)
+export type Nullish = null | undefined
+
+export function isNullish<T> (val: T | Nullish): val is Nullish {
+  return nullishValues.includes(val as any)
 }
 
-export { nullishValues }
+export function isNotNullish<T> (val: T): val is Exclude<T, Nullish> {
+  return !isNullish(val)
+}
+
 export default isNullish
