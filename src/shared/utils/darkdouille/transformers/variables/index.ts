@@ -1,5 +1,5 @@
 import { Darkdouille } from '../..'
-import { resolveArgs } from '../_resolveArgs'
+import { resolveArgs } from '../_utils/resolveArgs'
 
 // [WIP] since values are resolved from tree bottom to top, variables
 // declared below will be created before those declared above. We cannot

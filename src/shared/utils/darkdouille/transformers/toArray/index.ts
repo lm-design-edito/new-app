@@ -1,7 +1,7 @@
 import { Darkdouille } from '../..'
 import toNumber from '../toNumber'
 import clone from '../clone'
-import { resolveArgs } from '../_resolveArgs'
+import { resolveArgs } from '../_utils/resolveArgs'
 
 const toArray: Darkdouille.TransformerFunctionGenerator<Darkdouille.TreeValue[]> = (...args) => {
   return (inputValue): Darkdouille.TreeValue[] => {

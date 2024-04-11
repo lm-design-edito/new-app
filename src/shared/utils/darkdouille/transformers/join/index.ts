@@ -1,5 +1,5 @@
 import { Darkdouille } from '../..'
-import { resolveArgs } from '../_resolveArgs'
+import { resolveArgs } from '../_utils/resolveArgs'
 import toString from '../toString'
 
 const join: Darkdouille.TransformerFunctionGenerator<Darkdouille.TreeValue> = (...args) => {

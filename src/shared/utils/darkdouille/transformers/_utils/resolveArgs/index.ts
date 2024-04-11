@@ -1,4 +1,4 @@
-import { Darkdouille } from '../..'
+import { Darkdouille } from '../../..'
 
 export function resolveArgs (
   inputValue: Darkdouille.TreeValue,

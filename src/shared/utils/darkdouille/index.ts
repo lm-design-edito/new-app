@@ -34,6 +34,8 @@ import map from './transformers/map'
 import push from './transformers/push'
 /* NodeList transformers */
 import classList from './transformers/classList'
+import querySelector from './transformers/querySelector'
+import transformSelected from './transformers/transformSelected'
 /* Utility transformers */
 import that from './transformers/this'
 import clone from './transformers/clone'
@@ -445,6 +447,8 @@ export namespace Darkdouille {
 
       /* NodeList */
       if (name === FunctionName.CLASSLIST) return classList
+      if (name === FunctionName.QUERYSELECTOR) return querySelector
+      if (name === FunctionName.TRANSFORMSELECTED) return transformSelected
 
       /* Utils */
       if (name === FunctionName.THIS) return that
@@ -675,6 +679,8 @@ export namespace Darkdouille {
     PUSH = 'push',
     /* NodeList */
     CLASSLIST = 'classlist',
+    QUERYSELECTOR = 'queryselector',
+    TRANSFORMSELECTED = 'transformselected',
     /* Utility */
     THIS = 'this',
     CLONE = 'clone',
@@ -700,7 +706,7 @@ export namespace Darkdouille {
     /* Number   */ add, subtract, multiply, pow, divide, max, min, clamp, greater, smaller, equals,
     /* String   */ append, prepend, replace, trim, split,
     /* Array    */ join, at, map, push,
-    /* NodeList */ classList,
+    /* NodeList */ classList, querySelector, transformSelected,
     /* Utility  */ that, clone, print, set, get, cond, loop
   }
 

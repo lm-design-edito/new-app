@@ -1,5 +1,5 @@
 import { Darkdouille } from '../..'
-import { resolveArgs } from '../_resolveArgs'
+import { resolveArgs } from '../_utils/resolveArgs'
 
 const equals: Darkdouille.TransformerFunctionGenerator<boolean> = (...args) => {
   return (inputValue): boolean => {

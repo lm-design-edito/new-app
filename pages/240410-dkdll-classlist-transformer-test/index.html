@@ -20,7 +20,12 @@
           <lm-html class="content">
 
             <div class="my-wrapper other-class">
-              <div class="select-me">Select me !</div>
+              <div class="select-me" id="lol">
+                Select me !
+                <div class="pouet"></div>
+                <div class="lol"></div>
+                <div class="truc"></div>
+              </div>
               <div class="select-me">Select me !
                 <div class="select-me">Select me !
                   <div class="select-me">Select me !</div>
@@ -34,10 +39,19 @@
                 <!-- add | remove | toggle -->
                 <string>remove</string>
                 <!-- <string>additional-class</string> -->
-                <!-- Subsélecteur optionnel -->
-                <!-- <string>.select-me</string> -->
               </classList>
 
+              <querySelector>
+                <string>#lol</string>
+              </querySelector>
+
+              <transformSelected>
+                <string>.pouet, .lol</string>
+                <classList>
+                  <string>add</string>
+                  <string>ihihih</string>
+                </classList>
+              </transformSelected>
             </transformer>
 
 

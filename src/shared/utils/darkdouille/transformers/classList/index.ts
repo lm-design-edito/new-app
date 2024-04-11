@@ -1,6 +1,6 @@
 import { isNotNullish } from '~/utils/is-nullish'
 import { Darkdouille } from '../..'
-import { resolveArgs } from '../_resolveArgs'
+import { resolveArgs } from '../_utils/resolveArgs'
 import clone from '../clone'
 import toHtml from '../toHtml'
 import toString from '../toString'
@@ -15,17 +15,14 @@ enum Action {
 const classList: Darkdouille.TransformerFunctionGenerator<NodeListOf<Node>> = (...args) => {
   return inputValue => {
     const resolvedArgs = resolveArgs(inputValue, ...args)
-    const [rawAction, rawClasses, rawSubSelector] = resolvedArgs
+    const [rawAction, rawClasses] = resolvedArgs
     const action = isNotNullish(rawAction) ? toString()(rawAction) : undefined
     const nodeListInput = clone<NodeListOf<Node>>()(toHtml()(inputValue))
     if (!isInEnum(Action, action)) return nodeListInput
     const classes = isNotNullish(rawClasses) ? toString()(rawClasses).trim().split(/\s+/igm) : []
-    const subselector = isNotNullish(rawSubSelector) ? toString()(rawSubSelector).trim() : undefined
     const wrapperDiv = document.createElement('div')
     wrapperDiv.append(...nodeListInput)
-    const targets = subselector !== undefined
-      ? wrapperDiv.querySelectorAll(subselector)
-      : wrapperDiv.childNodes
+    const targets = wrapperDiv.childNodes
     const targetsArr = Array.from(targets)
     targetsArr.forEach(node => {
       if (node.nodeType !== Node.ELEMENT_NODE) return node

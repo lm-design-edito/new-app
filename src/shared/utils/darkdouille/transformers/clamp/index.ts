@@ -2,7 +2,7 @@ import { Darkdouille } from '../..'
 import min from '../min'
 import max from '../max'
 import toNumber from '../toNumber'
-import { resolveArgs } from '../_resolveArgs'
+import { resolveArgs } from '../_utils/resolveArgs'
 
 const clamp: Darkdouille.TransformerFunctionGenerator<number> = (...args) => {
   return (inputValue): number => {
