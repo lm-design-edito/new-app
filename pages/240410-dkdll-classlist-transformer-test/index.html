@@ -18,41 +18,51 @@
             <string class="reference">body</string>
           </record>
           <lm-html class="content">
-
-            <div class="my-wrapper other-class">
-              <div class="select-me" id="lol">
-                Select me !
-                <div class="pouet"></div>
-                <div class="lol"></div>
-                <div class="truc"></div>
-              </div>
-              <div class="select-me">Select me !
+            <lm-html>
+              <div class="my-wrapper other-class">
+                <div class="select-me" id="lol">
+                  Select me !
+                  <div class="pouet"></div>
+                  <div class="lol"></div>
+                  <div class="truc"></div>
+                </div>
                 <div class="select-me">Select me !
-                  <div class="select-me">Select me !</div>
+                  <div class="select-me">Select me !
+                    <div class="select-me">Select me !</div>
+                  </div>
                 </div>
               </div>
-            </div>
-
-            <transformer>
-              
-              <classList>
-                <!-- add | remove | toggle -->
-                <string>remove</string>
-                <!-- <string>additional-class</string> -->
-              </classList>
-
-              <querySelector>
-                <string>#lol</string>
-              </querySelector>
-
-              <transformSelected>
-                <string>.pouet, .lol</string>
+  
+              <transformer>
+                
                 <classList>
-                  <string>add</string>
-                  <string>ihihih</string>
+                  <!-- add | remove | toggle -->
+                  <string>remove</string>
+                  <!-- <string>additional-class</string> -->
                 </classList>
-              </transformSelected>
-            </transformer>
+  
+                <querySelector>
+                  <string>#lol</string>
+                </querySelector>
+  
+                <transformSelected>
+                  <string>.pouet, .lol</string>
+                  <classList>
+                    <string>add</string>
+                    <string>ihihih</string>
+                  </classList>
+                </transformSelected>
+              </transformer>
+            </lm-html>
+
+            <lm-html>
+              <comp name="ui">
+                <string class="component">icon</string>
+                <string class="url">http://localhost:8080/icons/assets/alert.svg</string>
+                <boolean class="asImg">true</boolean>
+                <string class="maskColor">coral</string>
+              </comp>
+            </lm-html>
 
 
           </lm-html>

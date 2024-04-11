@@ -1,0 +1,18 @@
+.wrapper.wrapper_as-img.wrapper_with-mask {
+  display: inline-block;
+  aspect-ratio: 1;
+  overflow: hidden;
+}
+
+.image-mask {}
+
+.masked {
+  display: block;
+  aspect-ratio: 1;
+  transform: translateY(-100%);
+  -webkit-mask-image: var(--img-url);
+  mask-image: var(--img-url);
+  mask-mode: alpha;
+  mask-size: cover;
+  background-color: var(--mask-color, transparent);
+}

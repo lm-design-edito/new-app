@@ -61,9 +61,10 @@ async function toProps (input: unknown, id: string): Promise<Props> {
     return await Apps.toPropsHelper(input, {
       component: () => component as Component.ICON,
       customClass: i => Apps.ifNotUndefinedHelper(i, toString),
-      url: () => iconData?.url,
-      description: () => iconData?.description,
-      asImg: i => Apps.ifNotUndefinedHelper(i, toBoolean)
+      url: i => Apps.ifNotUndefinedHelper(i, toString) ?? iconData?.url,
+      description: i => Apps.ifNotUndefinedHelper(i, toString) ?? iconData?.description,
+      asImg: i => Apps.ifNotUndefinedHelper(i, toBoolean),
+      maskColor: i => Apps.ifNotUndefinedHelper(i, toString)
     }) ?? {}
     
   // Tab
