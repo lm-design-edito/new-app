@@ -1,8 +1,7 @@
 import { FunctionalComponent, JSX } from 'preact'
 import bem from '~/utils/bem'
 import Svg from '~/components/Svg'
-import styles from './styles.module.scss'
-console.log(styles)
+
 export type Props = {
   customClass?: string
   url?: URL | string
@@ -17,18 +16,16 @@ const Icon: FunctionalComponent<Props> = (props: Props) => {
     ['as-img']: props.asImg,
     ['with-mask']: props.maskColor !== undefined
   })
-  const wrapperClasses = [wrapperBemClss.value, styles['wrapper']]
-  if (props.asImg) wrapperClasses.push(styles['wrapper_as-img'])
-  if (props.maskColor !== undefined) wrapperClasses.push(styles['wrapper_with-mask'])
+  const wrapperClasses = [wrapperBemClss.value]
   if (props.customClass !== undefined) wrapperClasses.push(props.customClass)
   const wrapperStyle = {
     '--img-url': `url('${props.url}')`,
     '--mask-color': props.maskColor
   } as JSX.CSSProperties
   const imageMaskBemClss = rootBemClss.elt('image-mask')
-  const imageMaskClasses = [imageMaskBemClss.value, styles['image-mask']]
+  const imageMaskClasses = [imageMaskBemClss.value]
   const maskedBemClss = rootBemClss.elt('masked')
-  const maskedClasses = [maskedBemClss.value, styles['masked']]
+  const maskedClasses = [maskedBemClss.value]
   const { url, description } = props
   if (url === undefined) return null
   if (props.asImg && props.maskColor !== undefined) return <span
