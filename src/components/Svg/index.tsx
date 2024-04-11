@@ -1,6 +1,5 @@
 import { Component, JSX } from 'preact'
 import bem, { BEM } from '~/utils/bem'
-import styles from './styles.module.scss'
 
 interface Props {
   className?: string
@@ -19,7 +18,7 @@ interface State {
 }
 
 class Svg extends Component<Props, State> {
-  bem: BEM = bem('lm-svg')
+  bem: BEM = bem('lmui-svg')
   $root: HTMLDivElement | null = null
   state: State = {
     loading: false,
@@ -117,7 +116,6 @@ class Svg extends Component<Props, State> {
     const classes = bem(attributes.class ?? '')
       .block(props.className)
       .block(this.bem.value)
-      .block(styles['wrapper'])
     
     const inlineStyle = { 
       ...(attributes.style ? this.stringToCSS(attributes.style as string) : {}),
