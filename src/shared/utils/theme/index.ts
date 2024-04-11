@@ -1,4 +1,4 @@
-import config from "~/config"
+import config from '~/config'
 
 
 export namespace Theme {
@@ -22,6 +22,7 @@ export namespace Theme {
     name: string
     url: URL
     description: string
+    category: string
   }
 
   export const iconsRegistry = new Map<IconData['name'], Omit<IconData, 'name'>>()
