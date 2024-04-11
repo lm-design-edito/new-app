@@ -6,16 +6,16 @@ export type Props = {
   customClass?: string
   url?: URL | string
   description?: string
-  inline?: boolean
+  asImg?: boolean
 }
 
 const Icon: FunctionalComponent<Props> = (props: Props) => {
-  const bemClss = bem('lmui-icon').mod({ inline: props.inline })
+  const bemClss = bem('lmui-icon').mod({ inline: props.asImg !== true })
   const wrapperClasses = [bemClss.value]
   if (props.customClass !== undefined) wrapperClasses.push(props.customClass)
   const { url, description } = props
   if (url === undefined) return null
-  if (props.inline === false) return <img
+  if (props.asImg) return <img
     className={wrapperClasses.join(' ')}
     src={url.toString()}
     alt={description} />

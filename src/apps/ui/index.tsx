@@ -62,7 +62,8 @@ async function toProps (input: unknown, id: string): Promise<Props> {
       component: () => component as Component.ICON,
       customClass: i => Apps.ifNotUndefinedHelper(i, toString),
       url: () => iconData?.url,
-      description: () => iconData?.description
+      description: () => iconData?.description,
+      asImg: i => Apps.ifNotUndefinedHelper(i, toBoolean)
     }) ?? {}
     
   // Tab
