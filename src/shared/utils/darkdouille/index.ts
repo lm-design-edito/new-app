@@ -33,6 +33,7 @@ import at from './transformers/at'
 import map from './transformers/map'
 import push from './transformers/push'
 /* NodeList transformers */
+import attributes from './transformers/attributes'
 import classList from './transformers/classList'
 import querySelector from './transformers/querySelector'
 import transformSelected from './transformers/transformSelected'
@@ -446,6 +447,7 @@ export namespace Darkdouille {
       if (name === FunctionName.PUSH) return push
 
       /* NodeList */
+      if (name === FunctionName.ATTRIBUTES) return attributes
       if (name === FunctionName.CLASSLIST) return classList
       if (name === FunctionName.QUERYSELECTOR) return querySelector
       if (name === FunctionName.TRANSFORMSELECTED) return transformSelected
@@ -678,6 +680,7 @@ export namespace Darkdouille {
     MAP = 'map',
     PUSH = 'push',
     /* NodeList */
+    ATTRIBUTES = 'attributes',
     CLASSLIST = 'classlist',
     QUERYSELECTOR = 'queryselector',
     TRANSFORMSELECTED = 'transformselected',
