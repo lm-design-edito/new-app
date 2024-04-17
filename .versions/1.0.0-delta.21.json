@@ -1,0 +1,145 @@
+{
+  "build": {
+    "version_number": "1.0.0-delta.21",
+    "version_description": "~/components/Gallery - typo fix",
+    "timestamp": "2024-04-17T14:56:30.849Z",
+    "latest_local_version_found": "1.0.0-delta.20"
+  },
+  "git": {
+    "has_uncommited_changes": false,
+    "latest_commit_number": "16b15652d9c06414d44107743e5ada21e97b1cfb"
+  },
+  "bucket": {
+    "name": "gs://decodeurs/design-edito/v1.delta",
+    "url": "https://assets-decodeurs.lemonde.fr/design-edito/v1.delta",
+    "current_versions_json": {
+      "1.0.0-delta.0": {
+        "description": "First v1.delta version, to Verdaccio, for lm-ui dev purpose",
+        "deployedOn": 1710842731804,
+        "deployedOnReadable": "Tue, 19 Mar 2024 10:05:31 GMT",
+        "commit": "753ddc23548622090082133541d05b1e59f67a1b"
+      },
+      "1.0.0-delta.1": {
+        "description": "~/components/UI/components/Toggle - add onToggle prop",
+        "deployedOn": 1711017964960,
+        "deployedOnReadable": "Thu, 21 Mar 2024 10:46:04 GMT",
+        "commit": "39d1b5e8230db9aa105d0fdacb943176331861c2"
+      },
+      "1.0.0-delta.2": {
+        "description": "~/components/UI/components/Toggle - add defaultChecked prop",
+        "deployedOn": 1711018513592,
+        "deployedOnReadable": "Thu, 21 Mar 2024 10:55:13 GMT",
+        "commit": "32174a7e0251cf6b051bb5587acfee6cf655f5f3"
+      },
+      "1.0.0-delta.3": {
+        "description": "Shorthand types in dkdll parsing (str, nbr, htm, etc, ...) - Slight changes in UI comps props for lm-ui purpose",
+        "deployedOn": 1711473246636,
+        "deployedOnReadable": "Tue, 26 Mar 2024 17:14:06 GMT",
+        "commit": "21388d4fc96686a47e6875c8a83f77ecd1d7bb3c"
+      },
+      "1.0.0-delta.4": {
+        "description": "~/apps/ui - Toggle - Generate ids during first render, not on didMount",
+        "deployedOn": 1711475316690,
+        "deployedOnReadable": "Tue, 26 Mar 2024 17:48:36 GMT",
+        "commit": "b8726ac816f8e0fcad14c6fb31f2bc4cedd3b207"
+      },
+      "1.0.0-delta.5": {
+        "description": "~/components/UI - CheckboxOrRadio - same as Toggle, ids are generated on first render",
+        "deployedOn": 1711530896813,
+        "deployedOnReadable": "Wed, 27 Mar 2024 09:14:56 GMT",
+        "commit": "261dd5515f2e5f6b7434af4d4f93b9c79528844a"
+      },
+      "1.0.0-delta.6": {
+        "description": "~/shared/darkdouille - performance optimization in new Tree(...).path calculation (optimizes new Tree(...).resolve)",
+        "deployedOn": 1712222393005,
+        "deployedOnReadable": "Thu, 04 Apr 2024 09:19:53 GMT",
+        "commit": "10152b13cbbe6351d33e98c9f41a286143ee457f"
+      },
+      "1.0.0-delta.7": {
+        "description": "~/apps/ui - added handlers",
+        "deployedOn": 1712233976788,
+        "deployedOnReadable": "Thu, 04 Apr 2024 12:32:56 GMT",
+        "commit": "e974cefd72991921d9ad928a5fe1c7383c95b9cb"
+      },
+      "1.0.0-delta.8": {
+        "description": "~/components/UI/components/Tabs - bugfix in tabWrapperClasses",
+        "deployedOn": 1712240958844,
+        "deployedOnReadable": "Thu, 04 Apr 2024 14:29:18 GMT",
+        "commit": "4a131883d448af783bd62b84501b4d4c385bbdb1"
+      },
+      "1.0.0-delta.9": {
+        "description": "First publication to official NPM registry",
+        "deployedOn": 1712332017590,
+        "deployedOnReadable": "Fri, 05 Apr 2024 15:46:57 GMT",
+        "commit": "19a3579fa9f24589315057ae69ab87ec7916d30f"
+      },
+      "1.0.0-delta.11": {
+        "description": "~/components/UI - changed Icon component props, no registry logic, this is left to ~/apps/UI",
+        "deployedOn": 1712737952302,
+        "deployedOnReadable": "Wed, 10 Apr 2024 08:32:32 GMT",
+        "commit": "ca0c160fbbe2bf62f247e819b6144d71bdb16dc3"
+      },
+      "1.0.0-delta.12": {
+        "description": "~/shared/darkdouille - added classList transformer",
+        "deployedOn": 1712762278727,
+        "deployedOnReadable": "Wed, 10 Apr 2024 15:17:58 GMT",
+        "commit": "a1a52083aae7206b2b712304b33dc96cba5a6077"
+      },
+      "1.0.0-delta.13": {
+        "description": "~/shared/darkdouille - added querySelector and transformSelected transformers",
+        "deployedOn": 1712836572142,
+        "deployedOnReadable": "Thu, 11 Apr 2024 11:56:12 GMT",
+        "commit": "2d3d1b219fb235baf510d014ee340a7855dbbe9e"
+      },
+      "1.0.0-delta.14": {
+        "description": "~/components/UI - Icon prop inline defaulting to true has been replaced by a prop asImg defaulting to false",
+        "deployedOn": 1712843673358,
+        "deployedOnReadable": "Thu, 11 Apr 2024 13:54:33 GMT",
+        "commit": "89d4ae1009c37d437227823117b0d9256d2415d3"
+      },
+      "1.0.0-delta.15": {
+        "description": "~/components/UI - Icon - added maskColor prop",
+        "deployedOn": 1712849675370,
+        "deployedOnReadable": "Thu, 11 Apr 2024 15:34:35 GMT",
+        "commit": "cfe411fe3eb91f295797cd257d70536e8494e756"
+      },
+      "1.0.0-delta.16": {
+        "description": "~/components/UI - Icon - removed the styles, let lm-ui do everything",
+        "deployedOn": 1712851086759,
+        "deployedOnReadable": "Thu, 11 Apr 2024 15:58:06 GMT",
+        "commit": "f915698566806c41f0da7b09a12c379d09c642c1"
+      },
+      "1.0.0-delta.17": {
+        "description": "~/components/Svg - removed styles.module.scss, let lm-ui handle this",
+        "deployedOn": 1712851855059,
+        "deployedOnReadable": "Thu, 11 Apr 2024 16:10:55 GMT",
+        "commit": "de1a43acae42aa9f463820262f1a685fac7e16c8"
+      },
+      "1.0.0-delta.18": {
+        "description": "~/shared/darkdouille - added attributes transformer",
+        "deployedOn": 1713344260398,
+        "deployedOnReadable": "Wed, 17 Apr 2024 08:57:40 GMT",
+        "commit": "c2172048c7714c20a8739c9ee582c83281a48716"
+      },
+      "1.0.0-delta.19": {
+        "description": "~/shared/darkdouille - fix some false positives in path resolving (/some/path was previously considered a parent of /some/path-1/etc)",
+        "deployedOn": 1713356336451,
+        "deployedOnReadable": "Wed, 17 Apr 2024 12:18:56 GMT",
+        "commit": "2730f07d609a1695c0719e91bc1db6bd51f89f73"
+      },
+      "1.0.0-delta.20": {
+        "description": "~/components/Gallery - now provides dots reflecting the current centered item position",
+        "deployedOn": 1713363264461,
+        "deployedOnReadable": "Wed, 17 Apr 2024 14:14:24 GMT",
+        "commit": "569155edf5b1f31b9341a7a1e18d4a078991f163"
+      }
+    },
+    "create_versions_json": false,
+    "latest_version_found": "1.0.0-delta.20",
+    "published": true
+  },
+  "npm": {
+    "registry": "https://registry.npmjs.org",
+    "published": true
+  }
+}
