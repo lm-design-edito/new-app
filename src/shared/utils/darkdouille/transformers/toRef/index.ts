@@ -1,7 +1,7 @@
 import { Darkdouille } from '../..'
 import toString from '../toString'
 
-let paths: string[] = []
+let intermediatePaths: string[] = []
 
 const toRef = (resolve: Darkdouille.TreeResolver): Darkdouille.TransformerFunctionGenerator => () => {
   const returned: Darkdouille.Transformer = (inputValue) => {
@@ -13,26 +13,28 @@ const toRef = (resolve: Darkdouille.TreeResolver): Darkdouille.TransformerFuncti
     if (resolved === undefined
       || thisPath === undefined
       || resolvedPath === undefined) {
-      paths = []
+      intermediatePaths = []
       return undefined
     }
-    paths.push(thisPath)
-    const circularPattern = paths.some(path => {
-      const resolvedIsParent = path.startsWith(resolvedPath)
-      const resolvedIsChild = resolvedPath.startsWith(path)
+    intermediatePaths.push(thisPath)
+    const circularPattern = intermediatePaths.some(intermediatePath => {
+      const intermediatePathChunks = intermediatePath.split('/')
+      const resolvedPathChunks = resolvedPath.split('/')
+      const resolvedIsParent = resolvedPathChunks.every((pathChunk, pathChunkPos) => intermediatePathChunks[pathChunkPos] === pathChunk)
+      const resolvedIsChild = intermediatePathChunks.every((pathChunk, pathChunkPos) => resolvedPathChunks[pathChunkPos] === pathChunk)
       return resolvedIsParent || resolvedIsChild
     })
     if (circularPattern) {
       console.error(
         'Circular reference pattern detected:\n >',
-        [...paths, resolvedPath].join('\n > ')
+        [...intermediatePaths, resolvedPath].join('\n > ')
       )
-      paths = []
+      intermediatePaths = []
       return undefined
     }
     /* Possibly dive deep further */
     const value = resolved?.value
-    paths = []
+    intermediatePaths = []
     return value
   }
   return returned
