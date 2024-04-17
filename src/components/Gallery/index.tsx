@@ -164,7 +164,7 @@ export default class Gallery extends Component<Props, State> {
     const buttonClasses = [buttonBemClass.value]
     const prevButtonClasses = [buttonBemClass.mod('prev').value, ...buttonClasses]
     const nextButtonClasses = [buttonBemClass.mod('next').value, ...buttonClasses]
-    const dotsBemClass = bem(rootClass).elt('dot')
+    const dotsBemClass = bem(rootClass).elt('dots')
     const dotsClasses = [dotsBemClass.value]
     return <div
       style={wrapperStyle}
