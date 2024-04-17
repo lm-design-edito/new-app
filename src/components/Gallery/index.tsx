@@ -164,6 +164,8 @@ export default class Gallery extends Component<Props, State> {
     const buttonClasses = [buttonBemClass.value]
     const prevButtonClasses = [buttonBemClass.mod('prev').value, ...buttonClasses]
     const nextButtonClasses = [buttonBemClass.mod('next').value, ...buttonClasses]
+    const dotsBemClass = bem(rootClass).elt('dot')
+    const dotsClasses = [dotsBemClass.value]
     return <div
       style={wrapperStyle}
       className={wrapperClasses.join(' ')}>
@@ -194,6 +196,13 @@ export default class Gallery extends Component<Props, State> {
         className={nextButtonClasses.join(' ')}>
         {props.nextButtonContent}
       </button>
+      <div className={dotsClasses.join(' ')}>
+        {props.itemsContent?.map((_, itemPos) => {
+          const dotBemClass = bem(rootClass).elt('dot').mod({ current: itemPos === state.currentSlotPos })
+          const dotClasses = [dotBemClass.value]
+          return <div className={dotClasses.join(' ')}></div>
+        })}
+      </div>
     </div>
   }
 }
