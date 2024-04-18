@@ -5,7 +5,9 @@ import clone from '../clone'
 const print: Darkdouille.TransformerFunctionGenerator<Darkdouille.TreeValue> = (...args) => {
   return inputValue => {
     const resolvedArgs = resolveArgs(inputValue, ...args)
-    console.log(...resolvedArgs, clone()(inputValue))
+    resolvedArgs.forEach((arg, argPos) => console.log(`arg ${argPos}:`, clone()(arg)))
+    if (resolvedArgs.length === 0) console.log(clone()(inputValue))
+    else console.log('input value:', clone()(inputValue))
     return inputValue
   }
 }

@@ -1,3 +1,5 @@
+import { randomHash } from '~/utils/random-uuid'
+
 /* Cast transformers */
 import toString from './transformers/toString'
 import toNumber from './transformers/toNumber'
@@ -44,7 +46,8 @@ import print from './transformers/print'
 import { set, get } from './transformers/variables'
 import cond from './transformers/cond'
 import loop from './transformers/loop'
-import { randomHash } from '~/utils/random-uuid'
+import evalDkdll from './transformers/evalDkdll'
+import typeOf from './transformers/typeOf'
 
 export namespace Darkdouille {
   export type TreeConstructorOptions = {
@@ -57,7 +60,9 @@ export namespace Darkdouille {
   export type Transformer<T extends TreeValue = TreeValue> = (input: TreeValue) => T
   export type TransformerFunctionGenerator<T extends TreeValue = TreeValue> = (...args: (TreeValue | Transformer)[]) => Transformer<T>
   export type TreePrimitiveValue = string | number | boolean | null | undefined | NodeListOf<Node>
-  export type TreeValue = TreePrimitiveValue | TreeValue[] | { [key: string]: TreeValue }
+  export type TreeArrayValue = TreeValue[]
+  export type TreeRecordValue = { [key: string]: TreeValue }
+  export type TreeValue = TreePrimitiveValue | TreeArrayValue | TreeRecordValue
 
   export class Tree {
     node: Node
@@ -278,7 +283,7 @@ export namespace Darkdouille {
             }
             if (subtree.kind === 'text') return { ...reduced, [key]: subtree.value }
             return reduced
-          }, {} as { [key: string]: TreeValue })
+          }, {} as TreeRecordValue)
         
         } else if (form.hasElements) {
           const fragment = document.createDocumentFragment()
@@ -460,6 +465,9 @@ export namespace Darkdouille {
       if (name === FunctionName.GET) return get(this.resolve.bind(this))
       if (name === FunctionName.COND) return cond
       if (name === FunctionName.LOOP) return loop
+      if (name === FunctionName.EVALDKDLL) return evalDkdll(this.resolve.bind(this))
+      if (name === FunctionName.TYPEOF) return typeOf
+
       return () => input => input
     }
 
@@ -691,7 +699,9 @@ export namespace Darkdouille {
     SET = 'set',
     GET = 'get',
     COND = 'cond',
-    LOOP = 'loop'
+    LOOP = 'loop',
+    EVALDKDLL = 'evaldkdll',
+    TYPEOF = 'typeof'
   }
 
   export const Functions = Object.values(FunctionName)
@@ -709,8 +719,8 @@ export namespace Darkdouille {
     /* Number   */ add, subtract, multiply, pow, divide, max, min, clamp, greater, smaller, equals,
     /* String   */ append, prepend, replace, trim, split,
     /* Array    */ join, at, map, push,
-    /* NodeList */ classList, querySelector, transformSelected,
-    /* Utility  */ that, clone, print, set, get, cond, loop
+    /* NodeList */ attributes, classList, querySelector, transformSelected,
+    /* Utility  */ that, clone, print, set, get, cond, loop, evalDkdll, typeOf
   }
 
   /* ========== HELPERS ========== */
@@ -758,7 +768,7 @@ export namespace Darkdouille {
     return 'element'
   }
 
-  export function valueIsRecord (value: TreeValue): value is { [key: string]: TreeValue } {
+  export function valueIsRecord (value: TreeValue): value is TreeRecordValue {
     return typeof value === 'object'
       && !Array.isArray(value)
       && !(value instanceof NodeList)

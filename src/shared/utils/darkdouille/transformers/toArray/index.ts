@@ -3,8 +3,8 @@ import toNumber from '../toNumber'
 import clone from '../clone'
 import { resolveArgs } from '../_utils/resolveArgs'
 
-const toArray: Darkdouille.TransformerFunctionGenerator<Darkdouille.TreeValue[]> = (...args) => {
-  return (inputValue): Darkdouille.TreeValue[] => {
+const toArray: Darkdouille.TransformerFunctionGenerator<Darkdouille.TreeArrayValue> = (...args) => {
+  return (inputValue): Darkdouille.TreeArrayValue => {
     const resolvedArgs = resolveArgs(inputValue, ...args)
     const arrayLengthArg = resolvedArgs[0]
     let targetArrayLength: number | undefined = undefined
