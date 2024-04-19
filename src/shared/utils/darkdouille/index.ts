@@ -46,7 +46,8 @@ import print from './transformers/print'
 import { set, get } from './transformers/variables'
 import cond from './transformers/cond'
 import loop from './transformers/loop'
-import evalDkdll from './transformers/evalDkdll'
+import asDkdll from './transformers/asDkdll'
+import toDkdll from './transformers/toDkdll'
 import typeOf from './transformers/typeOf'
 
 export namespace Darkdouille {
@@ -465,7 +466,8 @@ export namespace Darkdouille {
       if (name === FunctionName.GET) return get(this.resolve.bind(this))
       if (name === FunctionName.COND) return cond
       if (name === FunctionName.LOOP) return loop
-      if (name === FunctionName.EVALDKDLL) return evalDkdll(this.resolve.bind(this))
+      if (name === FunctionName.ASDKDLL) return asDkdll(this.resolve.bind(this))
+      if (name === FunctionName.TODKDLL) return toDkdll
       if (name === FunctionName.TYPEOF) return typeOf
 
       return () => input => input
@@ -700,7 +702,8 @@ export namespace Darkdouille {
     GET = 'get',
     COND = 'cond',
     LOOP = 'loop',
-    EVALDKDLL = 'evaldkdll',
+    ASDKDLL = 'asdkdll',
+    TODKDLL = 'todkdll',
     TYPEOF = 'typeof'
   }
 
@@ -720,7 +723,7 @@ export namespace Darkdouille {
     /* String   */ append, prepend, replace, trim, split,
     /* Array    */ join, at, map, push,
     /* NodeList */ attributes, classList, querySelector, transformSelected,
-    /* Utility  */ that, clone, print, set, get, cond, loop, evalDkdll, typeOf
+    /* Utility  */ that, clone, print, set, get, cond, loop, asDkdll, toDkdll, typeOf
   }
 
   /* ========== HELPERS ========== */
