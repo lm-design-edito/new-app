@@ -136,15 +136,30 @@ export namespace Events {
     payload: unknown,
     details: Omit<HandlerDetails, 'globals'>) {
     const handlersAsArr = Array.isArray(handlers) ? handlers : [handlers]
+    const globals = Globals.globalObj
+    const logger = globals[Globals.GlobalKey.LOGGER]
+    logger?.log(
+      'Events',
+      `%cDispatch`,
+      'font-weight: 800;',
+      `'${details.type}' from app with public id '${details.initiator.id}', and payload :`,
+      payload)
     for (const handler of handlersAsArr) {
       const actualHandler = typeof handler === 'string'
         ? getRegisteredHandler(handler)
         : handler
       if (actualHandler === undefined) continue
-      await actualHandler(payload, {
-        ...details,
-        globals: { ...Globals.globalObj }
-      })
+      const output = await actualHandler(payload, { ...details, globals })
+      logger?.log(
+        'Events',
+        `%cHandle`,
+        'font-weight: 800;',
+        `'${details.type}' with handler`,
+        handler,
+        `, arguments`,
+        [payload, { ...details, globals }],
+        `. Returned`,
+        output)
     }
   }
 
@@ -153,15 +168,31 @@ export namespace Events {
     payload: unknown,
     details: Omit<HandlerDetails, 'globals'>) {
     const handlersAsArr = Array.isArray(handlers) ? handlers : [handlers]
+    const globals = Globals.globalObj
+    const logger = globals[Globals.GlobalKey.LOGGER]
+    logger?.log(
+      'Events',
+      `%cDispatch`,
+      'font-weight: 800;',
+      `'${details.type}' from app with public id '${details.initiator.id}', and payload :`,
+      payload)
     await Promise.all(handlersAsArr.map(handler => {
       const actualHandler = typeof handler === 'string'
         ? getRegisteredHandler(handler)
         : handler
       if (actualHandler === undefined) return;
-      return actualHandler(payload, {
-        ...details,
-        globals: { ...Globals.globalObj }
-      })
+      const output = actualHandler(payload, { ...details, globals })
+      logger?.log(
+        'Events',
+        `%cHandle`,
+        'font-weight: 800;',
+        `'${details.type}' with handler`,
+        handler,
+        `, arguments`,
+        [payload, { ...details, globals }],
+        `. Returned`,
+        output)
+      return output
     }))
   }
 
