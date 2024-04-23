@@ -4,6 +4,7 @@ import toHtml from '../toHtml'
 
 const asDkdll = (resolve: Darkdouille.TreeResolver): Darkdouille.TransformerFunctionGenerator<Darkdouille.TreeValue> => () => {
   const returned: Darkdouille.Transformer<Darkdouille.TreeValue> = (inputValue) => {
+    if (!(inputValue instanceof NodeList)) return inputValue
     const thisTree = resolve('.')
     const htmlValue = toHtml()(clone()(inputValue))
     const elements = Array.from(htmlValue).filter((node): node is Element => node instanceof Element)

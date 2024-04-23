@@ -1,5 +1,6 @@
 import { Darkdouille } from '../..'
 import { resolveArgs } from '../_utils/resolveArgs'
+import clone from '../clone'
 
 // [WIP] since values are resolved from tree bottom to top, variables
 // declared below will be created before those declared above. We cannot
@@ -21,7 +22,7 @@ const set = (resolve: Darkdouille.TreeResolver): Darkdouille.TransformerFunction
     const [name, rawValue] = resolvedArgs
     const value = rawValue ?? inputValue
     const thisVariables = registry.get(path)
-    if (thisVariables === undefined) registry.set(path, new Map([[name, value]]))
+    if (thisVariables === undefined) registry.set(path, new Map([[name, clone()(value)]]))
     else thisVariables.set(name, value)
     return inputValue
   }
@@ -31,12 +32,24 @@ const get = (resolve: Darkdouille.TreeResolver): Darkdouille.TransformerFunction
   return inputValue => {
     const path = resolve('./')?.path
     if (path === undefined) return inputValue
+    const allParentPaths = path
+      .replace(/^\//igm, '')
+      .split('/').reduce<string[]>((reduced, _chunk, chunkPos, chunks) => ([...reduced, chunks.slice(0, chunkPos + 1).join('/')]), [])
+      .map(path => `/${path}`)
+      .reverse()
     const resolvedArgs = resolveArgs(inputValue, ...args)
     const [name] = resolvedArgs
-    const thisVariables = registry.get(path)
-    if (thisVariables === undefined) return undefined
-    const theVariable = thisVariables.get(name)
-    return theVariable
+    const found = allParentPaths.map(parentPath => {
+      const parentVariables = registry.get(parentPath)
+      if (parentVariables === undefined) return undefined
+      const theVariable = parentVariables.get(name)
+      return theVariable 
+    }).find(item => item !== undefined)
+    return found
+    // const thisVariables = registry.get(path)
+    // if (thisVariables === undefined) return undefined
+    // const theVariable = thisVariables.get(name)
+    // return theVariable
   }
 }
 

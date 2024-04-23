@@ -39,6 +39,9 @@ import attributes from './transformers/attributes'
 import classList from './transformers/classList'
 import querySelector from './transformers/querySelector'
 import transformSelected from './transformers/transformSelected'
+import childNodes from './transformers/childNodes'
+import appendDkdll from './transformers/appendDkdll'
+import prependDkdll from './transformers/prependDkdll'
 /* Utility transformers */
 import that from './transformers/this'
 import clone from './transformers/clone'
@@ -457,6 +460,9 @@ export namespace Darkdouille {
       if (name === FunctionName.CLASSLIST) return classList
       if (name === FunctionName.QUERYSELECTOR) return querySelector
       if (name === FunctionName.TRANSFORMSELECTED) return transformSelected
+      if (name === FunctionName.CHILDNODES) return childNodes
+      if (name === FunctionName.APPENDDKDLL) return appendDkdll
+      if (name === FunctionName.PREPENDDKDLL) return prependDkdll
 
       /* Utils */
       if (name === FunctionName.THIS) return that
@@ -694,6 +700,9 @@ export namespace Darkdouille {
     CLASSLIST = 'classlist',
     QUERYSELECTOR = 'queryselector',
     TRANSFORMSELECTED = 'transformselected',
+    CHILDNODES = 'childnodes',
+    APPENDDKDLL = 'appenddkdll',
+    PREPENDDKDLL = 'prependdkdll',
     /* Utility */
     THIS = 'this',
     CLONE = 'clone',
@@ -722,7 +731,7 @@ export namespace Darkdouille {
     /* Number   */ add, subtract, multiply, pow, divide, max, min, clamp, greater, smaller, equals,
     /* String   */ append, prepend, replace, trim, split,
     /* Array    */ join, at, map, push,
-    /* NodeList */ attributes, classList, querySelector, transformSelected,
+    /* NodeList */ attributes, classList, querySelector, transformSelected, childNodes, appendDkdll, prependDkdll,
     /* Utility  */ that, clone, print, set, get, cond, loop, asDkdll, toDkdll, typeOf
   }
 

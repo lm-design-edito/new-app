@@ -19,12 +19,13 @@ const transformSelected: Darkdouille.TransformerFunctionGenerator<NodeListOf<Nod
     targets.forEach(target => {
       const clonedTarget = target.cloneNode(true) as Element
       const toTransform = clone<NodeListOf<Node>>()(toNodeList(clonedTarget))
-      const transformed = rawTransformers.reduce<NodeListOf<Node>>((reduced, rawTransformer) => {
-        const resolvedTransformer = resolveArgs(reduced, rawTransformer)
-        return toHtml()(resolvedTransformer)
+      const rawTransformed = rawTransformers.reduce<NodeListOf<Node>>((reduced, rawTransformer) => {
+        const resolvedTransformer = resolveArgs(reduced, rawTransformer)[0]
+        return resolvedTransformer
       }, toTransform)
+      const htmlTransformed = toHtml()(rawTransformed)
       Array
-        .from(transformed)
+        .from(htmlTransformed)
         .reverse()
         .forEach(node => insertNode(node, 'after', target))
       target.remove()
