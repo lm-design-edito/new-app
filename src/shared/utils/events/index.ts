@@ -30,6 +30,10 @@ export namespace Events {
     CHECKBOX_OR_RADIO_CHANGE = 'checkbox-or-radio-change',
     /* Event Listener */
     EVENT_LISTENER_EVENT = 'event-listener-event',
+    GALLERY_SLIDE_CHANGE = 'gallery-slide-change',
+    GALLERY_PREV_CLICK = 'gallery-prev-click',
+    GALLERY_NEXT_CLICK = 'gallery-next-click',
+    GALLERY_DOT_CLICK = 'gallery-dot-click',
     /* Intersection Observer */
     INTERSECTION_OBSERVER_CALLBACK = 'intersection-observer-callback',
     /* Resize Observer */

@@ -10,17 +10,21 @@ export type Props = {
   nextButtonContent?: string | VNode
   snapScroll?: boolean
   scrollerWidth?: string
+  onSlideChange?: (payload: State) => void
+  onPrevClick?: (payload: State) => void
+  onNextClick?: (payload: State) => void
+  onDotClick?: (payload: State & { dotPos: number }) => void
 }
 
-type State = {
+export type State = {
   currentSlotPos: number
   isAtStart: boolean
   isAtEnd: boolean
 }
 
 export default class Gallery extends Component<Props, State> {
-  $stateUpdaterTimeout: number | null = null
-  $stateUpdaterInterval: number | null = null
+  stateUpdaterTimeout: number | null = null
+  stateUpdaterInterval: number | null = null
   $scroller: HTMLDivElement | null = null
   $slots: Array<HTMLDivElement | null> = []
   state: State = {
@@ -32,17 +36,18 @@ export default class Gallery extends Component<Props, State> {
   constructor (props: Props) {
     super(props)
     this.handleScroll = this.handleScroll.bind(this)
-    this.throttledHandleScroll = this.throttledHandleScroll.bind(this)
+    this.throttledUpdateState = this.throttledUpdateState.bind(this)
     this.getComputedPositions = this.getComputedPositions.bind(this)
     this.updateState = this.updateState.bind(this)
     this.resetScroll = this.resetScroll.bind(this)
     this.handleButtonClick = this.handleButtonClick.bind(this)
-    this.$stateUpdaterInterval = window.setInterval(this.updateState.bind(this), 1000)
+    this.setCurrentPage = this.setCurrentPage.bind(this)
+    this.stateUpdaterInterval = window.setInterval(this.updateState.bind(this), 1000)
   }
 
   componentWillUnmount(): void {
-    const intervalId = this.$stateUpdaterInterval
-    const timeoutId = this.$stateUpdaterTimeout
+    const intervalId = this.stateUpdaterInterval
+    const timeoutId = this.stateUpdaterTimeout
     if (intervalId !== null) window.clearInterval(intervalId)
     if (timeoutId !== null) window.clearTimeout(timeoutId)
   }
@@ -50,25 +55,19 @@ export default class Gallery extends Component<Props, State> {
   componentDidMount(): void {
     this.resetScroll()
     this.updateState()
-    this.$stateUpdaterTimeout = window.setTimeout(() => {
+    this.stateUpdaterTimeout = window.setTimeout(() => {
       this.resetScroll()
       this.updateState()
-    }, 50)
+    }, 100)
   }
-
-  handleScroll () {
-    this.throttledHandleScroll()
-  }
-
-  throttledHandleScroll = throttle(() => this.updateState(), 200).throttled
 
   getComputedPositions () {
     const { $scroller } = this
     if ($scroller === null) return;
-    const slotsSizeData = this.$slots.map($slot => {
-      if ($slot === null) return new DOMRect(0, 0, 0, 0)
-      return $slot.getBoundingClientRect()
-    }).reduce<Array<{
+    const slotsDomRects = this.$slots.map($slot => $slot === null
+      ? new DOMRect(0, 0, 0, 0)
+      : $slot.getBoundingClientRect())
+    const slotsSizeData = slotsDomRects.reduce<Array<{
         clientRect: DOMRect
         width: number
         left: number
@@ -108,16 +107,21 @@ export default class Gallery extends Component<Props, State> {
   }
 
   updateState () {
-    const { getComputedPositions } = this
+    const { getComputedPositions, props } = this
     const computedPositions = getComputedPositions() ?? {} as Partial<NonNullable<ReturnType<typeof getComputedPositions>>>
     const {
       slotsPositionData = [],
       currentScrollValue = 0,
       wrapperMaxScrollValue = 0
     } = computedPositions
-    const indexOfCurrent = slotsPositionData.findIndex(slotPosData => slotPosData.isCurrent === true)
-    const isAtStart = currentScrollValue <= 2 || indexOfCurrent <= 0
-    const isAtEnd = (wrapperMaxScrollValue - currentScrollValue <= 2) || indexOfCurrent >= slotsPositionData.length - 1
+    const indexOfCentered = slotsPositionData.findIndex(slotPosData => slotPosData.isCurrent === true)
+    const isAtStart = currentScrollValue <= 2 || indexOfCentered <= 0
+    const isAtEnd = (wrapperMaxScrollValue - currentScrollValue <= 2) || indexOfCentered >= slotsPositionData.length - 1
+    let indexOfCurrent: number
+    // [WIP] should not fallback on 0 and length, but last unsnappable to the left, and first unsnappable to the right
+    if (isAtStart) { indexOfCurrent = 0 }
+    else if (isAtEnd) { indexOfCurrent = slotsPositionData.length - 1 }
+    else { indexOfCurrent = indexOfCentered }
     this.setState(curr => {
       if (curr.currentSlotPos === indexOfCurrent
         && curr.isAtStart === isAtStart
@@ -128,7 +132,16 @@ export default class Gallery extends Component<Props, State> {
         isAtStart,
         isAtEnd
       }
+    }, () => {
+      const { onSlideChange } = props
+      if (onSlideChange !== undefined) onSlideChange({ ...this.state })
     })
+  }
+
+  throttledUpdateState = throttle(() => this.updateState(), 200).throttled
+
+  handleScroll () {
+    this.throttledUpdateState()
   }
 
   resetScroll () {
@@ -137,32 +150,26 @@ export default class Gallery extends Component<Props, State> {
     $scroller.scrollLeft = 0
   }
 
+  setCurrentPage (position: number) {
+    const { getComputedPositions, $scroller } = this
+    if ($scroller === null) return;
+    const computedPositions = getComputedPositions()
+    if (computedPositions === undefined) return;
+    const { slotsPositionData } = computedPositions
+    const targetElement = slotsPositionData?.[position]
+    if (targetElement === undefined) return;
+    const { distanceToScrollerCenter } = targetElement
+    $scroller.scrollLeft += distanceToScrollerCenter
+  }
+
   handleButtonClick (goForward: boolean = true) {
-    // const { $scroller } = this
-    // if ($scroller === null) return;
-    // const scrollerWidth = $scroller.clientWidth
-    // const targetForSnap = scrollerWidth / 2
-    // const slotsPositionData = this.getComputedPositions()
-    // if (slotsPositionData === undefined) return;
-    // const snappedPos = slotsPositionData.findIndex(slot => slot.isSnapped === true)
-    // const targetPos = goForward
-    //   ? snappedPos + 1
-    //   : snappedPos - 1
-    // const targetSlotPositionData = slotsPositionData[targetPos]
-    // if (targetSlotPositionData === undefined) return;
-    // const { left: targetLeft, right: targetRight } = targetSlotPositionData.clientRect
-    // const targetCenter = (targetLeft + targetRight) / 2
-    // const snappedSlotPositionData = slotsPositionData[snappedPos]
-    // let toScroll = 0
-    // if (snappedSlotPositionData !== undefined) {
-    //   const { left: snappedLeft, right: snappedRight } = snappedSlotPositionData.clientRect
-    //   const snappedCenter = (snappedLeft + snappedRight) / 2
-    //   const diff = snappedCenter - targetForSnap
-    //   console.log(diff)
-    //   if (diff > 0 === goForward && Math.abs(diff) > 5) { toScroll = diff }
-    //   else { toScroll = targetCenter - targetForSnap }
-    // } else { toScroll = targetCenter - targetForSnap }
-    // $scroller.scrollLeft += toScroll
+    const { props, state, setCurrentPage } = this
+    const { currentSlotPos } = state
+    const targetPosition = goForward ? currentSlotPos + 1 : currentSlotPos - 1
+    setCurrentPage(targetPosition)
+    const { onPrevClick, onNextClick } = props
+    if (goForward && onNextClick !== undefined) onNextClick({ ...this.state })
+    if (!goForward && onPrevClick !== undefined) onPrevClick({ ...this.state })
   }
 
   render () {
@@ -190,7 +197,6 @@ export default class Gallery extends Component<Props, State> {
       className={wrapperClasses.join(' ')}>
       <div
         ref={n => { this.$scroller = n }}
-        style={{ backgroundColor: 'blue' }}
         className={scrollerClasses.join(' ')}
         onScroll={this.handleScroll}>
         {props.itemsContent?.map((itemContent, itemPos) => {
@@ -219,7 +225,12 @@ export default class Gallery extends Component<Props, State> {
         {props.itemsContent?.map((_, itemPos) => {
           const dotBemClass = bem(rootClass).elt('dot').mod({ current: itemPos === state.currentSlotPos })
           const dotClasses = [dotBemClass.value]
-          return <div className={dotClasses.join(' ')}></div>
+          const handler = () => {
+            const { onDotClick } = props
+            this.setCurrentPage(itemPos)
+            if (onDotClick !== undefined) onDotClick({ ...this.state, dotPos: itemPos })
+          }
+          return <div className={dotClasses.join(' ')} onClick={handler} />
         })}
       </div>
     </div>

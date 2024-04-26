@@ -1,9 +1,7 @@
 import { Component, ComponentClass, VNode } from 'preact'
-import appConfig from '~/config'
 import {  Events } from '~/shared/events'
 import { Globals } from '~/shared/globals'
 import { LmHtml } from '~/shared/lm-html'
-import { Slots } from '~/shared/slots'
 import { toString } from '~/utils/cast'
 import isArrayOf from '~/utils/is-array-of'
 import isRecord from '~/utils/is-record'
@@ -16,13 +14,14 @@ export namespace Apps {
     _SLIDESHOW = '_slideshow',
     AUDIOQUOTE = 'audioquote',
     DRAWER = 'drawer',
+    EVENT_LISTENER = 'event-listener',
     GALLERY = 'gallery',
     HEADER = 'header',
+    INTERSECTION_OBSERVER = 'intersection-observer',
+    NAVIGATION = 'navigation',
+    RESIZE_OBSERVER = 'resize-observer',
     SCRLLGNGN = 'scrllgngn',
     UI = 'ui',
-    RESIZE_OBSERVER = 'resize-observer',
-    INTERSECTION_OBSERVER = 'intersection-observer',
-    EVENT_LISTENER = 'event-listener',
   }
 
   export const rendered: Array<{
@@ -43,19 +42,14 @@ export namespace Apps {
       if (name === Name._SLIDESHOW) { loaded = (await import('~/apps/_slideshow')).default }
       if (name === Name.AUDIOQUOTE) { loaded = (await import('~/apps/audioquote')).default }
       if (name === Name.DRAWER) { loaded = (await import('~/apps/drawer')).default }
+      if (name === Name.EVENT_LISTENER) { loaded = (await import('~/apps/event-listener')).default }
       if (name === Name.GALLERY) { loaded = (await import('~/apps/gallery')).default }
       if (name === Name.HEADER) { loaded = (await import('~/apps/header')).default }
-      if (name === Name.SCRLLGNGN) { loaded = (await import('~/apps/scrllgngn')).default }
-      if (name === Name.RESIZE_OBSERVER) { loaded = (await import('~/apps/resize-observer')).default }
       if (name === Name.INTERSECTION_OBSERVER) { loaded = (await import('~/apps/intersection-observer')).default }
-      if (name === Name.EVENT_LISTENER) { loaded = (await import('~/apps/event-listener')).default }
-      if (name === Name.UI) {
-        const uiStyles = appConfig.paths.STYLES_UI_URL.toString()
-        Slots.injectStyles('url', uiStyles, { position: Slots.StylesPositions.APP })
-        const logger = Globals.retrieve(Globals.GlobalKey.LOGGER)
-        logger?.log('Styles', '%cStylesheet injected', 'font-weight: 800;', uiStyles)
-        loaded = (await import('~/apps/ui')).default
-      }
+      if (name === Name.NAVIGATION) { loaded = (await import('~/apps/navigation')).default }
+      if (name === Name.RESIZE_OBSERVER) { loaded = (await import('~/apps/resize-observer')).default }
+      if (name === Name.SCRLLGNGN) { loaded = (await import('~/apps/scrllgngn')).default }
+      if (name === Name.UI) { loaded = (await import('~/apps/ui')).default }
       if (loaded === null) throw null
       return loaded
     } catch (err) {
@@ -128,10 +122,6 @@ export namespace Apps {
       name={publicName} />
     logger?.log('Render', '%cRendered app', 'font-weight: 800', `'${name}', with public id '${publicName}' and props`, props)
     return appComponent
-  }
-
-  export function updatePropsOf (apps: App[], updater: AppPropsSetter) {
-    apps.forEach(app => app.updateProps(updater))
   }
 
   export function getAppByName (name: string) {

@@ -29,7 +29,15 @@
   display: block;
   flex-grow: 0;
   flex-shrink: 0;
-  width: calc((100% - var(--scroller-width, 100%)) / 2);
+  --PRIVATE-offset-size: calc((100% - var(--scroller-width, 100%)) / 2);
+}
+
+.scroller::before {
+  margin-left: var(--PRIVATE-offset-size);
+}
+
+.scroller::after {
+  margin-right: var(--PRIVATE-offset-size);
 }
 
 .slot {
