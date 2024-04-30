@@ -17,7 +17,15 @@ const SHARED_ASSETS_ICONS_URL = new URL(`${SHARED_ASSETS_URL.href.replace(/\/$/,
 const STYLES_URL = new URL(`${SHARED_URL.href.replace(/\/$/, '')}/styles`)                              // shared/styles/
 const STYLES_FONTS_URL = new URL(`${STYLES_URL.href.replace(/\/$/, '')}/fonts.css`)                     // shared/styles/fonts.css
 const STYLES_INDEX_URL = new URL(`${STYLES_URL.href.replace(/\/$/, '')}/index.css`)                     // shared/styles/index.css
-// const STYLES_UI_URL = new URL(`${STYLES_URL.href.replace(/\/$/, '')}/ui.css`)                           // shared/styles/ui.css.css
+
+// SLOTS
+const slotsHeadStylesElementClass = 'lm-slots-head-section'
+const slotsRootElementClass = 'lm-slot'
+const slotsShadowElementClass = 'lm-slot__shadow'
+const slotsLightElementClass = 'lm-slot__light'
+const slotsInnerElementClass = 'lm-slot-inner'
+const slotsStylesElementClass = 'lm-slot-inner__styles'
+const slotsContentElementClass = 'lm-slot-inner__content'
 
 // THEME
 const THEME_ICONS_DIR_REL_PATH = '/icons'
@@ -56,6 +64,15 @@ export default {
     THEME_ICONS_DIR_REL_PATH,
     THEME_ICONS_REGISTRY_REL_PATH,
     THEME_ICONS_ASSETS_DIR_PATH
+  },
+  slots: {
+    headStylesElementClass: slotsHeadStylesElementClass,
+    rootElementClass: slotsRootElementClass,
+    shadowElementClass: slotsShadowElementClass,
+    lightElementClass: slotsLightElementClass,
+    innerElementClass: slotsInnerElementClass,
+    styleElementClass: slotsStylesElementClass,
+    contentElementClass: slotsContentElementClass
   },
   dataSourceSelector: 'data.dkdll',
   dataSourcesReservedNames: {

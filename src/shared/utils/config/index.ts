@@ -21,7 +21,8 @@ export namespace Config {
     CSS = 'css',
     STYLESHEET = 'stylesheet',
     SCALE = 'scale',
-    HANDLERS_FILE = 'handlersFile'
+    HANDLERS_FILE = 'handlersFile',
+    NO_SHADOW = 'noShadow'
   }
 
   export type ConfigInstruction = {
@@ -130,7 +131,7 @@ export namespace Config {
         const valueIsRecord = Darkdouille.valueIsRecord(value)
         if (!valueIsRecord) return
         const name = toString(value.name)
-        const root = value.root !== undefined ? toString(value.root) : ':host'
+        const root = value.root !== undefined ? toString(value.root) : ':root,:host'
         const bounds = Array.isArray(value.bounds)
           ? value.bounds.map(val => toNumber(val))
           : undefined
@@ -204,6 +205,9 @@ export namespace Config {
       
       // HANDLERS_FILE
       if (name === RemoteInstructionName.HANDLERS_FILE) Events.fetchAndRegister(toString(value))
+
+      // NO_SHADOW
+      if (name === RemoteInstructionName.NO_SHADOW) Slots.setIsolationMode(!toBoolean(value))
     })
   }
 }
