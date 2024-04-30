@@ -18,7 +18,7 @@ export enum Bucket {
   V1_ALPHA = 'gs://decodeurs/design-edito/v1.alpha',
   V1_BETA = 'gs://decodeurs/design-edito/v1.beta',
   V1_DELTA = 'gs://decodeurs/design-edito/v1.delta',
-  TEST = 'gs://decodeurs/design-edito/240314-delete-me-im-a-test'
+  V1_ECHO = 'gs://decodeurs/design-edito/v1.echo'
 }
 
 export type BucketMetaData = {
@@ -39,9 +39,9 @@ export const bucketsMetadataMap = new Map<Bucket, BucketMetaData>([
     publicUrl: 'https://assets-decodeurs.lemonde.fr/design-edito/v1.delta',
     versionRange: '>=1.0.0-delta <=1.0.0-delta.999999999'
   }],
-  [Bucket.TEST, {
-    publicUrl: 'https://assets-decodeurs.lemonde.fr/design-edito/240314-delete-me-im-a-test',
-    versionRange: '>=0.0.0-a'
+  [Bucket.V1_ECHO, {
+    publicUrl: 'https://assets-decodeurs.lemonde.fr/design-edito/v1.echo',
+    versionRange: '>=1.0.0-echo <=1.0.0-echo.999999999'
   }]
 ])
 
