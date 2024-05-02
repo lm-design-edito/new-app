@@ -1,4 +1,5 @@
 import { randomHash } from '~/utils/random-uuid'
+import isRecord from '~/utils/is-record'
 
 /* Cast transformers */
 import toString from './transformers/toString'
@@ -52,6 +53,7 @@ import loop from './transformers/loop'
 import asDkdll from './transformers/asDkdll'
 import toDkdll from './transformers/toDkdll'
 import typeOf from './transformers/typeOf'
+import global from './transformers/global'
 
 export namespace Darkdouille {
   export type TreeConstructorOptions = {
@@ -475,6 +477,7 @@ export namespace Darkdouille {
       if (name === FunctionName.ASDKDLL) return asDkdll(this.resolve.bind(this))
       if (name === FunctionName.TODKDLL) return toDkdll
       if (name === FunctionName.TYPEOF) return typeOf
+      if (name === FunctionName.GLOBAL) return global
 
       return () => input => input
     }
@@ -713,7 +716,8 @@ export namespace Darkdouille {
     LOOP = 'loop',
     ASDKDLL = 'asdkdll',
     TODKDLL = 'todkdll',
-    TYPEOF = 'typeof'
+    TYPEOF = 'typeof',
+    GLOBAL = 'global'
   }
 
   export const Functions = Object.values(FunctionName)
@@ -732,7 +736,7 @@ export namespace Darkdouille {
     /* String   */ append, prepend, replace, trim, split,
     /* Array    */ join, at, map, push,
     /* NodeList */ attributes, classList, querySelector, transformSelected, childNodes, appendDkdll, prependDkdll,
-    /* Utility  */ that, clone, print, set, get, cond, loop, asDkdll, toDkdll, typeOf
+    /* Utility  */ that, clone, print, set, get, cond, loop, asDkdll, toDkdll, typeOf, global
   }
 
   /* ========== HELPERS ========== */
@@ -835,6 +839,40 @@ export namespace Darkdouille {
       return wrapper
     }
     return createPrimitiveValueNode(value)
+  }
+
+  export function toTreeValue (input: unknown): TreeValue {
+    if (input === undefined) return undefined
+    if (input === null) return null
+    if (typeof input === 'string') return input
+    if (typeof input === 'number') return input
+    if (typeof input === 'boolean') return input
+    if (input instanceof NodeList) return input as NodeListOf<Node>
+    if (Array.isArray(input)) return input.map(toTreeValue)
+    if (isRecord(input)) {
+      const keys = Object.keys(input)
+      return keys.reduce((reduced, key) => {
+        console.log(key, input[key])
+        const treeVal = toTreeValue(input[key])
+        console.log(treeVal)
+        if (treeVal === undefined) return { ...reduced }
+        return { ...reduced, [key]: treeVal }
+      }, {} as TreeRecordValue)
+    }
+    // if (isRe)
+    // if (Array.isArray(input)) return input.map(toTreeValue)
+    // if (isRecord(input)) {
+    //   const returnedRecord: TreeRecordValue = {}
+    //   const keys = Object.keys(input)
+    //   console.log(keys)
+    //   keys.forEach(key => {
+    //     const val = input[key]
+    //     const treeValueVal = toTreeValue(val)
+    //     if (treeValueVal !== undefined) { returnedRecord[key] = treeValueVal }
+    //   })
+    //   return returnedRecord
+    // }
+    return undefined
   }
 
   // MERGE

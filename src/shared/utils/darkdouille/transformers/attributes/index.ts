@@ -18,7 +18,7 @@ const attributes: Darkdouille.TransformerFunctionGenerator<NodeListOf<Node>> = (
     const [rawAction, rawAttrName, rawAttrValue] = resolvedArgs
     const action = isNotNullish(rawAction) ? toString()(rawAction) : undefined
     const nodeListInput = clone<NodeListOf<Node>>()(toHtml()(inputValue))
-    if (!isInEnum(Action, action)) return nodeListInput
+    if (action === undefined || !isInEnum(Action, action)) return nodeListInput
     const attrName = isNotNullish(rawAttrName) ? toString()(rawAttrName) : undefined
     const attrValue = isNotNullish(rawAttrValue) ? toString()(rawAttrValue) : undefined
     const wrapperDiv = document.createElement('div')

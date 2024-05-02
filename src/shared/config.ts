@@ -23,9 +23,9 @@ const slotsHeadStylesElementClass = 'lm-slots-head-section'
 const slotsRootElementClass = 'lm-slot'
 const slotsShadowElementClass = 'lm-slot__shadow'
 const slotsLightElementClass = 'lm-slot__light'
-const slotsInnerElementClass = 'lm-slot-inner'
-const slotsStylesElementClass = 'lm-slot-inner__styles'
-const slotsContentElementClass = 'lm-slot-inner__content'
+const slotsInnerElementClass = 'lm-slot__inner'
+const slotsStylesElementClass = 'lm-slot__styles'
+const slotsContentElementClass = 'lm-slot__content'
 
 // THEME
 const THEME_ICONS_DIR_REL_PATH = '/icons'

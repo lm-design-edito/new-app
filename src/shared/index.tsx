@@ -107,10 +107,9 @@ async function init () {
   const fontsLinkElt = document.createElement('link')
   fontsLinkElt.setAttribute('rel', 'stylesheet')
   fontsLinkElt.setAttribute('href', fontsStyles)
-  Slots.injectStyles('url', fontsStyles, { name: 'lm-page-main-fonts', position: Slots.StylesPositions.GENERAL })
-  document.head.append(fontsLinkElt)
+  Slots.injectStyles('url', fontsStyles, { name: 'lm-page-main-fonts', position: Slots.StylePosition.HEAD })
   logger.log('Styles', '%cStylesheet injected', 'font-weight: 800;', fontsStyles)
-  Slots.injectStyles('url', mainStyles, { name: 'lm-page-main-styles', position: Slots.StylesPositions.GENERAL })
+  Slots.injectStyles('url', mainStyles, { name: 'lm-page-main-styles', position: Slots.StylePosition.GENERAL })
   logger.log('Styles', '%cStylesheet injected', 'font-weight: 800;', mainStyles)
   
   /* INLINE CONFIG * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

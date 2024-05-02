@@ -9,38 +9,47 @@ export namespace Slots {
 
   export function setIsolationMode (bool: boolean = true): void {
     isolationMode = bool
+    console.log(isolationMode)
     refreshSlotsIsolation()
     refreshStyles()
   }
 
   export const created = new Set<Element>()
 
+  export enum StylePosition {
+    HEAD_ONLY = -1,
+    HEAD = 0,
+    GENERAL = 1,
+    CUSTOM = 9999
+  }
+
+  export const stylePositionNameMap = new Map<string, StylePosition>([
+    ['head-only', StylePosition.HEAD_ONLY],
+    ['head', StylePosition.HEAD],
+    ['general', StylePosition.GENERAL],
+    ['custom', StylePosition.CUSTOM]
+  ])
+
   type StyleData = {
     id: string
     type: 'url' | 'css'
     content: string
     name?: string
-    position?: number
+    position: number
   }
 
   export const styles = new Set<StyleData>()
 
-  export enum StylesPositions {
-    GENERAL = 0,
-    APP = 1,
-    CUSTOM = 2
-  }
-
   type InjectStylesOptions = {
     name?: string,
-    position?: StylesPositions
+    position?: number
   }
 
   export function injectStyles (
     as: 'url' | 'css',
     content: string,
     options: InjectStylesOptions = {}) {
-    const { name, position } = options
+    const { name, position = StylePosition.GENERAL } = options
     const exists = [...styles].find(item => (item.type === as
       && item.content === content
       && item.name === name))
@@ -61,37 +70,6 @@ export namespace Slots {
     names.forEach(name => removeStyle(name))
   }
 
-  export function renderStylesInTarget (target: Element) {
-    const sortedStyles = Array.from(styles).sort((a, b) => {
-      return (a.position ?? 0) - (b.position ?? 0)
-    })
-    return preactRender(<>
-      {sortedStyles.map(styleData => {
-        if (styleData.type === 'css') return <style
-          name={styleData.name}
-          data-lmid={styleData.id}
-          key={styleData.id}>
-          {styleData.content}
-        </style>
-        else if (styleData.type === 'url') return <link
-          name={styleData.name}
-          href={styleData.content}
-          rel='stylesheet'
-          data-lmid={styleData.id}
-          key={styleData.id} />
-        return null
-      })}
-    </>, target)
-  }
-
-  export function removeStylesFromSlots () {
-    created.forEach((slotRootElt) => {
-      const stylesElt = getSlotChild(slotRootElt, 'styles')
-      if (stylesElt === null) return;
-      preactRender(<></>, stylesElt)
-    })
-  }
-
   export function getStylesElementFromHead () {
     const found = document.head.querySelector(`.${appConfig.slots.headStylesElementClass}`)
     if (found !== null) return found
@@ -101,26 +79,47 @@ export namespace Slots {
     return created
   }
 
-  export function removeStylesFromHead () {
-    preactRender(<></>, getStylesElementFromHead())
+  export function styleDataToVNode (styleData: StyleData) {
+    if (styleData.type === 'css') return <style
+      name={styleData.name}
+      data-lmid={styleData.id}
+      data-lmposition={styleData.position}>
+      {styleData.content}
+    </style>
+    return <link
+      rel='stylesheet'
+      href={styleData.content}
+      name={styleData.name}
+      data-lmid={styleData.id}
+      data-lmposition={styleData.position} />
   }
 
   export function refreshStyles () {
-    if (isolationMode === true) {
-      // Isolation mode : render styles in each slot
-      removeStylesFromHead()
-      created.forEach(slotElement => {
-        console.log('refresh for', slotElement)
-        const stylesElt = getSlotChild(slotElement, 'styles')
-        if (stylesElt === null) return;
-        renderStylesInTarget(stylesElt)
-      })
-    } else {
-      // No isolation mode : render styles in head
-      removeStylesFromSlots()
-      const headStylesTarget = getStylesElementFromHead()
-      renderStylesInTarget(headStylesTarget)
-    }
+    const [headStylesData, slotsStylesData] = Array.from(styles).reduce((reduced, styleData) => {
+      const [forHead, forSlots] = reduced
+      if (styleData.position === StylePosition.HEAD_ONLY) return [[...forHead, styleData], forSlots]
+      if (styleData.position === StylePosition.HEAD && isolationMode) return [
+        [...forHead, styleData],
+        [...forSlots, styleData]
+      ]
+      if (isolationMode) return [forHead, [...forSlots, styleData]]
+      return [[...forHead, styleData], forSlots]
+    }, [[], []] as [StyleData[], StyleData[]])
+    const stylesElementFromHead = getStylesElementFromHead()
+    // Render in head
+    preactRender(<>{headStylesData
+      .sort((a, b) => a.position - b.position)
+      .map(styleDataToVNode)
+    }</>, stylesElementFromHead)
+    // Render in slots
+    created.forEach(slotRootElt => {
+      const stylesElt = getSlotChild(slotRootElt, 'styles')
+      if (stylesElt === null) return;
+      preactRender(<>{slotsStylesData
+        .sort((a, b) => a.position - b.position)
+        .map(styleDataToVNode)
+      }</>, stylesElt)
+    })
   }
 
   export function makeSlot (slotRootElt: Element, content: VNode[] | string): Element | undefined {
@@ -160,7 +159,8 @@ export namespace Slots {
     }
 
     // External context detection
-    Externals.setDeviceContextAttribute(innerElt)
+    Externals.setContextAttribute(innerElt, slotRootElt)
+    Externals.setEditionAttribute(innerElt, slotRootElt)
     Externals.setColorModeContextAttribute(innerElt)
     Externals.setParentSnippetAttribute(innerElt)
 

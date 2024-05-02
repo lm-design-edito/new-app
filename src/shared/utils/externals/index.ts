@@ -1,6 +1,15 @@
 import getNodeAncestors from '~/utils/get-node-ancestors'
 
 export namespace Externals {
+
+  type SiteGlobalObj = {
+    isAec: boolean | undefined
+    lang: 'fr' | 'en' | undefined
+  }
+
+  export function getSiteGlobalObj (): SiteGlobalObj {
+    return (window as any).lmd ?? {}
+  }
   
   /* * * * * * * * * * * * * * * * * * * * * *
    *
@@ -13,22 +22,39 @@ export namespace Externals {
 
   /* * * * * * * * * * * * * * * * * * * * * *
    *
-   * Le Monde - AEC detection
+   * Le Monde - Context (website | AEC) detection
    * 
    * * * * * * * * * * * * * * * * * * * * * */
 
   export const leMondeAecHrefRegexp = /apps.([a-z]+\-)?lemonde.(fr|io)/
   export const leMondeWebsiteHrefRegexp = /www.lemonde.fr/
   export const isLeMondeAecViaHref = () => window.location.href.match(leMondeAecHrefRegexp)
-  export const isLeMondeAecViaGlobalVar = () => (((window as any).lmd ?? {})).isAec as boolean | undefined
+  export const isLeMondeAecViaGlobalVar = () => getSiteGlobalObj().isAec
   export const isLeMondeAec = () => isLeMondeAecViaHref() || isLeMondeAecViaGlobalVar()
   export const isLeMondeWebsite = () => window.location.href.match(leMondeWebsiteHrefRegexp)
-  export const deviceContextAttribute = 'data-lm-platform-context'
-  export const setDeviceContextAttribute = (elt: Element) => {
-    if (isLeMondeAec()) return elt.setAttribute(deviceContextAttribute, 'aec')
-    if (isLeMondeWebsite()) return elt.setAttribute(deviceContextAttribute, 'website')
-    else elt.setAttribute(deviceContextAttribute, 'unknown')
+  export const getContext = () => {
+    if (isLeMondeAec()) return 'aec'
+    if (isLeMondeWebsite()) return 'website'
+    return 'unknown'
   }
+  export const contextAttribute = 'data-lm-context'
+  export const setContextAttribute = (...elts: Element[]) => elts.forEach(elt => elt.setAttribute(contextAttribute, getContext()))
+
+  /* * * * * * * * * * * * * * * * * * * * * *
+   *
+   * Le Monde - Edition (fr | en) detection
+   * 
+   * * * * * * * * * * * * * * * * * * * * * */
+
+  export const isLeMondeInFrench = () => getSiteGlobalObj().lang === 'fr'
+  export const isLeMondeInEnglish = () => getSiteGlobalObj().lang === 'en'
+  export const getEdition = () => {
+    if (isLeMondeInFrench()) return 'fr'
+    if (isLeMondeInEnglish()) return 'en'
+    return 'unknown'
+  }
+  export const editionAttribute = 'data-lm-edition'
+  export const setEditionAttribute = (...elts: Element[]) => elts.forEach(elt => elt.setAttribute(editionAttribute, getContext()))
 
   /* * * * * * * * * * * * * * * * * * * * * *
    *
@@ -47,9 +73,11 @@ export namespace Externals {
     const colorMode = firstThemedTargetAncestor.getAttribute(leMondeColorAttributeName)
     return colorMode
   }
-  export const setColorModeContextAttribute = (elt: Element) => {
-    const colorMode = getLeMondeColorModeContext(elt)
-    if (colorMode !== null) elt.setAttribute(Externals.leMondeColorAttributeName, colorMode)
+  export const setColorModeContextAttribute = (...elts: Element[]) => {
+    elts.forEach(elt => {
+      const colorMode = getLeMondeColorModeContext(elt)
+      if (colorMode !== null) elt.setAttribute(Externals.leMondeColorAttributeName, colorMode)
+    })  
   }
   
   /* * * * * * * * * * * * * * * * * * * * * *
@@ -68,12 +96,14 @@ export namespace Externals {
   }
   export const snippetWrapperAttribute = 'data-lm-snippet'
   export const snippetChildAttribute = 'data-lm-snippet-child'
-  export const setParentSnippetAttribute = (elt: Element) => {
-    const snippetParent = getSnippetParent(elt)
-    // [WIP] or get all snippet parents ?
-    if (snippetParent === undefined) return
-    snippetParent.setAttribute(snippetWrapperAttribute, '')
-    elt.setAttribute(snippetChildAttribute, '')
+  export const setParentSnippetAttribute = (...elts: Element[]) => {
+    elts.forEach(elt => {
+      const snippetParent = getSnippetParent(elt)
+      // [WIP] or get all snippet parents ?
+      if (snippetParent === undefined) return
+      snippetParent.setAttribute(snippetWrapperAttribute, '')
+      elt.setAttribute(snippetChildAttribute, '')
+    })
   }
 
   /* * * * * * * * * * * * * * * * * * * * * *

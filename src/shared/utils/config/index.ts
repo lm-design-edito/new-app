@@ -6,7 +6,10 @@ import { Globals } from '~/shared/globals'
 import { Slots } from '~/shared/slots'
 import { toString, toNumber, toBoolean } from '~/utils/cast'
 import interpolate, { ratio } from '~/utils/interpolate'
+import isInEnum from '~/utils/is-in-enum'
+import isRecord from '~/utils/is-record'
 import roundNumbers from '~/utils/round-numbers'
+import stringNormalizeIndent from '~/utils/string-normalize-indent'
 
 export namespace Config {
   export enum InlineOnlyInstructionName {
@@ -19,6 +22,7 @@ export namespace Config {
     HIDE_HEADER = 'hideHeader',
     TRACKING = 'tracking',
     CSS = 'css',
+    STYLE = 'style',
     STYLESHEET = 'stylesheet',
     SCALE = 'scale',
     HANDLERS_FILE = 'handlersFile',
@@ -95,9 +99,62 @@ export namespace Config {
         logger?.log('Apply config', '%cTracking', 'font-weight: 800;', '– scroll listener attached')
         return window.setTimeout(() => window.addEventListener('scroll', scrollListener), 200) // [WIP] maybe throttle this ?
       }
+
+      // STYLE
+      if (name === RemoteInstructionName.STYLE) {
+        const valueIsRecord = isRecord(value)
+        if (!valueIsRecord) return;
+        const {
+          content: rawContent,
+          url: rawUrl,
+          name: rawName,
+          position: rawPosition
+        } = value
+        const url = rawUrl !== undefined ? toString(rawUrl) : null
+        let position: number
+        if (rawPosition === undefined) { position = Slots.StylePosition.CUSTOM }
+        else if (typeof rawPosition === 'number') { position = rawPosition }
+        else {
+          const strPosition = toString(rawPosition)
+          const knownPos = Slots.stylePositionNameMap.get(strPosition)
+          if (knownPos === undefined) { position = Slots.StylePosition.CUSTOM }
+          else { position = knownPos }
+        }
+        const elementName = rawName !== undefined
+          ? toString(rawName)
+          : (url !== null
+            ? 'lm-page-config-remote-style'
+            : 'lm-page-config-inline-style')
+        if (url !== null) {
+          Slots.injectStyles('url', url, { name: elementName, position })
+          return logger?.log('Apply config', '%cStylesheet injected\n', 'font-weight: 800;', url)
+        } else {
+          let injected = '\n'
+          if (rawContent instanceof NodeList) {
+            const styleElements = [...rawContent].filter((node): node is HTMLStyleElement => {
+              if (!(node instanceof HTMLElement)) return false;
+              if (node.tagName.toLowerCase() !== 'style') return false;
+              return true
+            })
+            injected += styleElements.map(elt => elt.textContent?.trim()).join('\n')
+          } else {
+            injected += toString(rawContent)
+          }
+          Slots.injectStyles('css', injected, { name: elementName, position })
+          return logger?.log('Apply config', '%cCSS injected\n', 'font-weight: 800;', injected)
+        }
+      }
       
       // CSS
       if (name === RemoteInstructionName.CSS) {
+        const deprecationWarning = stringNormalizeIndent(
+          `The use of config instruction css(value: NodeList) instruction is deprecated, support will be dropped after v1.echo. Use 'style' instead:
+          style(value: {
+          ||content: NodeList,
+          ||name?: string,
+          ||position?: Slots.StylesPosition
+          })`)
+        console.warn(deprecationWarning)
         let injected = '\n'
         if (value instanceof NodeList) {
           const styleElements = [...value].filter((node): node is HTMLStyleElement => {
@@ -109,20 +166,22 @@ export namespace Config {
         } else {
           injected += toString(value)
         }
-        Slots.injectStyles('css', injected, {
-          name: 'lm-page-config-css',
-          position: Slots.StylesPositions.CUSTOM
-        })
+        Slots.injectStyles('css', injected, { name: 'lm-page-config-css', position: Slots.StylePosition.CUSTOM })
         return logger?.log('Apply config', '%cCSS injected\n', 'font-weight: 800;', injected)
       }
 
       // STYLESHEET
       if (name === RemoteInstructionName.STYLESHEET) {
+        const deprecationWarning = stringNormalizeIndent(
+          `The use of config instruction stylesheet(value: string) instruction is deprecated, support will be dropped after v1.echo. Use 'style' instead:
+          style(value: {
+          ||url: string,
+          ||name?: string,
+          ||position?: Slots.StylesPosition
+          })`)
+        console.warn(deprecationWarning)
         const strValue = toString(value)
-        Slots.injectStyles('url', strValue, {
-          name: 'lm-page-config-stylesheet',
-          position: Slots.StylesPositions.CUSTOM
-        })
+        Slots.injectStyles('url', strValue, { name: 'lm-page-config-stylesheet', position: Slots.StylePosition.CUSTOM })
         return logger?.log('Apply config', '%cStylesheet injected\n', 'font-weight: 800;', strValue)
       }
       
@@ -191,10 +250,7 @@ export namespace Config {
             else { thisBreakpointCss += `}}` }
             return thisBreakpointCss
           }).join('')
-          Slots.injectStyles('css', scaleCss, {
-            name: 'lm-page-config-scale',
-            position: Slots.StylesPositions.CUSTOM
-          })
+          Slots.injectStyles('css', scaleCss, { name: 'lm-page-config-scale', position: Slots.StylePosition.CUSTOM })
           logger?.log(
             'Apply config',
             `%cScale created – ${name}\n`,

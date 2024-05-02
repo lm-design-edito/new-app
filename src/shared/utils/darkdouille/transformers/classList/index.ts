@@ -18,7 +18,7 @@ const classList: Darkdouille.TransformerFunctionGenerator<NodeListOf<Node>> = (.
     const [rawAction, rawClasses] = resolvedArgs
     const action = isNotNullish(rawAction) ? toString()(rawAction) : undefined
     const nodeListInput = clone<NodeListOf<Node>>()(toHtml()(inputValue))
-    if (!isInEnum(Action, action)) return nodeListInput
+    if (action === undefined || !isInEnum(Action, action)) return nodeListInput
     const classes = isNotNullish(rawClasses) ? toString()(rawClasses).trim().split(/\s+/igm) : []
     const wrapperDiv = document.createElement('div')
     wrapperDiv.append(...nodeListInput)

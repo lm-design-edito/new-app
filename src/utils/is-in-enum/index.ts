@@ -1,8 +1,11 @@
-export default function isInEnum<E extends Object> (
+export default function isInEnum<E extends Record<string, string | number>> (
   enumObj: E,
-  value: unknown
+  value: string | number
 ): value is E[keyof E] {
-  return Object
-    .values(enumObj)
-    .includes(value)
+  const keys = Object.keys(enumObj)
+  const values = Object.values(enumObj)
+  const numericValues = values.filter(val => typeof val === 'number')
+  const cleanKeys = keys.filter(key => !numericValues.includes(parseInt(key, 10)))
+  const cleanValues = cleanKeys.map(cleanKey => enumObj[cleanKey])
+  return cleanValues.includes(value)
 }

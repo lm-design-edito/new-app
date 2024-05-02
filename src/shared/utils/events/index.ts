@@ -79,7 +79,9 @@ export namespace Events {
     }
     let moduleDataLet: unknown = undefined
     try {
-      moduleDataLet = await import(fileUrl.toString())
+      const possiblyRelativeUrl = fileUrl
+      const absoluteUrl = new URL(possiblyRelativeUrl, window.location.href)
+      moduleDataLet = await import(absoluteUrl.toString())
     } catch (err) {
       logger?.error(
         'Events',
