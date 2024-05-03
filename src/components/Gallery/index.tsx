@@ -1,7 +1,7 @@
 import { Component, VNode } from 'preact'
-import styles from './styles.module.scss'
 import bem from '~/utils/bem'
 import { throttle } from '~/utils/throttle-debounce'
+import styles from './styles.module.scss'
 
 export type Props = {
   customClass?: string

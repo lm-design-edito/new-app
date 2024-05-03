@@ -58,7 +58,6 @@ export default {
     SHARED_ASSETS_ICONS_URL,
     STYLES_FONTS_URL,
     STYLES_INDEX_URL
-    // STYLES_UI_URL
   },
   theme: {
     THEME_ICONS_DIR_REL_PATH,

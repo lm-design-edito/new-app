@@ -7,7 +7,7 @@ import toString from '../toString'
 import isInEnum from '~/utils/is-in-enum'
 
 enum Action {
-  ADD = 'add',
+  SET = 'set',
   REMOVE = 'remove',
   TOGGLE = 'toggle'
 }
@@ -28,7 +28,7 @@ const attributes: Darkdouille.TransformerFunctionGenerator<NodeListOf<Node>> = (
     targetsArr.forEach(node => {
       if (node.nodeType !== Node.ELEMENT_NODE) return node
       const element = node as Element
-      if (action === Action.ADD) {
+      if (action === Action.SET) {
         if (attrName === undefined) return element
         return element.setAttribute(attrName, attrValue ?? '')
       }

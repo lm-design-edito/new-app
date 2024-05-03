@@ -6,7 +6,10 @@ import { toString } from '~/utils/cast'
 import isArrayOf from '~/utils/is-array-of'
 import isRecord from '~/utils/is-record'
 import randomUUID from '~/utils/random-uuid'
-import recordFormat, { FuncRecord, Formatted } from '~/utils/record-format'
+import recordFormat, {
+  Format as FormatterFormat,
+  Formatted as FormatterFormatted
+} from '~/utils/record-format'
 
 export namespace Apps {
   export enum Name {
@@ -167,7 +170,12 @@ export namespace Apps {
     }))
   }
 
-  export async function toPropsHelper<Format extends FuncRecord> (input: unknown, format: Format): Promise<Formatted<Format> | undefined> {
+  type UnknownRecordFormatter = FormatterFormat<Record<string, unknown>>
+
+  export async function toPropsHelper<Format extends UnknownRecordFormatter = {}> (
+    input: unknown,
+    format: Format
+  ): Promise<FormatterFormatted<Format> | undefined> {
     if (!isRecord(input)) return undefined
     const props = await recordFormat(input, format)
     return props

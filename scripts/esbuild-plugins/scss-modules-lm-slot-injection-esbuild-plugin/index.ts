@@ -35,10 +35,11 @@ const scssModulesToLmSlotsEsbuildPlugin: Plugin = {
       const jsContents = `
         const Slots = window.LM_PAGE?.Slots;
         const injectStyles = Slots?.injectStyles;
-        const appStylesPositions = Slots?.StylesPositions?.APP;
+        const appStylePosition = Slots?.StylePosition?.COMPONENTS;
         if (injectStyles !== undefined) injectStyles('css', \`${processed.css}\`, {
-          name: \`lm-page-bundled-css__${publicPath}\`,
-          position: appStylesPositions
+          name: 'lm-page-bundled-css',
+          position: appStylePosition,
+          details: \`${publicPath}\`
         });
         export default ${json};`;
       return { contents: jsContents, loader: 'js' }

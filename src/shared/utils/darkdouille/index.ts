@@ -1,5 +1,4 @@
 import { randomHash } from '~/utils/random-uuid'
-import isRecord from '~/utils/is-record'
 
 /* Cast transformers */
 import toString from './transformers/toString'
@@ -30,11 +29,17 @@ import prepend from './transformers/prepend'
 import replace from './transformers/replace'
 import trim from './transformers/trim'
 import split from './transformers/split'
+/* Boolean transformers */
+import and from './transformers/and'
+import or from './transformers/or'
+import negate from './transformers/negate'
 /* Array transformers */
 import join from './transformers/join'
 import at from './transformers/at'
 import map from './transformers/map'
 import push from './transformers/push'
+/* Record transformers */
+import prop from './transformers/prop'
 /* NodeList transformers */
 import attributes from './transformers/attributes'
 import classList from './transformers/classList'
@@ -53,7 +58,7 @@ import loop from './transformers/loop'
 import asDkdll from './transformers/asDkdll'
 import toDkdll from './transformers/toDkdll'
 import typeOf from './transformers/typeOf'
-import global from './transformers/global'
+import metadata from './transformers/metadata'
 
 export namespace Darkdouille {
   export type TreeConstructorOptions = {
@@ -450,12 +455,20 @@ export namespace Darkdouille {
       if (name === FunctionName.REPLACE) return replace
       if (name === FunctionName.TRIM) return trim
       if (name === FunctionName.SPLIT) return split
+
+      /* Boolean */
+      if (name === FunctionName.AND) return and
+      if (name === FunctionName.OR) return or
+      if (name === FunctionName.NEGATE) return negate
       
       /* Arrays */
       if (name === FunctionName.JOIN) return join
       if (name === FunctionName.AT) return at
       if (name === FunctionName.MAP) return map
       if (name === FunctionName.PUSH) return push
+
+      /* Records */
+      if (name === FunctionName.PROP) return prop
 
       /* NodeList */
       if (name === FunctionName.ATTRIBUTES) return attributes
@@ -477,7 +490,7 @@ export namespace Darkdouille {
       if (name === FunctionName.ASDKDLL) return asDkdll(this.resolve.bind(this))
       if (name === FunctionName.TODKDLL) return toDkdll
       if (name === FunctionName.TYPEOF) return typeOf
-      if (name === FunctionName.GLOBAL) return global
+      if (name === FunctionName.METADATA) return metadata
 
       return () => input => input
     }
@@ -693,11 +706,17 @@ export namespace Darkdouille {
     REPLACE = 'replace',
     TRIM = 'trim',
     SPLIT = 'split',
+    /* Boolean */
+    AND = 'and',
+    OR = 'or',
+    NEGATE = 'negate',
     /* Array */
     JOIN = 'join',
     AT = 'at',
     MAP = 'map',
     PUSH = 'push',
+    /* Record */
+    PROP = 'prop',
     /* NodeList */
     ATTRIBUTES = 'attributes',
     CLASSLIST = 'classlist',
@@ -717,7 +736,7 @@ export namespace Darkdouille {
     ASDKDLL = 'asdkdll',
     TODKDLL = 'todkdll',
     TYPEOF = 'typeof',
-    GLOBAL = 'global'
+    METADATA = 'metadata'
   }
 
   export const Functions = Object.values(FunctionName)
@@ -735,8 +754,9 @@ export namespace Darkdouille {
     /* Number   */ add, subtract, multiply, pow, divide, max, min, clamp, greater, smaller, equals,
     /* String   */ append, prepend, replace, trim, split,
     /* Array    */ join, at, map, push,
+    /* Record   */ prop,
     /* NodeList */ attributes, classList, querySelector, transformSelected, childNodes, appendDkdll, prependDkdll,
-    /* Utility  */ that, clone, print, set, get, cond, loop, asDkdll, toDkdll, typeOf, global
+    /* Utility  */ that, clone, print, set, get, cond, loop, asDkdll, toDkdll, typeOf, metadata
   }
 
   /* ========== HELPERS ========== */
@@ -839,40 +859,6 @@ export namespace Darkdouille {
       return wrapper
     }
     return createPrimitiveValueNode(value)
-  }
-
-  export function toTreeValue (input: unknown): TreeValue {
-    if (input === undefined) return undefined
-    if (input === null) return null
-    if (typeof input === 'string') return input
-    if (typeof input === 'number') return input
-    if (typeof input === 'boolean') return input
-    if (input instanceof NodeList) return input as NodeListOf<Node>
-    if (Array.isArray(input)) return input.map(toTreeValue)
-    if (isRecord(input)) {
-      const keys = Object.keys(input)
-      return keys.reduce((reduced, key) => {
-        console.log(key, input[key])
-        const treeVal = toTreeValue(input[key])
-        console.log(treeVal)
-        if (treeVal === undefined) return { ...reduced }
-        return { ...reduced, [key]: treeVal }
-      }, {} as TreeRecordValue)
-    }
-    // if (isRe)
-    // if (Array.isArray(input)) return input.map(toTreeValue)
-    // if (isRecord(input)) {
-    //   const returnedRecord: TreeRecordValue = {}
-    //   const keys = Object.keys(input)
-    //   console.log(keys)
-    //   keys.forEach(key => {
-    //     const val = input[key]
-    //     const treeValueVal = toTreeValue(val)
-    //     if (treeValueVal !== undefined) { returnedRecord[key] = treeValueVal }
-    //   })
-    //   return returnedRecord
-    // }
-    return undefined
   }
 
   // MERGE

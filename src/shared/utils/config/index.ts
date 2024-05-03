@@ -250,7 +250,7 @@ export namespace Config {
             else { thisBreakpointCss += `}}` }
             return thisBreakpointCss
           }).join('')
-          Slots.injectStyles('css', scaleCss, { name: 'lm-page-config-scale', position: Slots.StylePosition.CUSTOM })
+          Slots.injectStyles('css', scaleCss, { name: 'lm-page-config-scale', position: Slots.StylePosition.SCALES })
           logger?.log(
             'Apply config',
             `%cScale created – ${name}\n`,

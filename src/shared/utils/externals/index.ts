@@ -22,7 +22,7 @@ export namespace Externals {
 
   /* * * * * * * * * * * * * * * * * * * * * *
    *
-   * Le Monde - Context (website | AEC) detection
+   * Le Monde - Platform (website | AEC) detection
    * 
    * * * * * * * * * * * * * * * * * * * * * */
 
@@ -32,13 +32,13 @@ export namespace Externals {
   export const isLeMondeAecViaGlobalVar = () => getSiteGlobalObj().isAec
   export const isLeMondeAec = () => isLeMondeAecViaHref() || isLeMondeAecViaGlobalVar()
   export const isLeMondeWebsite = () => window.location.href.match(leMondeWebsiteHrefRegexp)
-  export const getContext = () => {
+  export const getPlatform = () => {
     if (isLeMondeAec()) return 'aec'
     if (isLeMondeWebsite()) return 'website'
     return 'unknown'
   }
-  export const contextAttribute = 'data-lm-context'
-  export const setContextAttribute = (...elts: Element[]) => elts.forEach(elt => elt.setAttribute(contextAttribute, getContext()))
+  export const platformAttribute = 'data-lm-platform'
+  export const setPlatformAttribute = (...elts: Element[]) => elts.forEach(elt => elt.setAttribute(platformAttribute, getPlatform()))
 
   /* * * * * * * * * * * * * * * * * * * * * *
    *
@@ -54,7 +54,7 @@ export namespace Externals {
     return 'unknown'
   }
   export const editionAttribute = 'data-lm-edition'
-  export const setEditionAttribute = (...elts: Element[]) => elts.forEach(elt => elt.setAttribute(editionAttribute, getContext()))
+  export const setEditionAttribute = (...elts: Element[]) => elts.forEach(elt => elt.setAttribute(editionAttribute, getEdition()))
 
   /* * * * * * * * * * * * * * * * * * * * * *
    *

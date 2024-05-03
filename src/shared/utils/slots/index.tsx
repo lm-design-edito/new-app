@@ -9,7 +9,6 @@ export namespace Slots {
 
   export function setIsolationMode (bool: boolean = true): void {
     isolationMode = bool
-    console.log(isolationMode)
     refreshSlotsIsolation()
     refreshStyles()
   }
@@ -17,16 +16,19 @@ export namespace Slots {
   export const created = new Set<Element>()
 
   export enum StylePosition {
-    HEAD_ONLY = -1,
+    HEAD_ONLY = -1000,
     HEAD = 0,
-    GENERAL = 1,
+    STRUCTURAL = 1000,
+    COMPONENTS = 2000,
+    SCALES = 3000,
     CUSTOM = 9999
   }
 
   export const stylePositionNameMap = new Map<string, StylePosition>([
     ['head-only', StylePosition.HEAD_ONLY],
     ['head', StylePosition.HEAD],
-    ['general', StylePosition.GENERAL],
+    ['structural', StylePosition.STRUCTURAL],
+    ['scales', StylePosition.SCALES],
     ['custom', StylePosition.CUSTOM]
   ])
 
@@ -36,6 +38,7 @@ export namespace Slots {
     content: string
     name?: string
     position: number
+    details?: string
   }
 
   export const styles = new Set<StyleData>()
@@ -43,19 +46,20 @@ export namespace Slots {
   type InjectStylesOptions = {
     name?: string,
     position?: number
+    details?: string
   }
 
   export function injectStyles (
     as: 'url' | 'css',
     content: string,
     options: InjectStylesOptions = {}) {
-    const { name, position = StylePosition.GENERAL } = options
+    const { name, position = StylePosition.CUSTOM, details } = options
     const exists = [...styles].find(item => (item.type === as
       && item.content === content
       && item.name === name))
     const id = randomUUID().split('-')[0] ?? ''
     if (exists !== undefined) return
-    styles.add({ id, type: as, content, name, position })
+    styles.add({ id, type: as, content, name, position, details })
     refreshStyles()
   }
 
@@ -82,35 +86,33 @@ export namespace Slots {
   export function styleDataToVNode (styleData: StyleData) {
     if (styleData.type === 'css') return <style
       name={styleData.name}
-      data-lmid={styleData.id}
-      data-lmposition={styleData.position}>
+      data-lm-id={styleData.id}
+      data-lm-position={styleData.position}
+      data-lm-details={styleData.details}>
       {styleData.content}
     </style>
     return <link
-      rel='stylesheet'
-      href={styleData.content}
       name={styleData.name}
-      data-lmid={styleData.id}
-      data-lmposition={styleData.position} />
+      data-lm-id={styleData.id}
+      data-lm-position={styleData.position}
+      data-lm-details={styleData.details}
+      rel='stylesheet'
+      href={styleData.content} />
   }
 
   export function refreshStyles () {
     const [headStylesData, slotsStylesData] = Array.from(styles).reduce((reduced, styleData) => {
       const [forHead, forSlots] = reduced
-      if (styleData.position === StylePosition.HEAD_ONLY) return [[...forHead, styleData], forSlots]
-      if (styleData.position === StylePosition.HEAD && isolationMode) return [
-        [...forHead, styleData],
-        [...forSlots, styleData]
-      ]
-      if (isolationMode) return [forHead, [...forSlots, styleData]]
-      return [[...forHead, styleData], forSlots]
+      if (!isolationMode) return [[...forHead, styleData], []]
+      if (styleData.position < 0) return [[...forHead, styleData], forSlots]
+      if (styleData.position === 0) return [[...forHead, styleData], [...forSlots, styleData]]
+      return [forHead, [...forSlots, styleData]]
     }, [[], []] as [StyleData[], StyleData[]])
-    const stylesElementFromHead = getStylesElementFromHead()
     // Render in head
     preactRender(<>{headStylesData
       .sort((a, b) => a.position - b.position)
       .map(styleDataToVNode)
-    }</>, stylesElementFromHead)
+    }</>, getStylesElementFromHead())
     // Render in slots
     created.forEach(slotRootElt => {
       const stylesElt = getSlotChild(slotRootElt, 'styles')
@@ -125,26 +127,34 @@ export namespace Slots {
   export function makeSlot (slotRootElt: Element, content: VNode[] | string): Element | undefined {
     if (created.has(slotRootElt)) return;
     slotRootElt.classList.add(appConfig.slots.rootElementClass)
+        
+    const classes = {
+      style: appConfig.slots.styleElementClass,
+      content: appConfig.slots.contentElementClass,
+      inner: appConfig.slots.innerElementClass,
+      shadow: appConfig.slots.shadowElementClass,
+      light: appConfig.slots.lightElementClass
+    }
 
     // Create styles element
     const stylesElt = document.createElement('div')
-    stylesElt.classList.add(appConfig.slots.styleElementClass)
+    stylesElt.classList.add(classes.style)
 
     // Create content element
     const contentElt = document.createElement('div')
-    contentElt.classList.add(appConfig.slots.contentElementClass)
+    contentElt.classList.add(classes.content)
     preactRender(<>{content}</>, contentElt)
 
     // Create slot inner element
     const innerElt = document.createElement('div')
-    innerElt.classList.add(appConfig.slots.innerElementClass)
+    innerElt.classList.add(classes.inner)
     innerElt.append(stylesElt, contentElt)
 
     // Create shadow and light elements
     const shadowElt = document.createElement('div')
     const lightElt = document.createElement('div')
-    shadowElt.classList.add(appConfig.slots.shadowElementClass)
-    lightElt.classList.add(appConfig.slots.lightElementClass)
+    shadowElt.classList.add(classes.shadow)
+    lightElt.classList.add(classes.light)
     slotRootElt.append(shadowElt, lightElt)
 
     if (isolationMode === true) {
@@ -159,7 +169,7 @@ export namespace Slots {
     }
 
     // External context detection
-    Externals.setContextAttribute(innerElt, slotRootElt)
+    Externals.setPlatformAttribute(innerElt, slotRootElt)
     Externals.setEditionAttribute(innerElt, slotRootElt)
     Externals.setColorModeContextAttribute(innerElt)
     Externals.setParentSnippetAttribute(innerElt)
