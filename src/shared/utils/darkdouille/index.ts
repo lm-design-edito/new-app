@@ -38,6 +38,7 @@ import join from './transformers/join'
 import at from './transformers/at'
 import map from './transformers/map'
 import push from './transformers/push'
+import pickRandom from './transformers/pickRandom'
 /* Record transformers */
 import prop from './transformers/prop'
 /* NodeList transformers */
@@ -466,6 +467,7 @@ export namespace Darkdouille {
       if (name === FunctionName.AT) return at
       if (name === FunctionName.MAP) return map
       if (name === FunctionName.PUSH) return push
+      if (name === FunctionName.PICKRANDOM) return pickRandom
 
       /* Records */
       if (name === FunctionName.PROP) return prop
@@ -715,6 +717,7 @@ export namespace Darkdouille {
     AT = 'at',
     MAP = 'map',
     PUSH = 'push',
+    PICKRANDOM = 'pickrandom',
     /* Record */
     PROP = 'prop',
     /* NodeList */
@@ -753,7 +756,7 @@ export namespace Darkdouille {
     /* Any      */ length,
     /* Number   */ add, subtract, multiply, pow, divide, max, min, clamp, greater, smaller, equals,
     /* String   */ append, prepend, replace, trim, split,
-    /* Array    */ join, at, map, push,
+    /* Array    */ join, at, map, push, pickRandom,
     /* Record   */ prop,
     /* NodeList */ attributes, classList, querySelector, transformSelected, childNodes, appendDkdll, prependDkdll,
     /* Utility  */ that, clone, print, set, get, cond, loop, asDkdll, toDkdll, typeOf, metadata
