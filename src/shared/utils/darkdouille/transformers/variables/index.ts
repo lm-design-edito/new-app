@@ -18,9 +18,11 @@ const set = (resolve: Darkdouille.TreeResolver): Darkdouille.TransformerFunction
   return inputValue => {
     const path = resolve('./')?.path
     if (path === undefined) return inputValue
-    const resolvedArgs = resolveArgs(inputValue, ...args)
-    const [name, rawValue] = resolvedArgs
-    const value = rawValue ?? inputValue
+    const [rawName, ...rawValueArgs] = args
+    const [name] = resolveArgs(inputValue, rawName)
+    const value = rawValueArgs.reduce<Darkdouille.TreeValue>((currentValue, rawValueArg) => {
+        return resolveArgs(currentValue, rawValueArg)[0]
+      },inputValue)
     const thisVariables = registry.get(path)
     if (thisVariables === undefined) registry.set(path, new Map([[name, clone()(value)]]))
     else thisVariables.set(name, value)

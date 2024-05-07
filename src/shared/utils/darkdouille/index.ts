@@ -29,6 +29,7 @@ import prepend from './transformers/prepend'
 import replace from './transformers/replace'
 import trim from './transformers/trim'
 import split from './transformers/split'
+import noTrailing from './transformers/noTrailing'
 /* Boolean transformers */
 import and from './transformers/and'
 import or from './transformers/or'
@@ -455,6 +456,7 @@ export namespace Darkdouille {
       if (name === FunctionName.REPLACE) return replace
       if (name === FunctionName.TRIM) return trim
       if (name === FunctionName.SPLIT) return split
+      if (name === FunctionName.NOTRAILING) return noTrailing
 
       /* Boolean */
       if (name === FunctionName.AND) return and
@@ -706,6 +708,7 @@ export namespace Darkdouille {
     REPLACE = 'replace',
     TRIM = 'trim',
     SPLIT = 'split',
+    NOTRAILING = 'notrailing',
     /* Boolean */
     AND = 'and',
     OR = 'or',
@@ -752,7 +755,7 @@ export namespace Darkdouille {
     /* Cast     */ toString, toNumber, toBoolean, toNull, toHtml, toRef, toArray, toRecord,
     /* Any      */ length,
     /* Number   */ add, subtract, multiply, pow, divide, max, min, clamp, greater, smaller, equals,
-    /* String   */ append, prepend, replace, trim, split,
+    /* String   */ append, prepend, replace, trim, split, noTrailing,
     /* Array    */ join, at, map, push,
     /* Record   */ prop,
     /* NodeList */ attributes, classList, querySelector, transformSelected, childNodes, appendDkdll, prependDkdll,

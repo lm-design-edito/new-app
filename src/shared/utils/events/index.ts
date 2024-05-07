@@ -62,6 +62,7 @@ export namespace Events {
 
   const fetchHandlersFile = async (url: string | URL): Promise<Map<string, HandlerFunc>> => {
     const logger = Globals.retrieve(Globals.GlobalKey.LOGGER)
+    console.log(url)
     const fileUrl = new URL(url)
     const urlSchemeMatches = appConfig.eventHandlersAllowedUrlSchemes.some(scheme => {
       const schemeKeys = Object.keys(scheme) as Array<keyof URL>
