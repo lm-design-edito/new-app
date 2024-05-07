@@ -1,0 +1,24 @@
+{
+  "build": {
+    "version_number": "1.0.0-echo.0",
+    "version_description": "-",
+    "timestamp": "2024-05-07T16:32:45.095Z",
+    "latest_local_version_found": "1.0.0-delta.21"
+  },
+  "git": {
+    "has_uncommited_changes": false,
+    "latest_commit_number": "473b035298176ce3324feb2bfe13496fa88536de"
+  },
+  "bucket": {
+    "name": "gs://decodeurs/design-edito/v1.echo",
+    "url": "https://assets-decodeurs.lemonde.fr/design-edito/v1.echo",
+    "current_versions_json": null,
+    "create_versions_json": true,
+    "latest_version_found": null,
+    "published": true
+  },
+  "npm": {
+    "registry": "https://registry.npmjs.org",
+    "published": true
+  }
+}
