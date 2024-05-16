@@ -52,7 +52,8 @@ async function arrayToPages (array: unknown[], id: string): Promise<PropsPageDat
     const extractedPage: PropsPageData = await recordFormat(pageData, {
       id: i => Apps.ifNotUndefinedHelper(i, toString),
       bgColor: i => Apps.ifNotUndefinedHelper(i, toString),
-      blocks: i => Apps.ifArrayHelper(i, i => arrayToBlocks(i, id))
+      blocks: i => Apps.ifArrayHelper(i, i => arrayToBlocks(i, id)),
+      data: i => isRecord(i) ? i : undefined
     })
     extractedPages.push(extractedPage)
   }

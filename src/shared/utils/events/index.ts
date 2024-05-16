@@ -36,6 +36,8 @@ export namespace Events {
     GALLERY_DOT_CLICK = 'gallery-dot-click',
     /* Intersection Observer */
     INTERSECTION_OBSERVER_CALLBACK = 'intersection-observer-callback',
+    /* Navigation */
+    NAVIGATION_ITEM_CLICK = 'navigation-item-click',
     /* Resize Observer */
     RESIZE_OBSERVER_RESIZE = 'resize-observer-resize',
     /* Scrllgngn */

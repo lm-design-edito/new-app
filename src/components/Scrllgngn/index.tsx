@@ -72,6 +72,7 @@ export type PropsPageData = {
   id?: string
   bgColor?: JSX.CSSProperties['backgroundColor']
   blocks?: PropsBlockData[]
+  data?: Record<string, any>
 }
 
 export type Props = {
@@ -83,7 +84,7 @@ export type Props = {
   thresholdOffset?: string
   bgColorTransitionDuration?: string|number
   pages?: PropsPageData[]
-  onPageChange?: (state?: State) => void
+  onPageChange?: (state?: State, pageData?: PropsPageData['data']) => void
 }
 
 /* Context stuff */

@@ -8,7 +8,12 @@ export type Props = {
   activeItemId?: string | null
   items?: Array<{
     content: string | VNode,
-    id: string
+    id: string,
+    onClick?: (paylaod: {
+      id: string,
+      content: string | VNode,
+      event: MouseEvent
+    }) => void
   }>
   galleryScrollerWidth?: string
 }
@@ -38,9 +43,10 @@ export default class Navigation extends Component<Props> {
         customClass={wrapperBemClass.elt('gallery').value}
         scrollerWidth={props.galleryScrollerWidth ?? '100%'}
         snapScroll={true}
-        itemsContent={props.items?.map(({ id, content }) => <Tab
+        itemsContent={props.items?.map(({ id, content, onClick }) => <Tab
           content={content}
-          active={id === activeId} />)} />
+          active={id === activeId}
+          onClick={event => onClick?.({ id, content, event })} />)} />
     </div>
   }
 }

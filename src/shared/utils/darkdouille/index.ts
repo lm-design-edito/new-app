@@ -40,8 +40,13 @@ import at from './transformers/at'
 import map from './transformers/map'
 import push from './transformers/push'
 import pickRandom from './transformers/pickRandom'
+import sortOn from './transformers/sortOn'
 /* Record transformers */
 import prop from './transformers/prop'
+import recordToArray from './transformers/recordToArray'
+import pickProps from './transformers/pickProps'
+import renameProp from './transformers/renameProp'
+import addProp from './transformers/addProp'
 /* NodeList transformers */
 import attributes from './transformers/attributes'
 import classList from './transformers/classList'
@@ -470,9 +475,14 @@ export namespace Darkdouille {
       if (name === FunctionName.MAP) return map
       if (name === FunctionName.PUSH) return push
       if (name === FunctionName.PICKRANDOM) return pickRandom
+      if (name === FunctionName.SORTON) return sortOn
 
       /* Records */
       if (name === FunctionName.PROP) return prop
+      if (name === FunctionName.RECORDTOARRAY) return recordToArray
+      if (name === FunctionName.PICKPROPS) return pickProps
+      if (name === FunctionName.RENAMEPROP) return renameProp
+      if (name === FunctionName.ADDPROP) return addProp
 
       /* NodeList */
       if (name === FunctionName.ATTRIBUTES) return attributes
@@ -721,8 +731,13 @@ export namespace Darkdouille {
     MAP = 'map',
     PUSH = 'push',
     PICKRANDOM = 'pickrandom',
+    SORTON = 'sorton',
     /* Record */
     PROP = 'prop',
+    RECORDTOARRAY = 'recordtoarray',
+    PICKPROPS = 'pickprops',
+    RENAMEPROP = 'renameprop',
+    ADDPROP = 'addprop',
     /* NodeList */
     ATTRIBUTES = 'attributes',
     CLASSLIST = 'classlist',
@@ -759,8 +774,8 @@ export namespace Darkdouille {
     /* Any      */ length,
     /* Number   */ add, subtract, multiply, pow, divide, max, min, clamp, greater, smaller, equals,
     /* String   */ append, prepend, replace, trim, split, noTrailing,
-    /* Array    */ join, at, map, push, pickRandom,
-    /* Record   */ prop,
+    /* Array    */ join, at, map, push, pickRandom, sortOn,
+    /* Record   */ prop, recordToArray, pickProps, renameProp, addProp,
     /* NodeList */ attributes, classList, querySelector, transformSelected, childNodes, appendDkdll, prependDkdll,
     /* Utility  */ that, clone, print, set, get, cond, loop, asDkdll, toDkdll, typeOf, metadata
   }
