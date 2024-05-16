@@ -1,0 +1,31 @@
+{
+  "build": {
+    "version_number": "1.0.0-echo.1",
+    "version_description": "new transformers",
+    "timestamp": "2024-05-16T08:46:34.129Z",
+    "latest_local_version_found": "1.0.0-echo.0"
+  },
+  "git": {
+    "has_uncommited_changes": false,
+    "latest_commit_number": "082b8ea2ff41290482a46b3908f7b3d31014ecb4"
+  },
+  "bucket": {
+    "name": "gs://decodeurs/design-edito/v1.echo",
+    "url": "https://assets-decodeurs.lemonde.fr/design-edito/v1.echo",
+    "current_versions_json": {
+      "1.0.0-echo.0": {
+        "description": "-",
+        "deployedOn": 1715099565095,
+        "deployedOnReadable": "Tue, 07 May 2024 16:32:45 GMT",
+        "commit": "473b035298176ce3324feb2bfe13496fa88536de"
+      }
+    },
+    "create_versions_json": false,
+    "latest_version_found": "1.0.0-echo.0",
+    "published": true
+  },
+  "npm": {
+    "registry": "https://registry.npmjs.org",
+    "published": true
+  }
+}
