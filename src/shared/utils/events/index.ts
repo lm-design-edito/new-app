@@ -42,6 +42,7 @@ export namespace Events {
     RESIZE_OBSERVER_RESIZE = 'resize-observer-resize',
     /* Scrllgngn */
     SCRLLGNGN_PAGE_CHANGE = 'scrllgngn-page-change',
+    SCRLLGNGN_SCROLL_TRACK = 'scrllgngn-scroll-track',
     /* Tab */
     TAB_CLICK = 'tab-click',
     /* Tabs */

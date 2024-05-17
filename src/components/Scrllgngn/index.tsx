@@ -84,7 +84,8 @@ export type Props = {
   thresholdOffset?: string
   bgColorTransitionDuration?: string|number
   pages?: PropsPageData[]
-  onPageChange?: (state?: State, pageData?: PropsPageData['data']) => void
+  onPageChange?: (payload?: { state: State }) => void
+  onScrollTrack?: (payload?: { state: State, nextState: State }) => void
 }
 
 /* Context stuff */
@@ -865,17 +866,25 @@ export default class Scrollgneugneu extends Component<Props, State> {
       }
     }, () => {
       const { onPageChange } = this.props
-      if (onPageChange !== undefined) onPageChange(this.state)
+      if (onPageChange !== undefined) onPageChange({ state: this.state })
     })
   }
 
   handleWindowScroll () {
     const {
+      props,
       state,
       getBlocksContextProgression,
       getBlocksContextMap,
-      mergeBlocksPartialContexts
+      mergeBlocksPartialContexts,
+      getCurrentPageData,
+      getPreviousPageData
     } = this
+    const currPageData = getCurrentPageData()
+    const prevPageData = getPreviousPageData()
+    const currentPageNeedsScrollTrack = currPageData?.blocks?.some(block => block.trackScroll === true)
+    const previousPageNeedsScrollTrack = prevPageData?.blocks?.some(block => block.trackScroll === true)
+    if (!currentPageNeedsScrollTrack && !previousPageNeedsScrollTrack) return
     const blocksContextProgression = getBlocksContextProgression()
     const currBlocksContext = getBlocksContextMap()
     const newBlocksContexts = mergeBlocksPartialContexts(
@@ -898,10 +907,11 @@ export default class Scrollgneugneu extends Component<Props, State> {
       return !contextsAreEqual(currContext, newContext)
     })
     if (!shouldUpdate) return
-    return this.setState(curr => ({
-      ...curr,
-      blocks: newBlocks
-    }))
+    return this.setState(curr => {
+      const nextState = { ...curr, blocks: newBlocks }
+      if (props.onScrollTrack !== undefined) props.onScrollTrack({ state, nextState })
+      return nextState
+    })
   }
 
   handleBlockResize () {

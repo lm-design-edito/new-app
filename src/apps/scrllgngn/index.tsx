@@ -38,7 +38,8 @@ async function toProps (input: unknown, id: string): Promise<Props> {
     pages: i => Apps.ifArrayHelper(i, i => arrayToPages(i, id)),
 
     // Handlers
-    onPageChange: i => Apps.makeHandlerHelper(Events.Type.SCRLLGNGN_PAGE_CHANGE, i, id)
+    onPageChange: i => Apps.makeHandlerHelper(Events.Type.SCRLLGNGN_PAGE_CHANGE, i, id),
+    onScrollTrack: i => Apps.makeHandlerHelper(Events.Type.SCRLLGNGN_SCROLL_TRACK, i, id)
   }) ?? {}
 }
 
