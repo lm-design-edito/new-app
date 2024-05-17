@@ -420,8 +420,13 @@ async function npmPublishLib () {
         return abort()
       }
     }
+    const { OTP } = await prompts({
+      name: 'OTP',
+      type: 'text',
+      message: 'NPM publish token?'
+    })
     await new Promise(resolve => exec(
-      `npm run publish-lib --otp=${process.env.OTP}`,
+      `npm run publish-lib --otp=${OTP}`,
       (err, stdout, stderr) => {
         if (err !== null) throw err
         if (stderr !== '' && err === null) console.log(styles.regular(stderr))
