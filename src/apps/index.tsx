@@ -1,5 +1,5 @@
 import { Component, ComponentClass, VNode } from 'preact'
-import {  Events } from '~/shared/events'
+import { Events } from '~/shared/events'
 import { Globals } from '~/shared/globals'
 import { LmHtml } from '~/shared/lm-html'
 import { toString } from '~/utils/cast'
@@ -95,16 +95,15 @@ export namespace Apps {
     }
 
     updateProps (propsSetter: AppPropsSetter) {
-      if (typeof propsSetter === 'function') this.setState(propsSetter)
-      else this.setState(() => ({ ...this.state,  ...propsSetter }))
+      if (typeof propsSetter === 'function') this.setState(curr => propsSetter(curr))
+      else this.setState(propsSetter)
     }
 
     render () {
       const { props, state } = this
-      const ChildComp = props.component
       const customClass = typeof state.customClass === 'string' ? `${state.customClass} lm-app` : 'lm-app'
       const childProps = { ...this.state, customClass } as typeof state
-      return <ChildComp {...childProps} />
+      return <props.component {...childProps} />
     }
   }
 
