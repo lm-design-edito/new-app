@@ -59,37 +59,26 @@ export default class Gallery extends Component<Props, State> {
       this.resetScroll()
       this.updateState()
     }, 100)
+    ;(window as any).lol = this.getComputedPositions
+    ;(window as any).scroller = this.$scroller
   }
 
   getComputedPositions () {
     const { $scroller } = this
     if ($scroller === null) return;
-    const slotsDomRects = this.$slots.map($slot => $slot === null
-      ? new DOMRect(0, 0, 0, 0)
-      : $slot.getBoundingClientRect())
-    const slotsSizeData = slotsDomRects.reduce<Array<{
-        clientRect: DOMRect
-        width: number
-        left: number
-        right: number
-        center: number
-    }>>((reduced, clientRect) => {
-      const prevReduced = reduced[reduced.length - 1]
-      const width = clientRect.width ?? 0
-      const left = (prevReduced?.left ?? 0) + (prevReduced?.width ?? 0)
-      const right = left + width
-      const center = (left + right) / 2
-      return [...reduced, { width, left, right, center, clientRect }]
-    }, [])
-    const wrapperWidth = $scroller.clientWidth
+    const slotsDomRects = this.$slots.map($slot => $slot?.getBoundingClientRect() ?? new DOMRect(0, 0, 0, 0))
+    const wrapperRects = $scroller.getBoundingClientRect()
+    const wrapperLeft = wrapperRects.left
+    const wrapperRight = wrapperRects.right
+    const wrapperCenter = (wrapperLeft + wrapperRight) / 2
+    const wrapperWidth = $scroller.getBoundingClientRect().width
     const wrapperScrollWidth = $scroller.scrollWidth
     const wrapperMaxScrollValue = wrapperScrollWidth - wrapperWidth
-    const slotsWidth = slotsSizeData.reduce((red, curr) => (red + curr.width), 0)
-    const computedScrollerWidth = slotsWidth - wrapperMaxScrollValue
     const currentScrollValue = $scroller.scrollLeft
-    const slotsSizeDataWithDist = slotsSizeData.map(slotPosData => {
-      const { center } = slotPosData
-      const distanceToScrollerCenter = center - computedScrollerWidth / 2 - currentScrollValue
+    const slotsSizeDataWithDist = slotsDomRects.map(slotPosData => {
+      const { left, right } = slotPosData
+      const center = (left + right) / 2
+      const distanceToScrollerCenter = center - wrapperCenter
       return { ...slotPosData, distanceToScrollerCenter }
     })
     const minDistance = Math.min(...slotsSizeDataWithDist.map(e => Math.abs(e.distanceToScrollerCenter)))
@@ -158,6 +147,7 @@ export default class Gallery extends Component<Props, State> {
     const { slotsPositionData } = computedPositions
     const targetElement = slotsPositionData?.[position]
     if (targetElement === undefined) return;
+    console.log(targetElement.distanceToScrollerCenter, computedPositions)
     const { distanceToScrollerCenter } = targetElement
     $scroller.scrollLeft += distanceToScrollerCenter
   }

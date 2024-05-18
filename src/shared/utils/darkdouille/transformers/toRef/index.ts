@@ -6,11 +6,11 @@ let intermediatePaths: string[] = []
 const toRef = (resolve: Darkdouille.TreeResolver): Darkdouille.TransformerFunctionGenerator => () => {
   const returned: Darkdouille.Transformer = (inputValue) => {
     const strValue = toString()(inputValue).trim()
-    const resolved = resolve(strValue)
+    const resolvedInput = resolve(strValue)
     /* Circular reference pattern detection */
     const thisPath = resolve('.')?.path
-    const resolvedPath = resolved?.path
-    if (resolved === undefined
+    const resolvedPath = resolvedInput?.path
+    if (resolvedInput === undefined
       || thisPath === undefined
       || resolvedPath === undefined) {
       intermediatePaths = []
@@ -33,7 +33,7 @@ const toRef = (resolve: Darkdouille.TreeResolver): Darkdouille.TransformerFuncti
       return undefined
     }
     /* Possibly dive deep further */
-    const value = resolved?.value
+    const value = resolvedInput?.value
     intermediatePaths = []
     return value
   }
