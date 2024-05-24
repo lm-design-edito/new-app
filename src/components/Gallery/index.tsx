@@ -78,7 +78,14 @@ export default class Gallery extends Component<Props, State> {
     const slotsSizeDataWithDist = slotsDomRects.map(slotPosData => {
       const { left, right } = slotPosData
       const center = (left + right) / 2
-      const distanceToScrollerCenter = center - wrapperCenter
+      const _distanceToScrollCenter = center - wrapperCenter;
+      let distanceToScrollerCenter = _distanceToScrollCenter;
+      if (currentScrollValue === 0) {
+        distanceToScrollerCenter = Math.abs(_distanceToScrollCenter);
+      }
+      if (currentScrollValue >= wrapperMaxScrollValue && _distanceToScrollCenter > 0) {
+        distanceToScrollerCenter = _distanceToScrollCenter * -1;
+      }
       return { ...slotPosData, distanceToScrollerCenter }
     })
     const minDistance = Math.min(...slotsSizeDataWithDist.map(e => Math.abs(e.distanceToScrollerCenter)))
@@ -155,7 +162,7 @@ export default class Gallery extends Component<Props, State> {
   handleButtonClick (goForward: boolean = true) {
     const { props, state, setCurrentPage } = this
     const { currentSlotPos } = state
-    const targetPosition = goForward ? currentSlotPos + 1 : currentSlotPos - 1
+    const targetPosition = Math.max(0, goForward ? currentSlotPos + 1 : currentSlotPos - 1)
     setCurrentPage(targetPosition)
     const { onPrevClick, onNextClick } = props
     if (goForward && onNextClick !== undefined) onNextClick({ ...this.state })
