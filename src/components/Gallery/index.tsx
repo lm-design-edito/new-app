@@ -59,8 +59,6 @@ export default class Gallery extends Component<Props, State> {
       this.resetScroll()
       this.updateState()
     }, 100)
-    ;(window as any).lol = this.getComputedPositions
-    ;(window as any).scroller = this.$scroller
   }
 
   getComputedPositions () {
