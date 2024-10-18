@@ -1,6 +1,6 @@
 import appConfig from '~/config'
 import { Globals } from '~/shared/globals'
-import isRecord from '~/utils/is-record'
+import isRecord from '@design-edito/tools/agnostic/objects/is-record'
 
 export namespace Events {
 

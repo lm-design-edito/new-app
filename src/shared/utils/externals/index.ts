@@ -1,4 +1,4 @@
-import getNodeAncestors from '~/utils/get-node-ancestors'
+import { getNodeAncestors } from '@design-edito/tools/agnostic/html/get-node-ancestors'
 
 export namespace Externals {
 

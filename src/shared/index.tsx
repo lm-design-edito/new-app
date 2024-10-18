@@ -1,39 +1,17 @@
+import { HyperJson } from '@design-edito/tools/agnostic/html/hyper-json'
 import appConfig from '~/config'
 import { Apps } from '~/apps'
 import { Analytics } from '~/shared/analytics'
 import { Config } from '~/shared/config'
-import { Darkdouille } from '~/shared/darkdouille'
 import { Events } from '~/shared/events'
 import { Externals } from '~/shared/externals'
 import { Globals } from '~/shared/globals'
 import { LmHtml } from '~/shared/lm-html'
 import { Slots } from '~/shared/slots'
-import absoluteModulo from '~/utils/absolute-modulo'
-import arrayRandomPick from '~/utils/array-random-pick'
-import bem from '~/utils/bem'
-import * as Cast from '~/utils/cast'
-import clamp from '~/utils/clamp'
-import generateNiceColor from '~/utils/generate-nice-color'
-import getCurrentDownlink from '~/utils/get-current-downlink'
-import getNodeAncestors from '~/utils/get-node-ancestors'
-import insertNode, { Position as InsertNodePosition } from '~/utils/insert-node'
-import interpolate from '~/utils/interpolate'
-import isArrayOf from '~/utils/is-array-of'
-import isConstructorFunction from '~/utils/is-constructor-function'
-import isFalsy from '~/utils/is-falsy'
-import isInEnum from '~/utils/is-in-enum'
-import isNullish from '~/utils/is-nullish'
-import isRecord from '~/utils/is-record'
-import isValidClassName from '~/utils/is-valid-css-class-name'
-import memoize from '~/utils/memoize'
-import randomUUID from '~/utils/random-uuid'
-import recordFormat from '~/utils/record-format'
-import replaceAll from '~/utils/replace-all'
-import roundNumbers from '~/utils/round-numbers'
-import selectorToElement from '~/utils/selector-to-element'
-import Logger from '~/utils/silent-log'
-import { debounce, throttle } from '~/utils/throttle-debounce'
-import transition from '~/utils/transition'
+import { insertNode, InsertNodePosition } from '@design-edito/tools/agnostic/html/insert-node'
+import { isRecord } from '@design-edito/tools/agnostic/objects/is-record'
+import { selectorToElement } from '@design-edito/tools/agnostic/html/selector-to-element'
+import { Logger } from '@design-edito/tools/agnostic/misc/logs/logger'
 
 /* * * * * * * * * * * * * * * * * * * * * *
  * EXPORT & GLOBALS
@@ -48,20 +26,17 @@ const meta: Globals.GlobalObj[Globals.GlobalKey.META] = {
   paths: appConfig.paths
 }
 const logger = new Logger()
-const utils = { absoluteModulo, arrayRandomPick, bem, Cast, clamp, generateNiceColor, getCurrentDownlink, getNodeAncestors, insertNode, interpolate, isArrayOf, isConstructorFunction, isFalsy, isInEnum, isNullish, isRecord, isValidClassName, memoize, randomUUID, recordFormat, replaceAll, roundNumbers, selectorToElement, throttle, debounce, transition }
 Globals.expose(Globals.GlobalKey.META, meta)
 Globals.expose(Globals.GlobalKey.ANALYTICS, Analytics)
 Globals.expose(Globals.GlobalKey.APPS, Apps)
 Globals.expose(Globals.GlobalKey.CONFIG, Config)
-Globals.expose(Globals.GlobalKey.DARKDOUILLE, Darkdouille)
 Globals.expose(Globals.GlobalKey.EVENTS, Events)
 Globals.expose(Globals.GlobalKey.EXTERNALS, Externals)
 Globals.expose(Globals.GlobalKey.LM_HTML, LmHtml)
 Globals.expose(Globals.GlobalKey.SLOTS, Slots)
-Globals.expose(Globals.GlobalKey.LOGGER, logger)
+Globals.expose(Globals.GlobalKey.LOGGER, logger as unknown as Logger)
 Globals.expose(Globals.GlobalKey.INIT, init)
-Globals.expose(Globals.GlobalKey.UTILS, utils)
-export { meta, Analytics, Apps, Config, Darkdouille, Events, Externals, LmHtml, Slots, Logger, logger, init, utils }
+export { meta, Analytics, Apps, Config, Events, Externals, LmHtml, Slots, Logger, logger, init }
 
 /* * * * * * * * * * * * * * * * * * * * * *
  * INIT ON LOAD
@@ -115,21 +90,26 @@ async function init () {
   /* INLINE CONFIG * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
   // Find, merge and evaluate inline page data
-  const pageInlineDataNodes = document.body.querySelectorAll(appConfig.dataSourceSelector)
-  const pageInlineDataNodesCopy = Array.from(pageInlineDataNodes).map(e => e.cloneNode(true)) as Element[]
-  const pageInlineDataValue = Darkdouille.tree(Array.from(pageInlineDataNodes)).value
+  const getPageInlineDataElements = () => {
+    const nodes = document.querySelectorAll(appConfig.dataSourceSelector)
+    return Array.from(nodes).map(e => e.cloneNode(true)) as Element[]
+  }
+  const pageInlineDataValue = HyperJson.Tree.from(
+    getPageInlineDataElements(),
+    { rootKey: appConfig.dataSourceRootKey }
+  ).evaluate()
   logger.log('Inline data', pageInlineDataValue)
-  const pageInlineDataValueIsRecord = Darkdouille.valueIsRecord(pageInlineDataValue)
+  const pageInlineDataValueIsRecord = isRecord(pageInlineDataValue)
   const pageDataConfigCollectionName = appConfig.dataSourcesReservedNames.config
   const pageInlineDataRawConfigInstructions = pageInlineDataValueIsRecord
     && Array.isArray(pageInlineDataValue[pageDataConfigCollectionName])
-    ? pageInlineDataValue[pageDataConfigCollectionName] as Darkdouille.TreeValue[]
+    ? pageInlineDataValue[pageDataConfigCollectionName] as HyperJson.Types.Value[]
     : []
   const pageInlineDataConfigInstructions = pageInlineDataRawConfigInstructions.map(instruction => {
-    const isRecord = Darkdouille.valueIsRecord(instruction)
-    if (!isRecord) return { name: '', value: undefined }
+    const instructionIsRecord = isRecord(instruction)
+    if (!instructionIsRecord) return { name: '', value: undefined }
     const { name, value } = instruction
-    const strName = Darkdouille.transformers.toString()(name)
+    const strName = HyperJson.Cast.toString(name ?? '')
     return Object
       .values(Config.InlineOnlyInstructionName)
       .includes(strName as any)
@@ -172,11 +152,14 @@ async function init () {
       wrapper.innerHTML += data
       return wrapper
     })
-  const pageFullDataTree = Darkdouille.tree([...pageInlineDataNodesCopy, ...pageRemoteDataNodes])
+  const pageFullDataTree = HyperJson.Tree.from([
+    ...getPageInlineDataElements(),
+    ...pageRemoteDataNodes
+  ], { rootKey: appConfig.dataSourceRootKey })
   Globals.expose(Globals.GlobalKey.TREE, pageFullDataTree)
-  const pageFullDataValue = pageFullDataTree.value
+  const pageFullDataValue = pageFullDataTree.evaluate()
   logger.log('Full data', pageFullDataValue)
-  const pageFullDataValueIsRecord = Darkdouille.valueIsRecord(pageFullDataValue)
+  const pageFullDataValueIsRecord = isRecord(pageFullDataValue)
   const pageDataSlotsCollectionName = appConfig.dataSourcesReservedNames.slots
   const pageFullDataConfig = pageFullDataValueIsRecord ? pageFullDataValue[pageDataConfigCollectionName] : undefined
   const pageFullDataSlots = pageFullDataValueIsRecord ? pageFullDataValue[pageDataSlotsCollectionName] : undefined
@@ -185,7 +168,7 @@ async function init () {
   const pageFullDataConfigIsArray = Array.isArray(pageFullDataConfig)
   const pageFullDataRawConfig: Config.ConfigInstruction[] = pageFullDataConfigIsArray
     ? pageFullDataConfig.filter((instruction): instruction is Config.ConfigInstruction => {
-      if (!Darkdouille.valueIsRecord(instruction)) return false
+      if (!isRecord(instruction)) return false
       const { name } = instruction
       const validInstructionsNames: string[] = [
         ...Object.values(Config.InlineOnlyInstructionName),
@@ -204,12 +187,13 @@ async function init () {
   const pageSlotsArray = pageSlotsIsArray ? pageFullDataSlots : []
   await Promise.all(pageSlotsArray.map(async pageSlotData => {
     // Validate data shape
-    if (!Darkdouille.valueIsRecord(pageSlotData)) return
+    if (!isRecord(pageSlotData)) return
     const { destination } = pageSlotData
-    if (!Darkdouille.valueIsRecord(destination)) return
-    const selector = Darkdouille.transformers.toString()(destination.selector)
-    const position = destination.position !== undefined ? Darkdouille.transformers.toString()(destination.position) : undefined
-    const reference = destination.reference !== undefined ? Darkdouille.transformers.toString()(destination.reference) : undefined
+    if (!isRecord(destination)) return
+    const selector = destination.selector !== undefined ? HyperJson.Cast.toString(destination.selector) : undefined
+    if (selector === undefined) return
+    const position = destination.position !== undefined ? HyperJson.Cast.toString(destination.position) : undefined
+    const reference = destination.reference !== undefined ? HyperJson.Cast.toString(destination.reference) : undefined
     // Create or select targets
     // [WIP] Maybe slots creation should be inside Slots
     const targetElements: Element[] = []
@@ -227,13 +211,23 @@ async function init () {
     // Inject content inside targets
     await Promise.all(targetElements.map(async targetElement => {
       const { content } = pageSlotData
-      const clonedContent = content instanceof NodeList
-        ? Array.from(content).map(node => node.cloneNode(true))
-        : Darkdouille.transformers.toString()(content)
-      const renderedContent = typeof clonedContent === 'string'
-        ? clonedContent
-        : await Promise.all(clonedContent.map(node => LmHtml.render(node)))
-      Slots.makeSlot(targetElement, renderedContent)
+      let actualContent: Element | Text | NodeList | string
+      if (content instanceof Element) { actualContent = content }
+      else if (content instanceof Text) { actualContent = content }
+      else if (content instanceof NodeList) { actualContent = content }
+      else { actualContent = HyperJson.Cast.toString(content ?? '') }
+      const rendered = typeof actualContent === 'string'
+        ? actualContent
+        : await LmHtml.render(actualContent)
+      Slots.makeSlot(targetElement, rendered)
+      // const { content } = pageSlotData
+      // const clonedContent = content instanceof NodeList
+      //   ? Array.from(content).map(node => node.cloneNode(true))
+      //   : HyperJson.Cast.toString(content ?? '')
+      // const renderedContent = typeof clonedContent === 'string'
+      //   ? clonedContent
+      //   : await Promise.all(clonedContent.map(node => LmHtml.render(node)))
+      // Slots.makeSlot(targetElement, renderedContent)
     }))
   }))
   logger.log('Slots', '%cCreated slots:', 'font-weight: 800;', Slots.created)

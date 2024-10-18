@@ -1,15 +1,15 @@
+import { HyperJson } from '@design-edito/tools/agnostic/html/hyper-json'
 import { init } from '~/shared'
 import appConfig from '~/config'
 import { Apps } from '~/apps'
 import { Analytics } from '~/shared/analytics'
 import { Config } from '~/shared/config'
-import { Darkdouille } from '~/shared/darkdouille'
 import { Events } from '~/shared/events'
 import { Externals } from '~/shared/externals'
 import { LmHtml } from '~/shared/lm-html'
 import { Slots } from '~/shared/slots'
 import Logger from '~/utils/silent-log'
-import isInEnum from '~/utils/is-in-enum'
+import { isInEnum } from '@design-edito/tools/agnostic/objects/enums/is-in-enum'
 
 declare global {
   interface Window { LM_PAGE?: Globals.GlobalObj }
@@ -22,7 +22,6 @@ export namespace Globals {
     [Globals.GlobalKey.ANALYTICS]?: typeof Analytics
     [Globals.GlobalKey.APPS]?: typeof Apps
     [Globals.GlobalKey.CONFIG]?: typeof Config
-    [Globals.GlobalKey.DARKDOUILLE]?: typeof Darkdouille
     [Globals.GlobalKey.EVENTS]?: typeof Events
     [Globals.GlobalKey.EXTERNALS]?: typeof Externals
     [Globals.GlobalKey.INIT]?: typeof init
@@ -38,8 +37,7 @@ export namespace Globals {
       paths?: typeof appConfig.paths
     }
     [Globals.GlobalKey.SLOTS]?: typeof Slots
-    [Globals.GlobalKey.TREE]?: Darkdouille.Tree
-    [Globals.GlobalKey.UTILS]?: Record<string, any>
+    [Globals.GlobalKey.TREE]?: InstanceType<typeof HyperJson.Tree.Tree>
   }
 
   // Allowed keys in global obj
@@ -48,7 +46,6 @@ export namespace Globals {
     ANALYTICS = 'Analytics',
     APPS = 'Apps',
     CONFIG = 'Config',
-    DARKDOUILLE = 'Darkdouille',
     EVENTS = 'Events',
     EXTERNALS = 'Externals',
     INIT = 'init',
@@ -57,7 +54,6 @@ export namespace Globals {
     META = 'meta',
     SLOTS = 'Slots',
     TREE = 'tree',
-    UTILS = 'utils',
   }
   
   // Global obj creation & access

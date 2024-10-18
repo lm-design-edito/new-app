@@ -1,13 +1,12 @@
+import { HyperJson } from '@design-edito/tools/agnostic/html/hyper-json'
 import { Analytics } from '~/shared/analytics'
-import { Darkdouille } from '~/shared/darkdouille'
 import { Events } from '~/shared/events'
 import { Externals } from '~/shared/externals'
 import { Globals } from '~/shared/globals'
 import { Slots } from '~/shared/slots'
 import { toString, toNumber, toBoolean } from '~/utils/cast'
 import interpolate, { ratio } from '~/utils/interpolate'
-import isInEnum from '~/utils/is-in-enum'
-import isRecord from '~/utils/is-record'
+import isRecord from '@design-edito/tools/agnostic/objects/is-record'
 import roundNumbers from '~/utils/round-numbers'
 import stringNormalizeIndent from '~/utils/string-normalize-indent'
 
@@ -31,7 +30,7 @@ export namespace Config {
 
   export type ConfigInstruction = {
     name: string,
-    [key: string]: Darkdouille.TreeValue
+    [key: string]: HyperJson.Types.Value
   }
 
   export function apply (instructions: ConfigInstruction[]) {
@@ -187,7 +186,7 @@ export namespace Config {
       
       // SCALE
       if (name === RemoteInstructionName.SCALE) {
-        const valueIsRecord = Darkdouille.valueIsRecord(value)
+        const valueIsRecord = isRecord(value)
         if (!valueIsRecord) return
         const name = toString(value.name)
         const root = value.root !== undefined ? toString(value.root) : ':root,:host'

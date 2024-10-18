@@ -124,7 +124,7 @@ export namespace Slots {
     })
   }
 
-  export function makeSlot (slotRootElt: Element, content: VNode[] | string): Element | undefined {
+  export function makeSlot (slotRootElt: Element, content: VNode | VNode[] | string): Element | undefined {
     if (created.has(slotRootElt)) return;
     slotRootElt.classList.add(appConfig.slots.rootElementClass)
         

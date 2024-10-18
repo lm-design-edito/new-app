@@ -100,7 +100,7 @@ const generateHomePage = async () => `<html class="lm-page">
 app.use('/', async (req, res, next) => {
   if (req.path !== '/') return next()
   const homePageContent = await generateHomePage()
-  return res.type('text/html').send(homePageContent)
+  res.type('text/html').send(homePageContent)
 })
 
 app.use('/pages', async (req, res, next) => {
@@ -115,14 +115,17 @@ app.use('/pages', async (req, res, next) => {
     styleElement.innerHTML += 'html, body { margin: 0; padding: 0 }'
     dom.window.document.head.append(styleElement)
     const domStr = dom.window.document.documentElement.outerHTML
-    return res.type('text/html').send(domStr)
+    res.type('text/html').send(domStr)
+    return
   } catch (err) {
     try {
       const fileContent = await readFile(TARGET, { encoding: 'utf-8' })
       const mime = lookup(TARGET) || 'text/plain'
-      return res.type(mime).send(fileContent)
+      res.type(mime).send(fileContent)
+      return
     } catch (err) {
-      return res.type('text/html').status(404).send('404')
+      res.type('text/html').status(404).send('404')
+      return
     }
   }
 })

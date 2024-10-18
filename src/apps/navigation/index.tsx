@@ -1,7 +1,7 @@
 import { Apps } from '~/apps'
 import { Events } from '~/shared'
 import { toString } from '~/utils/cast'
-import isRecord from '~/utils/is-record'
+import isRecord from '@design-edito/tools/agnostic/objects/is-record'
 import Navigation, { Props } from '~/components/Navigation'
 
 export { Props }

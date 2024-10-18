@@ -1,6 +1,6 @@
 import { Apps } from '~/apps'
 import { toString, toBoolean, toNumber } from '~/utils/cast'
-import isRecord from '~/utils/is-record'
+import isRecord from '@design-edito/tools/agnostic/objects/is-record'
 import Slideshow, { Props, Media } from '~/components/_Slideshow'
 import recordFormat from '~/utils/record-format'
 

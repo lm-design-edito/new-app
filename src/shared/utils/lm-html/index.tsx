@@ -1,9 +1,11 @@
 import { VNode, createElement } from 'preact'
-import { Darkdouille } from '~/shared/darkdouille'
+import appConfig from '~/config'
+import { HyperJson } from '@design-edito/tools/agnostic/html/hyper-json'
 import { Globals } from '~/shared/globals'
 import { Apps } from '~/apps'
-import isInEnum from '~/utils/is-in-enum'
+import { isInEnum } from '@design-edito/tools/agnostic/objects/enums/is-in-enum'
 import MutedVideo from './MutedVideo'
+import isRecord from '@design-edito/tools/agnostic/objects/is-record'
 
 export namespace LmHtml {
   export const boolAttrNames = [
@@ -15,10 +17,14 @@ export namespace LmHtml {
     'readonly',             'required',       'reversed',       'selected'
   ]
 
-  export async function render (node: Node): Promise<VNode> {
-    const { nodeType } = node
-    if (nodeType === Node.ELEMENT_NODE) return await elementToVNode(node as Element)
-    if (nodeType === Node.TEXT_NODE) return <>{(node as Text).wholeText}</>
+  export async function render (nodeOrNodeList: Node | NodeList): Promise<VNode> {
+    if (nodeOrNodeList instanceof NodeList) {
+      const rendered = await Promise.all(Array.from(nodeOrNodeList).map(n => render(n)))
+      return <>{...rendered}</>
+    }
+    const { nodeType } = nodeOrNodeList
+    if (nodeType === Node.ELEMENT_NODE) return await elementToVNode(nodeOrNodeList as Element)
+    if (nodeType === Node.TEXT_NODE) return <>{(nodeOrNodeList as Text).wholeText}</>
     return <></>
   }
 
@@ -27,16 +33,24 @@ export namespace LmHtml {
     const tagName = tagNameInAnyCase.toLowerCase()
     const logger = Globals.retrieve(Globals.GlobalKey.LOGGER)
 
-    // If tagname is comp
-    // [WIP] tag name configurable in ~/config ?
-    const isCustomComp = tagName === 'comp'
+    // [WIP] components literal data detection, maybe in config?
+    const isLiteralElement = tagName === 'literal'
+    const hasForCompAttribute = Array
+      .from(attributes)
+      .some(({ name, value }) => name === '_for' && value === 'app')
+    const isCustomComp = isLiteralElement && hasForCompAttribute
     if (isCustomComp) {
-      const appName = element.getAttribute('name') ?? ''
-      const appId = element.getAttribute('compid')
-      const typeIsValidAppName = isInEnum(Apps.Name, appName)
-      const unknownPropsTree = Darkdouille.tree([element])
-      const unknownProps = unknownPropsTree.value
-      if (typeIsValidAppName) return await Apps.render(appName, appId, unknownProps)
+      const recordWrapper = document.createElement('record')
+      recordWrapper.append(...Array.from(element.childNodes))
+      const evaluated = HyperJson.Tree.from([recordWrapper], { rootKey: appConfig.dataSourceRootKey }).evaluate()
+      if (!isRecord(evaluated)) {
+        logger?.warn('Render', '%App configuration object must be a record', 'font-weight: 800;', 'at', element, 'found', evaluated)
+        return <></>
+      }
+      const { name: appName, props: unknownProps } = evaluated
+      const appId = element.getAttribute('_id')
+      const typeIsValidAppName = isInEnum(Apps.Name, appName as any)
+      if (typeIsValidAppName) return await Apps.render(appName as Apps.Name, appId, unknownProps)
       logger?.warn('Render', '%cInvalid app name', 'font-weight: 800;', 'at', element)
       return <></>
     }

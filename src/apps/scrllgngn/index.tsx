@@ -1,7 +1,7 @@
 import { Apps } from '~/apps'
 import { Events } from '~/shared/events'
 import { toString, toNumber, toBoolean } from '~/utils/cast'
-import isRecord from '~/utils/is-record'
+import isRecord from '@design-edito/tools/agnostic/objects/is-record'
 import Scrollgneugneu, {
   Props,
   PropsPageData,

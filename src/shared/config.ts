@@ -32,6 +32,10 @@ const THEME_ICONS_DIR_REL_PATH = '/icons'
 const THEME_ICONS_REGISTRY_REL_PATH = '/icons/registry.json'
 const THEME_ICONS_ASSETS_DIR_PATH = '/icons/assets'
 
+// DATA & HYPER-JSON
+const dataSourceRootKey = 'DATA-ROOT'
+const dataSourceSelector = `record[_key="${dataSourceRootKey}"]`
+
 // OTHER
 const eventHandlersAllowedUrlSchemes: Array<Partial<URL>> = [
   { protocol: 'http:', hostname: 'localhost' },
@@ -73,7 +77,8 @@ export default {
     styleElementClass: slotsStylesElementClass,
     contentElementClass: slotsContentElementClass
   },
-  dataSourceSelector: 'data.dkdll',
+  dataSourceRootKey,
+  dataSourceSelector,
   dataSourcesReservedNames: {
     slots: 'SLOTS',
     config: 'CONFIG'

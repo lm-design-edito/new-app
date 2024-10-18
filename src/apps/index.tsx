@@ -4,7 +4,7 @@ import { Globals } from '~/shared/globals'
 import { LmHtml } from '~/shared/lm-html'
 import { toString } from '~/utils/cast'
 import isArrayOf from '~/utils/is-array-of'
-import isRecord from '~/utils/is-record'
+import isRecord from '@design-edito/tools/agnostic/objects/is-record'
 import randomUUID from '~/utils/random-uuid'
 import recordFormat, {
   Format as FormatterFormat,

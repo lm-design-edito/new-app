@@ -1,7 +1,7 @@
 import { Apps } from '~/apps'
 import { toString, toBoolean, toArray } from '~/utils/cast'
-import isRecord from '~/utils/is-record'
-import isInEnum from '~/utils/is-in-enum'
+import isRecord from '@design-edito/tools/agnostic/objects/is-record'
+import { isInEnum } from '@design-edito/tools/agnostic/objects/enums/is-in-enum'
 import Header, { Props, CtaActionType } from '~/components/Header'
 import recordFormat from '~/utils/record-format'
 
