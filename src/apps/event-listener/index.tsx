@@ -1,6 +1,6 @@
+import { Cast } from '@design-edito/tools/agnostic/misc/cast'
 import { Apps } from '~/apps'
 import { Events } from '~/shared/events'
-import { toString } from '~/utils/cast'
 import EventListenerComponent, { Props } from '~/components/EventListener'
 
 export default async function renderer (unknownProps: unknown, id: string): ReturnType<Apps.AsyncRendererModule<Props>> {
@@ -10,9 +10,9 @@ export default async function renderer (unknownProps: unknown, id: string): Retu
 
 async function toProps (input: unknown, id: string): Promise<Props> {
   return await Apps.toPropsHelper(input, {
-    customClass: i => Apps.ifNotUndefinedHelper(i, toString),
+    customClass: i => Apps.ifNotUndefinedHelper(i, Cast.toString),
     content: i => Apps.ifNotUndefinedHelper(i, Apps.toStringOrVNodeHelper),
-    targetSelector: i => Apps.ifNotUndefinedHelper(i, toString),
+    targetSelector: i => Apps.ifNotUndefinedHelper(i, Cast.toString),
     eventTypes: i => Apps.ifNotUndefinedHelper(i, Apps.toStringOrStringsHelper),
     
     // Handlers

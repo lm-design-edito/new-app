@@ -1,5 +1,5 @@
 import { Component, JSX, VNode } from 'preact'
-import bem from '~/utils/bem'
+import { Bem } from '@design-edito/tools/agnostic/css/bem'
 import Logo from '~/components/Logo'
 import Drawer from '~/components/Drawer'
 import styles from './styles.module.scss'
@@ -38,7 +38,7 @@ type State = {
 }
 
 export default class Header extends Component<Props, State> {
-  bemClss = bem('lm-header')
+  bemClss = Bem.bem('lm-header')
   state: State = {
     panelIsOpened: false
   }

@@ -1,5 +1,5 @@
 import { Component, VNode } from 'preact'
-import bem from '~/utils/bem'
+import { Bem } from '@design-edito/tools/agnostic/css/bem'
 import Tab from '../UI/components/Tab'
 import Gallery from '../Gallery'
 
@@ -33,7 +33,7 @@ export default class Navigation extends Component<Props> {
   render () {
     const { props } = this
     const activeId = props.activeItemId
-    const wrapperBemClass = bem('lm-navigation')
+    const wrapperBemClass = Bem.bem('lm-navigation')
     const wrapperClasses = [wrapperBemClass.value, props.customClass]
     return <div
       className={wrapperClasses.join(' ')}

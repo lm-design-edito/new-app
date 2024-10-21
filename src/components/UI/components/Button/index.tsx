@@ -1,5 +1,5 @@
 import { VNode, FunctionalComponent } from 'preact'
-import bem from '~/utils/bem'
+import { Bem } from '@design-edito/tools/agnostic/css/bem'
 
 export type Props = {
   customClass?: string
@@ -15,7 +15,7 @@ export type Props = {
 
 const Button: FunctionalComponent<Props> = (props: Props) => {
   const rootClass = 'lmui-button'
-  const bemClss = bem(rootClass).mod({
+  const bemClss = Bem.bem(rootClass).mod({
     m: props.size === 'medium',
     s: props.size === 'small',
     squared: props.squared,
@@ -25,7 +25,7 @@ const Button: FunctionalComponent<Props> = (props: Props) => {
   })
   const wrapperClasses = [bemClss.value]
   if (props.customClass !== undefined) wrapperClasses.push(props.customClass)
-  const iconWrapperClass = bem(rootClass).elt('icon')
+  const iconWrapperClass = Bem.bem(rootClass).elt('icon')
   return <button
     className={wrapperClasses.join(' ')}
     disabled={props.disabled}

@@ -1,8 +1,7 @@
+import { Cast } from '@design-edito/tools/agnostic/misc/cast'
 import { Apps } from '~/apps'
 import { Events } from '~/shared/events'
-import { toString, toBoolean, toNumberArr } from '~/utils/cast'
 import AudioQuote, { Props, State } from '~/components/AudioQuote'
-
 export { Props, State }
 
 export default async function renderer (unknownProps: unknown, id: string): ReturnType<Apps.AsyncRendererModule<Props>> {
@@ -12,20 +11,20 @@ export default async function renderer (unknownProps: unknown, id: string): Retu
  
 async function toProps (input: unknown, id: string): Promise<Props> {
   return await Apps.toPropsHelper(input, {
-    customClass: i => Apps.ifNotUndefinedHelper(i, toString),
-    audioSrc: i => Apps.ifNotUndefinedHelper(i, toString),
-    subsSrc: i => Apps.ifNotUndefinedHelper(i, toString),
-    subsGroups: i => Apps.ifNotUndefinedHelper(i, toNumberArr),
-    autoPlayWhenVisible: i => Apps.ifNotUndefinedHelper(i, toBoolean),
-    autoPauseWhenVisible: i => Apps.ifNotUndefinedHelper(i, toBoolean),
-    autoLoudWhenVisible: i => Apps.ifNotUndefinedHelper(i, toBoolean),
-    autoMuteWhenHidden: i => Apps.ifNotUndefinedHelper(i, toBoolean),
+    customClass: i => Apps.ifNotUndefinedHelper(i, Cast.toString),
+    audioSrc: i => Apps.ifNotUndefinedHelper(i, Cast.toString),
+    subsSrc: i => Apps.ifNotUndefinedHelper(i, Cast.toString),
+    subsGroups: i => Apps.ifNotUndefinedHelper(i, Cast.toNumberArr),
+    autoPlayWhenVisible: i => Apps.ifNotUndefinedHelper(i, Cast.toBoolean),
+    autoPauseWhenVisible: i => Apps.ifNotUndefinedHelper(i, Cast.toBoolean),
+    autoLoudWhenVisible: i => Apps.ifNotUndefinedHelper(i, Cast.toBoolean),
+    autoMuteWhenHidden: i => Apps.ifNotUndefinedHelper(i, Cast.toBoolean),
     title: i => Apps.ifNotUndefinedHelper(i, Apps.toStringOrVNodeHelper),
     playButton: i => Apps.ifNotUndefinedHelper(i, Apps.toStringOrVNodeHelper),
     pauseButton: i => Apps.ifNotUndefinedHelper(i, Apps.toStringOrVNodeHelper),
     loudButton: i => Apps.ifNotUndefinedHelper(i, Apps.toStringOrVNodeHelper),
     muteButton: i => Apps.ifNotUndefinedHelper(i, Apps.toStringOrVNodeHelper),
-    hidePauseButton: i => Apps.ifNotUndefinedHelper(i, toBoolean),
+    hidePauseButton: i => Apps.ifNotUndefinedHelper(i, Cast.toBoolean),
     
     // Handlers
     onSubsLoad: i => Apps.makeHandlerHelper<string | undefined>(Events.Type.AUDIOQUOTE_SUBS_LOAD, i, id),

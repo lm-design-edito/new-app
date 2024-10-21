@@ -1,5 +1,5 @@
 import { FunctionalComponent, JSX } from 'preact'
-import bem from '~/utils/bem'
+import { Bem } from '@design-edito/tools/agnostic/css/bem'
 import Svg from '~/components/Svg'
 
 export type Props = {
@@ -11,7 +11,7 @@ export type Props = {
 }
 
 const Icon: FunctionalComponent<Props> = (props: Props) => {
-  const rootBemClss = bem('lmui-icon')
+  const rootBemClss = Bem.bem('lmui-icon')
   const wrapperBemClss = rootBemClss.mod({
     ['as-img']: props.asImg,
     ['with-mask']: props.maskColor !== undefined

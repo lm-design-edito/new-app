@@ -1,5 +1,5 @@
 import { VNode, Component } from 'preact'
-import bem from '~/utils/bem'
+import { Bem } from '@design-edito/tools/agnostic/css/bem'
 
 export type Props = {
   customClass?: string
@@ -14,13 +14,13 @@ export default class Tab extends Component<Props> {
   render () {
     const { props } = this
     const rootClass = 'lmui-tab'
-    const bemClss = bem(rootClass).mod({
+    const bemClss = Bem.bem(rootClass).mod({
       active: props.active,
       'icon-first': props.iconFirst === true
     })
     const wrapperClasses = [bemClss.value]
     if (props.customClass !== undefined) wrapperClasses.push(props.customClass)
-    const iconClss = bem(rootClass).elt('icon')
+    const iconClss = Bem.bem(rootClass).elt('icon')
     return <button
       className={wrapperClasses.join(' ')}
       onClick={props.onClick}>

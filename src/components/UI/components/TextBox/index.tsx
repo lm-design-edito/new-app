@@ -1,5 +1,5 @@
 import { FunctionalComponent, VNode } from 'preact'
-import bem from '~/utils/bem'
+import { Bem } from '@design-edito/tools/agnostic/css/bem'
 
 export type Props = {
   customClass?: string
@@ -7,7 +7,7 @@ export type Props = {
 }
 
 const TextBox: FunctionalComponent<Props> = (props: Props) => {
-  const bemClss = bem('lmui-text-box')
+  const bemClss = Bem.bem('lmui-text-box')
   const wrapperClasses = [bemClss.value]
   if (props.customClass !== undefined) wrapperClasses.push(props.customClass)
   return <p className={bemClss.value}>{props.content}</p>

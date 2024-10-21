@@ -1,9 +1,9 @@
 import { VNode, isValidElement } from 'preact'
+import { isRecord } from '@design-edito/tools/agnostic/objects/is-record'
+import { Cast } from '@design-edito/tools/agnostic/misc/cast'
 import { Apps } from '~/apps'
 import { Events } from '~/shared/events'
 import iconsData from '~/theme/icons'
-import isRecord from '@design-edito/tools/agnostic/objects/is-record'
-import { toBoolean, toString } from '~/utils/cast'
 import UI, { Component, Props } from '~/components/UI'
 import { Theme } from '~/shared/theme'
 
@@ -21,18 +21,18 @@ async function toProps (input: unknown, id: string): Promise<Props> {
   if (component === Component.BUTTON) {
     return await Apps.toPropsHelper(input, {
       component: () => component as Component.BUTTON,
-      customClass: i => Apps.ifNotUndefinedHelper(i, toString),
+      customClass: i => Apps.ifNotUndefinedHelper(i, Cast.toString),
       content: async i => Apps.ifNotUndefinedHelper(i, Apps.toStringOrVNodeHelper),
       size: i => Apps.ifNotUndefinedHelper(i, i => {
-        const strI = toString(i)
+        const strI = Cast.toString(i)
         if (strI === 'large' || strI === 'medium' || strI === 'small') return strI
         return undefined
       }),
-      disabled: i => Apps.ifNotUndefinedHelper(i, toBoolean),
-      squared: i => Apps.ifNotUndefinedHelper(i, toBoolean),
-      secondary: i => Apps.ifNotUndefinedHelper(i, toBoolean),
+      disabled: i => Apps.ifNotUndefinedHelper(i, Cast.toBoolean),
+      squared: i => Apps.ifNotUndefinedHelper(i, Cast.toBoolean),
+      secondary: i => Apps.ifNotUndefinedHelper(i, Cast.toBoolean),
       iconContent: i => Apps.ifNotUndefinedHelper(i, Apps.toStringOrVNodeHelper),
-      iconFirst: i => Apps.ifNotUndefinedHelper(i, toBoolean),
+      iconFirst: i => Apps.ifNotUndefinedHelper(i, Cast.toBoolean),
       
       // Handlers
       onClick: i => Apps.makeHandlerHelper(Events.Type.BUTTON_CLICK, i, id)
@@ -44,11 +44,11 @@ async function toProps (input: unknown, id: string): Promise<Props> {
     return await Apps.toPropsHelper(input, {
       component: () => component as Component.CHECKBOX | Component.RADIO,
       type: () => type,
-      customClass: i => Apps.ifNotUndefinedHelper(i, toString),
+      customClass: i => Apps.ifNotUndefinedHelper(i, Cast.toString),
       labelContent: i => Apps.ifNotUndefinedHelper(i, Apps.toStringOrVNodeHelper),
-      disabled: i => Apps.ifNotUndefinedHelper(i, toBoolean),
-      error: i => Apps.ifNotUndefinedHelper(i, toBoolean),
-      defaultchecked: i => Apps.ifNotUndefinedHelper(i, toBoolean),
+      disabled: i => Apps.ifNotUndefinedHelper(i, Cast.toBoolean),
+      error: i => Apps.ifNotUndefinedHelper(i, Cast.toBoolean),
+      defaultchecked: i => Apps.ifNotUndefinedHelper(i, Cast.toBoolean),
 
       // Handlers
       onChange: i => Apps.makeHandlerHelper(Events.Type.CHECKBOX_OR_RADIO_CHANGE, i, id)
@@ -56,26 +56,26 @@ async function toProps (input: unknown, id: string): Promise<Props> {
 
   // Icon
   } else if (component === Component.ICON) {
-    const iconName = Apps.ifNotUndefinedHelper(input.name, toString)
+    const iconName = Apps.ifNotUndefinedHelper(input.name, Cast.toString)
     const iconData = iconName !== undefined ? Theme.getIconData(iconName) : undefined
     return await Apps.toPropsHelper(input, {
       component: () => component as Component.ICON,
-      customClass: i => Apps.ifNotUndefinedHelper(i, toString),
-      url: i => Apps.ifNotUndefinedHelper(i, toString) ?? iconData?.url,
-      description: i => Apps.ifNotUndefinedHelper(i, toString) ?? iconData?.description,
-      asImg: i => Apps.ifNotUndefinedHelper(i, toBoolean),
-      maskColor: i => Apps.ifNotUndefinedHelper(i, toString)
+      customClass: i => Apps.ifNotUndefinedHelper(i, Cast.toString),
+      url: i => Apps.ifNotUndefinedHelper(i, Cast.toString) ?? iconData?.url,
+      description: i => Apps.ifNotUndefinedHelper(i, Cast.toString) ?? iconData?.description,
+      asImg: i => Apps.ifNotUndefinedHelper(i, Cast.toBoolean),
+      maskColor: i => Apps.ifNotUndefinedHelper(i, Cast.toString)
     }) ?? {}
     
   // Tab
   } else if (component === Component.TAB) {
     return await Apps.toPropsHelper(input, {
       component: () => component as Component.TAB,
-      customClass: i => Apps.ifNotUndefinedHelper(i, toString),
+      customClass: i => Apps.ifNotUndefinedHelper(i, Cast.toString),
       content: i => Apps.ifNotUndefinedHelper(i, Apps.toStringOrVNodeHelper),
-      active: i => Apps.ifNotUndefinedHelper(i, toBoolean),
+      active: i => Apps.ifNotUndefinedHelper(i, Cast.toBoolean),
       iconContent: i => Apps.ifNotUndefinedHelper(i, Apps.toStringOrVNodeHelper),
-      iconFirst: i => Apps.ifNotUndefinedHelper(i, toBoolean),
+      iconFirst: i => Apps.ifNotUndefinedHelper(i, Cast.toBoolean),
 
       // Handlers
       onClick: i => Apps.makeHandlerHelper(Events.Type.TAB_CLICK, i, id)
@@ -85,7 +85,7 @@ async function toProps (input: unknown, id: string): Promise<Props> {
   } else if (component === Component.TABS) {
     return await Apps.toPropsHelper(input, {
       component: () => component as Component.TABS,
-      customClass: i => Apps.ifNotUndefinedHelper(i, toString),
+      customClass: i => Apps.ifNotUndefinedHelper(i, Cast.toString),
       tabs: i => Apps.ifArrayHelper(i, async i => await Promise.all(
         i.map(async tab => {
           if (isValidElement(tab)) return tab
@@ -103,7 +103,7 @@ async function toProps (input: unknown, id: string): Promise<Props> {
   } else if (component === Component.TEXT_BOX) {
     return await Apps.toPropsHelper(input, {
       component: () => component as Component.TEXT_BOX,
-      customClass: i => Apps.ifNotUndefinedHelper(i, toString),
+      customClass: i => Apps.ifNotUndefinedHelper(i, Cast.toString),
       content: i => Apps.ifNotUndefinedHelper(i, Apps.toStringOrVNodeHelper)
     }) ?? {}
 
@@ -111,14 +111,14 @@ async function toProps (input: unknown, id: string): Promise<Props> {
   } else if (component === Component.TOGGLE) {
     return await Apps.toPropsHelper(input, {
       component: () => component as Component.TOGGLE,
-      customClass: i => Apps.ifNotUndefinedHelper(i, toString),
+      customClass: i => Apps.ifNotUndefinedHelper(i, Cast.toString),
       labelContent: i => Apps.ifNotUndefinedHelper(i, Apps.toStringOrVNodeHelper),
       size: i => Apps.ifNotUndefinedHelper(i, i => {
-        const strI = toString(i)
+        const strI = Cast.toString(i)
         if (strI === 'medium' || strI === 'small') return strI
         return undefined
       }),
-      defaultChecked: i => Apps.ifNotUndefinedHelper(i, toBoolean),
+      defaultChecked: i => Apps.ifNotUndefinedHelper(i, Cast.toBoolean),
 
       // Handlers
       onToggle: i => Apps.makeHandlerHelper(Events.Type.TOGGLE_TOGGLED, i, id),

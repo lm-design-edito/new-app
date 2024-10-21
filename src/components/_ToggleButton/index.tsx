@@ -1,6 +1,5 @@
 import { Component, JSX, VNode } from 'preact'
-
-import bem from '~/utils/bem'
+import { Bem } from '@design-edito/tools/agnostic/css/bem'
 import styles from './styles.module.scss'
 
 export type Props = {
@@ -14,7 +13,7 @@ export type Props = {
 }
 
 export default class ToggleButton extends Component<Props, {}> {
-  bemClss = bem('lm-toggle-button')
+  bemClss = Bem.bem('lm-toggle-button')
 
   /* * * * * * * * * * * * * * * * * * *
    * RENDER

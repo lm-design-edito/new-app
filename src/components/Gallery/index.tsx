@@ -1,5 +1,5 @@
 import { Component, VNode } from 'preact'
-import bem from '~/utils/bem'
+import { Bem } from '@design-edito/tools/agnostic/css/bem'
 import { throttle } from '~/utils/throttle-debounce'
 import styles from './styles.module.scss'
 
@@ -170,7 +170,7 @@ export default class Gallery extends Component<Props, State> {
   render () {
     const { props, state } = this
     const rootClass = 'lm-gallery'
-    const wrapperBemClass = bem(rootClass).mod({
+    const wrapperBemClass = Bem.bem(rootClass).mod({
       'snap-scroll': props.snapScroll,
       'is-at-start': state.isAtStart,
       'is-at-end': state.isAtEnd

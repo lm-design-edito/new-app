@@ -1,5 +1,5 @@
 import { Component, JSX } from 'preact'
-import bem from '~/utils/bem'
+import { Bem } from '@design-edito/tools/agnostic/css/bem'
 
 interface Props {
   className?: string
@@ -38,7 +38,7 @@ class Page extends Component<Props, {}> {
     const { pageRef } = props
 
     /* Classes and style */
-    const wrapperClasses = [bem(props.className).block(this.clss).value]
+    const wrapperClasses = [Bem.bem(props.className).block(this.clss).value]
     const wrapperStyle: JSX.CSSProperties = { ...props.style }
 
     /* Display */

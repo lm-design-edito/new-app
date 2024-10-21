@@ -1,5 +1,5 @@
 import { Component, JSX, toChildArray, cloneElement } from 'preact'
-import bem from '~/utils/bem'
+import { Bem } from '@design-edito/tools/agnostic/css/bem'
 import { groupDelay } from '~/utils/group-delay' // [WIP] throttle would be better
 import Page, { Props as PageProps } from './Page'
 import styles from './styles.module.scss'
@@ -219,7 +219,7 @@ export default class Paginator extends Component<Props, State> {
     const { props } = this
 
     /* Classes and style */
-    const wrapperBemClasses = bem(props.className)
+    const wrapperBemClasses = Bem.bem(props.className)
       .block(this.clss)
       .mod({
         horizontal: props.direction === 'horizontal',
@@ -236,15 +236,15 @@ export default class Paginator extends Component<Props, State> {
     if (props.root === 'self') wrapperClasses.push(styles['wrapper_self-rooted'])
     if (props.root !== 'self') wrapperClasses.push(styles['wrapper_window-rooted'])
     const thresholdAreaClasses = [
-      bem(this.clss).elt('threshold-area').value,
+      Bem.bem(this.clss).elt('threshold-area').value,
       styles['threshold-area']
     ]
     const thresholdBarClasses = [
-      bem(this.clss).elt('threshold-bar').value,
+      Bem.bem(this.clss).elt('threshold-bar').value,
       styles['threshold-bar']
     ]
     const scrollableAreaClasses = [
-      bem(this.clss).elt('scrollable-area').value,
+      Bem.bem(this.clss).elt('scrollable-area').value,
       styles['scrollable-area']
     ]
     const wrapperStyle: JSX.CSSProperties = {

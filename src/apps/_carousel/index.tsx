@@ -1,8 +1,8 @@
+import { Cast } from '@design-edito/tools/agnostic/misc/cast'
+import { isRecord } from '@design-edito/tools/agnostic/objects/is-record'
+import { recordFormat } from '@design-edito/tools/agnostic/objects/record-format'
 import { Apps } from '~/apps'
-import { toString, toBoolean, toNumber } from '~/utils/cast'
-import isRecord from '@design-edito/tools/agnostic/objects/is-record'
 import Carousel, { Props, Media } from '~/components/_Carousel'
-import recordFormat from '~/utils/record-format'
 
 export default async function renderer (unknownProps: unknown, id: string): ReturnType<Apps.AsyncRendererModule<Props>> {
   const props = await toProps(unknownProps, id)
@@ -11,28 +11,28 @@ export default async function renderer (unknownProps: unknown, id: string): Retu
 
 async function toProps (input: unknown, id: string): Promise<Props> {
   return await Apps.toPropsHelper(input, {
-    customClass: i => Apps.ifNotUndefinedHelper(i, toString),
-    leftArrow: i => Apps.ifNotUndefinedHelper(i, toBoolean),
-    rightArrow: i => Apps.ifNotUndefinedHelper(i, toBoolean),
-    arrowsPosition: i => Apps.ifNotUndefinedHelper(i, toString),
-    dots: i => Apps.ifNotUndefinedHelper(i, toBoolean),
-    loop: i => Apps.ifNotUndefinedHelper(i, toBoolean),
-    duration: i => Apps.ifNotUndefinedHelper(i, toNumber),
-    fullscreen: i => Apps.ifNotUndefinedHelper(i, toBoolean),
-    imageHeight: i => Apps.ifNotUndefinedHelper(i, toNumber),
-    imageFit: i => Apps.ifNotUndefinedHelper(i, toString),
-    gapValue: i => Apps.ifNotUndefinedHelper(i, toNumber),
-    backgroundColor: i => Apps.ifNotUndefinedHelper(i, toString),
-    imageBackgroundColor: i => Apps.ifNotUndefinedHelper(i, toString),
-    titleColor: i => Apps.ifNotUndefinedHelper(i, toString),
-    descriptionColor: i => Apps.ifNotUndefinedHelper(i, toString),
-    creditsColor: i => Apps.ifNotUndefinedHelper(i, toString),
-    dotColor: i => Apps.ifNotUndefinedHelper(i, toString),
-    fullscreenButtonColor: i => Apps.ifNotUndefinedHelper(i, toString),
-    arrowColor: i => Apps.ifNotUndefinedHelper(i, toString),
-    arrowColorDisabled: i => Apps.ifNotUndefinedHelper(i, toString),
-    arrowBackgroundColor: i => Apps.ifNotUndefinedHelper(i, toString),
-    arrowBackgroundColorHover: i => Apps.ifNotUndefinedHelper(i, toString),
+    customClass: i => Apps.ifNotUndefinedHelper(i, Cast.toString),
+    leftArrow: i => Apps.ifNotUndefinedHelper(i, Cast.toBoolean),
+    rightArrow: i => Apps.ifNotUndefinedHelper(i, Cast.toBoolean),
+    arrowsPosition: i => Apps.ifNotUndefinedHelper(i, Cast.toString),
+    dots: i => Apps.ifNotUndefinedHelper(i, Cast.toBoolean),
+    loop: i => Apps.ifNotUndefinedHelper(i, Cast.toBoolean),
+    duration: i => Apps.ifNotUndefinedHelper(i, Cast.toNumber),
+    fullscreen: i => Apps.ifNotUndefinedHelper(i, Cast.toBoolean),
+    imageHeight: i => Apps.ifNotUndefinedHelper(i, Cast.toNumber),
+    imageFit: i => Apps.ifNotUndefinedHelper(i, Cast.toString),
+    gapValue: i => Apps.ifNotUndefinedHelper(i, Cast.toNumber),
+    backgroundColor: i => Apps.ifNotUndefinedHelper(i, Cast.toString),
+    imageBackgroundColor: i => Apps.ifNotUndefinedHelper(i, Cast.toString),
+    titleColor: i => Apps.ifNotUndefinedHelper(i, Cast.toString),
+    descriptionColor: i => Apps.ifNotUndefinedHelper(i, Cast.toString),
+    creditsColor: i => Apps.ifNotUndefinedHelper(i, Cast.toString),
+    dotColor: i => Apps.ifNotUndefinedHelper(i, Cast.toString),
+    fullscreenButtonColor: i => Apps.ifNotUndefinedHelper(i, Cast.toString),
+    arrowColor: i => Apps.ifNotUndefinedHelper(i, Cast.toString),
+    arrowColorDisabled: i => Apps.ifNotUndefinedHelper(i, Cast.toString),
+    arrowBackgroundColor: i => Apps.ifNotUndefinedHelper(i, Cast.toString),
+    arrowBackgroundColorHover: i => Apps.ifNotUndefinedHelper(i, Cast.toString),
     title: i => Apps.ifNotUndefinedHelper(i, Apps.toStringOrVNodeHelper),
     credits: i => Apps.ifNotUndefinedHelper(i, Apps.toStringOrVNodeHelper),
     description: i => Apps.ifNotUndefinedHelper(i, Apps.toStringOrVNodeHelper),

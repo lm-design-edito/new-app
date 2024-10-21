@@ -1,7 +1,7 @@
 import { Component, JSX, VNode } from 'preact'
+import { Bem } from '@design-edito/tools/agnostic/css/bem'
 import { throttle } from '~/utils/throttle-debounce'
 import clamp from '~/utils/clamp'
-import bem from '~/utils/bem'
 import IntersectionObserverComponent from '~/components/IntersectionObserver'
 import ResizeObserverComponent from '~/components/ResizeObserver'
 import Paginator, { State as PaginatorState } from '~/components/Paginator'
@@ -995,7 +995,7 @@ export default class Scrollgneugneu extends Component<Props, State> {
       : undefined
   }
 
-  wrapperBemClass = bem('lm-scrllgngn')
+  wrapperBemClass = Bem.bem('lm-scrllgngn')
 
   StickyBlocks () {
     const {

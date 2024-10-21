@@ -1,7 +1,7 @@
+import { Cast } from '@design-edito/tools/agnostic/misc/cast'
+import { isRecord } from '@design-edito/tools/agnostic/objects/is-record'
 import { Apps } from '~/apps'
 import { Events } from '~/shared'
-import { toString } from '~/utils/cast'
-import isRecord from '@design-edito/tools/agnostic/objects/is-record'
 import Navigation, { Props } from '~/components/Navigation'
 
 export { Props }
@@ -13,10 +13,10 @@ export default async function renderer (unknownProps: unknown, id: string): Retu
  
 async function toProps (input: unknown, id: string): Promise<Props> {
   return await Apps.toPropsHelper(input, {
-    customClass: i => Apps.ifNotUndefinedHelper(i, toString),
-    activeItemId: i => Apps.ifNotUndefinedHelper(i, i => i === null ? null : toString(i)),
+    customClass: i => Apps.ifNotUndefinedHelper(i, Cast.toString),
+    activeItemId: i => Apps.ifNotUndefinedHelper(i, i => i === null ? null : Cast.toString(i)),
     items: i => Apps.ifArrayHelper(i, i => arrayToItems(i, id)),
-    galleryScrollerWidth: i => Apps.ifNotUndefinedHelper(i, toString)
+    galleryScrollerWidth: i => Apps.ifNotUndefinedHelper(i, Cast.toString)
   }) ?? {}
 }
 
@@ -26,7 +26,7 @@ async function arrayToItems (input: unknown[], id: string) {
     if (!isRecord(itemData)) return;
     const { id: itemId, content, onClick } = itemData
     return {
-      id: toString(itemId),
+      id: Cast.toString(itemId),
       content: await Apps.toStringOrVNodeHelper(content),
       onClick: Apps.makeHandlerHelper(Events.Type.NAVIGATION_ITEM_CLICK, onClick, appId)
     }

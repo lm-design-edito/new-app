@@ -1,5 +1,5 @@
 import { Component, JSX } from 'preact'
-import bem, { BEM } from '~/utils/bem'
+import { Bem } from '@design-edito/tools/agnostic/css/bem'
 
 interface Props {
   className?: string
@@ -18,7 +18,7 @@ interface State {
 }
 
 class Svg extends Component<Props, State> {
-  bem: BEM = bem('lmui-svg')
+  bem: InstanceType<typeof Bem.BEM> = Bem.bem('lmui-svg')
   $root: HTMLDivElement | null = null
   state: State = {
     loading: false,
@@ -113,7 +113,7 @@ class Svg extends Component<Props, State> {
     const desc = props.desc !== undefined ? `<desc>${props.desc}</desc>` : ''
 
     /* Assign classes */
-    const classes = bem(attributes.class ?? '')
+    const classes = Bem.bem(attributes.class ?? '')
       .block(props.className)
       .block(this.bem.value)
     

@@ -1,10 +1,8 @@
 import { Component, JSX, createRef, RefObject, VNode } from 'preact'
-
+import { Bem } from '@design-edito/tools/agnostic/css/bem'
 import Icon, { Icons } from '~/components/Icon'
 import ToggleButton from '~/components/_ToggleButton'
 import Drawer from '~/components/Drawer'
-
-import bem from '~/utils/bem'
 import styles from './styles.module.scss'
 
 interface Media {
@@ -30,7 +28,7 @@ class Slide extends Component<Props, {}> {
   video: RefObject<HTMLVideoElement> | null = null
   lastSelected: boolean
 
-  bemClss = bem('lm-slide')
+  bemClss = Bem.bem('lm-slide')
 
 
   constructor(props: Props) {

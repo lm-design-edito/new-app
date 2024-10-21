@@ -19,6 +19,7 @@
     "build-server:prod": "tsc --project server/tsconfig.json",
     "start-server:dev": "nodemon .server.dist/app.js",
     "start-server:prod": "NODE_ENV=production node .server.dist/app.js",
+    "check:src": "tsc -p src/tsconfig.json --noEmit",
     "dev": "npm run remove-ds-stores && concurrently -n 'build-src,build-srv,serve    ' 'npm run build-dist:dev' 'npm run build-server:dev' 'npm run start-server:dev'",
     "prod": "npm run remove-ds-stores && npm run build-dist:prod && npm run build-server:prod && npm run start-server:prod",
     "start": "npm run dev",
@@ -69,7 +70,7 @@
     "typescript": "^5.6.3"
   },
   "dependencies": {
-    "@design-edito/tools": "^0.1.29",
+    "@design-edito/tools": "^0.1.30",
     "preact": "^10.18.1"
   }
 }

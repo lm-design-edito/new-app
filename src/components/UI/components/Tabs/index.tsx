@@ -1,5 +1,5 @@
 import { VNode, Component, toChildArray } from 'preact'
-import bem from '~/utils/bem'
+import { Bem } from '@design-edito/tools/agnostic/css/bem'
 
 type OnTabClickPayoad = {
   event: MouseEvent
@@ -15,7 +15,7 @@ export type Props = {
 export default class Tabs extends Component<Props> {
   render () {
     const { props } = this
-    const bemClss = bem('lmui-tabs')
+    const bemClss = Bem.bem('lmui-tabs')
     const wrapperClasses = [bemClss.value]
     const tabWrapperClasses = [bemClss.elt('tab').value]
     if (props.customClass !== undefined) wrapperClasses.push(props.customClass)

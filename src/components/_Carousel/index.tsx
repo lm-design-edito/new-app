@@ -1,9 +1,7 @@
 import { Component, JSX, createRef, RefObject, VNode } from 'preact'
-
+import { Bem } from '@design-edito/tools/agnostic/css/bem'
 import Icon, { Icons } from '~/components/Icon'
 import CarouselElement, { Media } from './components/CarouselElement'
-
-import bem from '~/utils/bem'
 import styles from './styles.module.scss'
 
 type State = {
@@ -71,7 +69,7 @@ class Carousel extends Component<Props, State> {
   loopTimer!: number
   loadingInterval!: number
 
-  bemClss = bem('lm-carousel')
+  bemClss = Bem.bem('lm-carousel')
 
   state: State = {
     index: 0

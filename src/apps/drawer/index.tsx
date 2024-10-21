@@ -1,5 +1,5 @@
+import { Cast } from '@design-edito/tools/agnostic/misc/cast'
 import { Apps } from '~/apps'
-import { toString } from '~/utils/cast'
 import Drawer, { Props } from '~/components/Drawer'
 
 export default async function renderer (unknownProps: unknown, id: string): ReturnType<Apps.AsyncRendererModule<Props>> {
@@ -9,9 +9,9 @@ export default async function renderer (unknownProps: unknown, id: string): Retu
 
 async function toProps (input: unknown, id: string): Promise<Props> {
   return await Apps.toPropsHelper(input, {
-    customClass: i => Apps.ifNotUndefinedHelper(i, toString),
+    customClass: i => Apps.ifNotUndefinedHelper(i, Cast.toString),
     defaultState: i => Apps.ifNotUndefinedHelper(i, i => {
-      const strI = toString(i)
+      const strI = Cast.toString(i)
       if (strI === 'opened') return 'opened'
       if (strI === 'closed') return 'closed'
       return undefined
@@ -21,9 +21,9 @@ async function toProps (input: unknown, id: string): Promise<Props> {
     topBarClosedContent: i => Apps.ifNotUndefinedHelper(i, Apps.toStringOrVNodeHelper),
     togglerContent: i => Apps.ifNotUndefinedHelper(i, Apps.toStringOrVNodeHelper),
     togglerClosedContent: i => Apps.ifNotUndefinedHelper(i, Apps.toStringOrVNodeHelper),
-    transitionDuration: i => Apps.ifNotUndefinedHelper(i, i => typeof i === 'number' ? i : toString(i)),
-    transitionCloseDuration: i => Apps.ifNotUndefinedHelper(i, i => typeof i === 'number' ? i : toString(i)),
-    transitionEase: i => Apps.ifNotUndefinedHelper(i, toString),
-    transitionCloseEase: i => Apps.ifNotUndefinedHelper(i, toString)
+    transitionDuration: i => Apps.ifNotUndefinedHelper(i, i => typeof i === 'number' ? i : Cast.toString(i)),
+    transitionCloseDuration: i => Apps.ifNotUndefinedHelper(i, i => typeof i === 'number' ? i : Cast.toString(i)),
+    transitionEase: i => Apps.ifNotUndefinedHelper(i, Cast.toString),
+    transitionCloseEase: i => Apps.ifNotUndefinedHelper(i, Cast.toString)
   })?? {}
 }

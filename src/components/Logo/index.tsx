@@ -1,6 +1,6 @@
 import { Component } from 'preact'
+import { Bem } from '@design-edito/tools/agnostic/css/bem'
 import Svg from '~/components/Svg'
-import bem from '~/utils/bem'
 import logoUrl from './logo.svg'
 import styles from './styles.module.scss'
 
@@ -13,7 +13,7 @@ export default class Logo extends Component<Props, {}> {
   clss = Logo.clss
 
   render() {
-    const logoClasses = [bem(this.clss).value, styles['logo']]
+    const logoClasses = [Bem.bem(this.clss).value, styles['logo']]
     return <a
       href={this.props.href ?? 'https://lemonde.fr'}
       className={logoClasses.join(' ')}>

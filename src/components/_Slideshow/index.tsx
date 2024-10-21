@@ -1,9 +1,7 @@
 import { Component, JSX, VNode } from 'preact'
-
+import { Bem } from '@design-edito/tools/agnostic/css/bem'
 import Icon, { Icons } from '~/components/Icon'
 import Slide, { Media } from './components/Slide'
-
-import bem from '~/utils/bem'
 import styles from './styles.module.scss'
 
 type Props = {
@@ -37,7 +35,7 @@ class Slideshow extends Component<Props, State> {
 
   loopTimer!: number
 
-  bemClss = bem('lm-slideshow')
+  bemClss = Bem.bem('lm-slideshow')
 
   state = {
     index: 0,

@@ -1,5 +1,5 @@
 import { Component, JSX, VNode } from 'preact'
-import bem from '~/utils/bem'
+import { Bem } from '@design-edito/tools/agnostic/css/bem'
 
 export type IO = IntersectionObserver
 export type IOE = IntersectionObserverEntry
@@ -99,7 +99,7 @@ class IntersectionObserverComponent extends Component<Props, State> {
       : null
 
     // Classes
-    const classes = bem(this.mainClass).blk(props.customClass)
+    const classes = Bem.bem(this.mainClass).blk(props.customClass)
     const inlineStyle = { ...props.style }
 
     // Display

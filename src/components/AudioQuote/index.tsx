@@ -1,8 +1,8 @@
 import { Component, JSX, createRef, RefObject, VNode } from 'preact'
+import { Bem } from '@design-edito/tools/agnostic/css/bem'
+import { Cast } from '@design-edito/tools/agnostic/misc/cast'
 import IntersectionObserverComponent, { IO, IOE } from '~/components/IntersectionObserver'
-import bem from '~/utils/bem'
 import styles from './styles.module.scss'
-import { toError } from '~/utils/cast'
 
 type SubGroupBoundaries = {
   startId: number
@@ -64,7 +64,7 @@ export type State = {
 }
 
 export default class AudioQuote extends Component<Props, State> {
-  bemClss = bem('lm-audio-quote')
+  bemClss = Bem.bem('lm-audio-quote')
   videoElt: RefObject<HTMLVideoElement> | null = null
   videoStateInterval?: number
   state: State = { timecodeInMs: 0 }
@@ -133,7 +133,7 @@ export default class AudioQuote extends Component<Props, State> {
       props.onSubsLoad?.(subsData)
     } catch (error) {
       console.error(error)
-      props.onSubsError?.(toError(error))
+      props.onSubsError?.(Cast.toError(error))
     }
   }
 

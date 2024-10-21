@@ -1,6 +1,6 @@
 import { Component, createRef, RefObject, VNode } from 'preact'
+import { Bem } from '@design-edito/tools/agnostic/css/bem'
 import ResizeObserverComponent from '~/components/ResizeObserver'
-import bem from '~/utils/bem'
 import styles from './styles.module.scss'
 
 export type Props = {
@@ -24,7 +24,7 @@ type State = {
 
 export default class Drawer extends Component<Props, State> {
   contentRef: RefObject<HTMLDivElement> | null = null
-  bemClss = bem('lm-drawer')
+  bemClss = Bem.bem('lm-drawer')
 
   constructor (props: Props) {
     super(props)

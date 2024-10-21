@@ -1,6 +1,5 @@
 import { Component, JSX, createRef, VNode, RefObject } from 'preact'
-
-import bem from '~/utils/bem'
+import { Bem } from '@design-edito/tools/agnostic/css/bem'
 import styles from './styles.module.scss'
 
 const isMobile = window.innerWidth < 768
@@ -28,7 +27,7 @@ class CarouselElement extends Component<Props, {}> {
   video: RefObject<HTMLVideoElement> | null = null
   lastSelected: boolean
 
-  bemClss = bem('lm-carousel-element')
+  bemClss = Bem.bem('lm-carousel-element')
 
   constructor(props: Props) {
     super(props)

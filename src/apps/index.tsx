@@ -1,15 +1,16 @@
 import { Component, ComponentClass, VNode } from 'preact'
+import { Cast } from '@design-edito/tools/agnostic/misc/cast'
+import { isRecord } from '@design-edito/tools/agnostic/objects/is-record'
+import { isArrayOf } from '@design-edito/tools/agnostic/arrays/is-array-of'
+import { randomUUID } from '@design-edito/tools/agnostic/random/uuid'
+import {
+  recordFormat,
+  Format as FormatterFormat,
+  Formatted as FormatterFormatted
+} from '@design-edito/tools/agnostic/objects/record-format'
 import { Events } from '~/shared/events'
 import { Globals } from '~/shared/globals'
 import { LmHtml } from '~/shared/lm-html'
-import { toString } from '~/utils/cast'
-import isArrayOf from '~/utils/is-array-of'
-import isRecord from '@design-edito/tools/agnostic/objects/is-record'
-import randomUUID from '~/utils/random-uuid'
-import recordFormat, {
-  Format as FormatterFormat,
-  Formatted as FormatterFormatted
-} from '~/utils/record-format'
 
 export namespace Apps {
   export enum Name {
@@ -143,7 +144,7 @@ export namespace Apps {
       const renderedNodes = await Promise.all(renderingNodes)
       return <>{renderedNodes}</>
     }
-    return toString(input)
+    return Cast.toString(input)
   }
 
   export function ifNotUndefinedHelper<T extends any> (value: unknown, then: (value: unknown) => T) {
@@ -157,8 +158,8 @@ export namespace Apps {
   }
 
   export function toStringOrStringsHelper (value: unknown): string | string[] {
-    if (Array.isArray(value)) return value.map(toString)
-    return toString(value)
+    if (Array.isArray(value)) return value.map(Cast.toString)
+    return Cast.toString(value)
   }
 
   export function makeHandlerHelper<T> (type: Events.Type, input: unknown, id: string) {

@@ -1,14 +1,14 @@
+import { isRecord } from '@design-edito/tools/agnostic/objects/is-record'
 import { HyperJson } from '@design-edito/tools/agnostic/html/hyper-json'
+import { Cast } from '@design-edito/tools/agnostic/misc/cast'
+import { interpolate, exterpolate } from '@design-edito/tools/agnostic/numbers/interpolate'
+import { round } from '@design-edito/tools/agnostic/numbers/round'
+import { normalizeIndent } from '@design-edito/tools/agnostic/strings/normalize-indent'
 import { Analytics } from '~/shared/analytics'
 import { Events } from '~/shared/events'
 import { Externals } from '~/shared/externals'
 import { Globals } from '~/shared/globals'
 import { Slots } from '~/shared/slots'
-import { toString, toNumber, toBoolean } from '~/utils/cast'
-import interpolate, { ratio } from '~/utils/interpolate'
-import isRecord from '@design-edito/tools/agnostic/objects/is-record'
-import roundNumbers from '~/utils/round-numbers'
-import stringNormalizeIndent from '~/utils/string-normalize-indent'
 
 export namespace Config {
   export enum InlineOnlyInstructionName {
@@ -39,12 +39,12 @@ export namespace Config {
     instructions.forEach(({ name, value }) => {
       // ID
       if (name === InlineOnlyInstructionName.ID) {
-        return Externals.setPageIdAttribute(toString(value))
+        return Externals.setPageIdAttribute(Cast.toString(value))
       }
       
       // HIDE_HEADER
       if (name === RemoteInstructionName.HIDE_HEADER) {
-        const shouldHide = toBoolean(value)
+        const shouldHide = Cast.toBoolean(value)
         const headerElements = Externals.setLeMondeHeaderVisibility(shouldHide)
         logger?.log('Apply config', shouldHide ? '%cHeader hidden' : '%cHeader displayed', 'font-weight: 800', headerElements)
         return
@@ -62,7 +62,7 @@ export namespace Config {
           END_REACHED = 'end-reached'
         }
         const validValues = value
-          .map(item => toString(item).trim())
+          .map(item => Cast.toString(item).trim())
           .filter(item => Object.values(TrackingOptions).includes(item as any))
         let hasStarted = false
         let hasReachedHalf = false
@@ -109,18 +109,18 @@ export namespace Config {
           name: rawName,
           position: rawPosition
         } = value
-        const url = rawUrl !== undefined ? toString(rawUrl) : null
+        const url = rawUrl !== undefined ? Cast.toString(rawUrl) : null
         let position: number
         if (rawPosition === undefined) { position = Slots.StylePosition.CUSTOM }
         else if (typeof rawPosition === 'number') { position = rawPosition }
         else {
-          const strPosition = toString(rawPosition)
+          const strPosition = Cast.toString(rawPosition)
           const knownPos = Slots.stylePositionNameMap.get(strPosition)
           if (knownPos === undefined) { position = Slots.StylePosition.CUSTOM }
           else { position = knownPos }
         }
         const elementName = rawName !== undefined
-          ? toString(rawName)
+          ? Cast.toString(rawName)
           : (url !== null
             ? 'lm-page-config-remote-style'
             : 'lm-page-config-inline-style')
@@ -137,7 +137,7 @@ export namespace Config {
             })
             injected += styleElements.map(elt => elt.textContent?.trim()).join('\n')
           } else {
-            injected += toString(rawContent)
+            injected += Cast.toString(rawContent)
           }
           Slots.injectStyles('css', injected, { name: elementName, position })
           return logger?.log('Apply config', '%cCSS injected\n', 'font-weight: 800;', injected)
@@ -146,7 +146,7 @@ export namespace Config {
       
       // CSS
       if (name === RemoteInstructionName.CSS) {
-        const deprecationWarning = stringNormalizeIndent(
+        const deprecationWarning = normalizeIndent(
           `The use of config instruction css(value: NodeList) instruction is deprecated, support will be dropped after v1.echo. Use 'style' instead:
           style(value: {
           ||content: NodeList,
@@ -163,7 +163,7 @@ export namespace Config {
           })
           injected += styleElements.map(elt => elt.textContent?.trim()).join('\n')
         } else {
-          injected += toString(value)
+          injected += Cast.toString(value)
         }
         Slots.injectStyles('css', injected, { name: 'lm-page-config-css', position: Slots.StylePosition.CUSTOM })
         return logger?.log('Apply config', '%cCSS injected\n', 'font-weight: 800;', injected)
@@ -171,7 +171,7 @@ export namespace Config {
 
       // STYLESHEET
       if (name === RemoteInstructionName.STYLESHEET) {
-        const deprecationWarning = stringNormalizeIndent(
+        const deprecationWarning = normalizeIndent(
           `The use of config instruction stylesheet(value: string) instruction is deprecated, support will be dropped after v1.echo. Use 'style' instead:
           style(value: {
           ||url: string,
@@ -179,7 +179,7 @@ export namespace Config {
           ||position?: Slots.StylesPosition
           })`)
         console.warn(deprecationWarning)
-        const strValue = toString(value)
+        const strValue = Cast.toString(value)
         Slots.injectStyles('url', strValue, { name: 'lm-page-config-stylesheet', position: Slots.StylePosition.CUSTOM })
         return logger?.log('Apply config', '%cStylesheet injected\n', 'font-weight: 800;', strValue)
       }
@@ -188,19 +188,19 @@ export namespace Config {
       if (name === RemoteInstructionName.SCALE) {
         const valueIsRecord = isRecord(value)
         if (!valueIsRecord) return
-        const name = toString(value.name)
-        const root = value.root !== undefined ? toString(value.root) : ':root,:host'
+        const name = Cast.toString(value.name)
+        const root = value.root !== undefined ? Cast.toString(value.root) : ':root,:host'
         const bounds = Array.isArray(value.bounds)
-          ? value.bounds.map(val => toNumber(val))
+          ? value.bounds.map(val => Cast.toNumber(val))
           : undefined
-        const breakpoints = toNumber(value.breakpoints)
+        const breakpoints = Cast.toNumber(value.breakpoints)
         const low = Array.isArray(value.low)
-          ? value.low.map(val => toNumber(val))
+          ? value.low.map(val => Cast.toNumber(val))
           : undefined
         const high = Array.isArray(value.high)
-          ? value.high.map(val => toNumber(val))
+          ? value.high.map(val => Cast.toNumber(val))
           : undefined
-        const levels = toNumber(value.levels)
+        const levels = Cast.toNumber(value.levels)
         const nameRegexp = /^[a-z]([a-z0-9\-\_]*[a-z0-9])?$/
         const isValid = nameRegexp.test(name)
           && bounds !== undefined
@@ -223,7 +223,7 @@ export namespace Config {
           .map((_, breakpointPos) => breakpointPos)
           .map(breakpointPos => {
             const threshold = Math.round(lowBound + breakpointPos * breakpointSize)
-            const thresholdRatio = ratio(threshold, lowBound, highBound)
+            const thresholdRatio = exterpolate(threshold, lowBound, highBound)
             const lowLevel = interpolate(thresholdRatio, lowLevelMin, lowLevelMax)
             const highLevel = interpolate(thresholdRatio, highLevelMin, highLevelMax)
             const highOverLow = highLevel / lowLevel
@@ -234,7 +234,7 @@ export namespace Config {
               levels: new Array(levels + 1)
                 .fill(null)
                 .map((_, level) => level)
-                .map(level => roundNumbers(lowLevel * Math.pow(factor, level), 2))
+                .map(level => round(lowLevel * Math.pow(factor, level), 2))
             }
           })
           .map(({ minWidth, levels }, breakpointPos) => {
@@ -259,10 +259,10 @@ export namespace Config {
       }
       
       // HANDLERS_FILE
-      if (name === RemoteInstructionName.HANDLERS_FILE) Events.fetchAndRegister(toString(value))
+      if (name === RemoteInstructionName.HANDLERS_FILE) Events.fetchAndRegister(Cast.toString(value))
 
       // NO_SHADOW
-      if (name === RemoteInstructionName.NO_SHADOW) Slots.setIsolationMode(!toBoolean(value))
+      if (name === RemoteInstructionName.NO_SHADOW) Slots.setIsolationMode(!Cast.toBoolean(value))
     })
   }
 }
