@@ -1,4 +1,6 @@
 import { HyperJson } from '@design-edito/tools/agnostic/html/hyper-json'
+import { isInEnum } from '@design-edito/tools/agnostic/objects/enums/is-in-enum'
+import { Logs } from '@design-edito/tools/agnostic/misc/logs'
 import { init } from '~/shared'
 import appConfig from '~/config'
 import { Apps } from '~/apps'
@@ -8,8 +10,6 @@ import { Events } from '~/shared/events'
 import { Externals } from '~/shared/externals'
 import { LmHtml } from '~/shared/lm-html'
 import { Slots } from '~/shared/slots'
-import Logger from '~/utils/silent-log'
-import { isInEnum } from '@design-edito/tools/agnostic/objects/enums/is-in-enum'
 
 declare global {
   interface Window { LM_PAGE?: Globals.GlobalObj }
@@ -26,7 +26,7 @@ export namespace Globals {
     [Globals.GlobalKey.EXTERNALS]?: typeof Externals
     [Globals.GlobalKey.INIT]?: typeof init
     [Globals.GlobalKey.LM_HTML]?: typeof LmHtml
-    [Globals.GlobalKey.LOGGER]?: Logger
+    [Globals.GlobalKey.LOGGER]?: InstanceType<typeof Logs.Logger>
     [Globals.GlobalKey.META]?: {
       env?: string
       built_on?: string

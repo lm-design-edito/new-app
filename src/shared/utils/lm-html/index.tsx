@@ -1,11 +1,11 @@
 import { VNode, createElement } from 'preact'
-import appConfig from '~/config'
 import { HyperJson } from '@design-edito/tools/agnostic/html/hyper-json'
+import { isInEnum } from '@design-edito/tools/agnostic/objects/enums/is-in-enum'
+import { isRecord } from '@design-edito/tools/agnostic/objects/is-record'
+import appConfig from '~/config'
 import { Globals } from '~/shared/globals'
 import { Apps } from '~/apps'
-import { isInEnum } from '@design-edito/tools/agnostic/objects/enums/is-in-enum'
 import MutedVideo from './MutedVideo'
-import isRecord from '@design-edito/tools/agnostic/objects/is-record'
 
 export namespace LmHtml {
   export const boolAttrNames = [

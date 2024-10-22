@@ -1,6 +1,6 @@
 import { Component, VNode } from 'preact'
 import { Bem } from '@design-edito/tools/agnostic/css/bem'
-import { throttle } from '~/utils/throttle-debounce'
+import { throttle } from '@design-edito/tools/agnostic/optim/throttle-debounce'
 import styles from './styles.module.scss'
 
 export type Props = {
@@ -179,13 +179,13 @@ export default class Gallery extends Component<Props, State> {
     if (props.snapScroll) wrapperClasses.push(styles['wrapper_snap'])
     if (props.customClass !== undefined) wrapperClasses.push(props.customClass)
     const wrapperStyle = { '--scroller-width': props.scrollerWidth }
-    const scrollerBemClass = bem(rootClass).elt('scroller')
+    const scrollerBemClass = Bem.bem(rootClass).elt('scroller')
     const scrollerClasses = [scrollerBemClass.value, styles['scroller']]
-    const buttonBemClass = bem(rootClass).elt('button')
+    const buttonBemClass = Bem.bem(rootClass).elt('button')
     const buttonClasses = [buttonBemClass.value]
     const prevButtonClasses = [buttonBemClass.mod('prev').value, ...buttonClasses]
     const nextButtonClasses = [buttonBemClass.mod('next').value, ...buttonClasses]
-    const dotsBemClass = bem(rootClass).elt('dots')
+    const dotsBemClass = Bem.bem(rootClass).elt('dots')
     const dotsClasses = [dotsBemClass.value]
     return <div
       style={wrapperStyle}
@@ -195,7 +195,7 @@ export default class Gallery extends Component<Props, State> {
         className={scrollerClasses.join(' ')}
         onScroll={this.handleScroll}>
         {props.itemsContent?.map((itemContent, itemPos) => {
-          const slotBemClass = bem(rootClass)
+          const slotBemClass = Bem.bem(rootClass)
             .elt('slot')
             .mod({ current: itemPos === state.currentSlotPos })
           const slotClasses = [slotBemClass.value, styles['slot']]
@@ -218,7 +218,7 @@ export default class Gallery extends Component<Props, State> {
       </button>
       <div className={dotsClasses.join(' ')}>
         {props.itemsContent?.map((_, itemPos) => {
-          const dotBemClass = bem(rootClass).elt('dot').mod({ current: itemPos === state.currentSlotPos })
+          const dotBemClass = Bem.bem(rootClass).elt('dot').mod({ current: itemPos === state.currentSlotPos })
           const dotClasses = [dotBemClass.value]
           const handler = () => {
             const { onDotClick } = props

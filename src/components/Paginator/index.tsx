@@ -1,6 +1,6 @@
 import { Component, JSX, toChildArray, cloneElement } from 'preact'
 import { Bem } from '@design-edito/tools/agnostic/css/bem'
-import { groupDelay } from '~/utils/group-delay' // [WIP] throttle would be better
+import { throttle } from '@design-edito/tools/agnostic/optim/throttle-debounce'
 import Page, { Props as PageProps } from './Page'
 import styles from './styles.module.scss'
 
@@ -193,10 +193,10 @@ export default class Paginator extends Component<Props, State> {
     })
   }
 
-  groupedCheckPages = groupDelay(
+  groupedCheckPages = throttle(
     this.checkPages.bind(this),
     this.getDelay.bind(this)()
-  )
+  ).throttled
 
   activateIntervalChecker (): void {
     this.inactivateIntervalChecker()

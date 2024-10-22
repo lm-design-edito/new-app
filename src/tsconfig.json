@@ -26,8 +26,7 @@
       "~/config": ["shared/config.ts"],
       "~/shared": ["shared/index.tsx"],
       "~/shared/*": ["shared/utils/*"],
-      "~/theme/*": ["theme/*"],
-      "~/utils/*": ["utils/*"]
+      "~/theme/*": ["theme/*"]
     }
   }
 }

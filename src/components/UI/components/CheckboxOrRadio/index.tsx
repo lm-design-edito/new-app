@@ -1,7 +1,7 @@
 import { VNode, FunctionalComponent } from 'preact'
 import { useState } from 'preact/hooks'
 import { Bem } from '@design-edito/tools/agnostic/css/bem'
-import randomUUID from '~/utils/random-uuid'
+import { randomUUID } from '@design-edito/tools/agnostic/random/uuid'
 
 export type Props = {
   customClass?: string

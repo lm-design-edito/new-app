@@ -1,7 +1,7 @@
 import { render as preactRender, VNode } from 'preact'
+import { randomUUID } from '@design-edito/tools/agnostic/random/uuid'
 import appConfig from '~/config'
 import { Externals } from '~/shared/externals'
-import randomUUID from '~/utils/random-uuid'
 
 export namespace Slots {
 
