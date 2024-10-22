@@ -1,6 +1,5 @@
 import config from '~/config'
 
-
 export namespace Theme {
   let _rootUrl: URL | null = null
 

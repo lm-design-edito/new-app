@@ -1,4 +1,8 @@
 import { HyperJson } from '@design-edito/tools/agnostic/html/hyper-json'
+import { insertNode, InsertNodePosition } from '@design-edito/tools/agnostic/html/insert-node'
+import { isRecord } from '@design-edito/tools/agnostic/objects/is-record'
+import { selectorToElement } from '@design-edito/tools/agnostic/html/selector-to-element'
+import { Logger } from '@design-edito/tools/agnostic/misc/logs/logger'
 import appConfig from '~/config'
 import { Apps } from '~/apps'
 import { Analytics } from '~/shared/analytics'
@@ -8,10 +12,6 @@ import { Externals } from '~/shared/externals'
 import { Globals } from '~/shared/globals'
 import { LmHtml } from '~/shared/lm-html'
 import { Slots } from '~/shared/slots'
-import { insertNode, InsertNodePosition } from '@design-edito/tools/agnostic/html/insert-node'
-import { isRecord } from '@design-edito/tools/agnostic/objects/is-record'
-import { selectorToElement } from '@design-edito/tools/agnostic/html/selector-to-element'
-import { Logger } from '@design-edito/tools/agnostic/misc/logs/logger'
 
 /* * * * * * * * * * * * * * * * * * * * * *
  * EXPORT & GLOBALS

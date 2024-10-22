@@ -1,7 +1,6 @@
 import { Component, JSX, VNode } from 'preact'
 import { Bem } from '@design-edito/tools/agnostic/css/bem'
 import Logo from '~/components/Logo'
-import Drawer from '~/components/Drawer'
 import styles from './styles.module.scss'
 
 export type NavItem = {

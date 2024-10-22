@@ -1,8 +1,8 @@
 import { Cast } from '@design-edito/tools/agnostic/misc/cast'
-import { Apps } from '~/apps'
 import { isRecord } from '@design-edito/tools/agnostic/objects/is-record'
 import { isInEnum } from '@design-edito/tools/agnostic/objects/enums/is-in-enum'
 import { recordFormat } from '@design-edito/tools/agnostic/objects/record-format'
+import { Apps } from '~/apps'
 import Header, { Props, CtaActionType } from '~/components/Header'
 
 export default async function renderer (unknownProps: unknown, id: string): ReturnType<Apps.AsyncRendererModule<Props>> {

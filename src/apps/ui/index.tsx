@@ -3,7 +3,6 @@ import { isRecord } from '@design-edito/tools/agnostic/objects/is-record'
 import { Cast } from '@design-edito/tools/agnostic/misc/cast'
 import { Apps } from '~/apps'
 import { Events } from '~/shared/events'
-import iconsData from '~/theme/icons'
 import UI, { Component, Props } from '~/components/UI'
 import { Theme } from '~/shared/theme'
 
