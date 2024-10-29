@@ -1,4 +1,4 @@
-import { HyperJson } from '@design-edito/tools/agnostic/html/hyper-json'
+import { HyperJson } from '~/shared/hyper-json'
 import { insertNode, InsertNodePosition } from '@design-edito/tools/agnostic/html/insert-node'
 import { isRecord } from '@design-edito/tools/agnostic/objects/is-record'
 import { selectorToElement } from '@design-edito/tools/agnostic/html/selector-to-element'
@@ -94,10 +94,10 @@ async function init () {
     const nodes = document.querySelectorAll(appConfig.dataSourceSelector)
     return Array.from(nodes).map(e => e.cloneNode(true)) as Element[]
   }
-  const pageInlineDataValue = HyperJson.Tree.from(
-    getPageInlineDataElements(),
-    { rootKey: appConfig.dataSourceRootKey }
-  ).evaluate()
+  const pageInlineDataValue = HyperJson.Tree.from(getPageInlineDataElements(), {
+    rootKey: appConfig.dataSourceRootKey,
+    globalObj: Globals.getHyperJsonGlobalObj()
+  }).evaluate()
   logger.log('Inline data', pageInlineDataValue)
   const pageInlineDataValueIsRecord = isRecord(pageInlineDataValue)
   const pageDataConfigCollectionName = appConfig.dataSourcesReservedNames.config
@@ -148,16 +148,18 @@ async function init () {
   const pageRemoteDataNodes = pageRemoteDataStrings
     .filter((data): data is string => data !== undefined)
     .map(data => {
-      const wrapper = document.createElement('data')
+      const wrapper = document.createElement('record')
       wrapper.innerHTML += data
       return wrapper
     })
-  const pageFullDataTree = HyperJson.Tree.from([
-    ...getPageInlineDataElements(),
-    ...pageRemoteDataNodes
-  ], { rootKey: appConfig.dataSourceRootKey })
+  const pageFullTreeElements = [...getPageInlineDataElements(), ...pageRemoteDataNodes]
+  const pageFullDataTree = HyperJson.Tree.from(pageFullTreeElements, {
+    rootKey: appConfig.dataSourceRootKey,
+    globalObj: Globals.getHyperJsonGlobalObj()
+  })
   Globals.expose(Globals.GlobalKey.TREE, pageFullDataTree)
   const pageFullDataValue = pageFullDataTree.evaluate()
+  pageFullDataTree.printPerfCounters()
   logger.log('Full data', pageFullDataValue)
   const pageFullDataValueIsRecord = isRecord(pageFullDataValue)
   const pageDataSlotsCollectionName = appConfig.dataSourcesReservedNames.slots
@@ -220,14 +222,6 @@ async function init () {
         ? actualContent
         : await LmHtml.render(actualContent)
       Slots.makeSlot(targetElement, rendered)
-      // const { content } = pageSlotData
-      // const clonedContent = content instanceof NodeList
-      //   ? Array.from(content).map(node => node.cloneNode(true))
-      //   : HyperJson.Cast.toString(content ?? '')
-      // const renderedContent = typeof clonedContent === 'string'
-      //   ? clonedContent
-      //   : await Promise.all(clonedContent.map(node => LmHtml.render(node)))
-      // Slots.makeSlot(targetElement, renderedContent)
     }))
   }))
   logger.log('Slots', '%cCreated slots:', 'font-weight: 800;', Slots.created)

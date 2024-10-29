@@ -1,5 +1,5 @@
 import { VNode, createElement } from 'preact'
-import { HyperJson } from '@design-edito/tools/agnostic/html/hyper-json'
+import { HyperJson } from '~/shared/hyper-json'
 import { isInEnum } from '@design-edito/tools/agnostic/objects/enums/is-in-enum'
 import { isRecord } from '@design-edito/tools/agnostic/objects/is-record'
 import appConfig from '~/config'
@@ -24,7 +24,7 @@ export namespace LmHtml {
     }
     const { nodeType } = nodeOrNodeList
     if (nodeType === Node.ELEMENT_NODE) return await elementToVNode(nodeOrNodeList as Element)
-    if (nodeType === Node.TEXT_NODE) return <>{(nodeOrNodeList as Text).wholeText}</>
+    if (nodeType === Node.TEXT_NODE) return <>{(nodeOrNodeList as Text).textContent}</>
     return <></>
   }
 
@@ -42,7 +42,10 @@ export namespace LmHtml {
     if (isCustomComp) {
       const recordWrapper = document.createElement('record')
       recordWrapper.append(...Array.from(element.childNodes))
-      const evaluated = HyperJson.Tree.from([recordWrapper], { rootKey: appConfig.dataSourceRootKey }).evaluate()
+      const evaluated = HyperJson.Tree.from([recordWrapper], {
+        rootKey: appConfig.dataSourceRootKey,
+        globalObj: Globals.getHyperJsonGlobalObj()
+      }).evaluate()
       if (!isRecord(evaluated)) {
         logger?.warn('Render', '%App configuration object must be a record', 'font-weight: 800;', 'at', element, 'found', evaluated)
         return <></>

@@ -1,5 +1,5 @@
 import { isRecord } from '@design-edito/tools/agnostic/objects/is-record'
-import { HyperJson } from '@design-edito/tools/agnostic/html/hyper-json'
+import { HyperJson } from '~/shared/hyper-json'
 import { Cast } from '@design-edito/tools/agnostic/misc/cast'
 import { interpolate, exterpolate } from '@design-edito/tools/agnostic/numbers/interpolate'
 import { round } from '@design-edito/tools/agnostic/numbers/round'
@@ -140,7 +140,7 @@ export namespace Config {
             injected += Cast.toString(rawContent)
           }
           Slots.injectStyles('css', injected, { name: elementName, position })
-          return logger?.log('Apply config', '%cCSS injected\n', 'font-weight: 800;', injected)
+          return logger?.log('Apply config', '%cCSS injected\n', 'font-weight: 800;', { name: elementName, position, content: injected })
         }
       }
       
@@ -165,8 +165,10 @@ export namespace Config {
         } else {
           injected += Cast.toString(value)
         }
-        Slots.injectStyles('css', injected, { name: 'lm-page-config-css', position: Slots.StylePosition.CUSTOM })
-        return logger?.log('Apply config', '%cCSS injected\n', 'font-weight: 800;', injected)
+        const elementName = 'lm-page-config-css'
+        const position = Slots.StylePosition.CUSTOM
+        Slots.injectStyles('css', injected, { name: elementName, position })
+        return logger?.log('Apply config', '%cCSS injected\n', 'font-weight: 800;', { name: elementName, position, content: injected })
       }
 
       // STYLESHEET

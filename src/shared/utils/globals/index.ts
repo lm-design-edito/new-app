@@ -1,4 +1,4 @@
-import { HyperJson } from '@design-edito/tools/agnostic/html/hyper-json'
+import { HyperJson } from '~/shared/hyper-json'
 import { isInEnum } from '@design-edito/tools/agnostic/objects/enums/is-in-enum'
 import { Logs } from '@design-edito/tools/agnostic/misc/logs'
 import { init } from '~/shared'
@@ -10,6 +10,7 @@ import { Events } from '~/shared/events'
 import { Externals } from '~/shared/externals'
 import { LmHtml } from '~/shared/lm-html'
 import { Slots } from '~/shared/slots'
+import { recordMap } from '@design-edito/tools/agnostic/objects/record-map'
 
 declare global {
   interface Window { LM_PAGE?: Globals.GlobalObj }
@@ -70,6 +71,23 @@ export namespace Globals {
     const lmPage = getOrCreateGlobalObj()
     const returned = lmPage[key]
     return returned
+  }
+
+  export function getHyperJsonGlobalObj (): { [k: string]: HyperJson.Types.Value } {
+    const meta = globalObj.meta ?? {}
+    const paths = (meta.paths ?? {}) as Partial<NonNullable<typeof meta.paths>>
+    const mapper = (val: URL | undefined) => val !== undefined ? val.toString() : null
+    const mappedPaths = recordMap(paths, mapper) as { [k: string]: HyperJson.Types.Value }
+    const {
+      hash, host, hostname, href, origin,
+      pathname, port, protocol, search
+    } = window.location
+    return {
+      meta: { ...meta, paths: mappedPaths },
+      platform: Externals.getPlatform(),
+      edition: Externals.getEdition(),
+      window: { location: { hash, host, hostname, href, origin, pathname, port, protocol, search } }
+    }
   }
 
   // Global obj mutation
