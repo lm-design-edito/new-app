@@ -33,8 +33,7 @@ const THEME_ICONS_REGISTRY_REL_PATH = '/icons/registry.json'
 const THEME_ICONS_ASSETS_DIR_PATH = '/icons/assets'
 
 // DATA & HYPER-JSON
-const dataSourceRootKey = 'DATA-ROOT'
-const dataSourceSelector = `record[_key="${dataSourceRootKey}"]`
+const dataSourceSelector = 'hyperjson'
 
 // OTHER
 const eventHandlersAllowedUrlSchemes: Array<Partial<URL>> = [
@@ -77,7 +76,6 @@ export default {
     styleElementClass: slotsStylesElementClass,
     contentElementClass: slotsContentElementClass
   },
-  dataSourceRootKey,
   dataSourceSelector,
   dataSourcesReservedNames: {
     slots: 'SLOTS',

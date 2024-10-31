@@ -30,7 +30,7 @@ export namespace Config {
 
   export type ConfigInstruction = {
     name: string,
-    [key: string]: HyperJson.Types.Value
+    [key: string]: HyperJson.Tree.Value
   }
 
   export function apply (instructions: ConfigInstruction[]) {

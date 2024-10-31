@@ -73,11 +73,11 @@ export namespace Globals {
     return returned
   }
 
-  export function getHyperJsonGlobalObj (): { [k: string]: HyperJson.Types.Value } {
+  export function getHyperJsonGlobalObj (): { [k: string]: HyperJson.Tree.Value } {
     const meta = globalObj.meta ?? {}
     const paths = (meta.paths ?? {}) as Partial<NonNullable<typeof meta.paths>>
     const mapper = (val: URL | undefined) => val !== undefined ? val.toString() : null
-    const mappedPaths = recordMap(paths, mapper) as { [k: string]: HyperJson.Types.Value }
+    const mappedPaths = recordMap(paths, mapper) as { [k: string]: HyperJson.Tree.Value }
     const {
       hash, host, hostname, href, origin,
       pathname, port, protocol, search

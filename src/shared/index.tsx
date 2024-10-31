@@ -12,6 +12,7 @@ import { Externals } from '~/shared/externals'
 import { Globals } from '~/shared/globals'
 import { LmHtml } from '~/shared/lm-html'
 import { Slots } from '~/shared/slots'
+import { Cast } from '@design-edito/tools/agnostic/misc/cast'
 
 /* * * * * * * * * * * * * * * * * * * * * *
  * EXPORT & GLOBALS
@@ -95,7 +96,6 @@ async function init () {
     return Array.from(nodes).map(e => e.cloneNode(true)) as Element[]
   }
   const pageInlineDataValue = HyperJson.Tree.from(getPageInlineDataElements(), {
-    rootKey: appConfig.dataSourceRootKey,
     globalObj: Globals.getHyperJsonGlobalObj()
   }).evaluate()
   logger.log('Inline data', pageInlineDataValue)
@@ -103,7 +103,7 @@ async function init () {
   const pageDataConfigCollectionName = appConfig.dataSourcesReservedNames.config
   const pageInlineDataRawConfigInstructions = pageInlineDataValueIsRecord
     && Array.isArray(pageInlineDataValue[pageDataConfigCollectionName])
-    ? pageInlineDataValue[pageDataConfigCollectionName] as HyperJson.Types.Value[]
+    ? pageInlineDataValue[pageDataConfigCollectionName] as HyperJson.Tree.Value[]
     : []
   const pageInlineDataConfigInstructions = pageInlineDataRawConfigInstructions.map(instruction => {
     const instructionIsRecord = isRecord(instruction)
@@ -153,10 +153,7 @@ async function init () {
       return wrapper
     })
   const pageFullTreeElements = [...getPageInlineDataElements(), ...pageRemoteDataNodes]
-  const pageFullDataTree = HyperJson.Tree.from(pageFullTreeElements, {
-    rootKey: appConfig.dataSourceRootKey,
-    globalObj: Globals.getHyperJsonGlobalObj()
-  })
+  const pageFullDataTree = HyperJson.Tree.from(pageFullTreeElements, { globalObj: Globals.getHyperJsonGlobalObj() })
   Globals.expose(Globals.GlobalKey.TREE, pageFullDataTree)
   const pageFullDataValue = pageFullDataTree.evaluate()
   pageFullDataTree.printPerfCounters()
@@ -192,10 +189,11 @@ async function init () {
     if (!isRecord(pageSlotData)) return
     const { destination } = pageSlotData
     if (!isRecord(destination)) return
-    const selector = destination.selector !== undefined ? HyperJson.Cast.toString(destination.selector) : undefined
+    destination
+    const selector = destination.selector !== undefined ? Cast.toString(destination.selector) : undefined
     if (selector === undefined) return
-    const position = destination.position !== undefined ? HyperJson.Cast.toString(destination.position) : undefined
-    const reference = destination.reference !== undefined ? HyperJson.Cast.toString(destination.reference) : undefined
+    const position = destination.position !== undefined ? Cast.toString(destination.position) : undefined
+    const reference = destination.reference !== undefined ? Cast.toString(destination.reference) : undefined
     // Create or select targets
     // [WIP] Maybe slots creation should be inside Slots
     const targetElements: Element[] = []
@@ -217,7 +215,7 @@ async function init () {
       if (content instanceof Element) { actualContent = content }
       else if (content instanceof Text) { actualContent = content }
       else if (content instanceof NodeList) { actualContent = content }
-      else { actualContent = HyperJson.Cast.toString(content ?? '') }
+      else { actualContent = Cast.toString(content ?? '') }
       const rendered = typeof actualContent === 'string'
         ? actualContent
         : await LmHtml.render(actualContent)

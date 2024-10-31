@@ -41,7 +41,6 @@ function appendInElement (
 
 export const append: Types.TransformerGenerator = (callerTagName, ...args): Types.Transformer => {
   return Utils.toNamedTransformer(callerTagName, args, currentValue => {
-    console.log('args', args)
     const makeError = Utils.makeTransformerError
     const { Element, Text, NodeList } = Window.get()
     const [...toAppend] = args

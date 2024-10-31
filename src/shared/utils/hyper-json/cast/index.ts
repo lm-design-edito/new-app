@@ -3,26 +3,23 @@ import { isFalsy } from '@design-edito/tools/agnostic/booleans/is-falsy'
 import { Window } from '@design-edito/tools/agnostic/misc/crossenv/window'
 import { Types } from '../types'
 
-type Value = Types.Value
-const getWindow = Window.get
-
 export namespace Cast {
   export const toNull = (): null => null
-  export const toBoolean = (input: Value): boolean => !isFalsy(input)
-  export const toNumber = (input: Value): number => {
-    const { Text } = getWindow()
+  export const toBoolean = (input: Types.Tree.Value): boolean => !isFalsy(input)
+  export const toNumber = (input: Types.Tree.Value): number => {
+    const { Text } = Window.get()
     if (typeof input === 'number') return input
     if (typeof input === 'string') return parseFloat(`${input}`)
     if (input instanceof Text) return parseFloat(`${input.textContent}`)
     return 0
   }
 
-  export const toString = (input: Value): string => {
+  export const toString = (input: Types.Tree.Value): string => {
     if (typeof input === 'string') return input
     if (typeof input === 'number'
       || typeof input === 'boolean'
       || input === null) return `${input}`
-    const { Element, Text, NodeList } = getWindow()
+    const { Element, Text, NodeList } = Window.get()
     if (input instanceof Element) return input.outerHTML
     if (input instanceof Text) return input.textContent ?? ''
     if (input instanceof NodeList) return Array.from(input).map(e => {
@@ -33,14 +30,14 @@ export namespace Cast {
     return input.toString()
   }
   
-  export const toText = (input: Value): Text => {
-    const { Text, document } = getWindow()
+  export const toText = (input: Types.Tree.Value): Text => {
+    const { Text, document } = Window.get()
     if (input instanceof Text) return input.cloneNode(true) as Text
     return document.createTextNode(toString(input))
   }
   
-  export const toElement = (input: Value): Element => {
-    const { Element, Text, NodeList, document } = getWindow()
+  export const toElement = (input: Types.Tree.Value): Element => {
+    const { Element, Text, NodeList, document } = Window.get()
     if (input instanceof Element) return input.cloneNode(true) as Element
     const elt = document.createElement('div')
     if (input instanceof Text) {
@@ -57,8 +54,8 @@ export namespace Cast {
     return elt
   }
 
-  export const toNodeList = (input: Value): NodeListOf<Element | Text> => {
-    const { Element, Text, NodeList, document } = getWindow()
+  export const toNodeList = (input: Types.Tree.Value): NodeListOf<Element | Text> => {
+    const { Element, Text, NodeList, document } = Window.get()
     const elt = document.createElement('div')
     if (input instanceof NodeList) {
       elt.append(...Array.from(input).map(i => i.cloneNode(true)))
@@ -75,15 +72,15 @@ export namespace Cast {
     return elt.childNodes as NodeListOf<Element | Text>
   }
 
-  export const toArray = (input: Value): Value[] => {
-    const { NodeList } = getWindow()
+  export const toArray = (input: Types.Tree.Value): Types.Tree.Value[] => {
+    const { NodeList } = Window.get()
     if (Array.isArray(input)) return [...input]
     if (input instanceof NodeList) return Array.from(input)
     return [input]
   }
 
-  export const toRecord = (input: Value): ({ [k: string]: Value }) => {
-    if (isRecord(input)) return { ...input }
+  export const toRecord = (input: Types.Tree.Value): ({ [k: string]: Types.Tree.Value }) => {
+    if (isRecord(input)) return { ...input } as { [k: string]: Types.Tree.Value }
     return {}
   }
 }

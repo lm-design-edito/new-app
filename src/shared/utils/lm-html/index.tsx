@@ -2,7 +2,6 @@ import { VNode, createElement } from 'preact'
 import { HyperJson } from '~/shared/hyper-json'
 import { isInEnum } from '@design-edito/tools/agnostic/objects/enums/is-in-enum'
 import { isRecord } from '@design-edito/tools/agnostic/objects/is-record'
-import appConfig from '~/config'
 import { Globals } from '~/shared/globals'
 import { Apps } from '~/apps'
 import MutedVideo from './MutedVideo'
@@ -42,10 +41,9 @@ export namespace LmHtml {
     if (isCustomComp) {
       const recordWrapper = document.createElement('record')
       recordWrapper.append(...Array.from(element.childNodes))
-      const evaluated = HyperJson.Tree.from([recordWrapper], {
-        rootKey: appConfig.dataSourceRootKey,
-        globalObj: Globals.getHyperJsonGlobalObj()
-      }).evaluate()
+      const evaluated = HyperJson.Tree
+        .from([recordWrapper], { globalObj: Globals.getHyperJsonGlobalObj() })
+        .evaluate()
       if (!isRecord(evaluated)) {
         logger?.warn('Render', '%App configuration object must be a record', 'font-weight: 800;', 'at', element, 'found', evaluated)
         return <></>

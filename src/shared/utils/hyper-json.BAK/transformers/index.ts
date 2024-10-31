@@ -3,7 +3,6 @@ import { and } from './and'
 import { append } from './append'
 import { classList } from './classList'
 import { equals } from './equals'
-import { functionFunc } from './function'
 import { globalObj } from './globalObj'
 import { join } from './join'
 import { length } from './length'
@@ -33,7 +32,6 @@ export namespace Transformers {
     ['append'.toLowerCase(), append],
     ['classList'.toLowerCase(), classList],
     ['equals'.toLowerCase(), equals],
-    ['function'.toLowerCase(), functionFunc],
     ['globalObj'.toLowerCase(), globalObj],
     ['join'.toLowerCase(), join],
     ['length'.toLowerCase(), length],
