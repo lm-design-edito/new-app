@@ -5,6 +5,7 @@ import { Merge } from '../merge'
 import { SmartTags } from '../smart-tags'
 import { Utils } from '../utils'
 import { Types } from '../types'
+import { Outcome } from '@design-edito/tools/agnostic/misc/outcome'
 
 /* * * * * * * * * * * * * * * * * * * * *
  *
@@ -43,7 +44,7 @@ export namespace Tree {
     readonly isRoot: boolean
     readonly path: Array<string | number>
     readonly pathString: string
-    readonly asMethod: boolean
+    readonly isMethod: boolean
     readonly tagName: string | null
     readonly smartTagName: string | null
     readonly attributes: T extends Element ? ReadonlyArray<Readonly<Attr>> : null
@@ -88,24 +89,24 @@ export namespace Tree {
       this.path = this.isRoot ? [] : [...this.parent!.path, this.pathFromParent!]
       this.pathString = `/${this.path.join('/')}`
 
-      // asMethod, tagName, smartTagName
+      // isMethod, tagName, smartTagName
       if (node instanceof Element) {
         const rawTagName = node.tagName.trim().toLowerCase()
         const hasTrailingUnderscore = rawTagName.endsWith('_')
         if (!hasTrailingUnderscore) {
           this.tagName = rawTagName
           this.smartTagName = rawTagName
-          this.asMethod = false
+          this.isMethod = false
         } else {
           this.tagName = rawTagName
           this.smartTagName = rawTagName.replace(/_+$/g, '')
-          this.asMethod = true
+          this.isMethod = true
         }
       }
       else {
         this.tagName = null
         this.smartTagName = null
-        this.asMethod = false
+        this.isMethod = false
       }
 
       // attributes
@@ -119,7 +120,7 @@ export namespace Tree {
       this.mode = hasIsolationModeAttribute ? 'isolation' : 'coalescion'
 
       // smartTags, smartTagData
-      this.smartTags = new Map([...SmartTags.defaultSmartTagsData, ...filledOptions.smartTags])
+      this.smartTags = new Map([...SmartTags.defaultRegister, ...filledOptions.smartTags])
       this.smartTagData = this.smartTags.get(this.smartTagName as string) ?? null
 
       // subtrees
@@ -208,20 +209,21 @@ export namespace Tree {
     }
 
     getTransformedValue (): Types.Tree.Value {
-      const { getWrappedValue, smartTagData, asMethod } = this
+      const { getWrappedValue, smartTagData, isMethod } = this
       const wrappedValue = getWrappedValue()
       if (smartTagData === null || smartTagData.generator === undefined) {
-        if (!asMethod) return wrappedValue
-        return new Generators.Method(new Generators.Transformer(
-          this.smartTagName ?? '<anonymous>',
-          wrappedValue,
-          () => ({ success: true, value: wrappedValue }),
-          this
-        ))
+        if (!isMethod) return wrappedValue
+        const name = this.smartTagName ?? '<anonymous>'
+        const args = wrappedValue
+        const func = () => Outcome.makeSuccess(wrappedValue)
+        const sourceTree = this
+        const options = {}
+        const transformer = new Generators.Transformer(name, args, func, sourceTree, options)
+        return new Generators.Method(transformer)
       }
       const { generator } = smartTagData
       const { transformer, method } = generator(wrappedValue, this)
-      if (asMethod) return method
+      if (isMethod) return method
       return transformer
     }
 

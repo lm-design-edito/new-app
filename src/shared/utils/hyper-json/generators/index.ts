@@ -1,6 +1,8 @@
+import { Outcome } from '@design-edito/tools/agnostic/misc/outcome'
 import { Tree } from '../tree'
 import { Types } from '../types'
 import { Utils } from '../utils'
+// import { Utils } from '../utils'
 
 export namespace Generators {
 
@@ -10,29 +12,8 @@ export namespace Generators {
   * 
   * * * * * * * * * * * * * * * * * * * * */
 
-  const makeError = (value: Types.Tree.Value): Types.Generators.TransformationFailure => ({ success: false, value })
-  const makeSuccess = (value: Types.Tree.Value): Types.Generators.TransformationSuccess => ({ success: true, value })
-  const makeOutput = (success: boolean, value: Types.Tree.Value) => ({ success, value })
-  
-  type TypeCheckSuccess<K extends Array<keyof Types.Tree.ValueTypesIndex>> = {
-    success: true,
-    value: Types.Tree.ValueType<K>
-  }
-  type TypeCheckFailure = {
-    success: false,
-    message: string
-  }
-  export function typeCheck<K extends Array<keyof Types.Tree.ValueTypesIndex>> (
-    value: unknown,
-    ...types: K
-  ): TypeCheckSuccess<K> | TypeCheckFailure {
-    const checked = Utils.typeCheck(value, ...types)
-    if (checked) return { success: true, value }
-    return {
-      success: false,
-      message: `Expected type ${types.join(' | ')}, found: ${Utils.getType(value)}`
-    }
-  }
+  const makeError = (value: Types.Tree.Value): Types.Generators.TransformationFailure => Outcome.makeFailure(value)
+  const makeSuccess = (value: Types.Tree.Value): Types.Generators.TransformationSuccess => Outcome.makeSuccess(value)
   
   /* * * * * * * * * * * * * * * * * * * * *
    *
@@ -40,26 +21,44 @@ export namespace Generators {
    * 
    * * * * * * * * * * * * * * * * * * * * */
 
-  export class Transformer {
+  export const makeTransformerOptions = <
+    In extends Types.Tree.Value,
+    Args extends Types.Tree.ArrayValue,
+    Out extends Types.Tree.Value
+  >(
+    options: Partial<Types.Generators.TransformerOptions<In, Args, Out>>
+  ): Types.Generators.TransformerOptions<In, Args, Out> => {
+    return {
+      inputCheck: options.inputCheck ?? ((i): Outcome.Success<In> => Outcome.makeSuccess(i as In)),
+      argsCheck: options.argsCheck ?? ((i): Outcome.Success<Args> => Outcome.makeSuccess(i as Args)),
+      outputCheck: options.outputCheck ?? ((i): Outcome.Success<Out> => Outcome.makeSuccess(i as Out))
+    }
+  }
+
+  export class Transformer<
+    In extends Types.Tree.Value = Types.Tree.Value,
+    Args extends Types.Tree.ArrayValue = Types.Tree.ArrayValue,
+    Out extends Types.Tree.Value = Types.Tree.Value
+  > {
     name: string
     args: Types.Tree.Value[]
-    func: Types.Generators.TransformerFunction
+    func: Types.Generators.TransformerTypedFunction<In, Args, Out>
     sourceTree: Tree.Tree
     mode: Tree.Tree['mode']
-    inputTypes: Array<Types.Tree.ValueTypeName> | null
-    outputTypes: Array<Types.Tree.ValueTypeName> | null
+    options: Types.Generators.TransformerOptions<In, Args, Out>
 
     static clone (transformer: Transformer): Transformer {
-      const { name, args, func, sourceTree } = transformer
-      return new Transformer(name, args, func, sourceTree)
+      const { name, args, func, sourceTree, options } = transformer
+      return new Transformer(name, args, func, sourceTree, options)
     }
 
     constructor (
       name: string,
       args: Types.Tree.Value,
-      func: Types.Generators.TransformerFunction,
+      func: Types.Generators.TransformerTypedFunction<In, Args, Out>,
       sourceTree: Tree.Tree,
-      options?: Types.Generators.TransformerOptions) {
+      options: Partial<Types.Generators.TransformerOptions<In, Args, Out>> = {}
+    ) {
       this.callFunc = this.callFunc.bind(this)
       this.silentApply = this.silentApply.bind(this)
       this.apply = this.apply.bind(this)
@@ -68,37 +67,36 @@ export namespace Generators {
       this.func = func
       this.sourceTree = sourceTree
       this.mode = sourceTree.mode
-      this.inputTypes = options?.inputTypes ?? null
-      this.outputTypes = options?.outputTypes ?? null
+      this.options = makeTransformerOptions(options)
     }
 
     callFunc (input: Types.Tree.Value, ...args: Types.Tree.Value[]): Types.Generators.TransformationOutput {
-      const { name, func, sourceTree, inputTypes, outputTypes } = this
-      let output: Types.Tree.Value
-      if (inputTypes === null) { output = func(input, args, { name, sourceTree }) }
-      else {
-        const inputChecked = typeCheck(input, ...inputTypes)
-        if (!inputChecked.success) return makeError(`Input type check failed: ${inputChecked.message}`)
-        output = func(input, args, { name, sourceTree })
+      const { name, func, sourceTree } = this
+      const inputChecked = this.options.inputCheck(input)
+      if (!inputChecked.success) throw 0
+      const argsChecked = this.options.argsCheck(args)
+      if (!argsChecked.success) throw 0
+      const output = func(inputChecked.payload, argsChecked.payload, { name, sourceTree })
+      if (output.success) {
+        const outputChecked = this.options.outputCheck(output.payload)
+        if (!outputChecked.success) throw 0
+        return makeSuccess(outputChecked.payload)
       }
-      if (outputTypes === null) return makeSuccess(output)
-      const outputChecked = typeCheck(output, ...outputTypes)
-      if (!outputChecked.success) return makeError(`IMPLEMENTATION ERROR: ${outputChecked.message}`)
-      return makeSuccess(outputChecked.value)
+      return makeError(output.error)
     }
 
     private silentApply (input: Types.Tree.Value): Types.Generators.TransformationOutput {
       const { args, mode } = this
       if (mode === 'coalescion') {
         const called = this.callFunc(input, ...args)
-        if (called.success) return makeSuccess(called.value)
-        return makeError(called.value)
+        if (called.success) return makeSuccess(called.payload)
+        return makeError(called.error)
       }
       const [firstArg, ...otherArgs] = args
       if (firstArg === undefined) return makeError('Tranformers in isolation mode require at least one argument.')
       const called = this.callFunc(firstArg, ...otherArgs)
-      if (called.success) return makeSuccess(called.value)
-      return makeError(called.value)
+      if (called.success) return makeSuccess(called.payload)
+      return makeError(called.error)
     }
 
     apply (input: Types.Tree.Value): Types.Generators.TransformationOutput {
@@ -108,7 +106,7 @@ export namespace Generators {
         at: sourceTree.pathString,
         transformer: name,
         tree: sourceTree,
-        details: silentResult.value
+        details: silentResult.error
       })
       return silentResult
     }
@@ -116,19 +114,27 @@ export namespace Generators {
 
   /* * * * * * * * * * * * * * * * * * * * *
    *
-   * FUNCTION
+   * METHOD
    * 
    * * * * * * * * * * * * * * * * * * * * */
 
-  export class Method {
-    transformer: Transformer
+  export class Method<
+    In extends Types.Tree.Value = Types.Tree.Value,
+    Args extends Types.Tree.ArrayValue = Types.Tree.ArrayValue,
+    Out extends Types.Tree.Value = Types.Tree.Value
+  > {
+    transformer: Transformer<In, Args, Out>
 
-    static clone (method: Method): Method {
+    static clone <
+      In extends Types.Tree.Value,
+      Args extends Types.Tree.ArrayValue,
+      Out extends Types.Tree.Value
+    >(method: Method<In, Args, Out>): Method<In, Args, Out> {
       const { transformer } = method
       return new Method(transformer)
     }
 
-    constructor (transformer: Transformer) {
+    constructor (transformer: Transformer<In, Args, Out>) {
       this.transformer = transformer
     }
   }
@@ -138,14 +144,20 @@ export namespace Generators {
    * GENERATOR MAKER
    * 
    * * * * * * * * * * * * * * * * * * * * */
-  export function make (
+  export function make <
+    In extends Types.Tree.Value,
+    Args extends Types.Tree.ArrayValue,
+    Out extends Types.Tree.Value
+  >(
     name: string,
-    func: Types.Generators.TransformerFunction | undefined,
-    options?: Types.Generators.TransformerOptions) {
-    return func !== undefined && ((wrapped: Types.Tree.Value, sourceTree: Tree.Tree) => {
-      const transformer = new Generators.Transformer(name, wrapped, func, sourceTree, options)
-      const method = new Generators.Method(transformer)
+    func: Types.Generators.TransformerTypedFunction<In, Args, Out>,
+    options: Types.Generators.TransformerOptions<In, Args, Out>
+  ): Types.Generators.Generator {
+    return (wrapped: Types.Tree.Value, sourceTree: Tree.Tree) => {
+      const transformer = new Transformer(name, wrapped, func, sourceTree, options) as unknown as Transformer
+      const method = new Method(transformer) as unknown as Method
       return { transformer, method }
-    }) || undefined
+    }
   }
+
 }

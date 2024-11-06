@@ -1,6 +1,7 @@
 import { Window } from '@design-edito/tools/agnostic/misc/crossenv/window'
 import { recordMap } from '@design-edito/tools/agnostic/objects/record-map'
 import { isRecord } from '@design-edito/tools/agnostic/objects/is-record'
+import { Outcome } from '@design-edito/tools/agnostic/misc/outcome'
 import { Generators } from '../generators'
 import { Types } from '../types'
 
@@ -38,7 +39,7 @@ export namespace Utils {
       const transformer = subvalue
       const transformed = transformer.apply(currentValue)
       if (transformed.success === false) return currentValue
-      else return transformed.value
+      else return transformed.payload
     }
   
     if (Array.isArray(currentValue)) return [...currentValue, subvalue]
@@ -142,11 +143,11 @@ export namespace Utils {
     }
   }
 
-  // [WIP] typechecks should be in its own util lib
-  function singleTypeCheck<K extends keyof Types.Tree.ValueTypesIndex> (
+  // [WIP] typechecks should be in its own util lib ?
+  function singleTypeCheck<K extends Types.Tree.ValueTypeName> (
     value: unknown,
     type: K
-  ): value is Types.Tree.ValueTypesIndex[K] {
+  ): value is Types.Tree.ValueTypeNamesIndex[K] {
     const { Element, Text, NodeList } = Window.get()
     if (type === 'any' && getType(value) !== undefined) return true
     if (type === 'null' && value === null) return true
@@ -163,18 +164,11 @@ export namespace Utils {
     return false
   }
 
-  export function typeCheck<K extends Array<keyof Types.Tree.ValueTypesIndex>> (
-    value: unknown,
-    ...types: K
-  ): value is Types.Tree.ValueTypesIndex[K[number]] {
-    return types.some(type => singleTypeCheck(value, type))
-  }
-
   export function getType<T extends unknown> (
     value: T
   ): T extends Types.Tree.Value
-    ? keyof Types.Tree.ValueTypesIndex
-    : keyof Types.Tree.ValueTypesIndex | undefined {
+    ? Types.Tree.ValueTypeName
+    : Types.Tree.ValueTypeName | undefined {
     if (value === null) return 'null'
     if (typeof value === 'boolean') return 'boolean'
     if (typeof value === 'number') return 'number'
@@ -187,7 +181,16 @@ export namespace Utils {
     if (Array.isArray(value)) return 'array'
     if (isRecord(value)) return 'record'
     return undefined as T extends Types.Tree.Value
-      ? keyof Types.Tree.ValueTypesIndex
-      : keyof Types.Tree.ValueTypesIndex | undefined
+      ? Types.Tree.ValueTypeName
+      : Types.Tree.ValueTypeName | undefined
+  }
+
+  export function typeCheck<K extends Array<Types.Tree.ValueTypeName>> (
+    value: unknown,
+    ...types: K
+  ): Outcome.Either<Types.Tree.ValueTypeFromNames<K>, { expected: string, found: string }> {
+    const matchesOneType = types.some(type => singleTypeCheck(value, type))
+    if (matchesOneType) return Outcome.makeSuccess(value as Types.Tree.ValueTypeFromNames<K>)
+    return Outcome.makeFailure({ expected: types.join(' | '), found: getType(value) ?? '<undefined>' })
   }
 }
