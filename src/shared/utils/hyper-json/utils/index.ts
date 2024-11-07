@@ -191,6 +191,21 @@ export namespace Utils {
   ): Outcome.Either<Types.Tree.ValueTypeFromNames<K>, { expected: string, found: string }> {
     const matchesOneType = types.some(type => singleTypeCheck(value, type))
     if (matchesOneType) return Outcome.makeSuccess(value as Types.Tree.ValueTypeFromNames<K>)
-    return Outcome.makeFailure({ expected: types.join(' | '), found: getType(value) ?? '<undefined>' })
+    return Outcome.makeFailure({
+      expected: types.join(' | '),
+      found: getType(value) ?? '<undefined>'
+    })
+  }
+
+  export function typeCheckMany<K extends Array<Types.Tree.ValueTypeName>> (
+    values: unknown[],
+    ...types: K
+  ): Outcome.Either<Types.Tree.ValueTypeFromNames<K>[], { position: number, expected: string, found: string }> {
+    for (const [pos, val] of Object.entries(values)) {
+      const checked = typeCheck(val, ...types)
+      if (checked.success) continue
+      return Outcome.makeFailure({ position: parseInt(pos), ...checked.error })
+    }
+    return Outcome.makeSuccess(values as Types.Tree.ValueTypeFromNames<K>[])
   }
 }

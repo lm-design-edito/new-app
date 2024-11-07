@@ -1,19 +1,8 @@
 import { Outcome } from '@design-edito/tools/agnostic/misc/outcome'
 import { Tree } from '../tree'
 import { Types } from '../types'
-import { Utils } from '../utils'
-// import { Utils } from '../utils'
 
 export namespace Generators {
-
-  /* * * * * * * * * * * * * * * * * * * * *
-  *
-  * UTILS
-  * 
-  * * * * * * * * * * * * * * * * * * * * */
-
-  const makeError = (value: Types.Tree.Value): Types.Generators.TransformationFailure => Outcome.makeFailure(value)
-  const makeSuccess = (value: Types.Tree.Value): Types.Generators.TransformationSuccess => Outcome.makeSuccess(value)
   
   /* * * * * * * * * * * * * * * * * * * * *
    *
@@ -29,9 +18,9 @@ export namespace Generators {
     options: Partial<Types.Generators.TransformerOptions<In, Args, Out>>
   ): Types.Generators.TransformerOptions<In, Args, Out> => {
     return {
-      inputCheck: options.inputCheck ?? ((i): Outcome.Success<In> => Outcome.makeSuccess(i as In)),
-      argsCheck: options.argsCheck ?? ((i): Outcome.Success<Args> => Outcome.makeSuccess(i as Args)),
-      outputCheck: options.outputCheck ?? ((i): Outcome.Success<Out> => Outcome.makeSuccess(i as Out))
+      inputCheck: options.inputCheck ?? (i => Outcome.makeSuccess(i as In)),
+      argsCheck: options.argsCheck ?? (i => Outcome.makeSuccess(i as Args)),
+      outputCheck: options.outputCheck ?? (i => Outcome.makeSuccess(i as Out))
     }
   }
 
@@ -44,7 +33,6 @@ export namespace Generators {
     args: Types.Tree.Value[]
     func: Types.Generators.TransformerTypedFunction<In, Args, Out>
     sourceTree: Tree.Tree
-    mode: Tree.Tree['mode']
     options: Types.Generators.TransformerOptions<In, Args, Out>
 
     static clone (transformer: Transformer): Transformer {
@@ -66,37 +54,49 @@ export namespace Generators {
       this.args = Array.isArray(args) ? args : [args]
       this.func = func
       this.sourceTree = sourceTree
-      this.mode = sourceTree.mode
       this.options = makeTransformerOptions(options)
     }
 
     callFunc (input: Types.Tree.Value, ...args: Types.Tree.Value[]): Types.Generators.TransformationOutput {
       const { name, func, sourceTree } = this
       const inputChecked = this.options.inputCheck(input)
-      if (!inputChecked.success) throw 0
-      const argsChecked = this.options.argsCheck(args)
-      if (!argsChecked.success) throw 0
+      if (!inputChecked.success) return Outcome.makeFailure({
+        message: 'Invalid input value',
+        details: inputChecked.error
+      })
+      const argsChecked = this.options.argsCheck(args, inputChecked.payload)
+      if (!argsChecked.success) return Outcome.makeFailure({
+        message: 'Invalid input argument',
+        details: argsChecked.error
+      })
       const output = func(inputChecked.payload, argsChecked.payload, { name, sourceTree })
       if (output.success) {
-        const outputChecked = this.options.outputCheck(output.payload)
-        if (!outputChecked.success) throw 0
-        return makeSuccess(outputChecked.payload)
+        const outputChecked = this.options.outputCheck(
+          output.payload,
+          inputChecked.payload,
+          argsChecked.payload
+        )
+        if (!outputChecked.success) return Outcome.makeFailure({
+          message: 'IMPLEMENTATION ERROR : Invalid output value',
+          details: outputChecked.error
+        })
+        return Outcome.makeSuccess(outputChecked.payload)
       }
-      return makeError(output.error)
+      return Outcome.makeFailure(output.error)
     }
 
     private silentApply (input: Types.Tree.Value): Types.Generators.TransformationOutput {
-      const { args, mode } = this
-      if (mode === 'coalescion') {
+      const { args, sourceTree } = this
+      if (sourceTree.mode === 'coalescion') {
         const called = this.callFunc(input, ...args)
-        if (called.success) return makeSuccess(called.payload)
-        return makeError(called.error)
+        if (called.success) return Outcome.makeSuccess(called.payload)
+        return Outcome.makeFailure(called.error)
       }
       const [firstArg, ...otherArgs] = args
-      if (firstArg === undefined) return makeError('Tranformers in isolation mode require at least one argument.')
+      if (firstArg === undefined) return Outcome.makeFailure('Tranformers in isolation mode require at least one argument.')
       const called = this.callFunc(firstArg, ...otherArgs)
-      if (called.success) return makeSuccess(called.payload)
-      return makeError(called.error)
+      if (called.success) return Outcome.makeSuccess(called.payload)
+      return Outcome.makeFailure(called.error)
     }
 
     apply (input: Types.Tree.Value): Types.Generators.TransformationOutput {

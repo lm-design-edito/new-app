@@ -35,14 +35,39 @@ export namespace Types {
       Out extends Tree.Value = Tree.Value,
       Err extends Tree.Value = Tree.Value
     > = (input: In, args: Args, details: TransformerFunctionDetails) => TransformationOutput<Out, Err>
+    export type TransformerInputCheckerFailure = {
+      expected?: string
+      found?: string
+      details?: Tree.Value
+    }
+    export type TransformerInputChecker<In extends Tree.Value> = (input: unknown) => Outcome.Either<In, TransformerInputCheckerFailure>
+    export type TransformerArgsCheckerFailure = {
+      position?: number
+      expected?: string
+      found?: string
+      details?: Tree.Value
+    }
+    export type TransformerArgsChecker<
+      In extends Tree.Value,
+      Args extends Tree.ArrayValue
+    > = (args: unknown[], input: In) => Outcome.Either<Args, TransformerArgsCheckerFailure>
+    export type TransformerOutputCheckerFailure = {
+      expected?: string
+      found?: string
+      details?: Tree.Value
+    }
+    export type TransformerOutputChecker<
+      In extends Tree.Value,
+      Args extends Tree.ArrayValue,
+      Output extends Tree.Value> = (output: unknown, input: In, args: Args) => Outcome.Either<Output, TransformerOutputCheckerFailure>
     export type TransformerOptions<
       In extends Tree.Value,
       Args extends Tree.ArrayValue,
       Out extends Tree.Value
     > = {
-      inputCheck: (input: unknown) => Outcome.Either<In, Tree.Value>,
-      argsCheck: (args: unknown[]) => Outcome.Either<Args, Tree.Value>,
-      outputCheck: (output: unknown) => Outcome.Either<Out, Tree.Value>
+      inputCheck: TransformerInputChecker<In>
+      argsCheck: TransformerArgsChecker<In, Args>
+      outputCheck: TransformerOutputChecker<In, Args, Out>
     }
   }
 

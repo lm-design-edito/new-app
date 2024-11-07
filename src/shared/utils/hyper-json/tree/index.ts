@@ -232,7 +232,7 @@ export namespace Tree {
       console.group(pathString)
       const transformedValue = getTransformedValue()
       console.log('!!!', this.smartTagName, transformedValue)
-      // [WIP] sécurité si isRoot et évalué comme un Transformer ou une Function ?
+      // [WIP] sécurité si isRoot et évalué comme un Transformer ou une Method ?
       console.groupEnd()
       return transformedValue
     }
