@@ -4,6 +4,7 @@ import { isRecord } from '@design-edito/tools/agnostic/objects/is-record'
 import { Outcome } from '@design-edito/tools/agnostic/misc/outcome'
 import { Generators } from '../generators'
 import { Types } from '../types'
+import { Tree } from '../tree'
 
 export namespace Utils {
   export function clone<T extends Types.Tree.Value = Types.Tree.Value> (value: T): T {
@@ -30,18 +31,38 @@ export namespace Utils {
   export function reduceValues (
     currentValue: Types.Tree.Value,
     subpath: string | number,
-    subvalue: Types.Tree.Value): Types.Tree.Value {
-    
+    rawsubvalue: Types.Tree.Value,
+    sourceTree: Tree.Tree): Types.Tree.Value {    
     const { Element, Text, NodeList, document } = Window.get()
-    
+
+    let subvalue = rawsubvalue
+
     // If subvalue is a Transformer, apply it
     if (subvalue instanceof Generators.Transformer) {
       const transformer = subvalue
-      const transformed = transformer.apply(currentValue)
-      if (transformed.success === false) return currentValue
-      else return transformed.payload
+      const mode = transformer.mode
+      if (mode === 'isolation') {
+        const transformationResult = transformer.apply()
+        if (!transformationResult.success) return currentValue
+        else {
+          const evaluated = transformationResult.payload
+
+          // [WIP] What if payload is a transformer itself ?
+          // thought of this below but meh...
+
+          // if (evaluated instanceof Generators.Transformer) {
+          //   const msg = `A transformer must not return a transformer value. At: ${sourceTree.pathString}`
+          //   throw new Error(msg)
+          // }
+          subvalue = evaluated
+        }
+      } else {
+        const transformationResult = transformer.apply(currentValue)
+        if (transformationResult.success === false) return currentValue
+        else return transformationResult.payload
+      }
     }
-  
+
     if (Array.isArray(currentValue)) return [...currentValue, subvalue]
     if (currentValue === null) return subvalue
     if (typeof currentValue === 'boolean') return subvalue
@@ -207,5 +228,88 @@ export namespace Utils {
       return Outcome.makeFailure({ position: parseInt(pos), ...checked.error })
     }
     return Outcome.makeSuccess(values as Types.Tree.ValueTypeFromNames<K>[])
+  }
+
+  export namespace SmartTags {
+    function fillOptions <
+      In extends Types.Tree.Value,
+      Args extends Types.Tree.ArrayValue,
+      Out extends Types.Tree.DELETE_ME_StaticValue
+    >(partial: Partial<Types.SmartTags.Options<In, Args, Out>>): Types.SmartTags.Options<In, Args, Out> {
+      return {
+        initializer: () => [],
+        wrapper: i => i,
+        inputCheck: (input: unknown) => Outcome.makeSuccess(input as In),
+        argsCheck: (args: unknown[]) => Outcome.makeSuccess(args as Args),
+        outputCheck: (output: unknown) => Outcome.makeSuccess(output as Out),
+        ...partial
+      }
+    }
+
+    export function makeData <
+      In extends Types.Tree.Value,
+      Args extends Types.Tree.ArrayValue,
+      Out extends Types.Tree.DELETE_ME_StaticValue
+    >(...descriptor: Types.SmartTags.Descriptor<In, Args, Out>): [string, Types.SmartTags.Data] {
+      const [name, partialOptions, func] = descriptor
+      const options = fillOptions<In, Args, Out>(partialOptions)
+      return [name, {
+        name,
+        initializer: options.initializer,
+        wrapper: options.wrapper,
+        generator: Generators.make(name, func, options)
+      }]
+    }
+
+    type InputCheckFail = Types.Generators.TransformerInputCheckerFailure
+    type ArgsCheckFail = Types.Generators.TransformerArgsCheckerFailure
+    type OutputCheckFail = Types.Generators.TransformerOutputCheckerFailure
+
+    export function makeInputCheckFailure (details: InputCheckFail): Outcome.Failure<InputCheckFail> { return Outcome.makeFailure(details) }
+    export function makeArgsCheckFailure (details: ArgsCheckFail): Outcome.Failure<ArgsCheckFail> { return Outcome.makeFailure(details) }
+    export function makeOutputCheckFailure (details: OutputCheckFail): Outcome.Failure<OutputCheckFail> { return Outcome.makeFailure(details) }
+    export function makeTypeCheckFailure (
+      type: 'input',
+      expected?: Types.Generators.TransformerTypeCheckFailureExpected,
+      found?: Types.Generators.TransformerTypeCheckFailureFound,
+      details?: Types.Generators.TransformerTypeCheckFailureDetails,
+    ): Outcome.Failure<InputCheckFail>
+    export function makeTypeCheckFailure (
+      type: 'args',
+      expected?: Types.Generators.TransformerTypeCheckFailureExpected,
+      found?: Types.Generators.TransformerTypeCheckFailureFound,
+      details?: Types.Generators.TransformerTypeCheckFailureDetails,
+      position?: Types.Generators.TransformerTypeCheckFailurePosition
+    ): Outcome.Failure<ArgsCheckFail>
+    export function makeTypeCheckFailure (
+      type: 'output',
+      expected?: Types.Generators.TransformerTypeCheckFailureExpected,
+      found?: Types.Generators.TransformerTypeCheckFailureFound,
+      details?: Types.Generators.TransformerTypeCheckFailureDetails,
+    ): Outcome.Failure<OutputCheckFail>
+    export function makeTypeCheckFailure (
+      type: 'input' | 'args' | 'output',
+      expected: Types.Generators.TransformerTypeCheckFailureExpected | undefined = undefined,
+      found: Types.Generators.TransformerTypeCheckFailureFound | undefined = undefined,
+      details: Types.Generators.TransformerTypeCheckFailureDetails | undefined = undefined,
+      position: Types.Generators.TransformerTypeCheckFailurePosition | undefined = undefined
+    ): Outcome.Failure<InputCheckFail | ArgsCheckFail | OutputCheckFail> {
+      if (type === 'input' || type === 'output') return Outcome.makeFailure({
+        expected,
+        found,
+        details
+      })
+      return Outcome.makeFailure({
+        expected,
+        found,
+        details,
+        position
+      })
+    }
+
+    export const expectEmptyArgs: Types.Generators.TransformerArgsChecker<Types.Tree.Value, []> = args => {
+      if (args.length !== 0) return Utils.SmartTags.makeTypeCheckFailure('args', undefined, undefined, 'No arguments are expected.')
+      return Outcome.makeSuccess([])
+    }
   }
 }

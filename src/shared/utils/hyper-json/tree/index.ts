@@ -113,11 +113,12 @@ export namespace Tree {
       this.attributes = (node instanceof Element ? Array.from(node.attributes) : null) as T extends Element ? Attr[] : null
       
       // mode
-      const hasIsolationModeAttribute = this.attributes?.find(({ name, value }) => {
-        return name === filledOptions.modeAttribute
-          && value === 'isolation'
-      }) ?? false
-      this.mode = hasIsolationModeAttribute ? 'isolation' : 'coalescion'
+      const { modeAttribute } = filledOptions
+      const hasCoalescionModeAttribute = this.attributes?.find(({ name, value }) => (
+        name === modeAttribute
+        && value === 'coalescion'
+      )) ?? false
+      this.mode = hasCoalescionModeAttribute ? 'coalescion' : 'isolation'
 
       // smartTags, smartTagData
       this.smartTags = new Map([...SmartTags.defaultRegister, ...filledOptions.smartTags])
@@ -135,6 +136,7 @@ export namespace Tree {
           const hasContent = (node.textContent ?? '').trim() !== ''
           if (hasContent) return true
           if (nodes.some(n => n instanceof Element)) return false
+          if (nodes.some(n => n instanceof Text && (n.textContent ?? '') !== '')) return false
           return true
         })
         .forEach(childNode => {
@@ -170,13 +172,21 @@ export namespace Tree {
     getInitialValue (): Types.Tree.Value {
       const { node, smartTagData } = this
       const { Text, document } = Window.get()
-      if (node instanceof Text) return document.createTextNode(node.textContent ?? '')
+      if (node instanceof Text) {
+        const initValue = document.createTextNode(node.textContent ?? '')
+        console.log('INIT=', initValue)
+        return initValue
+      }
       if (smartTagData === null) {
         const frag = document.createDocumentFragment()
-        return frag.childNodes as NodeListOf<Element | Text>
+        const initValue = frag.childNodes as NodeListOf<Element | Text>
+        console.log('INIT=', initValue)
+        return initValue
       }
       const { initializer } = smartTagData
-      return initializer !== undefined ? initializer(this) : []
+      const initValue = initializer !== undefined ? initializer(this) : []
+      console.log('INIT=', initValue)
+      return initValue
     }
 
     getCoalescedValue (): Types.Tree.Value {
@@ -184,11 +194,19 @@ export namespace Tree {
       const initialValue = getInitialValue()
       const coalesced = Array
         .from(subtrees)
-        .reduce((currentValue, [subpath, subtree]) => Utils.reduceValues(
-          currentValue,
-          subpath,
-          subtree.evaluate()
-        ), initialValue)
+        .reduce((currentValue, [subpath, subtree]) => {
+          const evaluatedSubtree = subtree.evaluate()
+          console.log('...COALESCING', currentValue, evaluatedSubtree)
+          const reduced = Utils.reduceValues(
+            currentValue,
+            subpath,
+            evaluatedSubtree,
+            this
+          )
+          console.log('  =>', reduced)
+          return reduced
+        }, initialValue)
+      console.log('COALESCED=', coalesced)
       return coalesced
     }
 
@@ -196,43 +214,63 @@ export namespace Tree {
       const { node, smartTagData, getCoalescedValue } = this
       const { Text } = Window.get()
       const coalescedValue = getCoalescedValue()
-      if (node instanceof Text) return Cast.toText(coalescedValue)
+      if (node instanceof Text) {
+        const wrappedValue = Cast.toText(coalescedValue)
+        console.log('WRAPPED=', wrappedValue)
+        return wrappedValue
+      }
       if (smartTagData === null) {
         const innerNodeList = Cast.toNodeList(coalescedValue)
         const clone = node.cloneNode() as Element
         clone.append(...Utils.clone(innerNodeList))
-        return clone
+        const wrappedValue = clone
+        console.log('WRAPPED=', wrappedValue)
+        return wrappedValue
       }
       const { wrapper } = smartTagData
-      if (wrapper === undefined) return coalescedValue
-      return wrapper(coalescedValue, this)
+      const wrappedValue = wrapper === undefined ? coalescedValue : wrapper(coalescedValue, this)
+      console.log('WRAPPED=', wrappedValue)
+      return wrappedValue
     }
 
     getTransformedValue (): Types.Tree.Value {
-      const { getWrappedValue, smartTagData, isMethod } = this
+      const { getWrappedValue, smartTagData, smartTagName, isMethod } = this
       const wrappedValue = getWrappedValue()
       if (smartTagData === null || smartTagData.generator === undefined) {
-        if (!isMethod) return wrappedValue
-        const name = this.smartTagName ?? '<anonymous>'
-        const args = wrappedValue
-        const func = () => Outcome.makeSuccess(wrappedValue)
-        const sourceTree = this
-        const options = {}
-        const transformer = new Generators.Transformer(name, args, func, sourceTree, options)
-        return new Generators.Method(transformer)
+        if (!isMethod) {
+          const transformedValue = wrappedValue
+          console.log('TRANSFORMED=', transformedValue)
+          return transformedValue
+        }
+        throw new Error(`${smartTagName ?? 'Text nodes'} cannot be used as a method`)
       }
       const { generator } = smartTagData
       const { transformer, method } = generator(wrappedValue, this)
-      if (isMethod) return method
-      return transformer
+      const transformedValue = isMethod ? method : transformer
+      console.log('TRANSFORMED=', transformedValue)
+      return transformedValue
     }
 
     evaluate (): Types.Tree.Value {
-      const { getTransformedValue, pathString } = this
-      console.group(pathString)
+      const { getTransformedValue, pathString, smartTagName, mode } = this
+      console.group(`${smartTagName}: ${pathString}`)
+      console.log('MODE=', mode)
+      console.log('METHOD=', this.isMethod)
+      console.log('SMARTTAG=', this.smartTagData)
+      console.log('SUBTREES=', this.subtrees)
       const transformedValue = getTransformedValue()
-      console.log('!!!', this.smartTagName, transformedValue)
+      if (this.isRoot && transformedValue instanceof Generators.Transformer) {
+        const applied = mode === 'coalescion'
+          ? transformedValue.apply(null)
+          : transformedValue.apply()
+        if (!applied.success) throw new Error('Root node transformer failed.')
+        console.log('EVALUATED(ROOT)=', applied.payload)
+        console.groupEnd()
+        return applied
+      }
+      console.log('EVALUATED=', transformedValue)
       // [WIP] sécurité si isRoot et évalué comme un Transformer ou une Method ?
+      // [WIP] cache/serialize
       console.groupEnd()
       return transformedValue
     }

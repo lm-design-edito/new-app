@@ -2,33 +2,31 @@ import { Outcome } from '@design-edito/tools/agnostic/misc/outcome'
 import { Window } from '@design-edito/tools/agnostic/misc/crossenv/window'
 import { Utils } from '../../utils'
 import { Cast } from '../../cast'
-import { SmartTags } from '..'
 
-type In = string | Text | Element | NodeListOf<Element | Text>
+type Input = string | Text | Element | NodeListOf<Element | Text>
 type Args = Array<string | Text | Element | NodeListOf<Element | Text>>
 type Output = string | Text | Element | NodeListOf<Element | Text>
 
-export const append = SmartTags.makeData<In, Args, Output>('append', {
+export const append = Utils.SmartTags.makeData<Input, Args, Output>('append', {
   inputCheck: (i) => Utils.typeCheck(i, 'string', 'text', 'element', 'nodelist'),
   argsCheck: (args, input): Outcome.Either<Args> => {
     const { Text } = Window.get()
     if (typeof input === 'string' || input instanceof Text) {
-      const allArgsAreStringOrText = args.every(arg => typeof arg === 'string' || arg instanceof Text)
-      if (allArgsAreStringOrText) return SmartTags.makeArgsCheckFailure({ details: 'Every argument should be of type string or Text when input is string or Text' })
+      for (const [argPos, argVal] of Object.entries(args)) {
+        if (typeof argVal !== 'string' && argVal instanceof Text) {
+          return Utils.SmartTags.makeTypeCheckFailure('args', 'string | text', Utils.getType(argVal), 'Arguments must be string | text when the input is string | text', parseInt(argPos))
+        }
+      }
     }
     return Outcome.makeSuccess(args as Args)
   },
   outputCheck: (output, input) => {
     const firstCheck = Utils.typeCheck(output, 'string', 'text', 'element', 'nodelist')
-    if (!firstCheck.success) return SmartTags.makeOutputCheckFailure(firstCheck.error)
+    if (!firstCheck.success) return Utils.SmartTags.makeTypeCheckFailure('output', firstCheck.error.expected, firstCheck.error.found)
     const checkedOutput = firstCheck.payload
     const outType = Utils.getType(checkedOutput)
     const inType = Utils.getType(input)
-    if (outType !== inType) return SmartTags.makeOutputCheckFailure({
-      expected: inType,
-      found: outType,
-      details: 'Output and input types should match'
-    })
+    if (outType !== inType) return Utils.SmartTags.makeTypeCheckFailure('output', inType, outType, 'Output and input types should match')
     return Outcome.makeSuccess(output as Output)
   }
 }, (input, args) => {

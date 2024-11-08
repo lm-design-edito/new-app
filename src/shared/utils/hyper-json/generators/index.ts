@@ -13,7 +13,7 @@ export namespace Generators {
   export const makeTransformerOptions = <
     In extends Types.Tree.Value,
     Args extends Types.Tree.ArrayValue,
-    Out extends Types.Tree.Value
+    Out extends Types.Tree.DELETE_ME_StaticValue
   >(
     options: Partial<Types.Generators.TransformerOptions<In, Args, Out>>
   ): Types.Generators.TransformerOptions<In, Args, Out> => {
@@ -27,13 +27,15 @@ export namespace Generators {
   export class Transformer<
     In extends Types.Tree.Value = Types.Tree.Value,
     Args extends Types.Tree.ArrayValue = Types.Tree.ArrayValue,
-    Out extends Types.Tree.Value = Types.Tree.Value
+    Out extends Types.Tree.DELETE_ME_StaticValue = Types.Tree.DELETE_ME_StaticValue
   > {
     name: string
     args: Types.Tree.Value[]
     func: Types.Generators.TransformerTypedFunction<In, Args, Out>
     sourceTree: Tree.Tree
     options: Types.Generators.TransformerOptions<In, Args, Out>
+
+    get mode () { return this.sourceTree.mode }
 
     static clone (transformer: Transformer): Transformer {
       const { name, args, func, sourceTree, options } = transformer
@@ -77,7 +79,7 @@ export namespace Generators {
           argsChecked.payload
         )
         if (!outputChecked.success) return Outcome.makeFailure({
-          message: 'IMPLEMENTATION ERROR : Invalid output value',
+          message: 'IMPLEMENTATION ERROR: Invalid output value',
           details: outputChecked.error
         })
         return Outcome.makeSuccess(outputChecked.payload)
@@ -85,21 +87,22 @@ export namespace Generators {
       return Outcome.makeFailure(output.error)
     }
 
-    private silentApply (input: Types.Tree.Value): Types.Generators.TransformationOutput {
+    private silentApply (input?: Types.Tree.Value): Types.Generators.TransformationOutput {
       const { args, sourceTree } = this
       if (sourceTree.mode === 'coalescion') {
+        if (input === undefined) return Outcome.makeFailure('Transformers in coalescion mode require an input')
         const called = this.callFunc(input, ...args)
         if (called.success) return Outcome.makeSuccess(called.payload)
         return Outcome.makeFailure(called.error)
       }
       const [firstArg, ...otherArgs] = args
-      if (firstArg === undefined) return Outcome.makeFailure('Tranformers in isolation mode require at least one argument.')
+      if (firstArg === undefined) return Outcome.makeFailure('Tranformers in isolation mode require at least one argument')
       const called = this.callFunc(firstArg, ...otherArgs)
       if (called.success) return Outcome.makeSuccess(called.payload)
       return Outcome.makeFailure(called.error)
     }
 
-    apply (input: Types.Tree.Value): Types.Generators.TransformationOutput {
+    apply (input?: Types.Tree.Value): Types.Generators.TransformationOutput {
       const { sourceTree, name, silentApply } = this
       const silentResult = silentApply(input)
       if (!silentResult.success) console.warn('Transformation error:', {
@@ -121,14 +124,14 @@ export namespace Generators {
   export class Method<
     In extends Types.Tree.Value = Types.Tree.Value,
     Args extends Types.Tree.ArrayValue = Types.Tree.ArrayValue,
-    Out extends Types.Tree.Value = Types.Tree.Value
+    Out extends Types.Tree.DELETE_ME_StaticValue = Types.Tree.DELETE_ME_StaticValue
   > {
     transformer: Transformer<In, Args, Out>
 
     static clone <
       In extends Types.Tree.Value,
       Args extends Types.Tree.ArrayValue,
-      Out extends Types.Tree.Value
+      Out extends Types.Tree.DELETE_ME_StaticValue
     >(method: Method<In, Args, Out>): Method<In, Args, Out> {
       const { transformer } = method
       return new Method(transformer)
@@ -147,7 +150,7 @@ export namespace Generators {
   export function make <
     In extends Types.Tree.Value,
     Args extends Types.Tree.ArrayValue,
-    Out extends Types.Tree.Value
+    Out extends Types.Tree.DELETE_ME_StaticValue
   >(
     name: string,
     func: Types.Generators.TransformerTypedFunction<In, Args, Out>,
