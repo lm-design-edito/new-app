@@ -214,11 +214,13 @@ export namespace Tree {
       const { node, smartTagData, getCoalescedValue } = this
       const { Text } = Window.get()
       const coalescedValue = getCoalescedValue()
+      // Node is Text node
       if (node instanceof Text) {
         const wrappedValue = Cast.toText(coalescedValue)
         console.log('WRAPPED=', wrappedValue)
         return wrappedValue
       }
+      // Node is regular HTML node
       if (smartTagData === null) {
         const innerNodeList = Cast.toNodeList(coalescedValue)
         const clone = node.cloneNode() as Element
@@ -227,8 +229,11 @@ export namespace Tree {
         console.log('WRAPPED=', wrappedValue)
         return wrappedValue
       }
+      // Node is HyperJson smart tag
       const { wrapper } = smartTagData
-      const wrappedValue = wrapper === undefined ? coalescedValue : wrapper(coalescedValue, this)
+      const wrappedValue = wrapper === undefined
+        ? coalescedValue
+        : wrapper(coalescedValue, this)
       console.log('WRAPPED=', wrappedValue)
       return wrappedValue
     }

@@ -13,11 +13,13 @@ export const append = Utils.SmartTags.makeData<Input, Args, Output>('append', {
     const { Text } = Window.get()
     if (typeof input === 'string' || input instanceof Text) {
       for (const [argPos, argVal] of Object.entries(args)) {
-        if (typeof argVal !== 'string' && argVal instanceof Text) {
+        if (typeof argVal !== 'string'
+          && argVal instanceof Text) {
           return Utils.SmartTags.makeTypeCheckFailure('args', 'string | text', Utils.getType(argVal), 'Arguments must be string | text when the input is string | text', parseInt(argPos))
         }
       }
     }
+    // [WIP] ??? What about args type check when input is element or nodelist ?
     return Outcome.makeSuccess(args as Args)
   },
   outputCheck: (output, input) => {

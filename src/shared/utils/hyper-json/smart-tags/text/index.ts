@@ -7,6 +7,7 @@ type Input = Types.Tree.Value
 type Args = []
 type Output = Types.Tree.NullValue
 
+// [WIP] finish this
 export const nullFunc = Utils.SmartTags.makeData<Input, Args, Output>('null', {
   initializer: () => null,
   wrapper: Cast.toNull,
