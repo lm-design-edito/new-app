@@ -230,6 +230,8 @@ export namespace Tree {
         return wrappedValue
       }
       // Node is HyperJson smart tag
+      // [WIP] is the wrapper function really needed ?
+      // The transformerFunc will do the job anyway i think
       const { wrapper } = smartTagData
       const wrappedValue = wrapper === undefined
         ? coalescedValue
