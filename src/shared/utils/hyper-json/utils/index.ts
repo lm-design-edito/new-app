@@ -43,17 +43,14 @@ export namespace Utils {
       const mode = transformer.mode
       if (mode === 'isolation') {
         const transformationResult = transformer.apply()
-        if (!transformationResult.success) return currentValue
+        if (!transformationResult.success) return currentValue // transformer.apply logs the error by itself
         else {
           const evaluated = transformationResult.payload
-
-          // [WIP] What if payload is a transformer itself ?
-          // thought of this below but meh...
-
-          // if (evaluated instanceof Generators.Transformer) {
-          //   const msg = `A transformer must not return a transformer value. At: ${sourceTree.pathString}`
-          //   throw new Error(msg)
-          // }
+          if (evaluated instanceof Generators.Transformer) {
+            // [WIP] from this we could rewrite the TransformerFunction type so that it outputs Exclude<Value, TransformerValue>
+            const msg = `A transformer must not return a transformer value. At: ${sourceTree.pathString}`
+            throw new Error(msg)
+          }
           subvalue = evaluated
         }
       } else {
@@ -234,7 +231,7 @@ export namespace Utils {
     function fillOptions <
       In extends Types.Tree.Value,
       Args extends Types.Tree.ArrayValue,
-      Out extends Types.Tree.DELETE_ME_StaticValue
+      Out extends Types.Tree.Value
     >(partial: Partial<Types.SmartTags.Options<In, Args, Out>>): Types.SmartTags.Options<In, Args, Out> {
       return {
         initializer: () => [],
@@ -249,7 +246,7 @@ export namespace Utils {
     export function makeData <
       In extends Types.Tree.Value,
       Args extends Types.Tree.ArrayValue,
-      Out extends Types.Tree.DELETE_ME_StaticValue
+      Out extends Types.Tree.Value
     >(...descriptor: Types.SmartTags.Descriptor<In, Args, Out>): [string, Types.SmartTags.Data] {
       const [name, partialOptions, func] = descriptor
       const options = fillOptions<In, Args, Out>(partialOptions)

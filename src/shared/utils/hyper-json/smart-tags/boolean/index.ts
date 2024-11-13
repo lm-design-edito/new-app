@@ -1,10 +1,8 @@
+import { Window } from '@design-edito/tools/agnostic/misc/crossenv/window'
 import { Outcome } from '@design-edito/tools/agnostic/misc/outcome'
-import { isNotFalsy } from '@design-edito/tools/agnostic/booleans/is-falsy'
 import { Utils } from '../../utils'
-import { SmartTags } from '..'
 import { Types } from '../../types'
 import { Cast } from '../../cast'
-import { Window } from '@design-edito/tools/agnostic/misc/crossenv/window'
 
 type Input = Types.Tree.Value
 type Args = []

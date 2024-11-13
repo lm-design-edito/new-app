@@ -18,21 +18,21 @@ export namespace Types {
       transformer: GeneratorsNamespace.Transformer,
       method: GeneratorsNamespace.Method
     }
-    export type TransformationSuccess<S extends Tree.DELETE_ME_StaticValue = Tree.DELETE_ME_StaticValue> = Outcome.Success<S>
-    export type TransformationFailure<F extends Tree.DELETE_ME_StaticValue = Tree.DELETE_ME_StaticValue> = Outcome.Failure<F>
+    export type TransformationSuccess<S extends Tree.Value = Tree.Value> = Outcome.Success<S>
+    export type TransformationFailure<F extends Tree.Value = Tree.Value> = Outcome.Failure<F>
     export type TransformationOutput<
-      S extends Tree.DELETE_ME_StaticValue = Tree.DELETE_ME_StaticValue,
+      S extends Tree.Value = Tree.Value,
       F extends Tree.Value = Tree.Value
     > = Outcome.Either<S, F>
     export type TransformerFunctionDetails = { name: string, sourceTree: TreeNamespace.Tree }
     export type TransformerFunction<
-      S extends Tree.DELETE_ME_StaticValue = Tree.DELETE_ME_StaticValue,
-      F extends Tree.DELETE_ME_StaticValue = Tree.DELETE_ME_StaticValue
+      S extends Tree.Value = Tree.Value,
+      F extends Tree.Value = Tree.Value
     > = (input: Tree.Value, args: Tree.Value[], details: TransformerFunctionDetails) => TransformationOutput<S, F>
     export type TransformerTypedFunction<
       In extends Tree.Value = Tree.Value,
       Args extends Tree.ArrayValue = Tree.ArrayValue,
-      Out extends Tree.DELETE_ME_StaticValue = Tree.DELETE_ME_StaticValue,
+      Out extends Tree.Value = Tree.Value,
       Err extends Tree.Value = Tree.Value
     > = (input: In, args: Args, details: TransformerFunctionDetails) => TransformationOutput<Out, Err>
     export type TransformerTypeCheckFailureExpected = string
@@ -63,11 +63,11 @@ export namespace Types {
     export type TransformerOutputChecker<
       In extends Tree.Value,
       Args extends Tree.ArrayValue,
-      Output extends Tree.DELETE_ME_StaticValue> = (output: unknown, input: In, args: Args) => Outcome.Either<Output, TransformerOutputCheckerFailure>
+      Output extends Tree.Value> = (output: unknown, input: In, args: Args) => Outcome.Either<Output, TransformerOutputCheckerFailure>
     export type TransformerOptions<
       In extends Tree.Value,
       Args extends Tree.ArrayValue,
-      Out extends Tree.DELETE_ME_StaticValue
+      Out extends Tree.Value
     > = {
       inputCheck: TransformerInputChecker<In>
       argsCheck: TransformerArgsChecker<In, Args>
@@ -107,6 +107,7 @@ export namespace Types {
       modeAttribute: string
     }
   
+    // [WIP] maybe a bad idea to have those duplicates NullValue = null etc...
     export type NullValue = null
     export type BooleanValue = boolean
     export type NumberValue = number
@@ -116,14 +117,8 @@ export namespace Types {
     export type NodeListValue = NodeListOf<ElementValue | TextValue>
     export type TransformerValue = GeneratorsNamespace.Transformer
     export type MethodValue = GeneratorsNamespace.Method
-    // export type StaticPrimitiveValue = NullValue | BooleanValue | NumberValue | StringValue | ElementValue | TextValue | NodeListValue
-    // export type StaticValue = StaticPrimitiveValue | StaticValue[] | { [k: string]: StaticValue }
-    // export type StaticArrayValue = StaticValue[]
-    // export type StaticRecordValue = { [k: string]: StaticValue }
-    // export type PrimitiveValue = StaticPrimitiveValue | TransformerValue | MethodValue
     export type PrimitiveValue = NullValue | BooleanValue | NumberValue | StringValue | ElementValue | TextValue | NodeListValue | TransformerValue | MethodValue
     export type Value = PrimitiveValue | Value[] | { [k: string]: Value }
-    export type DELETE_ME_StaticValue = Value // [WIP] replace everywhere with StaticValue
     export type ArrayValue = Value[]
     export type RecordValue = { [k: string]: Value }
   
@@ -156,7 +151,7 @@ export namespace Types {
     export type Options<
       In extends Tree.Value,
       Args extends Tree.ArrayValue,
-      Out extends Tree.DELETE_ME_StaticValue
+      Out extends Tree.Value
     > = Generators.TransformerOptions<In, Args, Out> & {
       initializer: (sourceTree: TreeNamespace.Tree) => Types.Tree.Value
       wrapper: (coalescedValue: Types.Tree.Value, sourceTree: TreeNamespace.Tree) => Types.Tree.Value,
@@ -165,7 +160,7 @@ export namespace Types {
     export type Descriptor<
       In extends Tree.Value,
       Args extends Tree.ArrayValue,
-      Out extends Tree.DELETE_ME_StaticValue
+      Out extends Tree.Value
     > = [
       name: string,
       options: Partial<Options<In, Args, Out>>,

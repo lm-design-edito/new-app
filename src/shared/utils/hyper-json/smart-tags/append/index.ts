@@ -12,6 +12,7 @@ export const append = Utils.SmartTags.makeData<Input, Args, Output>('append', {
   argsCheck: (args, input): Outcome.Either<Args> => {
     const { Text } = Window.get()
     if (typeof input === 'string' || input instanceof Text) {
+      // [WIP] maybe use Utils.typeCheckMany
       for (const [argPos, argVal] of Object.entries(args)) {
         if (typeof argVal !== 'string'
           && argVal instanceof Text) {
@@ -19,7 +20,14 @@ export const append = Utils.SmartTags.makeData<Input, Args, Output>('append', {
         }
       }
     }
-    // [WIP] ??? What about args type check when input is element or nodelist ?
+    // [WIP] maybe use Utils.typeCheckMany
+    for (const [argPos, argVal] of Object.entries(args)) {
+      const argChecked = Utils.typeCheck(argVal, 'string', 'text', 'element', 'nodelist')
+      if (!argChecked.success) {
+        const { expected, found } = argChecked.error
+        return Utils.SmartTags.makeTypeCheckFailure('args', expected, found, undefined, parseInt(argPos))
+      }
+    }
     return Outcome.makeSuccess(args as Args)
   },
   outputCheck: (output, input) => {

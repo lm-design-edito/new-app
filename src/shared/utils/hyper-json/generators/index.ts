@@ -13,7 +13,7 @@ export namespace Generators {
   export const makeTransformerOptions = <
     In extends Types.Tree.Value,
     Args extends Types.Tree.ArrayValue,
-    Out extends Types.Tree.DELETE_ME_StaticValue
+    Out extends Types.Tree.Value
   >(
     options: Partial<Types.Generators.TransformerOptions<In, Args, Out>>
   ): Types.Generators.TransformerOptions<In, Args, Out> => {
@@ -27,7 +27,7 @@ export namespace Generators {
   export class Transformer<
     In extends Types.Tree.Value = Types.Tree.Value,
     Args extends Types.Tree.ArrayValue = Types.Tree.ArrayValue,
-    Out extends Types.Tree.DELETE_ME_StaticValue = Types.Tree.DELETE_ME_StaticValue
+    Out extends Types.Tree.Value = Types.Tree.Value
   > {
     name: string
     args: Types.Tree.Value[]
@@ -124,14 +124,14 @@ export namespace Generators {
   export class Method<
     In extends Types.Tree.Value = Types.Tree.Value,
     Args extends Types.Tree.ArrayValue = Types.Tree.ArrayValue,
-    Out extends Types.Tree.DELETE_ME_StaticValue = Types.Tree.DELETE_ME_StaticValue
+    Out extends Types.Tree.Value = Types.Tree.Value
   > {
     transformer: Transformer<In, Args, Out>
 
     static clone <
       In extends Types.Tree.Value,
       Args extends Types.Tree.ArrayValue,
-      Out extends Types.Tree.DELETE_ME_StaticValue
+      Out extends Types.Tree.Value
     >(method: Method<In, Args, Out>): Method<In, Args, Out> {
       const { transformer } = method
       return new Method(transformer)
@@ -150,7 +150,7 @@ export namespace Generators {
   export function make <
     In extends Types.Tree.Value,
     Args extends Types.Tree.ArrayValue,
-    Out extends Types.Tree.DELETE_ME_StaticValue
+    Out extends Types.Tree.Value
   >(
     name: string,
     func: Types.Generators.TransformerTypedFunction<In, Args, Out>,
