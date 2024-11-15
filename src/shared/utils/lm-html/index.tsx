@@ -42,7 +42,7 @@ export namespace LmHtml {
       const recordWrapper = document.createElement('record')
       recordWrapper.append(...Array.from(element.childNodes))
       const evaluated = HyperJson.Tree
-        .from([recordWrapper], { globalObj: Globals.getHyperJsonGlobalObj() })
+        .from([recordWrapper], /* [WIP] pass this at some point { globalObj: Globals.getHyperJsonGlobalObj() }*/)
         .evaluate()
       if (!isRecord(evaluated)) {
         logger?.warn('Render', '%App configuration object must be a record', 'font-weight: 800;', 'at', element, 'found', evaluated)

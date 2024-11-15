@@ -9,7 +9,6 @@ type Output = Types.Tree.RecordValue
 
 export const hyperjson = Utils.SmartTags.makeData<Input, Args, Output>('hyperjson', {
   initializer: () => ({}),
-  wrapper: Cast.toRecord,
   inputCheck: i => Utils.typeCheck(i, 'record'),
   outputCheck: i => Utils.typeCheck(i, 'record')
 }, i => Outcome.makeSuccess(i))

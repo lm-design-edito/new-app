@@ -1,6 +1,7 @@
-import { HyperJson } from '~/shared/hyper-json'
+import { recordMap } from '@design-edito/tools/agnostic/objects/record-map'
 import { isInEnum } from '@design-edito/tools/agnostic/objects/enums/is-in-enum'
 import { Logs } from '@design-edito/tools/agnostic/misc/logs'
+import { HyperJson } from '~/shared/hyper-json'
 import { init } from '~/shared'
 import appConfig from '~/config'
 import { Apps } from '~/apps'
@@ -10,7 +11,6 @@ import { Events } from '~/shared/events'
 import { Externals } from '~/shared/externals'
 import { LmHtml } from '~/shared/lm-html'
 import { Slots } from '~/shared/slots'
-import { recordMap } from '@design-edito/tools/agnostic/objects/record-map'
 
 declare global {
   interface Window { LM_PAGE?: Globals.GlobalObj }
@@ -73,11 +73,11 @@ export namespace Globals {
     return returned
   }
 
-  export function getHyperJsonGlobalObj (): { [k: string]: HyperJson.Tree.Value } {
+  export function getHyperJsonGlobalObj (): { [k: string]: HyperJson.Types.Tree.Value } {
     const meta = globalObj.meta ?? {}
     const paths = (meta.paths ?? {}) as Partial<NonNullable<typeof meta.paths>>
     const mapper = (val: URL | undefined) => val !== undefined ? val.toString() : null
-    const mappedPaths = recordMap(paths, mapper) as { [k: string]: HyperJson.Tree.Value }
+    const mappedPaths = recordMap(paths, mapper) as { [k: string]: HyperJson.Types.Tree.Value }
     const {
       hash, host, hostname, href, origin,
       pathname, port, protocol, search

@@ -1,72 +1,172 @@
 import { Window } from '@design-edito/tools/agnostic/misc/crossenv/window'
-import { Cast } from '../cast'
-import { Generators } from '../generators'
-import { Merge } from '../merge'
+import { isInEnum } from '@design-edito/tools/agnostic/objects/enums/is-in-enum'
+import { Types } from '../types'
+import { Defaults } from '../defaults'
 import { SmartTags } from '../smart-tags'
 import { Utils } from '../utils'
-import { Types } from '../types'
-import { Outcome } from '@design-edito/tools/agnostic/misc/outcome'
-
-/* * * * * * * * * * * * * * * * * * * * *
- *
- * TREE
- * 
- * * * * * * * * * * * * * * * * * * * * */
+import { Cast } from '../cast'
 
 export namespace Tree {
+  export const actionAttribute = '_action'
+  export const keyAttribute = '_key'
+  export const methodAttribute = '_method'
+  export const initAttribute = '_init'
+  export const modeAttribute = '_mode'
 
-  const defaultOptions: Types.Tree.Options = {
-    ...Merge.defaultOptions,
-    globalObj: {},
-    smartTags: new Map(),
-    modeAttribute: '_mode'
+  export function mergeNodes (nodes: Array<Element | Text>): Element | Text {
+    const [first, ...rest] = nodes
+    if (first === undefined) throw new Error('Expecting at least one node')
+    const { Text, Element, document } = Window.get()
+  
+    /* Local utils function */
+    const isTextOrElement = (node: Node): node is Text | Element => node instanceof Text || node instanceof Element
+
+    /* Shallow merge nodes */
+    let CURRENT: Element | Text = first
+    rest.forEach(node => {
+      if (node instanceof Text) {
+        CURRENT.remove()
+        CURRENT = node
+        return;
+      }
+      const actionRaw = node.getAttribute(actionAttribute)
+      const action = isInEnum(Types.Tree.Merge.Action, actionRaw as any)
+        ? actionRaw as Types.Tree.Merge.Action
+        : Types.Tree.Merge.Action.REPLACE
+      if (action === Types.Tree.Merge.Action.REPLACE) {
+        CURRENT.remove()
+        CURRENT = node
+        return;
+      }
+      if (CURRENT instanceof Text) {
+        if (node instanceof Text) {
+          const appended = action === Types.Tree.Merge.Action.APPEND
+            ? document.createTextNode(`${CURRENT.textContent}${node.textContent}`)
+            : document.createTextNode(`${node.textContent}${CURRENT.textContent}`)
+          CURRENT.remove()
+          node.remove()
+          CURRENT = appended
+          return;
+        }
+        CURRENT.remove()
+        CURRENT = node
+        return;
+      }
+      if (node instanceof Text) {
+        CURRENT.remove()
+        CURRENT = node
+        return;
+      }
+      const currentAttributes = Array.from(CURRENT.attributes)
+      const nodeAttributes = Array.from(node.attributes)
+      const nodeChildren = Array.from(node.childNodes).filter(isTextOrElement)
+      const outputAttributes = action === Types.Tree.Merge.Action.APPEND
+        ? [...currentAttributes, ...nodeAttributes]
+        : [...nodeAttributes, ...currentAttributes]
+      if (action === Types.Tree.Merge.Action.APPEND) CURRENT.append(...nodeChildren)
+      else CURRENT.prepend(...nodeChildren)
+      outputAttributes.forEach(attr => (CURRENT as Element).setAttribute(attr.name, attr.value))
+      node.remove()
+      return;
+    })
+  
+    /* List child nodes sharing the same subpath */
+    const wrapperChildren = Array.from(CURRENT.childNodes).filter(isTextOrElement)
+    const subpaths = new Map<string | number, Array<Element | Text>>()
+    let positionnedChildrenCount = 0
+    wrapperChildren.forEach(child => {
+      if (child instanceof Text) {
+        const childKey = positionnedChildrenCount
+        const found = subpaths.get(childKey) ?? []
+        found.push(child)
+        subpaths.set(childKey, found)
+        positionnedChildrenCount += 1
+      } else {
+        const rawChildKey = child.getAttribute(keyAttribute)
+        const childKey = rawChildKey ?? positionnedChildrenCount
+        const found = subpaths.get(childKey) ?? []
+        found.push(child)
+        subpaths.set(childKey, found)
+        if (rawChildKey === null) { positionnedChildrenCount += 1 }
+      }
+    })
+  
+    /* For each node sharing a subpath, merge them */
+    subpaths.forEach(nodes => {
+      if (nodes.length < 2) return
+      return mergeNodes(nodes)
+    })
+  
+    /* At the end of the process, find and return wrapper's first child */
+    return CURRENT
   }
 
-  function fillOptions (partial: Partial<Types.Tree.Options>): Types.Tree.Options {
-    return {
-      ...defaultOptions,
-      ...partial
-    }
+  export function mergeRoots (nodes: Array<Element | Text>): Element | Text {
+    const { Element } = Window.get()
+    const elements = nodes.filter(e => e instanceof Element)
+    elements.forEach(element => {
+      const elementAction = element.getAttribute(actionAttribute) ?? Types.Tree.Merge.Action.APPEND
+      element.setAttribute(actionAttribute, elementAction)
+    })
+    const merged = mergeNodes(elements)
+    return merged
   }
 
-  export function from (
-    nodes: Array<Element | Text>,
-    options?: Partial<Types.Merge.Options & Types.Tree.Options>): Tree {
-    const merged = Merge.mergeRoots(nodes, options)
-    return new Tree(merged, null, null, options)
+  export function from (nodes: Array<Element | Text>): Tree {
+    const merged = mergeRoots(nodes)
+    return new Tree(merged, null, null)
   }
 
-  export class Tree<T extends Element | Text = Element | Text> {
-    readonly node: T
+  export function getInitialValueFromTypeName (name: Types.Tree.ValueTypeName): Types.Tree.Value {
+    const { document } = Window.get()
+    if (name === 'null') return null
+    if (name === 'boolean') return false
+    if (name === 'number') return 0
+    if (name === 'string') return ''
+    if (name === 'text') return document.createTextNode('')
+    if (name === 'nodelist') return document.createDocumentFragment().childNodes as NodeListOf<Element | Text>
+    if (name === 'element') return document.createElement('div')
+    if (name === 'transformer') return new Types.Methods.TEMP_Transformer() // [WIP] check this after actual Transformer implementation
+    if (name === 'method') return new Types.Methods.TEMP_Method() // [WIP] check this after actual Transformer implementation
+    if (name === 'array') return []
+    if (name === 'record') return {}
+    throw new Error(`Unknown value type name: ${name}`)
+  }
+
+  export class Tree {
+    readonly node: Element | Text
     readonly parent: Tree | null
     readonly pathFromParent: string | number | null
     readonly root: Tree
     readonly isRoot: boolean
     readonly path: Array<string | number>
     readonly pathString: string
-    readonly isMethod: boolean
+    readonly attributes: ReadonlyArray<Readonly<Attr>> | null
     readonly tagName: string | null
     readonly smartTagName: string | null
-    readonly attributes: T extends Element ? ReadonlyArray<Readonly<Attr>> : null
-    readonly mode: 'coalescion' | 'isolation'
-    readonly smartTags: Types.SmartTags.Register
-    readonly smartTagData: Types.SmartTags.Data | null
+    readonly smartTagData: SmartTags.SmartTag | null
+    readonly mode: Types.Tree.Mode
+    readonly isMethod: boolean
+    readonly initInnerValueTo: Types.Tree.ValueTypeName
     readonly subtrees: ReadonlyMap<string | number, Tree> = new Map()
-    readonly options: Types.Tree.Options
 
-    constructor (node: T, parent: null, pathFromParent: null, options?: Partial<Types.Tree.Options>)
-    constructor (node: T, parent: Tree, pathFromParent: string | number, options?: Partial<Types.Tree.Options>)
-    constructor (node: T, parent: Tree | null, pathFromParent: string | number | null, options: Partial<Types.Tree.Options> = defaultOptions) {
+    constructor (
+      node: Element | Text,
+      parent: null,
+      pathFromParent: null)
+    constructor (
+      node: Element | Text,
+      parent: Tree,
+      pathFromParent: string | number)
+    constructor (
+      node: Element | Text,
+      parent: Tree | null,
+      pathFromParent: string | number | null) {
       const { Element, Text } = Window.get()
-      const filledOptions = fillOptions(options)
 
       // Bounds
-      this.getInitialValue = this.getInitialValue.bind(this)
-      this.getCoalescedValue = this.getCoalescedValue.bind(this)
-      this.getWrappedValue = this.getWrappedValue.bind(this)
-      this.getTransformedValue = this.getTransformedValue.bind(this)
+      this.evaluateSilently = this.evaluateSilently.bind(this) // [WIP] use a Logger in the options and log directly from evaluate() ?
       this.evaluate = this.evaluate.bind(this)
-      this.getPerfCounters = this.getPerfCounters.bind(this)
       this.printPerfCounters = this.printPerfCounters.bind(this)
       
       // node
@@ -89,40 +189,50 @@ export namespace Tree {
       this.path = this.isRoot ? [] : [...this.parent!.path, this.pathFromParent!]
       this.pathString = `/${this.path.join('/')}`
 
+      // attributes
+      this.attributes = node instanceof Element
+        ? Array.from(node.attributes)
+        : null
+
       // isMethod, tagName, smartTagName
       if (node instanceof Element) {
         const rawTagName = node.tagName.trim().toLowerCase()
         const hasTrailingUnderscore = rawTagName.endsWith('_')
-        if (!hasTrailingUnderscore) {
-          this.tagName = rawTagName
-          this.smartTagName = rawTagName
-          this.isMethod = false
-        } else {
-          this.tagName = rawTagName
-          this.smartTagName = rawTagName.replace(/_+$/g, '')
-          this.isMethod = true
-        }
-      }
-      else {
+        const hasMethodAttribute = this.attributes?.find(attr => attr.name === methodAttribute) !== undefined
+        const isMethod = hasTrailingUnderscore || hasMethodAttribute
+        this.isMethod = isMethod
+        this.tagName = rawTagName
+        this.smartTagName = hasTrailingUnderscore 
+          ? rawTagName.replace(/_+$/g, '')
+          : rawTagName
+      } else {
+        this.isMethod = false
         this.tagName = null
         this.smartTagName = null
-        this.isMethod = false
       }
 
-      // attributes
-      this.attributes = (node instanceof Element ? Array.from(node.attributes) : null) as T extends Element ? Attr[] : null
-      
-      // mode
-      const { modeAttribute } = filledOptions
-      const hasCoalescionModeAttribute = this.attributes?.find(({ name, value }) => (
-        name === modeAttribute
-        && value === 'coalescion'
-      )) ?? false
-      this.mode = hasCoalescionModeAttribute ? 'coalescion' : 'isolation'
+      // smartTagData
+      if (this.smartTagName === null) { this.smartTagData = null }
+      else { this.smartTagData = SmartTags.register.get(this.smartTagName) ?? null }
 
-      // smartTags, smartTagData
-      this.smartTags = new Map([...SmartTags.defaultRegister, ...filledOptions.smartTags])
-      this.smartTagData = this.smartTags.get(this.smartTagName as string) ?? null
+      // mode
+      // [WIP] rootNode cannot be in coalescion mode
+      const hasModeAttribute = this.attributes?.find(attr => {
+        return attr.name === modeAttribute
+          && Types.Tree.isMode(attr.value)
+      })
+      this.mode = (hasModeAttribute?.value as Types.Tree.Mode | undefined)
+        ?? this.smartTagData?.defaultMode
+        ?? 'isolation'
+
+      // initInnerValueTo
+      const hasInitAttribute = this.attributes?.find(attr => {
+        return attr.name === initAttribute
+          && Types.Tree.isValueTypeName(attr.value.trim().toLowerCase())
+      })
+      this.initInnerValueTo = (hasInitAttribute?.value as Types.Tree.ValueTypeName | undefined)
+        ?? this.smartTagData?.init(this.mode)
+        ?? 'nodelist'
 
       // subtrees
       const { childNodes } = node
@@ -144,185 +254,72 @@ export namespace Tree {
             childNode.textContent = childNode.textContent?.trim() ?? ''
             mutableSubtrees.set(
               positionnedChildrenCount,
-              new Tree(childNode, this, positionnedChildrenCount, filledOptions)
+              new Tree(childNode, this, positionnedChildrenCount)
             )
             positionnedChildrenCount += 1
           } else {
-            const propertyName = childNode.getAttribute(filledOptions.keyAttribute)
+            const propertyName = childNode.getAttribute(Defaults.keyAttribute)
             if (propertyName === null) {
               mutableSubtrees.set(
                 positionnedChildrenCount,
-                new Tree(childNode, this, positionnedChildrenCount, filledOptions)
+                new Tree(childNode, this, positionnedChildrenCount)
               )
               positionnedChildrenCount += 1
             } else {
               mutableSubtrees.set(
                 propertyName,
-                new Tree(childNode, this, propertyName, filledOptions)
+                new Tree(childNode, this, propertyName)
               )
             }
           }
         })
       this.subtrees = mutableSubtrees
-
-      // options
-      this.options = filledOptions
     }
 
-    getInitialValue (): Types.Tree.Value {
-      const { node, smartTagData } = this
-      const { Text, document } = Window.get()
-      if (node instanceof Text) {
-        const initValue = document.createTextNode(node.textContent ?? '')
-        console.log('INIT=', initValue)
-        return initValue
-      }
-      if (smartTagData === null) {
-        const frag = document.createDocumentFragment()
-        const initValue = frag.childNodes as NodeListOf<Element | Text>
-        console.log('INIT=', initValue)
-        return initValue
-      }
-      const { initializer } = smartTagData
-      const initValue = initializer !== undefined ? initializer(this) : []
-      console.log('INIT=', initValue)
-      return initValue
-    }
-
-    getCoalescedValue (): Types.Tree.Value {
-      const { subtrees, getInitialValue } = this
-      const initialValue = getInitialValue()
-      const coalesced = Array
-        .from(subtrees)
-        .reduce((currentValue, [subpath, subtree]) => {
-          const evaluatedSubtree = subtree.evaluate()
-          console.log('...COALESCING', currentValue, evaluatedSubtree)
-          const reduced = Utils.reduceValues(
-            currentValue,
-            subpath,
-            evaluatedSubtree,
-            this
-          )
-          console.log('  =>', reduced)
-          return reduced
-        }, initialValue)
-      console.log('COALESCED=', coalesced)
-      return coalesced
-    }
-
-    getWrappedValue (): Types.Tree.Value {
-      const { node, smartTagData, getCoalescedValue } = this
+    evaluateSilently (): Types.Tree.Value {
+      const { initInnerValueTo, subtrees, node, smartTagData, isMethod, isRoot, mode } = this
       const { Text } = Window.get()
-      const coalescedValue = getCoalescedValue()
-      // Node is Text node
-      if (node instanceof Text) {
-        const wrappedValue = Cast.toText(coalescedValue)
-        console.log('WRAPPED=', wrappedValue)
-        return wrappedValue
+      const initialInnerValue = getInitialValueFromTypeName(initInnerValueTo)
+      const innerValue = Array
+        .from(subtrees)
+        .reduce((reduced, [subpath, subtree]) => Utils.coalesceValues(reduced, subpath, subtree.evaluate(), this), initialInnerValue)
+
+      // Checks for impossible configurations
+      if (node instanceof Text || smartTagData === null) {
+        if (isMethod) throw new Error('A Text or HTMLElement node cannot be used as a method')
+        if (mode === 'coalescion') throw new Error('A Text or HTMLElement node cannot be used in coalescion mode')
       }
-      // Node is regular HTML node
+
+      // If node is Text node, return a Text value
+      if (node instanceof Text) return Cast.toText(innerValue)
+    
+      // If no smartTagData, then treat it as an HTMLElement
       if (smartTagData === null) {
-        const innerNodeList = Cast.toNodeList(coalescedValue)
-        const clone = node.cloneNode() as Element
-        clone.append(...Utils.clone(innerNodeList))
-        const wrappedValue = clone
-        console.log('WRAPPED=', wrappedValue)
-        return wrappedValue
+        const nodelist = Cast.toNodeList(innerValue)
+        const clone = Utils.clone(node)
+        clone.append(...nodelist)
+        return clone
       }
-      // Node is HyperJson smart tag
-      // [WIP] is the wrapper function really needed ?
-      // The transformerFunc will do the job anyway i think
-      const { wrapper } = smartTagData
-      const wrappedValue = wrapper === undefined
-        ? coalescedValue
-        : wrapper(coalescedValue, this)
-      console.log('WRAPPED=', wrappedValue)
-      return wrappedValue
+    
+      // If node is a SmartTag
+      const { transformer, method } = smartTagData.generator(innerValue, mode, this)
+      if (isMethod) return method
+      if (mode === 'isolation') return transformer.apply(null) // Here we apply null as a placeholder outerValue since the transformer is in isolation mode
+      if (isRoot) throw new Error(`The root node cannot be used in coalescion mode`)
+      return transformer
     }
 
-    getTransformedValue (): Types.Tree.Value {
-      const { getWrappedValue, smartTagData, smartTagName, isMethod } = this
-      const wrappedValue = getWrappedValue()
-      if (smartTagData === null || smartTagData.generator === undefined) {
-        if (!isMethod) {
-          const transformedValue = wrappedValue
-          console.log('TRANSFORMED=', transformedValue)
-          return transformedValue
-        }
-        throw new Error(`${smartTagName ?? 'Text nodes'} cannot be used as a method`)
-      }
-      const { generator } = smartTagData
-      const { transformer, method } = generator(wrappedValue, this)
-      const transformedValue = isMethod ? method : transformer
-      console.log('TRANSFORMED=', transformedValue)
-      return transformedValue
-    }
-
-    evaluate (): Types.Tree.Value {
-      const { getTransformedValue, pathString, smartTagName, mode } = this
-      console.group(`${smartTagName}: ${pathString}`)
-      console.log('MODE=', mode)
-      console.log('METHOD=', this.isMethod)
-      console.log('SMARTTAG=', this.smartTagData)
-      console.log('SUBTREES=', this.subtrees)
-      const transformedValue = getTransformedValue()
-      if (this.isRoot && transformedValue instanceof Generators.Transformer) {
-        const applied = mode === 'coalescion'
-          ? transformedValue.apply(null)
-          : transformedValue.apply()
-        if (!applied.success) throw new Error('Root node transformer failed.')
-        console.log('EVALUATED(ROOT)=', applied.payload)
-        console.groupEnd()
-        return applied
-      }
-      console.log('EVALUATED=', transformedValue)
-      // [WIP] sécurité si isRoot et évalué comme un Transformer ou une Method ?
-      // [WIP] cache/serialize
+    evaluate () {
+      const { smartTagName, tagName, pathString } = this
+      console.group(smartTagName ?? tagName ?? '#text', pathString)
+      const evaluated = this.evaluateSilently()
+      console.log('EVALUATED=', evaluated)
       console.groupEnd()
-      return transformedValue
-    }
-
-    /* * * * * * * * * * * * * * * * * * * *
-     *
-     * PERF COUNTERS
-     * 
-     * * * * * * * * * * * * * * * * * * * */
-
-    perfCounters = {
-      computed: 0,
-      computeTime: 0,
-      computeTimeAvg: 0,
-      cached: 0,
-      cacheTime: 0,
-      cacheTimeAvg: 0,
-      totalTime: 0
-    }
-
-    getPerfCounters () {
-      // const { subtrees } = this
-      // const subCounters: Array<[string, typeof this['perfCounters']]> = []
-      // subCounters.push([this.pathString, this.perfCounters])
-      // subtrees.forEach(subtree => subCounters.push(...subtree.getPerfCounters()))
-      // return subCounters
+      return evaluated
     }
 
     printPerfCounters () {
-      console.log('PRINT PERF COUNTERS')
-      // const perfCounters = this.getPerfCounters()
-      //   .sort((a, b) => {
-      //     const aCalls = a[1].computed + a[1].cached
-      //     const bCalls = b[1].computed + b[1].cached
-      //     // return b[1].totalTime - a[1].totalTime
-      //     return bCalls - aCalls
-      //   })
-      //   .map(e => ({
-      //     path: e[0],
-      //     totalMs: e[1].totalTime,
-      //     computeMs: e[1].computeTime,
-      //     cacheMs: e[1].cacheTime,
-      //     ops: `${e[1].computed}/${e[1].cached}`
-      //   }))
-      // console.table(perfCounters)
+      console.log('[WIP] PRINT PERF COUNTERS')
     }
-  }
+  }  
 }

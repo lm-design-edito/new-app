@@ -9,9 +9,6 @@ type Output = Types.Tree.NullValue
 
 export const nullFunc = Utils.SmartTags.makeData<Input, Args, Output>('null', {
   initializer: () => null,
-  wrapper: Cast.toNull,
   argsCheck: Utils.SmartTags.expectEmptyArgs,
   outputCheck: o => Utils.typeCheck(o, 'null')
-}, () => {
-  return Outcome.makeSuccess(null)
-})
+}, () => Outcome.makeSuccess(null))

@@ -1,96 +1,132 @@
 import { Outcome } from '@design-edito/tools/agnostic/misc/outcome'
-import { Generators as GeneratorsNamespace } from '../generators'
 import { Tree as TreeNamespace } from '../tree'
 
 export namespace Types {
-
   /* * * * * * * * * * * * * * * * * * * * * * 
    *
-   * GENERATORS
+   * METHODS
    * 
    * * * * * * * * * * * * * * * * * * * * * */
-
-  export namespace Generators {
-    export type Generator = (
-      wrapped: Types.Tree.Value,
-      sourceTree: TreeNamespace.Tree
-    ) => {
-      transformer: GeneratorsNamespace.Transformer,
-      method: GeneratorsNamespace.Method
+  export namespace Methods {
+    export type TransformationFailurePayload = {
+      message: 'BAD_MAIN_VALUE',
+      expected: string,
+      found: string,
+      mainValue: Types.Tree.Value,
+      details?: any
+    } | {
+      message: 'BAD_ARGUMENTS_VALUE',
+      expected: string,
+      found: string,
+      argumentsValue: Types.Tree.ArrayValue,
+      at?: number
+      details?: any
+    } | {
+      message: 'TRANSFORMATION_ERROR',
+      details: any
     }
-    export type TransformationSuccess<S extends Tree.Value = Tree.Value> = Outcome.Success<S>
-    export type TransformationFailure<F extends Tree.Value = Tree.Value> = Outcome.Failure<F>
+
+    export type TransformationSuccessPayload = null | boolean | number | string | Text | NodeListOf<Element | Text> | Element | Tree.MethodValue | Tree.ArrayValue | Tree.RecordValue
     export type TransformationOutput<
-      S extends Tree.Value = Tree.Value,
-      F extends Tree.Value = Tree.Value
+      S extends TransformationSuccessPayload = TransformationSuccessPayload,
+      F extends TransformationFailurePayload = TransformationFailurePayload
     > = Outcome.Either<S, F>
-    export type TransformerFunctionDetails = { name: string, sourceTree: TreeNamespace.Tree }
+
+    export type TransformerFunctionDetails = {
+      name: string
+      sourceTree: TreeNamespace.Tree
+    }
+
     export type TransformerFunction<
-      S extends Tree.Value = Tree.Value,
-      F extends Tree.Value = Tree.Value
-    > = (input: Tree.Value, args: Tree.Value[], details: TransformerFunctionDetails) => TransformationOutput<S, F>
-    export type TransformerTypedFunction<
-      In extends Tree.Value = Tree.Value,
+      Main extends Tree.Value,
+      Args extends Tree.ArrayValue,
+      Output extends TransformationSuccessPayload
+    > = (mainValue: Main | undefined, args: Args, details: TransformerFunctionDetails) => TransformationOutput<Output, TransformationFailurePayload>
+
+    // [WIP] relocate this
+    export class TEMP_Transformer<
+      Main extends Tree.Value = Tree.Value,
       Args extends Tree.ArrayValue = Tree.ArrayValue,
-      Out extends Tree.Value = Tree.Value,
-      Err extends Tree.Value = Tree.Value
-    > = (input: In, args: Args, details: TransformerFunctionDetails) => TransformationOutput<Out, Err>
-    export type TransformerTypeCheckFailureExpected = string
-    export type TransformerTypeCheckFailureFound = string
-    export type TransformerTypeCheckFailureDetails = Tree.Value
-    export type TransformerTypeCheckFailurePosition = number
-    export type TransformerInputCheckerFailure = {
-      expected?: TransformerTypeCheckFailureExpected
-      found?: TransformerTypeCheckFailureFound
-      details?: TransformerTypeCheckFailureDetails
-    }
-    export type TransformerInputChecker<In extends Tree.Value> = (input: unknown) => Outcome.Either<In, TransformerInputCheckerFailure>
-    export type TransformerArgsCheckerFailure = {
-      position?: TransformerTypeCheckFailurePosition
-      expected?: TransformerTypeCheckFailureExpected
-      found?: TransformerTypeCheckFailureFound
-      details?: TransformerTypeCheckFailureDetails
-    }
-    export type TransformerArgsChecker<
-      In extends Tree.Value,
-      Args extends Tree.ArrayValue
-    > = (args: unknown[], input: In) => Outcome.Either<Args, TransformerArgsCheckerFailure>
-    export type TransformerOutputCheckerFailure = {
-      expected?: TransformerTypeCheckFailureExpected
-      found?: TransformerTypeCheckFailureFound
-      details?: TransformerTypeCheckFailureDetails
-    }
-    export type TransformerOutputChecker<
-      In extends Tree.Value,
-      Args extends Tree.ArrayValue,
-      Output extends Tree.Value> = (output: unknown, input: In, args: Args) => Outcome.Either<Output, TransformerOutputCheckerFailure>
-    export type TransformerOptions<
-      In extends Tree.Value,
-      Args extends Tree.ArrayValue,
-      Out extends Tree.Value
-    > = {
-      inputCheck: TransformerInputChecker<In>
-      argsCheck: TransformerArgsChecker<In, Args>
-      outputCheck: TransformerOutputChecker<In, Args, Out>
-    }
-  }
+      Output extends TransformationSuccessPayload = TransformationSuccessPayload
+    > {
+      name: string
+      mode: Tree.Mode
+      innerValue: Tree.Value
+      typeChecks: {
+        mainValue: (mainValue: Tree.Value) => Outcome.Either<Main, { expected: string, found: string }>
+        argsValue: (argsValue: Tree.ArrayValue, mainValue: Main) => Outcome.Either<Args, { expected: string, found: string, at?: number }>
+      }
+      func: TransformerFunction<Main, Args, Output>
+      sourceTree: TreeNamespace.Tree
 
-  /* * * * * * * * * * * * * * * * * * * * * * 
-   *
-   * MERGE
-   * 
-   * * * * * * * * * * * * * * * * * * * * * */
+      static clone <
+        Main extends Tree.Value,
+        Args extends Tree.ArrayValue,
+        Output extends TransformationSuccessPayload
+      >(transformer: TEMP_Transformer<Main, Args, Output>): TEMP_Transformer<Main, Args, Output> {
+        // [WIP] implement this
+        return transformer
+      }
 
-  export namespace Merge {
-    export type Options = {
-      actionAttribute: string
-      keyAttribute: string
+      constructor (
+        name: TEMP_Transformer<Main, Args, Output>['name'],
+        mode: TEMP_Transformer<Main, Args, Output>['mode'],
+        innerValue: TEMP_Transformer<Main, Args, Output>['innerValue'],
+        typeChecks: TEMP_Transformer<Main, Args, Output>['typeChecks'],
+        func: TEMP_Transformer<Main, Args, Output>['func'],
+        sourceTree: TEMP_Transformer<Main, Args, Output>['sourceTree']
+      ) {
+        this.apply = this.apply.bind(this)
+        this.name = name
+        this.mode = mode
+        this.innerValue = innerValue
+        this.typeChecks = typeChecks
+        this.func = func
+        this.sourceTree = sourceTree
+      }
+      
+      apply (outerValue: Tree.Value): TransformationOutput {
+        const { mode, innerValue, typeChecks, func } = this
+        const [mainValue, ...argumentsValue] = mode === 'isolation'
+          ? (Array.isArray(innerValue) ? innerValue : [innerValue]) as [Tree.Value, ...Tree.Value[]]
+          : [outerValue, Array.isArray(innerValue) ? innerValue : [innerValue]] as [Tree.Value, ...Tree.Value[]]
+        const mainChecked = typeChecks.mainValue(mainValue)
+        if (!mainChecked.success) return Outcome.makeFailure({
+          message: 'BAD_MAIN_VALUE',
+          ...mainChecked.error,
+          mainValue
+        })
+        const validMainValue = mainChecked.payload
+        const argsChecked = typeChecks.argsValue(argumentsValue, validMainValue)
+        if (!argsChecked.success) return Outcome.makeFailure({
+          message: 'BAD_ARGUMENTS_VALUE',
+          ...argsChecked.error,
+          argumentsValue
+        })
+        const validArgsValue = argsChecked.payload
+        const called = func(validMainValue, validArgsValue, { name: this.name, sourceTree: this.sourceTree })
+        if (!called.success) return Outcome.makeFailure(called.error)
+        return Outcome.makeSuccess(called.payload)
+      }
     }
 
-    export enum Action {
-      APPEND = 'append',
-      PREPEND = 'prepend',
-      REPLACE = 'replace'
+    // [WIP] relocate this
+    export class TEMP_Method<
+      Main extends Tree.Value = Tree.Value,
+      Args extends Tree.ArrayValue = Tree.ArrayValue,
+      Output extends TransformationSuccessPayload = TransformationSuccessPayload
+    > {
+      transformer: TEMP_Transformer<Main, Args, Output>
+
+      static clone <
+        Main extends Tree.Value,
+        Args extends Tree.ArrayValue,
+        Output extends TransformationSuccessPayload
+      >(method: TEMP_Method<Main, Args, Output>): TEMP_Method<Main, Args, Output> { return method }
+
+      constructor (transformer: TEMP_Transformer<Main, Args, Output>) {
+        this.transformer = transformer
+      }
     }
   }
 
@@ -101,82 +137,42 @@ export namespace Types {
    * * * * * * * * * * * * * * * * * * * * * */
 
   export namespace Tree {
-    export type Options = Types.Merge.Options & {
-      globalObj: { [k: string]: Value }
-      smartTags: SmartTags.Register
-      modeAttribute: string
+
+    export namespace Merge {
+      export enum Action {
+        APPEND = 'append',
+        PREPEND = 'prepend',
+        REPLACE = 'replace'
+      }
     }
-  
-    // [WIP] maybe a bad idea to have those duplicates NullValue = null etc...
-    export type NullValue = null
-    export type BooleanValue = boolean
-    export type NumberValue = number
-    export type StringValue = string
-    export type ElementValue = Element
-    export type TextValue = Text
-    export type NodeListValue = NodeListOf<ElementValue | TextValue>
-    export type TransformerValue = GeneratorsNamespace.Transformer
-    export type MethodValue = GeneratorsNamespace.Method
-    export type PrimitiveValue = NullValue | BooleanValue | NumberValue | StringValue | ElementValue | TextValue | NodeListValue | TransformerValue | MethodValue
+
+    export type Mode = 'isolation' | 'coalescion'
+    export const isMode = (name: string): name is Mode => name === 'isolation' || name === 'coalescion' // [WIP] maybe this should be in Utils.TypeChecks
+
+    export type TransformerValue = Methods.TEMP_Transformer
+    export type MethodValue = Methods.TEMP_Method
+    export type PrimitiveValue = null | boolean | number | string | Text | NodeListOf<Element | Text> | Element | TransformerValue | MethodValue
     export type Value = PrimitiveValue | Value[] | { [k: string]: Value }
     export type ArrayValue = Value[]
     export type RecordValue = { [k: string]: Value }
-  
-    export type ValueTypeNamesIndex = {
-      null: NullValue
-      boolean: BooleanValue
-      number: NumberValue
-      string: StringValue
-      element: ElementValue
-      text: TextValue
-      nodelist: NodeListValue
+
+    export type ValuesTypesNamesIndex = {
+      null: null
+      boolean: boolean
+      number: number
+      string: string
+      text: Text
+      nodelist: NodeListOf<Element | Text>
+      element: Element
       transformer: TransformerValue
       method: MethodValue
       array: ArrayValue
       record: RecordValue
-      any: Value
     }
 
-    export type ValueTypeName = keyof ValueTypeNamesIndex
-    export type ValueTypeFromNames<K extends ValueTypeName[]> = ValueTypeNamesIndex[K[number]]
-  }
-
-  /* * * * * * * * * * * * * * * * * * * * * * 
-   *
-   * SMART TAGS
-   * 
-   * * * * * * * * * * * * * * * * * * * * * */
-  export namespace SmartTags {
-    
-    export type Options<
-      In extends Tree.Value,
-      Args extends Tree.ArrayValue,
-      Out extends Tree.Value
-    > = Generators.TransformerOptions<In, Args, Out> & {
-      initializer: (sourceTree: TreeNamespace.Tree) => Types.Tree.Value
-      wrapper: (coalescedValue: Types.Tree.Value, sourceTree: TreeNamespace.Tree) => Types.Tree.Value,
-    }
-    
-    export type Descriptor<
-      In extends Tree.Value,
-      Args extends Tree.ArrayValue,
-      Out extends Tree.Value
-    > = [
-      name: string,
-      options: Partial<Options<In, Args, Out>>,
-      func: Types.Generators.TransformerTypedFunction<In, Args, Out>
-    ]
-  
-    export type Data = {
-      name: string
-      initializer: (sourceTree: TreeNamespace.Tree) => Types.Tree.Value
-      wrapper: (coalescedValue: Types.Tree.Value, sourceTree: TreeNamespace.Tree) => Types.Tree.Value
-      generator: (wrappedValue: Types.Tree.Value, sourceTree: TreeNamespace.Tree) => {
-        transformer: GeneratorsNamespace.Transformer
-        method: GeneratorsNamespace.Method
-      }
-    }
-
-    export type Register = Map<Data['name'], Data>
+    export type ValueTypeName = keyof ValuesTypesNamesIndex
+    export const valueTypesNames: ValueTypeName[] = ['null', 'boolean', 'number', 'string', 'text', 'nodelist', 'element', 'transformer', 'method', 'array', 'record']
+    export type ValueTypeFromNames<N extends ValueTypeName[]> = ValuesTypesNamesIndex[N[number]]
+    export const isValueTypeName = (name: string): name is ValueTypeName => valueTypesNames.includes(name as any) // [WIP] maybe this should be in Utils.TypeChecks
   }
 }

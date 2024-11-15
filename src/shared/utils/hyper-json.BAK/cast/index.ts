@@ -1,4 +1,5 @@
 import { isRecord } from '@design-edito/tools/agnostic/objects/is-record'
+import { isFalsy } from '@design-edito/tools/agnostic/booleans/is-falsy'
 import { Window } from '@design-edito/tools/agnostic/misc/crossenv/window'
 import { Types } from '../types'
 

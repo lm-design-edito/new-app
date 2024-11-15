@@ -1,64 +1,184 @@
-import { Tree } from '../tree'
+import { Outcome } from '@design-edito/tools/agnostic/misc/outcome'
+import { Generators as GeneratorsNamespace } from '../generators'
+import { Tree as TreeNamespace } from '../tree'
 
 export namespace Types {
-  export enum TyperTagName {
-    ANY = 'any',
-    NULL = 'null',
-    BOOLEAN = 'boolean',
-    NUMBER = 'number',
-    STRING = 'string',
-    TEXT = 'text',
-    NODELIST = 'nodelist',
-    ARRAY = 'array',
-    RECORD = 'record',
-    LITERAL = 'literal',
-    REF = 'ref',
-    FUNCTION = 'function'
+
+  /* * * * * * * * * * * * * * * * * * * * * * 
+   *
+   * GENERATORS
+   * 
+   * * * * * * * * * * * * * * * * * * * * * */
+
+  export namespace Generators {
+    export type Generator = (
+      wrapped: Types.Tree.Value,
+      sourceTree: TreeNamespace.Tree
+    ) => {
+      transformer: GeneratorsNamespace.Transformer,
+      method: GeneratorsNamespace.Method
+    }
+    export type TransformationSuccess<S extends Tree.Value = Tree.Value> = Outcome.Success<S>
+    export type TransformationFailure<F extends Tree.Value = Tree.Value> = Outcome.Failure<F>
+    export type TransformationOutput<
+      S extends Tree.Value = Tree.Value,
+      F extends Tree.Value = Tree.Value
+    > = Outcome.Either<S, F>
+    export type TransformerFunctionDetails = { name: string, sourceTree: TreeNamespace.Tree }
+    export type TransformerFunction<
+      S extends Tree.Value = Tree.Value,
+      F extends Tree.Value = Tree.Value
+    > = (input: Tree.Value, args: Tree.Value[], details: TransformerFunctionDetails) => TransformationOutput<S, F>
+    export type TransformerTypedFunction<
+      In extends Tree.Value = Tree.Value,
+      Args extends Tree.ArrayValue = Tree.ArrayValue,
+      Out extends Tree.Value = Tree.Value,
+      Err extends Tree.Value = Tree.Value
+    > = (input: In, args: Args, details: TransformerFunctionDetails) => TransformationOutput<Out, Err>
+    export type TransformerTypeCheckFailureExpected = string
+    export type TransformerTypeCheckFailureFound = string
+    export type TransformerTypeCheckFailureDetails = Tree.Value
+    export type TransformerTypeCheckFailurePosition = number
+    export type TransformerInputCheckerFailure = {
+      expected?: TransformerTypeCheckFailureExpected
+      found?: TransformerTypeCheckFailureFound
+      details?: TransformerTypeCheckFailureDetails
+    }
+    export type TransformerInputChecker<In extends Tree.Value> = (input: unknown) => Outcome.Either<In, TransformerInputCheckerFailure>
+    export type TransformerArgsCheckerFailure = {
+      position?: TransformerTypeCheckFailurePosition
+      expected?: TransformerTypeCheckFailureExpected
+      found?: TransformerTypeCheckFailureFound
+      details?: TransformerTypeCheckFailureDetails
+    }
+    export type TransformerArgsChecker<
+      In extends Tree.Value,
+      Args extends Tree.ArrayValue
+    > = (args: unknown[], input: In) => Outcome.Either<Args, TransformerArgsCheckerFailure>
+    export type TransformerOutputCheckerFailure = {
+      expected?: TransformerTypeCheckFailureExpected
+      found?: TransformerTypeCheckFailureFound
+      details?: TransformerTypeCheckFailureDetails
+    }
+    export type TransformerOutputChecker<
+      In extends Tree.Value,
+      Args extends Tree.ArrayValue,
+      Output extends Tree.Value> = (output: unknown, input: In, args: Args) => Outcome.Either<Output, TransformerOutputCheckerFailure>
+    export type TransformerOptions<
+      In extends Tree.Value,
+      Args extends Tree.ArrayValue,
+      Out extends Tree.Value
+    > = {
+      inputCheck: TransformerInputChecker<In>
+      argsCheck: TransformerArgsChecker<In, Args>
+      outputCheck: TransformerOutputChecker<In, Args, Out>
+      mode?: TreeNamespace.Tree['mode']
+    }
   }
+
+  /* * * * * * * * * * * * * * * * * * * * * * 
+   *
+   * MERGE
+   * 
+   * * * * * * * * * * * * * * * * * * * * * */
+
+  export namespace Merge {
+    export type Options = {
+      actionAttribute: string
+      keyAttribute: string
+    }
+
+    export enum Action {
+      APPEND = 'append',
+      PREPEND = 'prepend',
+      REPLACE = 'replace'
+    }
+  }
+
+  /* * * * * * * * * * * * * * * * * * * * * * 
+   *
+   * TREE
+   * 
+   * * * * * * * * * * * * * * * * * * * * * */
+
+  export namespace Tree {
+    export type Options = Types.Merge.Options & {
+      globalObj: { [k: string]: Value }
+      smartTags: SmartTags.Register
+      modeAttribute: string
+    }
   
-  export type PrimitiveValue = null | string | number | boolean | Element | Text | NodeListOf<Text | Element> | Transformer
-  export type Value = PrimitiveValue | Value[] | { [k: string]: Value }
-  export type TransformerHooks = {
-    resolver: Tree.Tree['resolve']
-    getGenerator: Tree.Tree['getGenerator']
-  }
-  export type TransformerErrorReturnType = { action: 'ERROR', value: Value }
-  // export type TransformerReplaceReturnType = { action: 'REPLACE', value: Exclude<Value, Transformer> }
-  export type TransformerReplaceReturnType = { action: 'REPLACE', value: Value }
-  export type TransformerNullReturnType = { action: null }
-  export type TransformerReturnType = TransformerErrorReturnType
-    | TransformerReplaceReturnType
-    | TransformerNullReturnType
+    // [WIP] maybe a bad idea to have those duplicates NullValue = null etc...
+    export type NullValue = null
+    export type BooleanValue = boolean
+    export type NumberValue = number
+    export type StringValue = string
+    export type ElementValue = Element
+    export type TextValue = Text
+    export type NodeListValue = NodeListOf<ElementValue | TextValue>
+    export type TransformerValue = GeneratorsNamespace.Transformer
+    export type MethodValue = GeneratorsNamespace.Method
+    export type PrimitiveValue = NullValue | BooleanValue | NumberValue | StringValue | ElementValue | TextValue | NodeListValue | TransformerValue | MethodValue
+    export type Value = PrimitiveValue | Value[] | { [k: string]: Value }
+    export type ArrayValue = Value[]
+    export type RecordValue = { [k: string]: Value }
+  
+    export type ValueTypeNamesIndex = {
+      null: NullValue
+      boolean: BooleanValue
+      number: NumberValue
+      string: StringValue
+      element: ElementValue
+      text: TextValue
+      nodelist: NodeListValue
+      transformer: TransformerValue
+      method: MethodValue
+      array: ArrayValue
+      record: RecordValue
+      any: Value
+    }
 
-  export type AnonymousTransformer = (currentValue: Value, callerTree: Tree.Tree) => TransformerReturnType
-  export type Transformer = AnonymousTransformer & {
-    transformerName: string
-    args: Value[]
-  }
-  export type TransformerGenerator = (name: string, ...args: Value[]) => Transformer
-  export type Resolver = (path: Tree.Tree['path']) => Tree.Tree | undefined
-
-  export type TreeOptions = {
-    generatorsMap: Map<string, Types.TransformerGenerator>
-    keyAttribute: string
-    actionAttribute: string
-    globalObj: { [k: string]: Value }
+    export type ValueTypeName = keyof ValueTypeNamesIndex
+    export type ValueTypeFromNames<K extends ValueTypeName[]> = ValueTypeNamesIndex[K[number]]
+    export const allTypesNames: ValueTypeName[] = ['null', 'boolean', 'number', 'string', 'text', 'nodelist', 'element', 'transformer', 'method', 'array', 'record']
   }
 
-  export enum ReductionAction {
-    APPEND = 'append',
-    PREPEND = 'prepend',
-    REPLACE = 'replace'
-  }
+  /* * * * * * * * * * * * * * * * * * * * * * 
+   *
+   * SMART TAGS
+   * 
+   * * * * * * * * * * * * * * * * * * * * * */
+  export namespace SmartTags {
+    
+    export type Options<
+      In extends Tree.Value,
+      Args extends Tree.ArrayValue,
+      Out extends Tree.Value
+    > = Generators.TransformerOptions<In, Args, Out> & {
+      initializer: (sourceTree: TreeNamespace.Tree) => Types.Tree.Value
+      wrapper: (coalescedValue: Types.Tree.Value, sourceTree: TreeNamespace.Tree) => Types.Tree.Value
+    }
+    
+    export type Descriptor<
+      In extends Tree.Value,
+      Args extends Tree.ArrayValue,
+      Out extends Tree.Value
+    > = [
+      name: string,
+      options: Partial<Options<In, Args, Out>>,
+      func: Types.Generators.TransformerTypedFunction<In, Args, Out>
+    ]
+  
+    export type Data = {
+      name: string
+      initializer: (sourceTree: TreeNamespace.Tree) => Types.Tree.Value
+      wrapper: (coalescedValue: Types.Tree.Value, sourceTree: TreeNamespace.Tree) => Types.Tree.Value
+      generator: (wrappedValue: Types.Tree.Value, sourceTree: TreeNamespace.Tree) => {
+        transformer: GeneratorsNamespace.Transformer
+        method: GeneratorsNamespace.Method
+      }
+    }
 
-  export type Serialized = { type: 'null', value: null }
-    | { type: 'boolean', value: boolean }
-    | { type: 'number', value: number }
-    | { type: 'string', value: string }
-    | { type: 'text', value: string }
-    | { type: 'element', value: string }
-    | { type: 'nodelist', value: Array<Serialized> }
-    | { type: 'array', value: Array<Serialized> }
-    | { type: 'record', value: { [k: string]: Serialized } }
-    | { type: 'transformer', value: Transformer }
+    export type Register = Map<Data['name'], Data>
+  }
 }

@@ -95,15 +95,15 @@ async function init () {
     const nodes = document.querySelectorAll(appConfig.dataSourceSelector)
     return Array.from(nodes).map(e => e.cloneNode(true)) as Element[]
   }
-  const pageInlineDataValue = HyperJson.Tree.from(getPageInlineDataElements(), {
+  const pageInlineDataValue = HyperJson.Tree.from(getPageInlineDataElements()/* [WIP] pass the globalObj at some point, {
     globalObj: Globals.getHyperJsonGlobalObj()
-  }).evaluate()
+  }*/).evaluate()
   logger.log('Inline data', pageInlineDataValue)
   const pageInlineDataValueIsRecord = isRecord(pageInlineDataValue)
   const pageDataConfigCollectionName = appConfig.dataSourcesReservedNames.config
   const pageInlineDataRawConfigInstructions = pageInlineDataValueIsRecord
     && Array.isArray(pageInlineDataValue[pageDataConfigCollectionName])
-    ? pageInlineDataValue[pageDataConfigCollectionName] as HyperJson.Tree.Value[]
+    ? pageInlineDataValue[pageDataConfigCollectionName] as HyperJson.Types.Tree.Value[]
     : []
   const pageInlineDataConfigInstructions = pageInlineDataRawConfigInstructions.map(instruction => {
     const instructionIsRecord = isRecord(instruction)
@@ -153,7 +153,7 @@ async function init () {
       return wrapper
     })
   const pageFullTreeElements = [...getPageInlineDataElements(), ...pageRemoteDataNodes]
-  const pageFullDataTree = HyperJson.Tree.from(pageFullTreeElements, { globalObj: Globals.getHyperJsonGlobalObj() })
+  const pageFullDataTree = HyperJson.Tree.from(pageFullTreeElements, /* [WIP] pass the global obj at some point { globalObj: Globals.getHyperJsonGlobalObj() }*/)
   Globals.expose(Globals.GlobalKey.TREE, pageFullDataTree)
   const pageFullDataValue = pageFullDataTree.evaluate()
   pageFullDataTree.printPerfCounters()

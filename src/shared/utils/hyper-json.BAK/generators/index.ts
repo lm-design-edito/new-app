@@ -20,7 +20,8 @@ export namespace Generators {
     return {
       inputCheck: options.inputCheck ?? (i => Outcome.makeSuccess(i as In)),
       argsCheck: options.argsCheck ?? (i => Outcome.makeSuccess(i as Args)),
-      outputCheck: options.outputCheck ?? (i => Outcome.makeSuccess(i as Out))
+      outputCheck: options.outputCheck ?? (i => Outcome.makeSuccess(i as Out)),
+      mode: options.mode
     }
   }
 
@@ -35,7 +36,9 @@ export namespace Generators {
     sourceTree: Tree.Tree
     options: Types.Generators.TransformerOptions<In, Args, Out>
 
-    get mode () { return this.sourceTree.mode }
+    get mode (): NonNullable<Types.Generators.TransformerOptions<In, Args, Out>['mode']> {
+      return this.options.mode ?? this.sourceTree.mode
+    }
 
     static clone (transformer: Transformer): Transformer {
       const { name, args, func, sourceTree, options } = transformer
@@ -88,8 +91,8 @@ export namespace Generators {
     }
 
     private silentApply (input?: Types.Tree.Value): Types.Generators.TransformationOutput {
-      const { args, sourceTree } = this
-      if (sourceTree.mode === 'coalescion') {
+      const { args, mode } = this
+      if (mode === 'coalescion') {
         if (input === undefined) return Outcome.makeFailure('Transformers in coalescion mode require an input')
         const called = this.callFunc(input, ...args)
         if (called.success) return Outcome.makeSuccess(called.payload)

@@ -12,22 +12,11 @@ export const append = Utils.SmartTags.makeData<Input, Args, Output>('append', {
   argsCheck: (args, input): Outcome.Either<Args> => {
     const { Text } = Window.get()
     if (typeof input === 'string' || input instanceof Text) {
-      // [WIP] maybe use Utils.typeCheckMany
-      for (const [argPos, argVal] of Object.entries(args)) {
-        if (typeof argVal !== 'string'
-          && argVal instanceof Text) {
-          return Utils.SmartTags.makeTypeCheckFailure('args', 'string | text', Utils.getType(argVal), 'Arguments must be string | text when the input is string | text', parseInt(argPos))
-        }
-      }
+      const argsChecked = Utils.typeCheckMany(args, 'string', 'text')
+      if (!argsChecked.success) return argsChecked
     }
-    // [WIP] maybe use Utils.typeCheckMany
-    for (const [argPos, argVal] of Object.entries(args)) {
-      const argChecked = Utils.typeCheck(argVal, 'string', 'text', 'element', 'nodelist')
-      if (!argChecked.success) {
-        const { expected, found } = argChecked.error
-        return Utils.SmartTags.makeTypeCheckFailure('args', expected, found, undefined, parseInt(argPos))
-      }
-    }
+    const argsChecked = Utils.typeCheckMany(args, 'string', 'text', 'element', 'nodelist')
+    if (!argsChecked.success) return argsChecked
     return Outcome.makeSuccess(args as Args)
   },
   outputCheck: (output, input) => {
