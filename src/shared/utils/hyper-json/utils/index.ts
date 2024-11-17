@@ -222,4 +222,17 @@ export namespace Utils {
       return Outcome.makeSuccess(values as Types.Tree.ValueTypeFromNames<K>[])
     }
   }
+
+  export namespace SmartTags {
+    export const expectEmptyArgs = (args: unknown[]): Outcome.Either<[], {
+      expected: string,
+      found: string
+    }> => {
+      if (args.length === 0) return Outcome.makeSuccess([])
+      return Outcome.makeFailure({
+        expected: 'length: 0',
+        found: `length: ${args.length}`
+      })
+    }
+  }
 }

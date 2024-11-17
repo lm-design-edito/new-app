@@ -103,7 +103,7 @@ export namespace Tree {
 
   export function mergeRoots (nodes: Array<Element | Text>): Element | Text {
     const { Element } = Window.get()
-    const elements = nodes.filter(e => e instanceof Element)
+    const elements = nodes.filter((e): e is Element => e instanceof Element)
     elements.forEach(element => {
       const elementAction = element.getAttribute(actionAttribute) ?? Types.Tree.Merge.Action.APPEND
       element.setAttribute(actionAttribute, elementAction)
@@ -117,7 +117,7 @@ export namespace Tree {
     return new Tree(merged, null, null)
   }
 
-  export function getInitialValueFromTypeName (name: Types.Tree.ValueTypeName): Types.Tree.Value {
+  export function getInitialValueFromTypeName (name: Exclude<Types.Tree.ValueTypeName, 'transformer' | 'method'>): Types.Tree.Value {
     const { document } = Window.get()
     if (name === 'null') return null
     if (name === 'boolean') return false
@@ -126,8 +126,6 @@ export namespace Tree {
     if (name === 'text') return document.createTextNode('')
     if (name === 'nodelist') return document.createDocumentFragment().childNodes as NodeListOf<Element | Text>
     if (name === 'element') return document.createElement('div')
-    if (name === 'transformer') return new Types.Methods.TEMP_Transformer() // [WIP] check this after actual Transformer implementation
-    if (name === 'method') return new Types.Methods.TEMP_Method() // [WIP] check this after actual Transformer implementation
     if (name === 'array') return []
     if (name === 'record') return {}
     throw new Error(`Unknown value type name: ${name}`)
@@ -147,7 +145,7 @@ export namespace Tree {
     readonly smartTagData: SmartTags.SmartTag | null
     readonly mode: Types.Tree.Mode
     readonly isMethod: boolean
-    readonly initInnerValueTo: Types.Tree.ValueTypeName
+    readonly isolationInitType: Exclude<Types.Tree.ValueTypeName, 'transformer' | 'method'>
     readonly subtrees: ReadonlyMap<string | number, Tree> = new Map()
 
     constructor (
@@ -225,14 +223,22 @@ export namespace Tree {
         ?? this.smartTagData?.defaultMode
         ?? 'isolation'
 
-      // initInnerValueTo
+      // isolationInitType
       const hasInitAttribute = this.attributes?.find(attr => {
-        return attr.name === initAttribute
-          && Types.Tree.isValueTypeName(attr.value.trim().toLowerCase())
+        if (attr.name !== initAttribute) return false
+        const val = attr.value.trim().toLowerCase()
+        if (!Types.Tree.isValueTypeName(val)) return false
+        if (val === 'transformer') return false
+        if (val === 'method') return false
+        return true
       })
-      this.initInnerValueTo = (hasInitAttribute?.value as Types.Tree.ValueTypeName | undefined)
-        ?? this.smartTagData?.init(this.mode)
-        ?? 'nodelist'
+      if (this.mode === 'coalescion') { this.isolationInitType = 'array' }
+      else {
+        const initAttributeValue = hasInitAttribute?.value as Exclude<Types.Tree.ValueTypeName, 'transformer' | 'method'> | undefined
+        if (initAttributeValue !== undefined) { this.isolationInitType = initAttributeValue }
+        else if (this.smartTagData !== undefined) { this.isolationInitType = this.smartTagData?.isolationInitType ?? 'array' }
+        else { this.isolationInitType = 'nodelist' }
+      }
 
       // subtrees
       const { childNodes } = node
@@ -277,9 +283,9 @@ export namespace Tree {
     }
 
     evaluateSilently (): Types.Tree.Value {
-      const { initInnerValueTo, subtrees, node, smartTagData, isMethod, isRoot, mode } = this
+      const { isolationInitType, subtrees, node, smartTagData, isMethod, isRoot, mode } = this
       const { Text } = Window.get()
-      const initialInnerValue = getInitialValueFromTypeName(initInnerValueTo)
+      const initialInnerValue = getInitialValueFromTypeName(isolationInitType)
       const innerValue = Array
         .from(subtrees)
         .reduce((reduced, [subpath, subtree]) => Utils.coalesceValues(reduced, subpath, subtree.evaluate(), this), initialInnerValue)

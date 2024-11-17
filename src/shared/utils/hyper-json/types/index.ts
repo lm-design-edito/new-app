@@ -1,5 +1,6 @@
 import { Outcome } from '@design-edito/tools/agnostic/misc/outcome'
 import { Tree as TreeNamespace } from '../tree'
+import { Window } from '@design-edito/tools/agnostic/misc/crossenv/window'
 
 export namespace Types {
   /* * * * * * * * * * * * * * * * * * * * * * 
@@ -41,7 +42,7 @@ export namespace Types {
       Main extends Tree.Value,
       Args extends Tree.ArrayValue,
       Output extends TransformationSuccessPayload
-    > = (mainValue: Main | undefined, args: Args, details: TransformerFunctionDetails) => TransformationOutput<Output, TransformationFailurePayload>
+    > = (mainValue: Main, args: Args, details: TransformerFunctionDetails) => TransformationOutput<Output, TransformationFailurePayload>
 
     // [WIP] relocate this
     export class TEMP_Transformer<
@@ -64,8 +65,8 @@ export namespace Types {
         Args extends Tree.ArrayValue,
         Output extends TransformationSuccessPayload
       >(transformer: TEMP_Transformer<Main, Args, Output>): TEMP_Transformer<Main, Args, Output> {
-        // [WIP] implement this
-        return transformer
+        const { name, mode, innerValue, typeChecks, func, sourceTree } = transformer
+        return new TEMP_Transformer(name, mode, innerValue, typeChecks, func, sourceTree)
       }
 
       constructor (
@@ -122,7 +123,10 @@ export namespace Types {
         Main extends Tree.Value,
         Args extends Tree.ArrayValue,
         Output extends TransformationSuccessPayload
-      >(method: TEMP_Method<Main, Args, Output>): TEMP_Method<Main, Args, Output> { return method }
+      >(method: TEMP_Method<Main, Args, Output>): TEMP_Method<Main, Args, Output> {
+        const { transformer } = method
+        return new TEMP_Method(transformer)
+      }
 
       constructor (transformer: TEMP_Transformer<Main, Args, Output>) {
         this.transformer = transformer
@@ -155,6 +159,33 @@ export namespace Types {
     export type Value = PrimitiveValue | Value[] | { [k: string]: Value }
     export type ArrayValue = Value[]
     export type RecordValue = { [k: string]: Value }
+    export const isNull = (input: unknown): input is null => input === null
+    export const isBoolean = (input: unknown): input is boolean => typeof input === 'boolean'
+    export const isNumber = (input: unknown): input is number => typeof input === 'number'
+    export const isString = (input: unknown): input is string => typeof input === 'string'
+    export const isText = (input: unknown): input is Text => input instanceof Window.get().Text
+    export const isElement = (input: unknown): input is Element => input instanceof Window.get().Element
+    export const isNodeList = (input: unknown): input is NodeListOf<Element | Text> => input instanceof Window.get().NodeList
+      && [...input].every(child => isText(child) || isElement(child))
+    export const isTransformer = (input: unknown): input is Methods.TEMP_Transformer => input instanceof Methods.TEMP_Transformer
+    export const isMethod = (input: unknown): input is Methods.TEMP_Method => input instanceof Methods.TEMP_Method
+    export const isArray = (input: unknown): input is ArrayValue => Array.isArray(input)
+      && input.every(isValue)
+    export const isRecord = (input: unknown): input is RecordValue => isRecord(input)
+      && Object.entries(input).every(([key, val]) => isValue(val))
+    export const isValue = (input: unknown): input is Value => {
+      return isNull(input)
+        || isBoolean(input)
+        || isNumber(input)
+        || isString(input)
+        || isText(input)
+        || isElement(input)
+        || isNodeList(input)
+        || isTransformer(input)
+        || isMethod(input)
+        || isArray(input)
+        || isRecord(input)
+    }
 
     export type ValuesTypesNamesIndex = {
       null: null

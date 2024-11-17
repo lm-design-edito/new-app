@@ -51,44 +51,44 @@ export namespace Cast {
   export const toElement = (input: Types.Tree.Value): Element => {
     const { Element, Text, NodeList, document } = Window.get()
     if (input instanceof Element) return input.cloneNode(true) as Element
-    const elt = document.createElement('div')
+    const returned = document.createElement('div')
     if (input instanceof Text) {
-      elt.append(input.cloneNode(true))
-      return elt
+      returned.append(input.cloneNode(true))
+      return returned
     }
     if (input instanceof NodeList) {
-      elt.append(...Array.from(input).map(e => e.cloneNode(true)))
-      return elt
+      returned.append(...Array.from(input).map(e => e.cloneNode(true)))
+      return returned
     }
-    if (Array.isArray(input)) return elt
-    if (isRecord(input)) return elt
-    elt.innerHTML = `${input}`
-    return elt
+    if (Array.isArray(input)) return returned
+    if (isRecord(input)) return returned
+    returned.innerHTML = `${input}`
+    return returned
   }
 
   export const toNodeList = (input: Types.Tree.Value): NodeListOf<Element | Text> => {
     const { Element, Text, NodeList, document } = Window.get()
-    const elt = document.createElement('div')
+    const parentDiv = document.createElement('div')
     if (input instanceof NodeList) {
-      elt.append(...Array.from(input).map(i => i.cloneNode(true)))
-      return elt.childNodes as NodeListOf<Element | Text>
+      parentDiv.append(...Array.from(input).map(i => i.cloneNode(true)))
+      return parentDiv.childNodes as NodeListOf<Element | Text>
     }
     if (input instanceof Element
       || input instanceof Text) {
-      elt.append(input.cloneNode(true) as Element | Text)
-      return elt.childNodes as NodeListOf<Element | Text>
+      parentDiv.append(input.cloneNode(true) as Element | Text)
+      return parentDiv.childNodes as NodeListOf<Element | Text>
     }
     if (Array.isArray(input)) {
       input.forEach(item => {
-        if (typeof item === 'number' || typeof item === 'boolean' || item === null) elt.append(`${item}`)
-        else if (typeof item === 'string' || item instanceof Text || item instanceof Element) elt.append(item)
-        else if (item instanceof NodeList) elt.append(...item)
+        if (typeof item === 'number' || typeof item === 'boolean' || item === null) parentDiv.append(`${item}`)
+        else if (typeof item === 'string' || item instanceof Text || item instanceof Element) parentDiv.append(item)
+        else if (item instanceof NodeList) parentDiv.append(...item)
       })
-      return elt.childNodes as NodeListOf<Element | Text>
+      return parentDiv.childNodes as NodeListOf<Element | Text>
     }
-    if (isRecord(input)) return elt.childNodes as NodeListOf<Element | Text>
-    elt.innerHTML = `${input}`
-    return elt.childNodes as NodeListOf<Element | Text>
+    if (isRecord(input)) return parentDiv.childNodes as NodeListOf<Element | Text>
+    parentDiv.innerHTML = `${input}`
+    return parentDiv.childNodes as NodeListOf<Element | Text>
   }
 
   export const toArray = (input: Types.Tree.Value): Types.Tree.Value[] => {
