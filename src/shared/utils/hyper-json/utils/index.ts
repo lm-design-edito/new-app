@@ -1,9 +1,10 @@
 import { Window } from '@design-edito/tools/agnostic/misc/crossenv/window'
 import { isRecord } from '@design-edito/tools/agnostic/objects/is-record'
 import { recordMap } from '@design-edito/tools/agnostic/objects/record-map'
-import { Types } from '../types'
-import { Tree } from '../tree'
 import { Outcome } from '@design-edito/tools/agnostic/misc/outcome'
+import { Method } from '../method'
+import { Transformer } from '../transformer'
+import { Types } from '../types'
 
 export namespace Utils {
   export function clone<T extends Types.Tree.Value = Types.Tree.Value> (value: T): T {
@@ -20,8 +21,8 @@ export namespace Utils {
       return frag.childNodes as T
     }
     if (value instanceof Element) return value.cloneNode(true) as T
-    if (value instanceof Types.Methods.TEMP_Transformer) return Types.Methods.TEMP_Transformer.clone(value) as T
-    if (value instanceof Types.Methods.TEMP_Method) return Types.Methods.TEMP_Method.clone(value) as T
+    if (value instanceof Transformer) return Transformer.clone(value) as T
+    if (value instanceof Method) return Method.clone(value) as T
     if (Array.isArray(value)) return [...value.map(clone)] as T
     if (isRecord(value)) return recordMap(value, prop => clone(prop as Types.Tree.Value)) as T
     throw new Error(`Cannot clone value: ${value}`)
@@ -30,21 +31,16 @@ export namespace Utils {
   export function coalesceValues (
     currentValue: Types.Tree.Value,
     subpath: string | number,
-    subvalue: Types.Tree.Value,
-    sourceTree: Tree.Tree): Types.Tree.Value {
+    subvalue: Types.Tree.Value): Types.Tree.Value {
     const { Element, Text, NodeList, document } = Window.get()
-
     let actualSubvalue = subvalue
 
     // If actualSubvalue is a Transformer, apply it
-    if (actualSubvalue instanceof Types.Methods.TEMP_Transformer) {
+    if (actualSubvalue instanceof Transformer) {
       const transformer = actualSubvalue
       const transformationResult = transformer.apply(currentValue)
       if (!transformationResult.success) {
-        console.error({
-          ...transformationResult.error,
-
-        })
+        console.warn({ ...transformationResult.error })
         return currentValue // [WIP] transformer.apply logs the error by itself, should not be
       }
       const evaluated = transformationResult.payload
@@ -59,8 +55,8 @@ export namespace Utils {
     if (currentValue === null) return actualSubvalue
     if (typeof currentValue === 'boolean') return actualSubvalue
     if (typeof currentValue === 'number') return actualSubvalue
-    if (currentValue instanceof Types.Methods.TEMP_Transformer) return actualSubvalue
-    if (currentValue instanceof Types.Methods.TEMP_Method) return actualSubvalue
+    if (currentValue instanceof Transformer) return actualSubvalue
+    if (currentValue instanceof Method) return actualSubvalue
     
     if (typeof currentValue === 'string') {
       if (actualSubvalue === null
@@ -170,8 +166,8 @@ export namespace Utils {
       if (type === 'element' && value instanceof Element) return true
       if (type === 'text' && value instanceof Text) return true
       if (type === 'nodelist' && value instanceof NodeList) return true
-      if (type === 'transformer' && value instanceof Types.Methods.TEMP_Transformer) return true
-      if (type === 'method' && value instanceof Types.Methods.TEMP_Method) return true
+      if (type === 'transformer' && value instanceof Transformer) return true
+      if (type === 'method' && value instanceof Method) return true
       if (type === 'array' && Array.isArray(value)) return true
       if (type === 'record' && isRecord(value)) return true
       return false
@@ -189,8 +185,8 @@ export namespace Utils {
       if (value instanceof Element) return 'element'
       if (value instanceof Text) return 'text'
       if (value instanceof NodeList) return 'nodelist'
-      if (value instanceof Types.Methods.TEMP_Transformer) return 'transformer'
-      if (value instanceof Types.Methods.TEMP_Method) return 'method'
+      if (value instanceof Transformer) return 'transformer'
+      if (value instanceof Method) return 'method'
       if (Array.isArray(value)) return 'array'
       if (isRecord(value)) return 'record'
       return undefined as T extends Types.Tree.Value
@@ -206,7 +202,7 @@ export namespace Utils {
       if (matchesOneType) return Outcome.makeSuccess(value as Types.Tree.ValueTypeFromNames<K>)
       return Outcome.makeFailure({
         expected: types.join(' | '),
-        found: getType(value) ?? '<undefined>'
+        found: getType(value) ?? 'undefined'
       })
     }
   
@@ -220,6 +216,18 @@ export namespace Utils {
         return Outcome.makeFailure({ position: parseInt(pos), ...checked.error })
       }
       return Outcome.makeSuccess(values as Types.Tree.ValueTypeFromNames<K>[])
+    }
+
+    export const isTreeMode = (name: string): name is Types.Tree.Mode => name === 'isolation' || name === 'coalescion' 
+
+    export const isValueTypeName = (name: string): name is Types.Tree.ValueTypeName => {
+      const list: Types.Tree.ValueTypeName[] = [
+        'null', 'boolean', 'number', 'string',
+        'text', 'nodelist', 'element',
+        'transformer', 'method',
+        'array', 'record'
+      ]
+      return list.includes(name as any)
     }
   }
 

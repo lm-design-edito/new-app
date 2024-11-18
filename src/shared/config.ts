@@ -33,7 +33,7 @@ const THEME_ICONS_REGISTRY_REL_PATH = '/icons/registry.json'
 const THEME_ICONS_ASSETS_DIR_PATH = '/icons/assets'
 
 // DATA & HYPER-JSON
-const dataSourceSelector = 'hyperjson, hyperjson_'
+const dataSourceSelector = 'record.hyperjson'
 
 // OTHER
 const eventHandlersAllowedUrlSchemes: Array<Partial<URL>> = [

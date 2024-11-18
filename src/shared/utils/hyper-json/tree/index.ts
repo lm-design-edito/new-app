@@ -1,10 +1,30 @@
 import { Window } from '@design-edito/tools/agnostic/misc/crossenv/window'
 import { isInEnum } from '@design-edito/tools/agnostic/objects/enums/is-in-enum'
 import { Types } from '../types'
-import { Defaults } from '../defaults'
-import { SmartTags } from '../smart-tags'
 import { Utils } from '../utils'
 import { Cast } from '../cast'
+
+import { array } from '../smart-tags/isolated/array'
+import { boolean } from '../smart-tags/isolated/boolean'
+import { element } from '../smart-tags/isolated/element'
+import { nodelist } from '../smart-tags/isolated/nodelist'
+import { nullFunc } from '../smart-tags/isolated/null'
+import { number } from '../smart-tags/isolated/number'
+import { record } from '../smart-tags/isolated/record'
+import { string } from '../smart-tags/isolated/string'
+import { text } from '../smart-tags/isolated/text'
+
+export const SMART_TAGS_REGISTER: Types.SmartTags.Register = new Map<string, Types.SmartTags.SmartTag<any, any, any>>([
+  array,
+  boolean,
+  element,
+  nodelist,
+  nullFunc,
+  number,
+  record,
+  string,
+  text
+])
 
 export namespace Tree {
   export const actionAttribute = '_action'
@@ -142,7 +162,7 @@ export namespace Tree {
     readonly attributes: ReadonlyArray<Readonly<Attr>> | null
     readonly tagName: string | null
     readonly smartTagName: string | null
-    readonly smartTagData: SmartTags.SmartTag | null
+    readonly smartTagData: Types.SmartTags.SmartTag | null
     readonly mode: Types.Tree.Mode
     readonly isMethod: boolean
     readonly isolationInitType: Exclude<Types.Tree.ValueTypeName, 'transformer' | 'method'>
@@ -211,13 +231,13 @@ export namespace Tree {
 
       // smartTagData
       if (this.smartTagName === null) { this.smartTagData = null }
-      else { this.smartTagData = SmartTags.register.get(this.smartTagName) ?? null }
+      else { this.smartTagData = SMART_TAGS_REGISTER.get(this.smartTagName) ?? null }
 
       // mode
       // [WIP] rootNode cannot be in coalescion mode
       const hasModeAttribute = this.attributes?.find(attr => {
         return attr.name === modeAttribute
-          && Types.Tree.isMode(attr.value)
+          && Utils.TypeChecks.isTreeMode(attr.value)
       })
       this.mode = (hasModeAttribute?.value as Types.Tree.Mode | undefined)
         ?? this.smartTagData?.defaultMode
@@ -227,7 +247,7 @@ export namespace Tree {
       const hasInitAttribute = this.attributes?.find(attr => {
         if (attr.name !== initAttribute) return false
         const val = attr.value.trim().toLowerCase()
-        if (!Types.Tree.isValueTypeName(val)) return false
+        if (!Utils.TypeChecks.isValueTypeName(val)) return false
         if (val === 'transformer') return false
         if (val === 'method') return false
         return true
@@ -264,7 +284,7 @@ export namespace Tree {
             )
             positionnedChildrenCount += 1
           } else {
-            const propertyName = childNode.getAttribute(Defaults.keyAttribute)
+            const propertyName = childNode.getAttribute(keyAttribute)
             if (propertyName === null) {
               mutableSubtrees.set(
                 positionnedChildrenCount,
@@ -285,10 +305,6 @@ export namespace Tree {
     evaluateSilently (): Types.Tree.Value {
       const { isolationInitType, subtrees, node, smartTagData, isMethod, isRoot, mode } = this
       const { Text } = Window.get()
-      const initialInnerValue = getInitialValueFromTypeName(isolationInitType)
-      const innerValue = Array
-        .from(subtrees)
-        .reduce((reduced, [subpath, subtree]) => Utils.coalesceValues(reduced, subpath, subtree.evaluate(), this), initialInnerValue)
 
       // Checks for impossible configurations
       if (node instanceof Text || smartTagData === null) {
@@ -296,7 +312,18 @@ export namespace Tree {
         if (mode === 'coalescion') throw new Error('A Text or HTMLElement node cannot be used in coalescion mode')
       }
 
+      // If node is text, returns the node itself
+      if (node instanceof Text) return node.cloneNode(true) as Text
+
+      const initialInnerValue = getInitialValueFromTypeName(isolationInitType)
+      console.log('INIT-TYPE=', isolationInitType)
+      console.log('INITIAL=', initialInnerValue)
+      const innerValue = Array
+        .from(subtrees)
+        .reduce((reduced, [subpath, subtree]) => Utils.coalesceValues(reduced, subpath, subtree.evaluate()), initialInnerValue)
+
       // If node is Text node, return a Text value
+      console.log('INNER=', innerValue)
       if (node instanceof Text) return Cast.toText(innerValue)
     
       // If no smartTagData, then treat it as an HTMLElement
@@ -310,7 +337,16 @@ export namespace Tree {
       // If node is a SmartTag
       const { transformer, method } = smartTagData.generator(innerValue, mode, this)
       if (isMethod) return method
-      if (mode === 'isolation') return transformer.apply(null) // Here we apply null as a placeholder outerValue since the transformer is in isolation mode
+      if (mode === 'isolation') {
+        const applied = transformer.apply(null) // Here we apply null as a placeholder outerValue since the transformer is in isolation mode
+        if (applied.success) return applied.payload
+        throw {
+          error: 'Transformation error',
+          details: applied.error,
+          transformer: transformer.name,
+          path: this.pathString,
+        }
+      }
       if (isRoot) throw new Error(`The root node cannot be used in coalescion mode`)
       return transformer
     }
@@ -319,7 +355,7 @@ export namespace Tree {
       const { smartTagName, tagName, pathString } = this
       console.group(smartTagName ?? tagName ?? '#text', pathString)
       const evaluated = this.evaluateSilently()
-      console.log('EVALUATED=', evaluated)
+      // console.log('EVALUATED=', evaluated)
       console.groupEnd()
       return evaluated
     }
