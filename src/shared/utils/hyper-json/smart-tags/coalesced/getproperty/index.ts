@@ -14,8 +14,8 @@ export const getproperty = SmartTags.makeSmartTag<Main, Args, Output>({
   isolationInitType: 'array',
   mainValueCheck: m => Utils.TypeChecks.typeCheck(m, 'record'),
   argsValueCheck: a => {
-    if (a.length === 0) return Outcome.makeFailure({ at: 0, expected: 'string | Text', found: 'undefined' })
-    if (a.length !== 1) return Outcome.makeFailure({ at: 1, expected: 'undefined', found: Utils.TypeChecks.getType(a.at(1)) ?? 'undefined' })
+    if (a.length === 0) return Outcome.makeFailure({ position: 0, expected: 'string | Text', found: 'undefined' })
+    if (a.length !== 1) return Outcome.makeFailure({ position: 1, expected: 'undefined', found: Utils.TypeChecks.getType(a.at(1)) ?? 'undefined' })
     const checked = Utils.TypeChecks.typeCheckMany(a, 'string', 'text')
     if (!checked.success) return checked
     return Outcome.makeSuccess(checked.payload as Args)

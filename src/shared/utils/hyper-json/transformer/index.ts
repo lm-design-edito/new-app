@@ -12,7 +12,7 @@ export class Transformer<
   innerValue: Types.Tree.Value
   typeChecks: {
     mainValue: (mainValue: Types.Tree.Value) => Outcome.Either<Main, { expected: string, found: string }>
-    argsValue: (argsValue: Types.Tree.ArrayValue, mainValue: Main) => Outcome.Either<Args, { expected: string, found: string, at?: number }>
+    argsValue: (argsValue: Types.Tree.ArrayValue, mainValue: Main) => Outcome.Either<Args, { expected: string, found: string, position?: number }>
   }
   func: Types.Methods.TransformerFunction<Main, Args, Output>
   sourceTree: TreeNamespace.Tree

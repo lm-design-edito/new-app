@@ -17,7 +17,7 @@ export const equals = SmartTags.makeSmartTag<Main, Args, Output>({
     if (first === undefined) return Outcome.makeFailure({
       expected: 'value',
       found: 'undefined',
-      at: 0
+      position: 0
     })
     const returned = [first, ...others] as Args
     return Outcome.makeSuccess(returned)
