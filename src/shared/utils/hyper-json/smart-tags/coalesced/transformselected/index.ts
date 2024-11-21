@@ -17,12 +17,12 @@ export const transformselected = SmartTags.makeSmartTag<Main, Args, Output>({
   name: 'transformselected',
   defaultMode: 'coalescion',
   isolationInitType: 'array',
-  mainValueCheck: m => Utils.TypeChecks.typeCheck(m, 'element', 'nodelist'),
+  mainValueCheck: m => Utils.Tree.TypeChecks.typeCheck(m, 'element', 'nodelist'),
   argsValueCheck: a => {
     const [first, ...others] = a
-    const firstChecked = Utils.TypeChecks.typeCheck(first, 'string', 'text')
+    const firstChecked = Utils.Tree.TypeChecks.typeCheck(first, 'string', 'text')
     if (!firstChecked.success) return Outcome.makeFailure({ ...firstChecked.error, position: 0 })
-    const othersChecked = Utils.TypeChecks.typeCheckMany(others, 'method')
+    const othersChecked = Utils.Tree.TypeChecks.typeCheckMany(others, 'method')
     if (!othersChecked.success) return Outcome.makeFailure({
       ...othersChecked.error,
       position: othersChecked.error.position + 1
@@ -56,7 +56,7 @@ export const transformselected = SmartTags.makeSmartTag<Main, Args, Output>({
       }
     }
     for (const [selected, transformed] of transformationMap) {
-      const transformedChecked = Utils.TypeChecks.typeCheck(transformed, 'element', 'nodelist', 'text', 'string', 'number', 'boolean', 'null')
+      const transformedChecked = Utils.Tree.TypeChecks.typeCheck(transformed, 'element', 'nodelist', 'text', 'string', 'number', 'boolean', 'null')
       if (!transformedChecked.success) return Outcome.makeFailure({
         message: 'TRANSFORMATION_ERROR',
         transformerName: details.name,

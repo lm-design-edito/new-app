@@ -11,8 +11,8 @@ export const addclass = SmartTags.makeSmartTag<Main, Args, Output>({
   name: 'addclass',
   defaultMode: 'coalescion',
   isolationInitType: 'array',
-  mainValueCheck: m => Utils.TypeChecks.typeCheck(m, 'element'),
-  argsValueCheck: a => Utils.TypeChecks.typeCheckMany(a, 'string', 'text'),
+  mainValueCheck: m => Utils.Tree.TypeChecks.typeCheck(m, 'element'),
+  argsValueCheck: a => Utils.Tree.TypeChecks.typeCheckMany(a, 'string', 'text'),
   func: (main, args) => {
     main.classList.add(...args.map(arg => Cast.toString(arg)))
     return Outcome.makeSuccess(main)

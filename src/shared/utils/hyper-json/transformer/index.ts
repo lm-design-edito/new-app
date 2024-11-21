@@ -3,9 +3,9 @@ import { Tree as TreeNamespace } from '../tree'
 import { Types } from '../types'
 
 export class Transformer<
-  Main extends Types.Tree.Value = Types.Tree.Value,
+  Main extends Types.Tree.RestingValue = Types.Tree.RestingValue,
   Args extends Types.Tree.ArrayValue = Types.Tree.ArrayValue,
-  Output extends Types.Methods.TransformationSuccessPayload = Types.Methods.TransformationSuccessPayload
+  Output extends Types.Tree.RestingValue = Types.Tree.RestingValue
 > {
   name: string
   mode: Types.Tree.Mode
@@ -14,13 +14,13 @@ export class Transformer<
     mainValue: (mainValue: Types.Tree.Value) => Outcome.Either<Main, { expected: string, found: string }>
     argsValue: (argsValue: Types.Tree.ArrayValue, mainValue: Main) => Outcome.Either<Args, { expected: string, found: string, position?: number }>
   }
-  func: Types.Methods.TransformerFunction<Main, Args, Output>
+  func: Types.Transformations.Function<Main, Args, Output>
   sourceTree: TreeNamespace.Tree
 
   static clone <
     Main extends Types.Tree.Value,
     Args extends Types.Tree.ArrayValue,
-    Output extends Types.Methods.TransformationSuccessPayload
+    Output extends Types.Tree.Value
   >(transformer: Transformer<Main, Args, Output>): Transformer<Main, Args, Output> {
     const { name, mode, innerValue, typeChecks, func, sourceTree } = transformer
     return new Transformer(name, mode, innerValue, typeChecks, func, sourceTree)
@@ -43,7 +43,7 @@ export class Transformer<
     this.sourceTree = sourceTree
   }
   
-  apply (outerValue: Types.Tree.Value): Types.Methods.TransformationOutput {
+  apply (outerValue: Types.Tree.Value): Types.Transformations.Output {
     const { mode, innerValue, typeChecks, func, sourceTree } = this
     let mainValue: Types.Tree.Value
     let argumentsValue: Types.Tree.ArrayValue

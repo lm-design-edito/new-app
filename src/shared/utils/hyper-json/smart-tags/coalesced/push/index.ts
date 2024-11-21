@@ -1,5 +1,4 @@
 import { Outcome } from '@design-edito/tools/agnostic/misc/outcome'
-import { Cast } from '../../../cast'
 import { Types } from '../../../types'
 import { Utils } from '../../../utils'
 import { SmartTags } from '../..'
@@ -12,7 +11,7 @@ export const push = SmartTags.makeSmartTag<Main, Args, Output>({
   name: 'push',
   defaultMode: 'coalescion',
   isolationInitType: 'array',
-  mainValueCheck: m => Utils.TypeChecks.typeCheck(m, 'array'),
+  mainValueCheck: m => Utils.Tree.TypeChecks.typeCheck(m, 'array'),
   argsValueCheck: a => Outcome.makeSuccess(a),
   func: (main, args) => Outcome.makeSuccess([...main, ...args])
 })

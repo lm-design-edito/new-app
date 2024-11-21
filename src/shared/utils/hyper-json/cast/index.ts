@@ -1,10 +1,12 @@
 import { isRecord } from '@design-edito/tools/agnostic/objects/is-record'
 import { Window } from '@design-edito/tools/agnostic/misc/crossenv/window'
 import { Types } from '../types'
+import { Utils } from '../utils'
 
 export namespace Cast {
   export const toNull = (): null => null
-  export const toBoolean = (input: Types.Tree.Value): boolean => {
+
+  export const toBoolean = (input: Types.Tree.RestingValue): boolean => {
     const { Text } = Window.get()
     if (input === null) return false
     if (typeof input === 'boolean') return input
@@ -17,7 +19,8 @@ export namespace Cast {
     }
     return true
   }
-  export const toNumber = (input: Types.Tree.Value): number => {
+
+  export const toNumber = (input: Types.Tree.RestingValue): number => {
     const { Text } = Window.get()
     if (typeof input === 'boolean') return input ? 1 : 0
     if (typeof input === 'number') return input
@@ -26,7 +29,7 @@ export namespace Cast {
     return 0
   }
 
-  export const toString = (input: Types.Tree.Value): string => {
+  export const toString = (input: Types.Tree.RestingValue): string => {
     if (typeof input === 'string') return input
     if (typeof input === 'number'
       || typeof input === 'boolean'
@@ -42,13 +45,13 @@ export namespace Cast {
     return input.toString()
   }
   
-  export const toText = (input: Types.Tree.Value): Text => {
+  export const toText = (input: Types.Tree.RestingValue): Text => {
     const { Text, document } = Window.get()
     if (input instanceof Text) return input.cloneNode(true) as Text
     return document.createTextNode(toString(input))
   }
   
-  export const toElement = (input: Types.Tree.Value): Element => {
+  export const toElement = (input: Types.Tree.RestingValue): Element => {
     const { Element, Text, NodeList, document } = Window.get()
     if (input instanceof Element) return input.cloneNode(true) as Element
     const returned = document.createElement('div')
@@ -66,7 +69,7 @@ export namespace Cast {
     return returned
   }
 
-  export const toNodeList = (input: Types.Tree.Value): NodeListOf<Element | Text> => {
+  export const toNodeList = (input: Types.Tree.RestingValue): NodeListOf<Element | Text> => {
     const { Element, Text, NodeList, document } = Window.get()
     const parentDiv = document.createElement('div')
     if (input instanceof NodeList) {
@@ -91,15 +94,16 @@ export namespace Cast {
     return parentDiv.childNodes as NodeListOf<Element | Text>
   }
 
-  export const toArray = (input: Types.Tree.Value): Types.Tree.Value[] => {
+  export const toArray = (input: Types.Tree.RestingValue): Types.Tree.ArrayValue => {
     const { NodeList } = Window.get()
     if (Array.isArray(input)) return [...input]
     if (input instanceof NodeList) return Array.from(input)
     return [input]
   }
 
-  export const toRecord = (input: Types.Tree.Value): ({ [k: string]: Types.Tree.Value }) => {
-    if (isRecord(input)) return { ...input } as { [k: string]: Types.Tree.Value }
+  export const toRecord = (input: Types.Tree.RestingValue): Types.Tree.RecordValue => {
+    const isRecord = Utils.Tree.TypeChecks.typeCheck(input, 'record')
+    if (isRecord.success) return { ...isRecord.payload }
     return {}
   }
 }

@@ -12,8 +12,8 @@ export const element = SmartTags.makeSmartTag<Main, Args, Output>({
   name: 'element',
   defaultMode: 'isolation',
   isolationInitType: 'array',
-  mainValueCheck: m => Utils.TypeChecks.typeCheck(m, 'string', 'text'),
-  argsValueCheck: a => Utils.TypeChecks.typeCheckMany(a, 'null', 'boolean', 'number', 'string', 'text', 'element', 'nodelist'),
+  mainValueCheck: m => Utils.Tree.TypeChecks.typeCheck(m, 'string', 'text'),
+  argsValueCheck: a => Utils.Tree.TypeChecks.typeCheckMany(a, 'null', 'boolean', 'number', 'string', 'text', 'element', 'nodelist'),
   func: (main, args) => {
     const tagName = Cast.toString(main).trim().toLowerCase()
     const { document, NodeList } = Window.get()

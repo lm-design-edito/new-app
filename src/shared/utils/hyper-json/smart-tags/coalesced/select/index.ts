@@ -12,8 +12,8 @@ export const select = SmartTags.makeSmartTag<Main, Args, Output>({
   name: 'select',
   defaultMode: 'coalescion',
   isolationInitType: 'array',
-  mainValueCheck: m => Utils.TypeChecks.typeCheck(m, 'nodelist', 'element'),
-  argsValueCheck: a => Utils.TypeChecks.typeCheckMany(a, 'string', 'text'),
+  mainValueCheck: m => Utils.Tree.TypeChecks.typeCheck(m, 'nodelist', 'element'),
+  argsValueCheck: a => Utils.Tree.TypeChecks.typeCheckMany(a, 'string', 'text'),
   func: (main, args) => {
     const selectedFragment = document.createDocumentFragment()
     if (main instanceof Window.get().Element) {

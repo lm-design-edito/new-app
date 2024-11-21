@@ -3,7 +3,7 @@ import { Types } from '../../../types'
 import { SmartTags } from '../..'
 import { Utils } from '~/shared/hyper-json/utils'
 
-type Main = Types.Tree.Value
+type Main = Types.Tree.RestingValue
 type Args = Types.Tree.ArrayValue
 type Output = Types.Tree.ArrayValue // [WIP] Typeof Global Obj
 

@@ -1,10 +1,10 @@
 import { Outcome } from '@design-edito/tools/agnostic/misc/outcome'
-import { Types } from '~/shared/hyper-json/types'
+import { Types } from '../../../types'
 import { Cast } from '../../../cast'
 import { Utils } from '../../../utils'
 import { SmartTags } from '../..'
 
-type Main = Types.Tree.Value
+type Main = Types.Tree.RestingValue
 type Args = []
 type Output = Types.Tree.ArrayValue
 

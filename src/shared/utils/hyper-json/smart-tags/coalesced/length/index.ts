@@ -12,7 +12,7 @@ export const length = SmartTags.makeSmartTag<Main, Args, Output>({
   name: 'length',
   defaultMode: 'coalescion',
   isolationInitType: 'array',
-  mainValueCheck: m => Utils.TypeChecks.typeCheck(m, 'string', 'nodelist'),
+  mainValueCheck: m => Utils.Tree.TypeChecks.typeCheck(m, 'string', 'nodelist'),
   argsValueCheck: a => Utils.SmartTags.expectEmptyArgs(a),
   func: main => {
     const { Text, NodeList, Element } = Window.get()

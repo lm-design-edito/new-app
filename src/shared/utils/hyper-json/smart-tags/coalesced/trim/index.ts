@@ -11,7 +11,7 @@ export const trim = SmartTags.makeSmartTag<Main, Args, Output>({
   name: 'trim',
   defaultMode: 'coalescion',
   isolationInitType: 'array',
-  mainValueCheck: m => Utils.TypeChecks.typeCheck(m, 'string', 'text'),
+  mainValueCheck: m => Utils.Tree.TypeChecks.typeCheck(m, 'string', 'text'),
   argsValueCheck: a => Utils.SmartTags.expectEmptyArgs(a),
   func: main => {
     return typeof main === 'string'

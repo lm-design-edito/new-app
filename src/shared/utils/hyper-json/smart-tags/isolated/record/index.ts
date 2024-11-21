@@ -11,8 +11,8 @@ export const record = SmartTags.makeSmartTag<Main, Args, Output>({
   name: 'record',
   defaultMode: 'isolation',
   isolationInitType: 'record',
-  mainValueCheck: i => Utils.TypeChecks.typeCheck(i, 'record'),
-  argsValueCheck: a => Utils.TypeChecks.typeCheckMany(a, 'record'), // [WIP] (see comment for boolean) or maybe dont allow parameters, like other value-type smart tags do (boolean, number, string, etc...) ?
+  mainValueCheck: i => Utils.Tree.TypeChecks.typeCheck(i, 'record'),
+  argsValueCheck: a => Utils.Tree.TypeChecks.typeCheckMany(a, 'record'),
   func: (main, args) => Outcome.makeSuccess(args.reduce((reduced, current) => ({
     ...reduced,
     ...current

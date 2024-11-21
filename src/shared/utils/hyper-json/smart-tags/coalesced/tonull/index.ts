@@ -1,6 +1,5 @@
 import { Outcome } from '@design-edito/tools/agnostic/misc/outcome'
-import { Types } from '~/shared/hyper-json/types'
-import { Cast } from '../../../cast'
+import { Types } from '../../../types'
 import { Utils } from '../../../utils'
 import { SmartTags } from '../..'
 

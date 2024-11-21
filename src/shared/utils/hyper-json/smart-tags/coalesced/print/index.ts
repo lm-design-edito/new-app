@@ -3,15 +3,15 @@ import { Types } from '../../../types'
 import { Utils } from '../../../utils'
 import { SmartTags } from '../..'
 
-type Main = Exclude<Types.Tree.Value, Types.Tree.TransformerValue>
+type Main = Types.Tree.RestingValue
 type Args = Types.Tree.ArrayValue
-type Output = Exclude<Types.Tree.Value, Types.Tree.TransformerValue>
+type Output = Types.Tree.RestingValue
 
 export const print = SmartTags.makeSmartTag<Main, Args, Output>({
   name: 'print',
   defaultMode: 'coalescion',
   isolationInitType: 'array',
-  mainValueCheck: m => Utils.TypeChecks.getType(m) === 'transformer'
+  mainValueCheck: m => Utils.Tree.TypeChecks.getType(m) === 'transformer'
     ? Outcome.makeFailure({ expected: 'Exclude<value, transformer>', found: 'transformer' })
     : Outcome.makeSuccess(m as Main),
   argsValueCheck: a => Outcome.makeSuccess(a),

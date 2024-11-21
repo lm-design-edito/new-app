@@ -12,8 +12,8 @@ export const join = SmartTags.makeSmartTag<Main, Args, Output>({
   name: 'join',
   defaultMode: 'coalescion',
   isolationInitType: 'array',
-  mainValueCheck: m => Utils.TypeChecks.typeCheck(m, 'array', 'nodelist'),
-  argsValueCheck: a => Utils.TypeChecks.typeCheckMany(a, 'string', 'text'),
+  mainValueCheck: m => Utils.Tree.TypeChecks.typeCheck(m, 'array', 'nodelist'),
+  argsValueCheck: a => Utils.Tree.TypeChecks.typeCheckMany(a, 'string', 'text'),
   func: (main, args) => {
     const joiner = Cast.toString(args)
     if (Array.isArray(main)) return Outcome.makeSuccess(main.map(Cast.toString).join(joiner))

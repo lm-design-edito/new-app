@@ -3,8 +3,8 @@ import { Cast } from '../../../cast'
 import { Types } from '../../../types'
 import { SmartTags } from '../..'
 
-type Main = Types.Tree.Value
-type Args = [Types.Tree.Value, ...Types.Tree.ArrayValue]
+type Main = Types.Tree.RestingValue
+type Args = [Types.Tree.RestingValue, ...Types.Tree.ArrayValue]
 type Output = boolean
 
 export const equals = SmartTags.makeSmartTag<Main, Args, Output>({

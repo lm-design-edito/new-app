@@ -11,8 +11,8 @@ export const toggleclass = SmartTags.makeSmartTag<Main, Args, Output>({
   name: 'toggleclass',
   defaultMode: 'coalescion',
   isolationInitType: 'array',
-  mainValueCheck: m => Utils.TypeChecks.typeCheck(m, 'element'),
-  argsValueCheck: a => Utils.TypeChecks.typeCheckMany(a, 'string', 'text'),
+  mainValueCheck: m => Utils.Tree.TypeChecks.typeCheck(m, 'element'),
+  argsValueCheck: a => Utils.Tree.TypeChecks.typeCheckMany(a, 'string', 'text'),
   func: (main, args) => {
     for (const arg of args) {
       // [WIP] should meet the actual implementation ? Element.classList.toggle(token: string, force?: boolean)

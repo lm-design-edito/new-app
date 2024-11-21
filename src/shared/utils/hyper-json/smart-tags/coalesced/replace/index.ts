@@ -13,13 +13,13 @@ export const replace = SmartTags.makeSmartTag<Main, Args, Output>({
   name: 'replace',
   defaultMode: 'coalescion',
   isolationInitType: 'array',
-  mainValueCheck: m => Utils.TypeChecks.typeCheck(m, 'string', 'text', 'nodelist', 'element'),
+  mainValueCheck: m => Utils.Tree.TypeChecks.typeCheck(m, 'string', 'text', 'nodelist', 'element'),
   argsValueCheck: a => {
     const expectedStr = 'string | Text | NodeListOf<Element | Text> | Element'
     if (a.length === 0) return Outcome.makeFailure({ position: 0, expected: expectedStr, found: 'undefined' })
     if (a.length === 1) return Outcome.makeFailure({ position: 1, expected: expectedStr, found: 'undefined' })
-    if (a.length > 2) return Outcome.makeFailure({ position: 3, expected: 'undefined', found: Utils.TypeChecks.getType(a.at(2)) ?? 'undefined' })
-    const checked = Utils.TypeChecks.typeCheckMany(a, 'string', 'text', 'nodelist', 'element')
+    if (a.length > 2) return Outcome.makeFailure({ position: 3, expected: 'undefined', found: Utils.Tree.TypeChecks.getType(a.at(2)) ?? 'undefined' })
+    const checked = Utils.Tree.TypeChecks.typeCheckMany(a, 'string', 'text', 'nodelist', 'element')
     if (!checked.success) return checked
     return Outcome.makeSuccess(checked.payload as Args)
   },

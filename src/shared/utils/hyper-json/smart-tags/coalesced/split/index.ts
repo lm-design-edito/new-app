@@ -11,8 +11,8 @@ export const split = SmartTags.makeSmartTag<Main, Args, Output>({
   name: 'split',
   defaultMode: 'coalescion',
   isolationInitType: 'array',
-  mainValueCheck: m => Utils.TypeChecks.typeCheck(m, 'string', 'text'),
-  argsValueCheck: a => Utils.TypeChecks.typeCheckMany(a, 'string', 'text'),
+  mainValueCheck: m => Utils.Tree.TypeChecks.typeCheck(m, 'string', 'text'),
+  argsValueCheck: a => Utils.Tree.TypeChecks.typeCheckMany(a, 'string', 'text'),
   func: (main, args) => {
     let strReturnedArr = [Cast.toString(main)]
     for (const arg of args) {

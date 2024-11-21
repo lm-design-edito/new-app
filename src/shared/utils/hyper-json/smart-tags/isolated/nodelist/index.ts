@@ -4,8 +4,8 @@ import { Cast } from '../../../cast'
 import { Types } from '../../../types'
 import { SmartTags } from '../..'
 
-type Main = Types.Tree.Value
-type Args = Types.Tree.Value[]
+type Main = Types.Tree.RestingValue
+type Args = Types.Tree.ArrayValue
 type Output = NodeListOf<Element | Text>
 
 export const nodelist = SmartTags.makeSmartTag<Main, Args, Output>({

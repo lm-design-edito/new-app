@@ -11,8 +11,8 @@ export const number = SmartTags.makeSmartTag<Main, Args, Output>({
   name: 'number',
   defaultMode: 'isolation',
   isolationInitType: 'number',
-  mainValueCheck: m => Utils.TypeChecks.typeCheck(m, 'null', 'boolean', 'number', 'string', 'text'),
-  argsValueCheck: a => Utils.TypeChecks.typeCheckMany(a, 'null', 'boolean', 'number', 'string', 'text'),
+  mainValueCheck: m => Utils.Tree.TypeChecks.typeCheck(m, 'null', 'boolean', 'number', 'string', 'text'),
+  argsValueCheck: a => Utils.Tree.TypeChecks.typeCheckMany(a, 'null', 'boolean', 'number', 'string', 'text'),
   func: (main, args) => {
     const all = [main, ...args]
     const reduced = all.reduce<number>((reduced, curr) => {

@@ -1,5 +1,6 @@
 import { Window } from '@design-edito/tools/agnostic/misc/crossenv/window'
 import { isInEnum } from '@design-edito/tools/agnostic/objects/enums/is-in-enum'
+
 import { Types } from '../types'
 import { Utils } from '../utils'
 import { Cast } from '../cast'
@@ -7,6 +8,7 @@ import { Cast } from '../cast'
 import { array } from '../smart-tags/isolated/array'
 import { boolean } from '../smart-tags/isolated/boolean'
 import { element } from '../smart-tags/isolated/element'
+import { global } from '../smart-tags/isolated/global'
 import { nodelist } from '../smart-tags/isolated/nodelist'
 import { nullFunc } from '../smart-tags/isolated/null'
 import { number } from '../smart-tags/isolated/number'
@@ -14,16 +16,41 @@ import { record } from '../smart-tags/isolated/record'
 import { string } from '../smart-tags/isolated/string'
 import { text } from '../smart-tags/isolated/text'
 
+import { addclass } from '../smart-tags/coalesced/addclass'
+import { and } from '../smart-tags/coalesced/and'
+import { append } from '../smart-tags/coalesced/append'
+import { deleteproperties } from '../smart-tags/coalesced/deleteproperties'
+import { equals } from '../smart-tags/coalesced/equals'
+import { getproperties } from '../smart-tags/coalesced/getproperties'
+import { getproperty } from '../smart-tags/coalesced/getproperty'
+import { join } from '../smart-tags/coalesced/join'
+import { length } from '../smart-tags/coalesced/length'
+import { negate } from '../smart-tags/coalesced/negate'
+import { or } from '../smart-tags/coalesced/or'
+import { print } from '../smart-tags/coalesced/print'
+import { push } from '../smart-tags/coalesced/push'
+import { removeclass } from '../smart-tags/coalesced/removeclass'
+import { replace } from '../smart-tags/coalesced/replace'
+import { select } from '../smart-tags/coalesced/select'
+import { setproperty } from '../smart-tags/coalesced/setproperty'
+import { split } from '../smart-tags/coalesced/split'
+import { toarray } from '../smart-tags/coalesced/toarray'
+import { toboolean } from '../smart-tags/coalesced/toboolean'
+import { tonull } from '../smart-tags/coalesced/tonull'
+import { tonumber } from '../smart-tags/coalesced/tonumber'
+import { torecord } from '../smart-tags/coalesced/torecord'
+import { tostring } from '../smart-tags/coalesced/tostring'
+import { totext } from '../smart-tags/coalesced/totext'
+import { transformselected } from '../smart-tags/coalesced/transformselected'
+import { trim } from '../smart-tags/coalesced/trim'
+
+// [WIP] find a better place for this
 export const SMART_TAGS_REGISTER: Types.SmartTags.Register = new Map<string, Types.SmartTags.SmartTag<any, any, any>>([
-  array,
-  boolean,
-  element,
-  nodelist,
-  nullFunc,
-  number,
-  record,
-  string,
-  text
+  array, boolean, element, global, nodelist, nullFunc, number, record, string, text,
+  addclass, and, append, deleteproperties, equals, getproperties, getproperty, join,
+  length, negate, or, print, push, removeclass, replace, select, setproperty, split,
+  toarray, toboolean, tonull, tonumber, torecord, tostring, totext, transformselected,
+  trim
 ])
 
 export namespace Tree {
@@ -137,7 +164,7 @@ export namespace Tree {
     return new Tree(merged, null, null)
   }
 
-  export function getInitialValueFromTypeName (name: Exclude<Types.Tree.ValueTypeName, 'transformer' | 'method'>): Types.Tree.Value {
+  export function getInitialValueFromTypeName (name: Exclude<Types.Tree.ValueTypeName, 'transformer' | 'method'>): Types.Tree.RestingValue {
     const { document } = Window.get()
     if (name === 'null') return null
     if (name === 'boolean') return false
@@ -237,7 +264,7 @@ export namespace Tree {
       // [WIP] rootNode cannot be in coalescion mode
       const hasModeAttribute = this.attributes?.find(attr => {
         return attr.name === modeAttribute
-          && Utils.TypeChecks.isTreeMode(attr.value)
+          && Utils.Tree.TypeChecks.isTreeMode(attr.value)
       })
       this.mode = (hasModeAttribute?.value as Types.Tree.Mode | undefined)
         ?? this.smartTagData?.defaultMode
@@ -247,7 +274,7 @@ export namespace Tree {
       const hasInitAttribute = this.attributes?.find(attr => {
         if (attr.name !== initAttribute) return false
         const val = attr.value.trim().toLowerCase()
-        if (!Utils.TypeChecks.isValueTypeName(val)) return false
+        if (!Utils.Tree.TypeChecks.isValueTypeName(val)) return false
         if (val === 'transformer') return false
         if (val === 'method') return false
         return true

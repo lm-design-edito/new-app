@@ -2,16 +2,16 @@ import { Transformer } from '../transformer'
 import { Types } from '../types'
 
 export class Method<
-  Main extends Types.Tree.Value = Types.Tree.Value,
+  Main extends Types.Tree.RestingValue = Types.Tree.RestingValue,
   Args extends Types.Tree.ArrayValue = Types.Tree.ArrayValue,
-  Output extends Types.Methods.TransformationSuccessPayload = Types.Methods.TransformationSuccessPayload
+  Output extends Types.Tree.RestingValue = Types.Tree.RestingValue
 > {
   transformer: Transformer<Main, Args, Output>
 
   static clone <
-    Main extends Types.Tree.Value,
+    Main extends Types.Tree.RestingValue,
     Args extends Types.Tree.ArrayValue,
-    Output extends Types.Methods.TransformationSuccessPayload
+    Output extends Types.Tree.RestingValue
   >(method: Method<Main, Args, Output>): Method<Main, Args, Output> {
     const { transformer } = method
     return new Method(transformer)

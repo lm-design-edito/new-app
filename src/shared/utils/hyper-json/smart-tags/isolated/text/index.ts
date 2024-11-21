@@ -11,8 +11,8 @@ export const text = SmartTags.makeSmartTag<Main, Args, Output>({
   name: 'text',
   defaultMode: 'isolation',
   isolationInitType: 'text',
-  mainValueCheck: m => Utils.TypeChecks.typeCheck(m, 'null', 'boolean', 'number', 'string', 'text', 'element', 'nodelist'),
-  argsValueCheck: a => Utils.TypeChecks.typeCheckMany(a, 'null', 'boolean', 'number', 'string', 'text', 'element', 'nodelist'),
+  mainValueCheck: m => Utils.Tree.TypeChecks.typeCheck(m, 'null', 'boolean', 'number', 'string', 'text', 'element', 'nodelist'),
+  argsValueCheck: a => Utils.Tree.TypeChecks.typeCheckMany(a, 'null', 'boolean', 'number', 'string', 'text', 'element', 'nodelist'),
   func: (main, args) => {
     const all = [main, ...args]
     const reduced = all.reduce<Text>((reduced, curr) => {

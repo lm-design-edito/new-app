@@ -11,10 +11,10 @@ type Output = string | Text | NodeListOf<Element | Text> | Element | Types.Tree.
 
 export const append = SmartTags.makeSmartTag<Main, Args, Output>({
   name: 'append',
-  defaultMode: 'isolation',
+  defaultMode: 'coalescion',
   isolationInitType: 'array',
-  mainValueCheck: m => Utils.TypeChecks.typeCheck(m, 'string', 'text', 'nodelist', 'element', 'array'),
-  argsValueCheck: a => Utils.TypeChecks.typeCheckMany(a, 'string', 'text', 'nodelist', 'element', 'array'),
+  mainValueCheck: m => Utils.Tree.TypeChecks.typeCheck(m, 'string', 'text', 'nodelist', 'element', 'array'),
+  argsValueCheck: a => Utils.Tree.TypeChecks.typeCheckMany(a, 'string', 'text', 'nodelist', 'element', 'array'),
   func: (main, args) => {
     const { Text, Element, NodeList, document } = Window.get()
     if (Array.isArray(main)) return Outcome.makeSuccess([...main, ...args])
