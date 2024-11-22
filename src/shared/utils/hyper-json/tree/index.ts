@@ -19,10 +19,12 @@ import { text } from '../smart-tags/isolated/text'
 import { addclass } from '../smart-tags/coalesced/addclass'
 import { and } from '../smart-tags/coalesced/and'
 import { append } from '../smart-tags/coalesced/append'
+import { call } from '../smart-tags/coalesced/call'
 import { deleteproperties } from '../smart-tags/coalesced/deleteproperties'
 import { equals } from '../smart-tags/coalesced/equals'
 import { getproperties } from '../smart-tags/coalesced/getproperties'
 import { getproperty } from '../smart-tags/coalesced/getproperty'
+import { ifFunc } from '../smart-tags/coalesced/if'
 import { join } from '../smart-tags/coalesced/join'
 import { length } from '../smart-tags/coalesced/length'
 import { negate } from '../smart-tags/coalesced/negate'
@@ -47,9 +49,9 @@ import { trim } from '../smart-tags/coalesced/trim'
 // [WIP] find a better place for this
 export const SMART_TAGS_REGISTER: Types.SmartTags.Register = new Map<string, Types.SmartTags.SmartTag<any, any, any>>([
   array, boolean, element, global, nodelist, nullFunc, number, record, string, text,
-  addclass, and, append, deleteproperties, equals, getproperties, getproperty, join,
-  length, negate, or, print, push, removeclass, replace, select, setproperty, split,
-  toarray, toboolean, tonull, tonumber, torecord, tostring, totext, transformselected,
+  addclass, and, append, call, deleteproperties, equals, getproperties, getproperty,
+  ifFunc, join, length, negate, or, print, push, removeclass, replace, select, setproperty,
+  split, toarray, toboolean, tonull, tonumber, torecord, tostring, totext, transformselected,
   trim
 ])
 

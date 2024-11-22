@@ -4,23 +4,30 @@ import { Types } from '../types'
 
 export class Transformer<
   Main extends Types.Tree.RestingValue = Types.Tree.RestingValue,
-  Args extends Types.Tree.ArrayValue = Types.Tree.ArrayValue,
+  Args extends Types.Tree.RestingArrayValue = Types.Tree.RestingArrayValue,
   Output extends Types.Tree.RestingValue = Types.Tree.RestingValue
 > {
   name: string
   mode: Types.Tree.Mode
-  innerValue: Types.Tree.Value
+  innerValue: Types.Tree.RestingValue
   typeChecks: {
-    mainValue: (mainValue: Types.Tree.Value) => Outcome.Either<Main, { expected: string, found: string }>
-    argsValue: (argsValue: Types.Tree.ArrayValue, mainValue: Main) => Outcome.Either<Args, { expected: string, found: string, position?: number }>
+    mainValue: (mainValue: Types.Tree.RestingValue) => Outcome.Either<Main, {
+      expected: string,
+      found: string
+    }>
+    argsValue: (argsValue: Types.Tree.RestingArrayValue, mainValue: Main) => Outcome.Either<Args, {
+      expected: string,
+      found: string,
+      position?: number
+    }>
   }
   func: Types.Transformations.Function<Main, Args, Output>
   sourceTree: TreeNamespace.Tree
 
   static clone <
-    Main extends Types.Tree.Value,
-    Args extends Types.Tree.ArrayValue,
-    Output extends Types.Tree.Value
+    Main extends Types.Tree.RestingValue,
+    Args extends Types.Tree.RestingArrayValue,
+    Output extends Types.Tree.RestingValue
   >(transformer: Transformer<Main, Args, Output>): Transformer<Main, Args, Output> {
     const { name, mode, innerValue, typeChecks, func, sourceTree } = transformer
     return new Transformer(name, mode, innerValue, typeChecks, func, sourceTree)
@@ -35,6 +42,7 @@ export class Transformer<
     sourceTree: Transformer<Main, Args, Output>['sourceTree']
   ) {
     this.apply = this.apply.bind(this)
+    this.getMainAndArgsValue = this.getMainAndArgsValue.bind(this)
     this.name = name
     this.mode = mode
     this.innerValue = innerValue
@@ -42,43 +50,125 @@ export class Transformer<
     this.func = func
     this.sourceTree = sourceTree
   }
-  
-  apply (outerValue: Types.Tree.Value): Types.Transformations.Output {
-    const { mode, innerValue, typeChecks, func, sourceTree } = this
-    let mainValue: Types.Tree.Value
-    let argumentsValue: Types.Tree.ArrayValue
+
+  getMainAndArgsValue (outerValue: Types.Tree.RestingValue): {
+    mainValue: Types.Tree.RestingValue
+    argsValue: Types.Tree.RestingArrayValue
+  } {
+    const { mode, innerValue } = this
+    let mainValue: Types.Tree.RestingValue
+    let argsValue: Types.Tree.RestingArrayValue
     if (mode === 'isolation') {
       if (Array.isArray(innerValue)) {
+        innerValue
         mainValue = innerValue.at(0) ?? []
-        argumentsValue = innerValue.slice(1)
+        argsValue = innerValue.slice(1)
       } else {
         mainValue = innerValue
-        argumentsValue = []
+        argsValue = []
       }
     } else {
       mainValue = outerValue
-      argumentsValue = Array.isArray(innerValue) ? innerValue : [innerValue]
+      argsValue = Array.isArray(innerValue) ? innerValue : [innerValue]
     }
-    const mainChecked = typeChecks.mainValue(mainValue)
-    if (!mainChecked.success) return Outcome.makeFailure({
+    return { mainValue, argsValue }
+  }
+
+  // MainValueFailurePayload
+  // ArgsValueFailurePayload
+  // TransformationFailurePayload
+
+  makeMainValueError (
+    mainValue: Types.Tree.RestingValue,
+    argsValue: Types.Tree.RestingArrayValue,
+    expected: string,
+    found: string,
+    details?: any
+  ): Types.Transformations.MainValueFailurePayload {
+    const { name, sourceTree } = this
+    return {
       message: 'BAD_MAIN_VALUE',
-      ...mainChecked.error,
+      expected,
+      found,
+      details,
+      transformerName: name,
+      path: sourceTree.pathString,
       mainValue,
-      transformerName: this.name,
-      path: sourceTree.pathString
-    })
-    const validMainValue = mainChecked.payload
-    const argsChecked = typeChecks.argsValue(argumentsValue, validMainValue)
-    if (!argsChecked.success) return Outcome.makeFailure({
+      argsValue,
+    }
+  }
+
+  makeArgsValueError (
+    mainValue: Types.Tree.RestingValue,
+    argsValue: Types.Tree.RestingArrayValue,
+    expected: string,
+    found: string,
+    position?: number,
+    details?: any
+  ): Types.Transformations.ArgsValueFailurePayload {
+    const { name, sourceTree } = this
+    return {
       message: 'BAD_ARGUMENTS_VALUE',
-      ...argsChecked.error,
-      argumentsValue,
-      transformerName: this.name,
-      path: sourceTree.pathString
-    })
+      expected,
+      found,
+      position,
+      details,
+      transformerName: name,
+      path: sourceTree.pathString,
+      mainValue,
+      argsValue,
+    }
+  }
+
+  makeTransformationError (
+    mainValue: Types.Tree.RestingValue,
+    argsValue: Types.Tree.RestingArrayValue,
+    details?: any
+  ): Types.Transformations.TransformationFailurePayload {
+    const { name, sourceTree } = this
+    return {
+      message: 'TRANSFORMATION_ERROR',
+      details,
+      transformerName: name,
+      path: sourceTree.pathString,
+      mainValue,
+      argsValue,
+    }
+  }
+  
+  apply (outerValue: Types.Tree.RestingValue): Types.Transformations.Output {
+    const {
+      getMainAndArgsValue,
+      typeChecks,
+      makeMainValueError,
+      makeArgsValueError,
+      makeTransformationError,
+      func
+    } = this
+    const { mainValue, argsValue } = getMainAndArgsValue(outerValue)
+    const mainChecked = typeChecks.mainValue(mainValue)
+    if (!mainChecked.success) return Outcome.makeFailure(makeMainValueError(
+      mainValue,
+      argsValue,
+      mainChecked.error.expected,
+      mainChecked.error.found
+    ))
+    const validMainValue = mainChecked.payload
+    const argsChecked = typeChecks.argsValue(argsValue, validMainValue)
+    if (!argsChecked.success) return Outcome.makeFailure(makeArgsValueError(
+      mainValue,
+      argsValue,
+      argsChecked.error.expected,
+      argsChecked.error.found,
+      argsChecked.error.position
+    ))
     const validArgsValue = argsChecked.payload
     const called = func(validMainValue, validArgsValue, { name: this.name, sourceTree: this.sourceTree })
-    if (!called.success) return Outcome.makeFailure(called.error)
+    if (!called.success) return Outcome.makeFailure(makeTransformationError(
+      mainValue,
+      argsValue,
+      called.error
+    ))
     return Outcome.makeSuccess(called.payload)
   }
 }

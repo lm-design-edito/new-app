@@ -15,13 +15,16 @@ export const replace = SmartTags.makeSmartTag<Main, Args, Output>({
   isolationInitType: 'array',
   mainValueCheck: m => Utils.Tree.TypeChecks.typeCheck(m, 'string', 'text', 'nodelist', 'element'),
   argsValueCheck: a => {
+    const { makeFailure, makeSuccess } = Outcome
+    const { getType, typeCheckMany } = Utils.Tree.TypeChecks
+    const { makeArgsValueError } = Utils.SmartTags
     const expectedStr = 'string | Text | NodeListOf<Element | Text> | Element'
-    if (a.length === 0) return Outcome.makeFailure({ position: 0, expected: expectedStr, found: 'undefined' })
-    if (a.length === 1) return Outcome.makeFailure({ position: 1, expected: expectedStr, found: 'undefined' })
-    if (a.length > 2) return Outcome.makeFailure({ position: 3, expected: 'undefined', found: Utils.Tree.TypeChecks.getType(a.at(2)) ?? 'undefined' })
-    const checked = Utils.Tree.TypeChecks.typeCheckMany(a, 'string', 'text', 'nodelist', 'element')
+    if (a.length === 0) return makeFailure(makeArgsValueError(expectedStr, 'undefined', 0))
+    if (a.length === 1) return makeFailure(makeArgsValueError(expectedStr, 'undefined', 1))
+    if (a.length > 2) return makeFailure(makeArgsValueError('undefined', getType(a.at(2)) ?? 'undefined', 3))
+    const checked = typeCheckMany(a, 'string', 'text', 'nodelist', 'element')
     if (!checked.success) return checked
-    return Outcome.makeSuccess(checked.payload as Args)
+    return makeSuccess(checked.payload as Args)
   },
   func: (main, args) => {
     const [toReplace, replacer] = args

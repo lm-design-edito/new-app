@@ -10,45 +10,55 @@ export namespace Types {
    * 
    * * * * * * * * * * * * * * * * * * * * * */
   export namespace Transformations {
-    export type FailurePayload = {
-      message: 'BAD_MAIN_VALUE',
-      transformerName: string,
-      path: string,
-      expected: string,
-      found: string,
-      mainValue: Tree.RestingValue,
+    export type FunctionMainValueFailure = {
+      expected: string
+      found: string
       details?: any
-    } | {
-      message: 'BAD_ARGUMENTS_VALUE',
-      transformerName: string,
-      path: string,
-      expected: string,
-      found: string,
-      argumentsValue: Tree.RestingValue,
-      at?: number
-      details?: any
-    } | {
-      message: 'TRANSFORMATION_ERROR',
-      transformerName: string,
-      path: string,
-      details: any
     }
 
-    export type Output<
-      S extends Tree.RestingValue = Tree.RestingValue,
-      F extends FailurePayload = FailurePayload
-    > = Outcome.Either<S, F>
+    export type FunctionArgsValueFailure = {
+      expected: string
+      found: string
+      position?: number
+      details?: any
+    }
 
-    export type FunctionDetails = {
+    export type FunctionTransformationFailure = {
+      details?: any
+    }
+
+    export type FunctionFailurePayload = FunctionMainValueFailure
+      | FunctionArgsValueFailure
+      | FunctionTransformationFailure
+
+    export type FunctionDetailsArg = {
       name: string
       sourceTree: TreeNamespace.Tree
     }
 
     export type Function<
-      Main extends Tree.RestingValue, // [WIP] Should never expect Transformers here...
-      Args extends Tree.Value[], // [WIP] probably neither here
+      Main extends Tree.RestingValue,
+      Args extends Tree.Value[],
       Out extends Tree.RestingValue
-    > = (mainValue: Main, args: Args, details: FunctionDetails) => Output<Out, FailurePayload>
+    > = (mainValue: Main, args: Args, details: FunctionDetailsArg) => Outcome.Either<Out, FunctionFailurePayload>
+
+    export type FailurePayloadCore = {
+      transformerName: string
+      path: string
+      mainValue: Tree.RestingValue
+      argsValue: Tree.RestingArrayValue
+    }
+
+    export type MainValueFailurePayload = FailurePayloadCore & FunctionMainValueFailure & { message: 'BAD_MAIN_VALUE' }
+    export type ArgsValueFailurePayload = FailurePayloadCore & FunctionArgsValueFailure & { message: 'BAD_ARGUMENTS_VALUE' }
+    export type TransformationFailurePayload = FailurePayloadCore & FunctionTransformationFailure & { message: 'TRANSFORMATION_ERROR' }
+
+    export type FailurePayload = MainValueFailurePayload | ArgsValueFailurePayload | TransformationFailurePayload
+
+    export type Output<
+      S extends Tree.RestingValue = Tree.RestingValue,
+      F extends FailurePayload = FailurePayload
+    > = Outcome.Either<S, F>
   }
 
   /* * * * * * * * * * * * * * * * * * * * * * 
@@ -73,8 +83,8 @@ export namespace Types {
     export type PrimitiveValue = null | boolean | number | string | Text | NodeListOf<Element | Text> | Element | MethodValue
     export type RestingValue = PrimitiveValue | RestingValue[] | { [k: string]: RestingValue }
     export type Value = RestingValue | TransformerValue
-    export type ArrayValue = RestingValue[]
-    export type RecordValue = { [k: string]: RestingValue }
+    export type RestingArrayValue = RestingValue[]
+    export type RestingRecordValue = { [k: string]: RestingValue }
 
     export type ValuesTypesNamesIndex = {
       null: null
@@ -86,8 +96,8 @@ export namespace Types {
       element: Element
       transformer: TransformerValue
       method: MethodValue
-      array: ArrayValue
-      record: RecordValue
+      array: RestingArrayValue
+      record: RestingRecordValue
     }
 
     export type ValueTypeName = keyof ValuesTypesNamesIndex
@@ -97,7 +107,7 @@ export namespace Types {
   export namespace SmartTags {
     export type SmartTag<
       Main extends Types.Tree.RestingValue = Types.Tree.RestingValue,
-      Args extends Types.Tree.ArrayValue = Types.Tree.ArrayValue,
+      Args extends Types.Tree.RestingArrayValue = Types.Tree.RestingArrayValue,
       Output extends Types.Tree.RestingValue = Types.Tree.RestingValue
     > = {
       defaultMode: Types.Tree.Mode
@@ -110,7 +120,7 @@ export namespace Types {
 
     export type Descriptor<
       Main extends Types.Tree.RestingValue = Types.Tree.RestingValue,
-      Args extends Types.Tree.ArrayValue = Types.Tree.ArrayValue,
+      Args extends Types.Tree.RestingArrayValue = Types.Tree.RestingArrayValue,
       Output extends Types.Tree.RestingValue = Types.Tree.RestingValue
     > = {
       name: string,

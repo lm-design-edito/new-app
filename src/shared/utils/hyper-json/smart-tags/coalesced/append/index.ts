@@ -5,9 +5,9 @@ import { Types } from '../../../types'
 import { Utils } from '../../../utils'
 import { SmartTags } from '../..'
 
-type Main = string | Text | NodeListOf<Element | Text> | Element | Types.Tree.ArrayValue
-type Args = Array<string | Text | NodeListOf<Element | Text> | Element | Types.Tree.ArrayValue>
-type Output = string | Text | NodeListOf<Element | Text> | Element | Types.Tree.ArrayValue
+type Main = string | Text | NodeListOf<Element | Text> | Element | Types.Tree.RestingArrayValue
+type Args = Array<string | Text | NodeListOf<Element | Text> | Element | Types.Tree.RestingArrayValue>
+type Output = string | Text | NodeListOf<Element | Text> | Element | Types.Tree.RestingArrayValue
 
 export const append = SmartTags.makeSmartTag<Main, Args, Output>({
   name: 'append',

@@ -3,7 +3,7 @@ import { Types } from '../../../types'
 import { SmartTags } from '../..'
 
 type Main = Types.Tree.RestingValue
-type Args = Types.Tree.ArrayValue
+type Args = Types.Tree.RestingArrayValue
 type Output = null
 
 export const nullFunc = SmartTags.makeSmartTag<Main, Args, Output>({

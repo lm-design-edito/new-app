@@ -5,7 +5,7 @@ import { Types } from '../types'
 export namespace SmartTags {
   export function makeSmartTag <
     Main extends Types.Tree.RestingValue = Types.Tree.RestingValue,
-    Args extends Types.Tree.ArrayValue = Types.Tree.ArrayValue,
+    Args extends Types.Tree.RestingArrayValue = Types.Tree.RestingArrayValue,
     Output extends Types.Tree.RestingValue = Types.Tree.RestingValue
   >(descriptor: Types.SmartTags.Descriptor<Main, Args, Output>): [string, Types.SmartTags.SmartTag<Main, Args, Output>] {
     return [descriptor.name, {

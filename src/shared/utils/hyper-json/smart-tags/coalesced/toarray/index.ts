@@ -6,7 +6,7 @@ import { SmartTags } from '../..'
 
 type Main = Types.Tree.RestingValue
 type Args = []
-type Output = Types.Tree.ArrayValue
+type Output = Types.Tree.RestingArrayValue
 
 export const toarray = SmartTags.makeSmartTag<Main, Args, Output>({
   name: 'toarray',

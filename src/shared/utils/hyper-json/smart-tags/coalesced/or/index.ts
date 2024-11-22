@@ -4,7 +4,7 @@ import { Types } from '../../../types'
 import { SmartTags } from '../..'
 
 type Main = Types.Tree.RestingValue
-type Args = Types.Tree.ArrayValue
+type Args = Types.Tree.RestingArrayValue
 type Output = boolean
 
 export const or = SmartTags.makeSmartTag<Main, Args, Output>({

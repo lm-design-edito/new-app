@@ -4,16 +4,21 @@ import { Utils } from '../../../utils'
 import { SmartTags } from '../..'
 
 type Main = Types.Tree.RestingValue
-type Args = Types.Tree.ArrayValue
+type Args = Types.Tree.RestingArrayValue
 type Output = Types.Tree.RestingValue
 
 export const print = SmartTags.makeSmartTag<Main, Args, Output>({
   name: 'print',
   defaultMode: 'coalescion',
   isolationInitType: 'array',
-  mainValueCheck: m => Utils.Tree.TypeChecks.getType(m) === 'transformer'
-    ? Outcome.makeFailure({ expected: 'Exclude<value, transformer>', found: 'transformer' })
-    : Outcome.makeSuccess(m as Main),
+  mainValueCheck: m => {
+    const { getType } = Utils.Tree.TypeChecks
+    const { makeSuccess, makeFailure } = Outcome
+    const { makeMainValueError } = Utils.SmartTags
+    return getType(m) === 'transformer'
+      ? makeFailure(makeMainValueError('Exclude<value, transformer>', 'transformer'))
+      : makeSuccess(m as Main)
+  },
   argsValueCheck: a => Outcome.makeSuccess(a),
   func: (main, args, details) => {
     console.log(

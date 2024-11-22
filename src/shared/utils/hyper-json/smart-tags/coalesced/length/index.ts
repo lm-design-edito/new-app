@@ -4,7 +4,7 @@ import { Utils } from '../../../utils'
 import { SmartTags } from '../..'
 import { Window } from '@design-edito/tools/agnostic/misc/crossenv/window'
 
-type Main = string | Text | NodeListOf<Element | Text> | Element | Types.Tree.ArrayValue | Types.Tree.RecordValue
+type Main = string | Text | NodeListOf<Element | Text> | Element | Types.Tree.RestingArrayValue | Types.Tree.RestingRecordValue
 type Args = []
 type Output = number
 

@@ -19,56 +19,52 @@ export const transformselected = SmartTags.makeSmartTag<Main, Args, Output>({
   isolationInitType: 'array',
   mainValueCheck: m => Utils.Tree.TypeChecks.typeCheck(m, 'element', 'nodelist'),
   argsValueCheck: a => {
+    const { makeFailure, makeSuccess } = Outcome
+    const { typeCheck, typeCheckMany } = Utils.Tree.TypeChecks
     const [first, ...others] = a
-    const firstChecked = Utils.Tree.TypeChecks.typeCheck(first, 'string', 'text')
-    if (!firstChecked.success) return Outcome.makeFailure({ ...firstChecked.error, position: 0 })
-    const othersChecked = Utils.Tree.TypeChecks.typeCheckMany(others, 'method')
-    if (!othersChecked.success) return Outcome.makeFailure({
+    const firstChecked = typeCheck(first, 'string', 'text')
+    if (!firstChecked.success) return makeFailure({ ...firstChecked.error, position: 0 })
+    const othersChecked = typeCheckMany(others, 'method')
+    if (!othersChecked.success) return makeFailure({
       ...othersChecked.error,
       position: othersChecked.error.position + 1
     })
     const returned = [firstChecked.payload, ...othersChecked.payload] as Args
-    return Outcome.makeSuccess(returned)
+    return makeSuccess(returned)
   },
   func: (main, args, details) => {
+    const { makeFailure, makeSuccess } = Outcome
+    const { makeTransformationError } = Utils.SmartTags
+    const { typeCheck } = Utils.Tree.TypeChecks
     const mainClone = Cast.toElement(main)
     const [selector, ...methods] = args
     const selectedElements = [...mainClone.querySelectorAll(Cast.toString(selector))]
-    const transformationMap = new Map<Element, Types.Tree.Value>(selectedElements.map(s => ([s, s])))
+    const transformationMap = new Map<Element, Types.Tree.RestingValue>(selectedElements.map(s => ([s, s])))
     for (const method of methods) {
       for (const [selected, value] of transformationMap) {
         const transformer = method.transformer
         const applied = transformer.apply(value)
-        if (!applied.success) return Outcome.makeFailure({
-          message: 'TRANSFORMATION_ERROR',
-          transformerName: details.name,
-          path: details.sourceTree.pathString,
-          details: {
-            message: 'Subtransformation failure.',
-            onSelected: selected,
-            onTransformed: value,
-            transformerAt: methods.indexOf(method),
-            transformerName: transformer.name,
-            transformerOutput: applied
-          }
-        })
+        if (!applied.success) return makeFailure(makeTransformationError({
+          // [WIP] maybe a custom makeSubTransformationError ?
+          message: 'Subtransformation failure.',
+          onSelected: selected,
+          onTransformed: value,
+          transformerAt: methods.indexOf(method),
+          transformerName: transformer.name,
+          transformerOutput: applied
+        }))
         transformationMap.set(selected, applied.payload)
       }
     }
     for (const [selected, transformed] of transformationMap) {
-      const transformedChecked = Utils.Tree.TypeChecks.typeCheck(transformed, 'element', 'nodelist', 'text', 'string', 'number', 'boolean', 'null')
-      if (!transformedChecked.success) return Outcome.makeFailure({
-        message: 'TRANSFORMATION_ERROR',
-        transformerName: details.name,
-        path: details.sourceTree.pathString,
-        details: {
-          message: 'Bad transformation output',
-          onSelected: selected,
-          onTransformed: transformed,
-          details: { ...transformedChecked.error }
-        }
-      })
-
+      const transformedChecked = typeCheck(transformed, 'element', 'nodelist', 'text', 'string', 'number', 'boolean', 'null')
+      if (!transformedChecked.success) return makeFailure(makeTransformationError({
+        // [WIP] maybe a custom makeBadTransformationOutputError ?
+        message: 'Bad transformation output',
+        onSelected: selected,
+        onTransformed: transformed,
+        details: { ...transformedChecked.error }
+      }))
       const { Element, NodeList, Text } = Window.get()
       const replacer = transformedChecked.payload
       if (replacer instanceof Element || replacer instanceof Text) {
@@ -83,11 +79,11 @@ export const transformselected = SmartTags.makeSmartTag<Main, Args, Output>({
       }
       transformedChecked.payload
     }
-    if (main instanceof Element) return Outcome.makeSuccess(mainClone)
+    if (main instanceof Element) return makeSuccess(mainClone)
     const safeChildren = Array.from(mainClone.childNodes)
       .filter((e): e is Element | Text => e instanceof Element || e instanceof Text)
     return main instanceof Element
-      ? Outcome.makeSuccess(mainClone)
-      : Outcome.makeSuccess(Cast.toNodeList(safeChildren))
+      ? makeSuccess(mainClone)
+      : makeSuccess(Cast.toNodeList(safeChildren))
   }
 })

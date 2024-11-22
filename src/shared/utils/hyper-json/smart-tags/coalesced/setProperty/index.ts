@@ -4,9 +4,9 @@ import { Utils } from '../../../utils'
 import { Types } from '../../../types'
 import { SmartTags } from '../..'
 
-type Main = Types.Tree.RecordValue
+type Main = Types.Tree.RestingRecordValue
 type Args = [string | Text, Types.Tree.RestingValue]
-type Output = Types.Tree.RecordValue
+type Output = Types.Tree.RestingRecordValue
 
 export const setproperty = SmartTags.makeSmartTag<Main, Args, Output>({
   name: 'setproperty',
@@ -14,13 +14,16 @@ export const setproperty = SmartTags.makeSmartTag<Main, Args, Output>({
   isolationInitType: 'array',
   mainValueCheck: m => Utils.Tree.TypeChecks.typeCheck(m, 'record'),
   argsValueCheck: a => {
-    if (a.length === 0) return Outcome.makeFailure({ position: 0, expected: 'string | Text', found: 'undefined' })
-    if (a.length === 1) return Outcome.makeFailure({ position: 1, expected: 'value', found: 'undefined' })
-    if (a.length !== 2) return Outcome.makeFailure({ position: 2, expected: 'undefined', found: Utils.Tree.TypeChecks.getType(a.at(2)) ?? 'undefined' })
+    const { makeFailure, makeSuccess } = Outcome
+    const { makeArgsValueError } = Utils.SmartTags
+    const { getType, typeCheck } = Utils.Tree.TypeChecks
+    if (a.length === 0) return makeFailure(makeArgsValueError('string | Text', 'undefined', 0))
+    if (a.length === 1) return makeFailure(makeArgsValueError('value', 'undefined', 1))
+    if (a.length !== 2) return makeFailure(makeArgsValueError('undefined', getType(a.at(2)) ?? 'undefined', 2))
     const [first, second] = a as [Types.Tree.Value, Types.Tree.Value]
-    const firstChecked = Utils.Tree.TypeChecks.typeCheck(first, 'string', 'text')
-    if (!firstChecked.success) return Outcome.makeFailure({ position: 0, ...firstChecked.error })
-    return Outcome.makeSuccess([firstChecked.payload, second] as Args)
+    const firstChecked = typeCheck(first, 'string', 'text')
+    if (!firstChecked.success) return makeFailure(makeArgsValueError(firstChecked.error.expected, firstChecked.error.found, 0))
+    return makeSuccess([firstChecked.payload, second] as Args)
   },
   func: (main, args) => {
     const [key, val] = args

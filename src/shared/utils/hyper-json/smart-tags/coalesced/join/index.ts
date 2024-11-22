@@ -4,7 +4,7 @@ import { Types } from '../../../types'
 import { Utils } from '../../../utils'
 import { SmartTags } from '../..'
 
-type Main = Types.Tree.ArrayValue | NodeListOf<Element | Text>
+type Main = Types.Tree.RestingArrayValue | NodeListOf<Element | Text>
 type Args = Array<string | Text>
 type Output = string
 

@@ -3,9 +3,9 @@ import { Types } from '../../../types'
 import { Utils } from '../../../utils'
 import { SmartTags } from '../..'
 
-type Main = Types.Tree.ArrayValue
-type Args = Types.Tree.ArrayValue
-type Output = Types.Tree.ArrayValue
+type Main = Types.Tree.RestingArrayValue
+type Args = Types.Tree.RestingArrayValue
+type Output = Types.Tree.RestingArrayValue
 
 export const push = SmartTags.makeSmartTag<Main, Args, Output>({
   name: 'push',

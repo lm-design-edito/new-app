@@ -4,8 +4,8 @@ import { SmartTags } from '../..'
 import { Utils } from '~/shared/hyper-json/utils'
 
 type Main = Types.Tree.RestingValue
-type Args = Types.Tree.ArrayValue
-type Output = Types.Tree.ArrayValue // [WIP] Typeof Global Obj
+type Args = Types.Tree.RestingArrayValue
+type Output = Types.Tree.RestingArrayValue // [WIP] Typeof Global Obj
 
 export const global = SmartTags.makeSmartTag<Main, Args, Output>({
   name: 'global',

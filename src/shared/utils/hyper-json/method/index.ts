@@ -3,14 +3,14 @@ import { Types } from '../types'
 
 export class Method<
   Main extends Types.Tree.RestingValue = Types.Tree.RestingValue,
-  Args extends Types.Tree.ArrayValue = Types.Tree.ArrayValue,
+  Args extends Types.Tree.RestingArrayValue = Types.Tree.RestingArrayValue,
   Output extends Types.Tree.RestingValue = Types.Tree.RestingValue
 > {
   transformer: Transformer<Main, Args, Output>
 
   static clone <
     Main extends Types.Tree.RestingValue,
-    Args extends Types.Tree.ArrayValue,
+    Args extends Types.Tree.RestingArrayValue,
     Output extends Types.Tree.RestingValue
   >(method: Method<Main, Args, Output>): Method<Main, Args, Output> {
     const { transformer } = method

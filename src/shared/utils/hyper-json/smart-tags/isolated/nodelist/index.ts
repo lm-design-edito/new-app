@@ -5,7 +5,7 @@ import { Types } from '../../../types'
 import { SmartTags } from '../..'
 
 type Main = Types.Tree.RestingValue
-type Args = Types.Tree.ArrayValue
+type Args = Types.Tree.RestingArrayValue
 type Output = NodeListOf<Element | Text>
 
 export const nodelist = SmartTags.makeSmartTag<Main, Args, Output>({

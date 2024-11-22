@@ -94,14 +94,14 @@ export namespace Cast {
     return parentDiv.childNodes as NodeListOf<Element | Text>
   }
 
-  export const toArray = (input: Types.Tree.RestingValue): Types.Tree.ArrayValue => {
+  export const toArray = (input: Types.Tree.RestingValue): Types.Tree.RestingArrayValue => {
     const { NodeList } = Window.get()
     if (Array.isArray(input)) return [...input]
     if (input instanceof NodeList) return Array.from(input)
     return [input]
   }
 
-  export const toRecord = (input: Types.Tree.RestingValue): Types.Tree.RecordValue => {
+  export const toRecord = (input: Types.Tree.RestingValue): Types.Tree.RestingRecordValue => {
     const isRecord = Utils.Tree.TypeChecks.typeCheck(input, 'record')
     if (isRecord.success) return { ...isRecord.payload }
     return {}

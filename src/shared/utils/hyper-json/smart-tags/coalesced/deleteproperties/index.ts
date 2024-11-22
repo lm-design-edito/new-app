@@ -4,9 +4,9 @@ import { Utils } from '../../../utils'
 import { Types } from '../../../types'
 import { SmartTags } from '../..'
 
-type Main = Types.Tree.RecordValue
+type Main = Types.Tree.RestingRecordValue
 type Args = Array<string | Text>
-type Output = Types.Tree.RecordValue
+type Output = Types.Tree.RestingRecordValue
 
 export const deleteproperties = SmartTags.makeSmartTag<Main, Args, Output>({
   name: 'deleteproperties',

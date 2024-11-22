@@ -41,7 +41,7 @@ export namespace Utils {
       const transformationResult = transformer.apply(currentValue)
       if (!transformationResult.success) {
         console.warn({ ...transformationResult.error })
-        return currentValue // [WIP] transformer.apply logs the error by itself, should not be
+        return currentValue
       }
       const evaluated = transformationResult.payload
       if (transformer.mode === 'isolation') {
@@ -335,5 +335,9 @@ export namespace Utils {
         found: `length: ${args.length}`
       })
     }
+
+    export const makeMainValueError = (expected: string, found: string, details?: any) => ({ expected, found, details }) as Types.Transformations.FunctionMainValueFailure
+    export const makeArgsValueError = (expected: string, found: string, position?: number, details?: any) => ({ expected, found, position, details }) as Types.Transformations.FunctionArgsValueFailure
+    export const makeTransformationError = (details?: any) => ({ details }) as Types.Transformations.FunctionTransformationFailure
   }
 }
