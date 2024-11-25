@@ -102,6 +102,8 @@ export namespace Types {
 
     export type ValueTypeName = keyof ValuesTypesNamesIndex
     export type ValueTypeFromNames<N extends ValueTypeName[]> = ValuesTypesNamesIndex[N[number]]
+
+    export type Resolver = (path: TreeNamespace.Tree['path']) => TreeNamespace.Tree | undefined
   }
 
   export namespace SmartTags {

@@ -12,6 +12,7 @@ import { global } from '../smart-tags/isolated/global'
 import { nodelist } from '../smart-tags/isolated/nodelist'
 import { nullFunc } from '../smart-tags/isolated/null'
 import { number } from '../smart-tags/isolated/number'
+import { ref } from '../smart-tags/isolated/ref'
 import { record } from '../smart-tags/isolated/record'
 import { string } from '../smart-tags/isolated/string'
 import { text } from '../smart-tags/isolated/text'
@@ -19,7 +20,9 @@ import { text } from '../smart-tags/isolated/text'
 import { addclass } from '../smart-tags/coalesced/addclass'
 import { and } from '../smart-tags/coalesced/and'
 import { append } from '../smart-tags/coalesced/append'
+import { at } from '../smart-tags/coalesced/at'
 import { call } from '../smart-tags/coalesced/call'
+import { clone } from '../smart-tags/coalesced/clone'
 import { deleteproperties } from '../smart-tags/coalesced/deleteproperties'
 import { equals } from '../smart-tags/coalesced/equals'
 import { getproperties } from '../smart-tags/coalesced/getproperties'
@@ -27,6 +30,8 @@ import { getproperty } from '../smart-tags/coalesced/getproperty'
 import { ifFunc } from '../smart-tags/coalesced/if'
 import { join } from '../smart-tags/coalesced/join'
 import { length } from '../smart-tags/coalesced/length'
+import { map } from '../smart-tags/coalesced/map'
+import { notrailing } from '../smart-tags/coalesced/notrailing'
 import { negate } from '../smart-tags/coalesced/negate'
 import { or } from '../smart-tags/coalesced/or'
 import { print } from '../smart-tags/coalesced/print'
@@ -35,6 +40,7 @@ import { removeclass } from '../smart-tags/coalesced/removeclass'
 import { replace } from '../smart-tags/coalesced/replace'
 import { select } from '../smart-tags/coalesced/select'
 import { setproperty } from '../smart-tags/coalesced/setproperty'
+import { sorton } from '../smart-tags/coalesced/sorton'
 import { split } from '../smart-tags/coalesced/split'
 import { toarray } from '../smart-tags/coalesced/toarray'
 import { toboolean } from '../smart-tags/coalesced/toboolean'
@@ -48,11 +54,11 @@ import { trim } from '../smart-tags/coalesced/trim'
 
 // [WIP] find a better place for this
 export const SMART_TAGS_REGISTER: Types.SmartTags.Register = new Map<string, Types.SmartTags.SmartTag<any, any, any>>([
-  array, boolean, element, global, nodelist, nullFunc, number, record, string, text,
-  addclass, and, append, call, deleteproperties, equals, getproperties, getproperty,
-  ifFunc, join, length, negate, or, print, push, removeclass, replace, select, setproperty,
-  split, toarray, toboolean, tonull, tonumber, torecord, tostring, totext, transformselected,
-  trim
+  array, boolean, element, global, nodelist, nullFunc, number, ref, record, string, text,
+  addclass, and, append, at, call, clone, deleteproperties, equals, getproperties, getproperty,
+  ifFunc, join, length, map, notrailing, negate, or, print, push, removeclass, replace, select,
+  setproperty, sorton, split, toarray, toboolean, tonull, tonumber, torecord, tostring, totext,
+  transformselected, trim
 ])
 
 export namespace Tree {
@@ -212,6 +218,7 @@ export namespace Tree {
       const { Element, Text } = Window.get()
 
       // Bounds
+      this.resolve = this.resolve.bind(this)
       this.evaluateSilently = this.evaluateSilently.bind(this) // [WIP] use a Logger in the options and log directly from evaluate() ?
       this.evaluate = this.evaluate.bind(this)
       this.printPerfCounters = this.printPerfCounters.bind(this)
@@ -329,6 +336,22 @@ export namespace Tree {
           }
         })
       this.subtrees = mutableSubtrees
+    }
+
+    resolve: Types.Tree.Resolver = function (this: Tree, path): Tree | undefined {
+      let currentTree: Tree = this.root
+      for (const chunk of path) {
+        if (chunk === '.') continue
+        if (chunk === '..') {
+          currentTree = this.parent ?? this
+          continue
+        }
+        const { subtrees } = currentTree
+        const foundSubtree = subtrees.get(chunk)
+        if (foundSubtree === undefined) return undefined
+        currentTree = foundSubtree
+      }
+      return currentTree
     }
 
     evaluateSilently (): Types.Tree.Value {

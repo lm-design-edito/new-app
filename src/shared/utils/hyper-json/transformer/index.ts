@@ -1,4 +1,5 @@
 import { Outcome } from '@design-edito/tools/agnostic/misc/outcome'
+import { Method } from '../method'
 import { Tree as TreeNamespace } from '../tree'
 import { Types } from '../types'
 
@@ -43,6 +44,10 @@ export class Transformer<
   ) {
     this.apply = this.apply.bind(this)
     this.getMainAndArgsValue = this.getMainAndArgsValue.bind(this)
+    this.makeMainValueError = this.makeMainValueError.bind(this)
+    this.makeArgsValueError = this.makeArgsValueError.bind(this)
+    this.makeTransformationError = this.makeTransformationError.bind(this)
+    this.toMethod = this.toMethod.bind(this)
     this.name = name
     this.mode = mode
     this.innerValue = innerValue
@@ -73,10 +78,6 @@ export class Transformer<
     }
     return { mainValue, argsValue }
   }
-
-  // MainValueFailurePayload
-  // ArgsValueFailurePayload
-  // TransformationFailurePayload
 
   makeMainValueError (
     mainValue: Types.Tree.RestingValue,
@@ -170,5 +171,9 @@ export class Transformer<
       called.error
     ))
     return Outcome.makeSuccess(called.payload)
+  }
+
+  toMethod (): Method<Main, Args, Output> {
+    return new Method(this)
   }
 }

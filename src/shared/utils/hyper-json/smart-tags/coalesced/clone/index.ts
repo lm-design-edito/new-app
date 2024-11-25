@@ -4,14 +4,14 @@ import { Utils } from '../../../utils'
 import { SmartTags } from '../..'
 
 type Main = Types.Tree.RestingValue
-type Args = Types.Tree.RestingArrayValue
-type Output = Types.Tree.RestingArrayValue // [WIP] Typeof Global Obj
+type Args = []
+type Output = Main
 
-export const global = SmartTags.makeSmartTag<Main, Args, Output>({
-  name: 'global',
-  defaultMode: 'isolation',
+export const clone = SmartTags.makeSmartTag<Main, Args, Output>({
+  name: 'clone',
+  defaultMode: 'coalescion',
   isolationInitType: 'array',
   mainValueCheck: m => Outcome.makeSuccess(m),
   argsValueCheck: a => Utils.SmartTags.expectEmptyArgs(a),
-  func: (_m, _a, { sourceTree }) => Outcome.makeSuccess({ ...sourceTree.globalObj })
+  func: main => Outcome.makeSuccess(Utils.clone(main))
 })

@@ -152,6 +152,55 @@ export namespace Utils {
     }
   }
 
+  export const toHyperJson = (value: Types.Tree.RestingValue, keyAttribute: string): Element => {
+    // [WIP] finish this
+    const { document, Element, Text, NodeList } = Window.get()
+    if (value instanceof Text) {
+      const elt = document.createElement('text')
+      elt.innerHTML = value.textContent ?? ''
+      return elt
+    }
+    if (value instanceof Element) return value.cloneNode(true) as Element
+    if (value instanceof NodeList) {
+      const elt = document.createElement('nodelist')
+      elt.append(...Array.from(value).map(e => e.cloneNode(true)))
+      return elt
+    }
+    if (value === null) return document.createElement('null')
+    if (typeof value === 'string'
+      || typeof value === 'number'
+      || typeof value === 'boolean') {
+      const elt = document.createElement(typeof value)
+      elt.innerHTML = `${value}`
+      return elt
+    }
+    // if (typeof value === 'function') {
+    //   const name = value.transformerName
+    //   const args = value.args
+    //   const elt = document.createElement(name)
+    //   const hyperJsonArgs = args.map(arg => toHyperJson(arg, keyAttribute))
+    //   elt.append(...hyperJsonArgs)
+    //   return elt
+    // }
+    if (Array.isArray(value)) {
+      const elt = document.createElement('array')
+      elt.append(...value.map(e => toHyperJson(e, keyAttribute)))
+      return elt
+    }
+    if (value instanceof Method) {
+      // [WIP] finish this
+      return 0 as any
+    }
+    // Value is record
+    const elt = document.createElement('record')
+    Object.entries(value).forEach(([key, val]) => {
+      const hjVal = toHyperJson(val, keyAttribute)
+      hjVal.setAttribute(keyAttribute, key)
+      elt.append(hjVal)
+    })
+    return elt
+  }
+
   export namespace Transformations {
     export namespace TypeChecks {
       export function getType<T extends unknown> (value: T): T extends Types.Tree.Value
