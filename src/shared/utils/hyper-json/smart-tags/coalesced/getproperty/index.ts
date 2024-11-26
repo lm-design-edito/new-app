@@ -6,7 +6,7 @@ import { SmartTags } from '../..'
 
 type Main = Types.Tree.RestingRecordValue
 type Args = [string | Text]
-type Output = Exclude<Types.Tree.Value, Types.Tree.TransformerValue>
+type Output = Types.Tree.RestingValue
 
 export const getproperty = SmartTags.makeSmartTag<Main, Args, Output>({
   name: 'getproperty',

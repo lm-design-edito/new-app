@@ -6,9 +6,10 @@ import { Method } from '../method'
 export namespace Types {
   /* * * * * * * * * * * * * * * * * * * * * * 
    *
-   * METHODS
+   * TRANSFORMATIONS
    * 
    * * * * * * * * * * * * * * * * * * * * * */
+  
   export namespace Transformations {
     export type FunctionMainValueFailure = {
       expected: string
@@ -104,7 +105,17 @@ export namespace Types {
     export type ValueTypeFromNames<N extends ValueTypeName[]> = ValuesTypesNamesIndex[N[number]]
 
     export type Resolver = (path: TreeNamespace.Tree['path']) => TreeNamespace.Tree | undefined
+
+    export type Options = {
+      globalObject: RestingRecordValue
+    }
   }
+
+  /* * * * * * * * * * * * * * * * * * * * * * 
+   *
+   * SMART TAGS
+   * 
+   * * * * * * * * * * * * * * * * * * * * * */
 
   export namespace SmartTags {
     export type SmartTag<

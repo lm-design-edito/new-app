@@ -1,8 +1,8 @@
+import { replaceAll } from '@design-edito/tools/agnostic/strings/replace-all'
 import { Outcome } from '@design-edito/tools/agnostic/misc/outcome'
 import { Cast } from '../../../cast'
 import { Utils } from '../../../utils'
 import { SmartTags } from '../..'
-import { replaceAll } from '@design-edito/tools/agnostic/strings/replace-all'
 
 type Main = string | Text | NodeListOf<Element | Text> | Element
 type Arg = string | Text | NodeListOf<Element | Text> | Element

@@ -41,7 +41,7 @@ export namespace LmHtml {
     if (isCustomComp) {
       const recordWrapper = document.createElement('record')
       recordWrapper.append(...Array.from(element.childNodes))
-      const evaluated = HyperJson.Tree
+      const evaluated = HyperJson.Tree.Tree
         .from([recordWrapper], /* [WIP] pass this at some point { globalObj: Globals.getHyperJsonGlobalObj() }*/)
         .evaluate()
       if (!isRecord(evaluated)) {

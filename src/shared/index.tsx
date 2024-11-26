@@ -95,7 +95,7 @@ async function init () {
     const nodes = document.querySelectorAll(appConfig.dataSourceSelector)
     return Array.from(nodes).map(e => e.cloneNode(true)) as Element[]
   }
-  const pageInlineDataValue = HyperJson.Tree.from(getPageInlineDataElements()/* [WIP] pass the globalObj at some point, {
+  const pageInlineDataValue = HyperJson.Tree.Tree.from(getPageInlineDataElements()/* [WIP] pass the globalObj at some point, {
     globalObj: Globals.getHyperJsonGlobalObj()
   }*/).evaluate()
   logger.log('Inline data', pageInlineDataValue)
@@ -153,7 +153,7 @@ async function init () {
       return wrapper
     })
   const pageFullTreeElements = [...getPageInlineDataElements(), ...pageRemoteDataNodes]
-  const pageFullDataTree = HyperJson.Tree.from(pageFullTreeElements, /* [WIP] pass the global obj at some point { globalObj: Globals.getHyperJsonGlobalObj() }*/)
+  const pageFullDataTree = HyperJson.Tree.Tree.from(pageFullTreeElements, /* [WIP] pass the global obj at some point { globalObj: Globals.getHyperJsonGlobalObj() }*/)
   Globals.expose(Globals.GlobalKey.TREE, pageFullDataTree)
   const pageFullDataValue = pageFullDataTree.evaluate()
   pageFullDataTree.printPerfCounters()

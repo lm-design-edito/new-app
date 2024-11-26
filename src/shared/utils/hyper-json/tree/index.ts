@@ -1,5 +1,4 @@
 import { Window } from '@design-edito/tools/agnostic/misc/crossenv/window'
-import { isInEnum } from '@design-edito/tools/agnostic/objects/enums/is-in-enum'
 
 import { Types } from '../types'
 import { Utils } from '../utils'
@@ -12,8 +11,8 @@ import { global } from '../smart-tags/isolated/global'
 import { nodelist } from '../smart-tags/isolated/nodelist'
 import { nullFunc } from '../smart-tags/isolated/null'
 import { number } from '../smart-tags/isolated/number'
-import { ref } from '../smart-tags/isolated/ref'
 import { record } from '../smart-tags/isolated/record'
+import { ref } from '../smart-tags/isolated/ref'
 import { string } from '../smart-tags/isolated/string'
 import { text } from '../smart-tags/isolated/text'
 
@@ -31,11 +30,12 @@ import { ifFunc } from '../smart-tags/coalesced/if'
 import { join } from '../smart-tags/coalesced/join'
 import { length } from '../smart-tags/coalesced/length'
 import { map } from '../smart-tags/coalesced/map'
-import { notrailing } from '../smart-tags/coalesced/notrailing'
 import { negate } from '../smart-tags/coalesced/negate'
+import { notrailing } from '../smart-tags/coalesced/notrailing'
 import { or } from '../smart-tags/coalesced/or'
 import { print } from '../smart-tags/coalesced/print'
 import { push } from '../smart-tags/coalesced/push'
+import { recordtoarray } from '../smart-tags/coalesced/recordtoarray'
 import { removeclass } from '../smart-tags/coalesced/removeclass'
 import { replace } from '../smart-tags/coalesced/replace'
 import { select } from '../smart-tags/coalesced/select'
@@ -44,9 +44,13 @@ import { sorton } from '../smart-tags/coalesced/sorton'
 import { split } from '../smart-tags/coalesced/split'
 import { toarray } from '../smart-tags/coalesced/toarray'
 import { toboolean } from '../smart-tags/coalesced/toboolean'
+import { toelement } from '../smart-tags/coalesced/toelement'
+import { toggleclass } from '../smart-tags/coalesced/toggleclass'
+import { tonodelist } from '../smart-tags/coalesced/tonodelist'
 import { tonull } from '../smart-tags/coalesced/tonull'
 import { tonumber } from '../smart-tags/coalesced/tonumber'
 import { torecord } from '../smart-tags/coalesced/torecord'
+import { toref } from '../smart-tags/coalesced/toref'
 import { tostring } from '../smart-tags/coalesced/tostring'
 import { totext } from '../smart-tags/coalesced/totext'
 import { transformselected } from '../smart-tags/coalesced/transformselected'
@@ -54,140 +58,18 @@ import { trim } from '../smart-tags/coalesced/trim'
 
 // [WIP] find a better place for this
 export const SMART_TAGS_REGISTER: Types.SmartTags.Register = new Map<string, Types.SmartTags.SmartTag<any, any, any>>([
-  array, boolean, element, global, nodelist, nullFunc, number, ref, record, string, text,
-  addclass, and, append, at, call, clone, deleteproperties, equals, getproperties, getproperty,
-  ifFunc, join, length, map, notrailing, negate, or, print, push, removeclass, replace, select,
-  setproperty, sorton, split, toarray, toboolean, tonull, tonumber, torecord, tostring, totext,
-  transformselected, trim
+  array, boolean, element, global, nodelist, nullFunc, number, record, ref, string, text, addclass,
+  and, append, at, call, clone, deleteproperties, equals, getproperties, getproperty, ifFunc, join,
+  length, map, negate, notrailing, or, print, push, recordtoarray, removeclass, replace, select,
+  setproperty, sorton, split, toarray, toboolean, toelement, toggleclass, tonodelist, tonull,
+  tonumber, toref, torecord, tostring, totext, transformselected, trim
 ])
 
+// [WIP] eventually just export the Tree class here
 export namespace Tree {
-  export const actionAttribute = '_action'
-  export const keyAttribute = '_key'
-  export const methodAttribute = '_method'
-  export const initAttribute = '_init'
-  export const modeAttribute = '_mode'
-
-  export function mergeNodes (nodes: Array<Element | Text>): Element | Text {
-    const [first, ...rest] = nodes
-    if (first === undefined) throw new Error('Expecting at least one node')
-    const { Text, Element, document } = Window.get()
-  
-    /* Local utils function */
-    const isTextOrElement = (node: Node): node is Text | Element => node instanceof Text || node instanceof Element
-
-    /* Shallow merge nodes */
-    let CURRENT: Element | Text = first
-    rest.forEach(node => {
-      if (node instanceof Text) {
-        CURRENT.remove()
-        CURRENT = node
-        return;
-      }
-      const actionRaw = node.getAttribute(actionAttribute)
-      const action = isInEnum(Types.Tree.Merge.Action, actionRaw as any)
-        ? actionRaw as Types.Tree.Merge.Action
-        : Types.Tree.Merge.Action.REPLACE
-      if (action === Types.Tree.Merge.Action.REPLACE) {
-        CURRENT.remove()
-        CURRENT = node
-        return;
-      }
-      if (CURRENT instanceof Text) {
-        if (node instanceof Text) {
-          const appended = action === Types.Tree.Merge.Action.APPEND
-            ? document.createTextNode(`${CURRENT.textContent}${node.textContent}`)
-            : document.createTextNode(`${node.textContent}${CURRENT.textContent}`)
-          CURRENT.remove()
-          node.remove()
-          CURRENT = appended
-          return;
-        }
-        CURRENT.remove()
-        CURRENT = node
-        return;
-      }
-      if (node instanceof Text) {
-        CURRENT.remove()
-        CURRENT = node
-        return;
-      }
-      const currentAttributes = Array.from(CURRENT.attributes)
-      const nodeAttributes = Array.from(node.attributes)
-      const nodeChildren = Array.from(node.childNodes).filter(isTextOrElement)
-      const outputAttributes = action === Types.Tree.Merge.Action.APPEND
-        ? [...currentAttributes, ...nodeAttributes]
-        : [...nodeAttributes, ...currentAttributes]
-      if (action === Types.Tree.Merge.Action.APPEND) CURRENT.append(...nodeChildren)
-      else CURRENT.prepend(...nodeChildren)
-      outputAttributes.forEach(attr => (CURRENT as Element).setAttribute(attr.name, attr.value))
-      node.remove()
-      return;
-    })
-  
-    /* List child nodes sharing the same subpath */
-    const wrapperChildren = Array.from(CURRENT.childNodes).filter(isTextOrElement)
-    const subpaths = new Map<string | number, Array<Element | Text>>()
-    let positionnedChildrenCount = 0
-    wrapperChildren.forEach(child => {
-      if (child instanceof Text) {
-        const childKey = positionnedChildrenCount
-        const found = subpaths.get(childKey) ?? []
-        found.push(child)
-        subpaths.set(childKey, found)
-        positionnedChildrenCount += 1
-      } else {
-        const rawChildKey = child.getAttribute(keyAttribute)
-        const childKey = rawChildKey ?? positionnedChildrenCount
-        const found = subpaths.get(childKey) ?? []
-        found.push(child)
-        subpaths.set(childKey, found)
-        if (rawChildKey === null) { positionnedChildrenCount += 1 }
-      }
-    })
-  
-    /* For each node sharing a subpath, merge them */
-    subpaths.forEach(nodes => {
-      if (nodes.length < 2) return
-      return mergeNodes(nodes)
-    })
-  
-    /* At the end of the process, find and return wrapper's first child */
-    return CURRENT
-  }
-
-  export function mergeRoots (nodes: Array<Element | Text>): Element | Text {
-    const { Element } = Window.get()
-    const elements = nodes.filter((e): e is Element => e instanceof Element)
-    elements.forEach(element => {
-      const elementAction = element.getAttribute(actionAttribute) ?? Types.Tree.Merge.Action.APPEND
-      element.setAttribute(actionAttribute, elementAction)
-    })
-    const merged = mergeNodes(elements)
-    return merged
-  }
-
-  export function from (nodes: Array<Element | Text>): Tree {
-    const merged = mergeRoots(nodes)
-    return new Tree(merged, null, null)
-  }
-
-  export function getInitialValueFromTypeName (name: Exclude<Types.Tree.ValueTypeName, 'transformer' | 'method'>): Types.Tree.RestingValue {
-    const { document } = Window.get()
-    if (name === 'null') return null
-    if (name === 'boolean') return false
-    if (name === 'number') return 0
-    if (name === 'string') return ''
-    if (name === 'text') return document.createTextNode('')
-    if (name === 'nodelist') return document.createDocumentFragment().childNodes as NodeListOf<Element | Text>
-    if (name === 'element') return document.createElement('div')
-    if (name === 'array') return []
-    if (name === 'record') return {}
-    throw new Error(`Unknown value type name: ${name}`)
-  }
-
   export class Tree {
     readonly node: Element | Text
+    readonly options: Types.Tree.Options
     readonly parent: Tree | null
     readonly pathFromParent: string | number | null
     readonly root: Tree
@@ -195,36 +77,63 @@ export namespace Tree {
     readonly path: Array<string | number>
     readonly pathString: string
     readonly attributes: ReadonlyArray<Readonly<Attr>> | null
+    readonly isMethod: boolean
     readonly tagName: string | null
     readonly smartTagName: string | null
     readonly smartTagData: Types.SmartTags.SmartTag | null
     readonly mode: Types.Tree.Mode
-    readonly isMethod: boolean
+    readonly isPreserved: boolean
+    readonly isLiteral: boolean
     readonly isolationInitType: Exclude<Types.Tree.ValueTypeName, 'transformer' | 'method'>
     readonly subtrees: ReadonlyMap<string | number, Tree> = new Map()
+
+    static actionAttribute = '_action'
+    static keyAttribute = '_key'
+    static methodAttribute = '_method'
+    static initAttribute = '_init'
+    static modeAttribute = '_mode'
+    static preserveAttribute = '_preserve'
+    static literalAttribute = '_literal'
+
+    static defaultOptions: Types.Tree.Options = {
+      globalObject: {}
+    }
+
+    static from (
+      nodes: Array<Element | Text>,
+      options: Types.Tree.Options): Tree {
+      const merged = Utils.Tree.mergeRoots(nodes)
+      return new Tree(merged, null, null, options)
+    }
 
     constructor (
       node: Element | Text,
       parent: null,
-      pathFromParent: null)
+      pathFromParent: null,
+      options?: Types.Tree.Options)
     constructor (
       node: Element | Text,
       parent: Tree,
-      pathFromParent: string | number)
+      pathFromParent: string | number,
+      options?: Types.Tree.Options)
     constructor (
       node: Element | Text,
       parent: Tree | null,
-      pathFromParent: string | number | null) {
+      pathFromParent: string | number | null,
+      options?: Types.Tree.Options) {
       const { Element, Text } = Window.get()
 
       // Bounds
       this.resolve = this.resolve.bind(this)
-      this.evaluateSilently = this.evaluateSilently.bind(this) // [WIP] use a Logger in the options and log directly from evaluate() ?
+      this.evaluateAsValue = this.evaluateAsValue.bind(this) // [WIP] use a Logger in the options and log directly from evaluate() ?
       this.evaluate = this.evaluate.bind(this)
       this.printPerfCounters = this.printPerfCounters.bind(this)
       
       // node
       this.node = node
+
+      // options
+      this.options = options ?? Tree.defaultOptions
 
       // parent, pathFromParent, root, isRoot
       if (parent !== null && pathFromParent !== null) {
@@ -252,7 +161,7 @@ export namespace Tree {
       if (node instanceof Element) {
         const rawTagName = node.tagName.trim().toLowerCase()
         const hasTrailingUnderscore = rawTagName.endsWith('_')
-        const hasMethodAttribute = this.attributes?.find(attr => attr.name === methodAttribute) !== undefined
+        const hasMethodAttribute = this.attributes?.find(attr => attr.name === Tree.methodAttribute) !== undefined
         const isMethod = hasTrailingUnderscore || hasMethodAttribute
         this.isMethod = isMethod
         this.tagName = rawTagName
@@ -272,16 +181,22 @@ export namespace Tree {
       // mode
       // [WIP] rootNode cannot be in coalescion mode
       const hasModeAttribute = this.attributes?.find(attr => {
-        return attr.name === modeAttribute
+        return attr.name === Tree.modeAttribute
           && Utils.Tree.TypeChecks.isTreeMode(attr.value)
       })
       this.mode = (hasModeAttribute?.value as Types.Tree.Mode | undefined)
         ?? this.smartTagData?.defaultMode
         ?? 'isolation'
 
+      // isLiteral, isPreserved
+      const hasLiteralAttribute = this.attributes?.find(attr => attr.name === Tree.literalAttribute) !== undefined
+      this.isLiteral = hasLiteralAttribute
+      const hasPreservedAttribute = this.attributes?.find(attr => attr.name === Tree.preserveAttribute) !== undefined
+      this.isPreserved = hasPreservedAttribute
+
       // isolationInitType
       const hasInitAttribute = this.attributes?.find(attr => {
-        if (attr.name !== initAttribute) return false
+        if (attr.name !== Tree.initAttribute) return false
         const val = attr.value.trim().toLowerCase()
         if (!Utils.Tree.TypeChecks.isValueTypeName(val)) return false
         if (val === 'transformer') return false
@@ -302,35 +217,35 @@ export namespace Tree {
       const mutableSubtrees = new Map<string | number, Tree>()
       Array
         .from(childNodes)
-        .filter((node, _, nodes): node is Element | Text => {
-          if (node instanceof Element) return true
-          if (!(node instanceof Text)) return false
-          const hasContent = (node.textContent ?? '').trim() !== ''
+        .filter((child, _, childNodes): child is Element | Text => {
+          if (child instanceof Element) return true
+          if (!(child instanceof Text)) return false
+          const hasContent = (child.textContent ?? '').trim() !== ''
           if (hasContent) return true
-          if (nodes.some(n => n instanceof Element)) return false
-          if (nodes.some(n => n instanceof Text && (n.textContent ?? '') !== '')) return false
+          if (childNodes.some(n => n instanceof Element)) return false
           return true
         })
         .forEach(childNode => {
           if (childNode instanceof Text) {
-            childNode.textContent = childNode.textContent?.trim() ?? ''
+            const hasContent = (childNode.textContent ?? '').trim() !== ''
+            if (hasContent) { childNode.textContent = childNode.textContent?.trim() ?? '' }
             mutableSubtrees.set(
               positionnedChildrenCount,
-              new Tree(childNode, this, positionnedChildrenCount)
+              new Tree(childNode, this, positionnedChildrenCount, this.options)
             )
             positionnedChildrenCount += 1
           } else {
-            const propertyName = childNode.getAttribute(keyAttribute)
+            const propertyName = childNode.getAttribute(Tree.keyAttribute)
             if (propertyName === null) {
               mutableSubtrees.set(
                 positionnedChildrenCount,
-                new Tree(childNode, this, positionnedChildrenCount)
+                new Tree(childNode, this, positionnedChildrenCount, this.options)
               )
               positionnedChildrenCount += 1
             } else {
               mutableSubtrees.set(
                 propertyName,
-                new Tree(childNode, this, propertyName)
+                new Tree(childNode, this, propertyName, this.options)
               )
             }
           }
@@ -354,7 +269,7 @@ export namespace Tree {
       return currentTree
     }
 
-    evaluateSilently (): Types.Tree.Value {
+    evaluateAsValue (): Types.Tree.Value {
       const { isolationInitType, subtrees, node, smartTagData, isMethod, isRoot, mode } = this
       const { Text } = Window.get()
 
@@ -367,17 +282,19 @@ export namespace Tree {
       // If node is text, returns the node itself
       if (node instanceof Text) return node.cloneNode(true) as Text
 
-      const initialInnerValue = getInitialValueFromTypeName(isolationInitType)
+      const initialInnerValue = Utils.Tree.getInitialValueFromTypeName(isolationInitType)
       console.log('INIT-TYPE=', isolationInitType)
       console.log('INITIAL=', initialInnerValue)
+      console.log('SUBTREES=', subtrees)
       const innerValue = Array
         .from(subtrees)
-        .reduce((reduced, [subpath, subtree]) => Utils.coalesceValues(reduced, subpath, subtree.evaluate()), initialInnerValue)
-
-      // If node is Text node, return a Text value
+        .reduce((reduced, [subpath, subtree]) => Utils.coalesceValues(
+          reduced,
+          subpath,
+          subtree.evaluate()
+        ), initialInnerValue)
       console.log('INNER=', innerValue)
-      if (node instanceof Text) return Cast.toText(innerValue)
-    
+
       // If no smartTagData, then treat it as an HTMLElement
       if (smartTagData === null) {
         const nodelist = Cast.toNodeList(innerValue)
@@ -385,12 +302,13 @@ export namespace Tree {
         clone.append(...nodelist)
         return clone
       }
-    
+
       // If node is a SmartTag
       const { transformer, method } = smartTagData.generator(innerValue, mode, this)
       if (isMethod) return method
       if (mode === 'isolation') {
-        const applied = transformer.apply(null) // Here we apply null as a placeholder outerValue since the transformer is in isolation mode
+        // Here we apply null as a placeholder outerValue since the transformer is in isolation mode
+        const applied = transformer.apply(null)
         if (applied.success) return applied.payload
         throw {
           error: 'Transformation error',
@@ -404,12 +322,22 @@ export namespace Tree {
     }
 
     evaluate () {
-      const { smartTagName, tagName, pathString } = this
-      console.group(smartTagName ?? tagName ?? '#text', pathString)
-      const evaluated = this.evaluateSilently()
-      // console.log('EVALUATED=', evaluated)
-      console.groupEnd()
-      return evaluated
+      const { smartTagName, tagName, pathString, isLiteral, isPreserved, attributes, node } = this
+      const { Element } = Window.get()
+      console.group(smartTagName ?? tagName ?? '#text', '@', pathString)
+      if (isPreserved) return Utils.clone(node)
+      const evaluated = this.evaluateAsValue()
+      if (!isLiteral) {
+        console.log('EVALUATED=', evaluated)
+        console.groupEnd()
+        return evaluated
+      } else {
+        const asLiteral = Utils.toHyperJson(evaluated)
+        if (asLiteral instanceof Element) attributes?.forEach(({ name, value }) => asLiteral.setAttribute(name, value))
+        console.log('EVALUATED=', asLiteral)
+        console.groupEnd()
+        return asLiteral
+      }
     }
 
     printPerfCounters () {
