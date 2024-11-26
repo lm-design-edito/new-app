@@ -2,6 +2,7 @@ import { isRecord } from '@design-edito/tools/agnostic/objects/is-record'
 import { Window } from '@design-edito/tools/agnostic/misc/crossenv/window'
 import { Types } from '../types'
 import { Utils } from '../utils'
+import { Method } from '../method'
 
 export namespace Cast {
   export const toNull = (): null => null
@@ -42,7 +43,8 @@ export namespace Cast {
       return e.textContent
     }).join('')
     if (Array.isArray(input)) return input.map(toString).join('')
-    return input.toString()
+    if (input instanceof Method) return `[Method:${input.transformer.name}]`
+    return `{${Object.entries(input).map(([key, val]) => `${key}:"${toString(val)}"`).join(',')}}`
   }
   
   export const toText = (input: Types.Tree.RestingValue): Text => {
@@ -86,10 +88,15 @@ export namespace Cast {
         if (typeof item === 'number' || typeof item === 'boolean' || item === null) parentDiv.append(`${item}`)
         else if (typeof item === 'string' || item instanceof Text || item instanceof Element) parentDiv.append(item)
         else if (item instanceof NodeList) parentDiv.append(...item)
+        else if (Array.isArray(item)) parentDiv.append(...toNodeList(item))
+        else parentDiv.append(toString(item))
       })
       return parentDiv.childNodes as NodeListOf<Element | Text>
     }
-    if (isRecord(input)) return parentDiv.childNodes as NodeListOf<Element | Text>
+    if (isRecord(input)) {
+      parentDiv.append(toString(input))
+      return parentDiv.childNodes as NodeListOf<Element | Text>
+    }
     parentDiv.innerHTML = `${input}`
     return parentDiv.childNodes as NodeListOf<Element | Text>
   }

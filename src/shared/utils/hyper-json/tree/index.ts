@@ -16,6 +16,7 @@ import { ref } from '../smart-tags/isolated/ref'
 import { string } from '../smart-tags/isolated/string'
 import { text } from '../smart-tags/isolated/text'
 
+import { add } from '../smart-tags/coalesced/add'
 import { addclass } from '../smart-tags/coalesced/addclass'
 import { and } from '../smart-tags/coalesced/and'
 import { append } from '../smart-tags/coalesced/append'
@@ -58,11 +59,11 @@ import { trim } from '../smart-tags/coalesced/trim'
 
 // [WIP] find a better place for this
 export const SMART_TAGS_REGISTER: Types.SmartTags.Register = new Map<string, Types.SmartTags.SmartTag<any, any, any>>([
-  array, boolean, element, global, nodelist, nullFunc, number, record, ref, string, text, addclass,
+  add, array, boolean, element, global, nodelist, nullFunc, number, record, ref, string, text, addclass,
   and, append, at, call, clone, deleteproperties, equals, getproperties, getproperty, ifFunc, join,
   length, map, negate, notrailing, or, print, push, recordtoarray, removeclass, replace, select,
-  setproperty, sorton, split, toarray, toboolean, toelement, toggleclass, tonodelist, tonull,
-  tonumber, toref, torecord, tostring, totext, transformselected, trim
+  setproperty, sorton, split, toarray, toboolean, toelement, toggleclass, tonodelist, tonull, tonumber,
+  toref, torecord, tostring, totext, transformselected, trim
 ])
 
 // [WIP] eventually just export the Tree class here
@@ -71,6 +72,7 @@ export namespace Tree {
     readonly node: Element | Text
     readonly options: Types.Tree.Options
     readonly parent: Tree | null
+    readonly parents: Tree[]
     readonly pathFromParent: string | number | null
     readonly root: Tree
     readonly isRoot: boolean
@@ -135,15 +137,17 @@ export namespace Tree {
       // options
       this.options = options ?? Tree.defaultOptions
 
-      // parent, pathFromParent, root, isRoot
+      // parent, parents, pathFromParent, root, isRoot
       if (parent !== null && pathFromParent !== null) {
         this.isRoot = false
         this.parent = parent
+        this.parents = [parent, ...parent.parents]
         this.pathFromParent = pathFromParent
         this.root = this.parent.root
       } else {
         this.isRoot = true
         this.parent = null
+        this.parents = []
         this.pathFromParent = null
         this.root = this
       }
@@ -254,7 +258,7 @@ export namespace Tree {
     }
 
     resolve: Types.Tree.Resolver = function (this: Tree, path): Tree | undefined {
-      let currentTree: Tree = this.root
+      let currentTree: Tree = this
       for (const chunk of path) {
         if (chunk === '.') continue
         if (chunk === '..') {
@@ -288,17 +292,17 @@ export namespace Tree {
       console.log('SUBTREES=', subtrees)
       const innerValue = Array
         .from(subtrees)
-        .reduce((reduced, [subpath, subtree]) => Utils.coalesceValues(
-          reduced,
-          subpath,
-          subtree.evaluate()
-        ), initialInnerValue)
+        .reduce((reduced, [subpath, subtree]) => {
+          const coalesced = Utils.coalesceValues(reduced, subpath, subtree.evaluate())
+          console.log('COALESCED=', coalesced)
+          return coalesced
+        }, initialInnerValue)
       console.log('INNER=', innerValue)
 
       // If no smartTagData, then treat it as an HTMLElement
       if (smartTagData === null) {
         const nodelist = Cast.toNodeList(innerValue)
-        const clone = Utils.clone(node)
+        const clone = node.cloneNode() as Element
         clone.append(...nodelist)
         return clone
       }
