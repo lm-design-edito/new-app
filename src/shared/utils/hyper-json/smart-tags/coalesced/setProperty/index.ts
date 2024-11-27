@@ -3,6 +3,7 @@ import { Cast } from '../../../cast'
 import { Utils } from '../../../utils'
 import { Types } from '../../../types'
 import { SmartTags } from '../..'
+import { isRecord } from '@design-edito/tools/agnostic/objects/is-record'
 
 type Main = Types.Tree.RestingRecordValue
 type Args = [string | Text, Types.Tree.RestingValue]
@@ -27,6 +28,36 @@ export const setproperty = SmartTags.makeSmartTag<Main, Args, Output>({
   },
   func: (main, args) => {
     const [key, val] = args
-    return Outcome.makeSuccess({ ...main, [Cast.toString(key)]: val })
+    const { makeSuccess, makeFailure } = Outcome
+    const { makeTransformationError } = Utils.SmartTags
+    try {
+      const withPropertySet = deepSetProperty(
+        Utils.clone(main),
+        Cast.toString(key),
+        val)
+      return makeSuccess(withPropertySet)
+    } catch (err) {
+      return makeFailure(makeTransformationError(`Impossible to access property :${key}`))
+    }
   }
 })
+
+function deepSetProperty (
+  record: Types.Tree.RestingRecordValue,
+  pathString: string,
+  value: Types.Tree.RestingValue
+): Types.Tree.RestingRecordValue {
+  const pathChunks = pathString.split('.')
+  const clone = Utils.clone(record)
+  let currentRecord = clone
+  pathChunks.forEach((chunk, pos) => {
+    const isLast = pos === pathChunks.length - 1
+    if (isLast) { currentRecord[chunk] = value }
+    else {
+      const found = currentRecord[chunk]
+      if (isRecord(found)) currentRecord = found
+      else throw 'NOT_A_RECORD'
+    }
+  })
+  return clone
+}

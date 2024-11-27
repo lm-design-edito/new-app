@@ -109,6 +109,18 @@ export namespace Types {
     export type Options = {
       globalObject: RestingRecordValue
     }
+
+    export type Serialized = { type: 'null', value: null }
+      | { type: 'boolean', value: boolean }
+      | { type: 'number', value: number }
+      | { type: 'string', value: string }
+      | { type: 'text', value: string }
+      | { type: 'element', value: string }
+      | { type: 'nodelist', value: Array<Serialized> }
+      | { type: 'array', value: Array<Serialized> }
+      | { type: 'record', value: { [k: string]: Serialized } }
+      | { type: 'transformer', value: Transformer }
+      | { type: 'method', value: Method }
   }
 
   /* * * * * * * * * * * * * * * * * * * * * * 

@@ -1,3 +1,4 @@
+import { isRecord } from '@design-edito/tools/agnostic/objects/is-record'
 import { Outcome } from '@design-edito/tools/agnostic/misc/outcome'
 import { Cast } from '../../../cast'
 import { Utils } from '../../../utils'
@@ -29,9 +30,33 @@ export const getproperty = SmartTags.makeSmartTag<Main, Args, Output>({
     const { makeFailure, makeSuccess } = Outcome
     const [propName] = args
     const strPropName = Cast.toString(propName)
-    const val = main[strPropName]
-    const valType = getType(val)
-    if (valType !== undefined && valType !== 'transformer') return makeSuccess(val as Output)
-    return makeFailure(makeTransformationError(`Forbidden access to key: '${strPropName}'`))
+    try {
+      const found = deepGetProperty(main, strPropName)
+      const foundType = getType(found)
+      if (foundType !== 'transformer') return makeSuccess(found as Output)
+      return makeFailure(makeTransformationError(`Forbidden access to key: '${strPropName}'`))
+    } catch (err) {
+      return makeFailure(makeTransformationError(`Impossible to access ${strPropName}`))
+    }
   }
 })
+
+function deepGetProperty (record: Types.Tree.RestingRecordValue, pathString: string): Types.Tree.RestingRecordValue {
+  const pathChunks = pathString.split('.')
+  let currentRecord = record
+  let returned: Types.Tree.RestingValue = currentRecord
+  pathChunks.forEach((chunk, pos) => {
+    const isLast = pos === pathChunks.length - 1
+    if (isLast) {
+      const val = currentRecord[chunk]
+      if (val === undefined) throw 'PROP_UNDEFINED'
+      returned = val
+    }
+    else {
+      const found = currentRecord[chunk]
+      if (isRecord(found)) currentRecord = found
+      else throw 'NOT_A_RECORD'
+    }
+  })
+  return returned
+}

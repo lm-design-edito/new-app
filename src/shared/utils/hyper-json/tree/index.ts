@@ -4,6 +4,7 @@ import { Types } from '../types'
 import { Utils } from '../utils'
 import { Cast } from '../cast'
 
+import { any } from '../smart-tags/isolated/any'
 import { array } from '../smart-tags/isolated/array'
 import { boolean } from '../smart-tags/isolated/boolean'
 import { element } from '../smart-tags/isolated/element'
@@ -40,6 +41,7 @@ import { recordtoarray } from '../smart-tags/coalesced/recordtoarray'
 import { removeclass } from '../smart-tags/coalesced/removeclass'
 import { replace } from '../smart-tags/coalesced/replace'
 import { select } from '../smart-tags/coalesced/select'
+import { set } from '../smart-tags/coalesced/set'
 import { setproperty } from '../smart-tags/coalesced/setproperty'
 import { sorton } from '../smart-tags/coalesced/sorton'
 import { split } from '../smart-tags/coalesced/split'
@@ -56,12 +58,14 @@ import { tostring } from '../smart-tags/coalesced/tostring'
 import { totext } from '../smart-tags/coalesced/totext'
 import { transformselected } from '../smart-tags/coalesced/transformselected'
 import { trim } from '../smart-tags/coalesced/trim'
+import { Serialize } from '../serialize'
+import { Transformer } from '../transformer'
 
 // [WIP] find a better place for this
 export const SMART_TAGS_REGISTER: Types.SmartTags.Register = new Map<string, Types.SmartTags.SmartTag<any, any, any>>([
-  add, array, boolean, element, global, nodelist, nullFunc, number, record, ref, string, text, addclass,
+  any, array, boolean, element, global, nodelist, nullFunc, number, record, ref, string, text, add, addclass,
   and, append, at, call, clone, deleteproperties, equals, getproperties, getproperty, ifFunc, join,
-  length, map, negate, notrailing, or, print, push, recordtoarray, removeclass, replace, select,
+  length, map, negate, notrailing, or, print, push, recordtoarray, removeclass, replace, select, set,
   setproperty, sorton, split, toarray, toboolean, toelement, toggleclass, tonodelist, tonull, tonumber,
   toref, torecord, tostring, totext, transformselected, trim
 ])
@@ -127,9 +131,14 @@ export namespace Tree {
 
       // Bounds
       this.resolve = this.resolve.bind(this)
-      this.evaluateAsValue = this.evaluateAsValue.bind(this) // [WIP] use a Logger in the options and log directly from evaluate() ?
-      this.evaluate = this.evaluate.bind(this)
+      this.performSafetyChecks = this.performSafetyChecks.bind(this)
+      this.computeValue = this.computeValue.bind(this)
+      this.enforceEvaluation = this.enforceEvaluation.bind(this)
+      this.getCachedValue = this.getCachedValue.bind(this)
+      this.setCachedValue = this.setCachedValue.bind(this)
+      this.getPerfCounters = this.getPerfCounters.bind(this)
       this.printPerfCounters = this.printPerfCounters.bind(this)
+      this.evaluate = this.evaluate.bind(this)
       
       // node
       this.node = node
@@ -262,7 +271,7 @@ export namespace Tree {
       for (const chunk of path) {
         if (chunk === '.') continue
         if (chunk === '..') {
-          currentTree = this.parent ?? this
+          currentTree = currentTree.parent ?? this
           continue
         }
         const { subtrees } = currentTree
@@ -273,8 +282,27 @@ export namespace Tree {
       return currentTree
     }
 
-    evaluateAsValue (): Types.Tree.Value {
-      const { isolationInitType, subtrees, node, smartTagData, isMethod, isRoot, mode } = this
+    // [WIP] variablesStore is actually only used on root Tree
+    variablesStore = new Map<string, Types.Tree.Serialized>()
+
+    setVariable (name: string, value: Types.Tree.RestingValue): void {
+      const { root, isRoot, variablesStore } = this
+      if (!isRoot) return root.setVariable(name, value)
+      variablesStore.set(name, Serialize.serialize(value))
+    }
+
+    getVariable (name: string): Types.Tree.RestingValue | undefined {
+      const { root } = this
+      const found = root.variablesStore.get(name)
+      if (found === undefined) return undefined
+      const deserialized = Serialize.deserialize(found)
+      if (deserialized instanceof Transformer) throw 'A transformer should not be stored as a variable, this happening denotes an implementation error.'
+      return deserialized
+    }
+
+    // [WIP] bind this
+    private performSafetyChecks () {
+      const { node, smartTagData, isMethod, mode, isRoot } = this
       const { Text } = Window.get()
 
       // Checks for impossible configurations
@@ -283,21 +311,33 @@ export namespace Tree {
         if (mode === 'coalescion') throw new Error('A Text or HTMLElement node cannot be used in coalescion mode')
       }
 
+      if (isRoot && mode === 'coalescion') throw new Error(`The root node cannot be used in coalescion mode`)
+    }
+
+    // [WIP] bind this
+    private computeValue (): Types.Tree.Value {
+      const { isolationInitType, subtrees, node, smartTagData, isMethod, mode, performSafetyChecks } = this
+      
+      // Looks for impossible attributes configurations
+      performSafetyChecks()
+
       // If node is text, returns the node itself
+      const { Text } = Window.get()
       if (node instanceof Text) return node.cloneNode(true) as Text
 
+      // Inner value calculation
       const initialInnerValue = Utils.Tree.getInitialValueFromTypeName(isolationInitType)
-      console.log('INIT-TYPE=', isolationInitType)
-      console.log('INITIAL=', initialInnerValue)
-      console.log('SUBTREES=', subtrees)
+      // console.log('INIT-INNER=', initialInnerValue)
       const innerValue = Array
         .from(subtrees)
         .reduce((reduced, [subpath, subtree]) => {
-          const coalesced = Utils.coalesceValues(reduced, subpath, subtree.evaluate())
-          console.log('COALESCED=', coalesced)
+          const subvalue = subtree.evaluate()
+          const coalesced = Utils.coalesceValues(reduced, subpath, subvalue)
+          // console.log('COALESCING...', reduced, subvalue, 'on:', subpath)
+          // console.log('COALESCED=', coalesced)
           return coalesced
         }, initialInnerValue)
-      console.log('INNER=', innerValue)
+      // console.log('INNER=', innerValue)
 
       // If no smartTagData, then treat it as an HTMLElement
       if (smartTagData === null) {
@@ -311,8 +351,7 @@ export namespace Tree {
       const { transformer, method } = smartTagData.generator(innerValue, mode, this)
       if (isMethod) return method
       if (mode === 'isolation') {
-        // Here we apply null as a placeholder outerValue since the transformer is in isolation mode
-        const applied = transformer.apply(null)
+        const applied = transformer.apply(null) // null ignored by apply since isolation mode
         if (applied.success) return applied.payload
         throw {
           error: 'Transformation error',
@@ -321,31 +360,107 @@ export namespace Tree {
           path: this.pathString,
         }
       }
-      if (isRoot) throw new Error(`The root node cannot be used in coalescion mode`)
       return transformer
     }
 
-    evaluate () {
-      const { smartTagName, tagName, pathString, isLiteral, isPreserved, attributes, node } = this
+    // [WIP] bind this
+    private enforceEvaluation (): Types.Tree.Value {
+      const { isPreserved, node, computeValue, isLiteral, attributes } = this
       const { Element } = Window.get()
-      console.group(smartTagName ?? tagName ?? '#text', '@', pathString)
       if (isPreserved) return Utils.clone(node)
-      const evaluated = this.evaluateAsValue()
-      if (!isLiteral) {
-        console.log('EVALUATED=', evaluated)
-        console.groupEnd()
-        return evaluated
-      } else {
-        const asLiteral = Utils.toHyperJson(evaluated)
-        if (asLiteral instanceof Element) attributes?.forEach(({ name, value }) => asLiteral.setAttribute(name, value))
-        console.log('EVALUATED=', asLiteral)
-        console.groupEnd()
-        return asLiteral
-      }
+      const evaluated = computeValue()
+      if (!isLiteral) return evaluated
+      const asLiteral = Utils.toHyperJson(evaluated)
+      if (asLiteral instanceof Element) attributes?.forEach(({ name, value }) => asLiteral.setAttribute(name, value))
+      return asLiteral
     }
 
-    printPerfCounters () {
-      console.log('[WIP] PRINT PERF COUNTERS')
+    private cachedValue: Types.Tree.Serialized | undefined = undefined
+
+    // [WIP] bind this
+    private getCachedValue (): Types.Tree.Value | undefined {
+      const { cachedValue } = this
+      if (cachedValue === undefined) return undefined
+      const deserialized = Serialize.deserialize(cachedValue)
+      return deserialized
     }
-  }  
+
+    private setCachedValue (evaluated: Types.Tree.Value) {
+      this.cachedValue = Serialize.serialize(evaluated)
+    }
+
+    perfCounters = {
+      computed: 0,
+      computeTime: 0,
+      computeTimeAvg: 0,
+      cached: 0,
+      cacheTime: 0,
+      cacheTimeAvg: 0,
+      totalTime: 0
+    }
+
+    // [WIP] bind this
+    getPerfCounters () {
+      const { subtrees } = this
+      const subCounters: Array<[string, typeof this['perfCounters']]> = []
+      subCounters.push([this.pathString, this.perfCounters])
+      subtrees.forEach(subtree => subCounters.push(...subtree.getPerfCounters()))
+      return subCounters
+    }
+
+    // [WIP] bind this
+    printPerfCounters () {
+      const perfCounters = this.getPerfCounters()
+        .sort((a, b) => {
+          const aCalls = a[1].computed + a[1].cached
+          const bCalls = b[1].computed + b[1].cached
+          // return b[1].totalTime - a[1].totalTime
+          return bCalls - aCalls
+        })
+        .map(e => ({
+          path: e[0],
+          totalMs: e[1].totalTime,
+          computeMs: e[1].computeTime,
+          cacheMs: e[1].cacheTime,
+          ops: `${e[1].computed}/${e[1].cached}`
+        }))
+      console.table(perfCounters)
+    }
+
+    evaluate () {
+      const start = Date.now()
+      const { smartTagName, tagName, pathString, getCachedValue, setCachedValue, enforceEvaluation, isRoot, isMethod, isPreserved, isLiteral, mode, subtrees, perfCounters } = this
+      console.group(smartTagName ?? tagName ?? '#text', '@', pathString)
+      // console.log('IS-ROOT=', isRoot)
+      // console.log('IS-METHOD=', isMethod)
+      // console.log('IS-PRESERVED=', isPreserved)
+      // console.log('IS-LITERAL', isLiteral)
+      // console.log('MODE=', mode)
+      // console.log('SUBTREES=', subtrees)
+      const cached = getCachedValue()
+      // console.log('CACHED=', cached)
+      if (cached !== undefined) {
+        console.groupEnd()
+        console.log('EVALUATED=', cached)
+        const end = Date.now()
+        const time = end - start
+        perfCounters.cached ++
+        perfCounters.cacheTime += time
+        perfCounters.cacheTimeAvg = perfCounters.cacheTime / perfCounters.cached
+        perfCounters.totalTime = perfCounters.computeTime + perfCounters.cacheTime
+        return cached
+      }
+      const evaluated = enforceEvaluation()
+      console.log('EVALUATED=', evaluated)
+      setCachedValue(evaluated)
+      console.groupEnd()
+      const end = Date.now()
+      const time = end - start
+      perfCounters.computed ++
+      perfCounters.computeTime += time
+      perfCounters.computeTimeAvg = perfCounters.computeTime / perfCounters.computed
+      perfCounters.totalTime = perfCounters.computeTime + perfCounters.cacheTime
+      return evaluated
+    }
+  }
 }
