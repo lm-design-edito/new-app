@@ -2,6 +2,7 @@ import { Outcome } from '@design-edito/tools/agnostic/misc/outcome'
 import { Tree as TreeNamespace } from '../tree'
 import { Transformer } from '../transformer'
 import { Method } from '../method'
+import { Logger } from '@design-edito/tools/agnostic/misc/logs/logger'
 
 export namespace Types {
   /* * * * * * * * * * * * * * * * * * * * * * 
@@ -108,6 +109,8 @@ export namespace Types {
 
     export type Options = {
       globalObject: RestingRecordValue
+      logger: Logger | null
+      loggerThread: string | undefined
     }
 
     export type Serialized = { type: 'null', value: null }

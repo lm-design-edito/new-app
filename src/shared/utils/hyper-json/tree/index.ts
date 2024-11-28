@@ -1,5 +1,7 @@
 import { Window } from '@design-edito/tools/agnostic/misc/crossenv/window'
 
+import { Serialize } from '../serialize'
+import { Transformer } from '../transformer'
 import { Types } from '../types'
 import { Utils } from '../utils'
 import { Cast } from '../cast'
@@ -29,6 +31,7 @@ import { equals } from '../smart-tags/coalesced/equals'
 import { getproperties } from '../smart-tags/coalesced/getproperties'
 import { getproperty } from '../smart-tags/coalesced/getproperty'
 import { ifFunc } from '../smart-tags/coalesced/if'
+import { initialize } from '../smart-tags/coalesced/initialize'
 import { join } from '../smart-tags/coalesced/join'
 import { length } from '../smart-tags/coalesced/length'
 import { map } from '../smart-tags/coalesced/map'
@@ -58,14 +61,12 @@ import { tostring } from '../smart-tags/coalesced/tostring'
 import { totext } from '../smart-tags/coalesced/totext'
 import { transformselected } from '../smart-tags/coalesced/transformselected'
 import { trim } from '../smart-tags/coalesced/trim'
-import { Serialize } from '../serialize'
-import { Transformer } from '../transformer'
 
 // [WIP] find a better place for this
 export const SMART_TAGS_REGISTER: Types.SmartTags.Register = new Map<string, Types.SmartTags.SmartTag<any, any, any>>([
   any, array, boolean, element, global, nodelist, nullFunc, number, record, ref, string, text, add, addclass,
-  and, append, at, call, clone, deleteproperties, equals, getproperties, getproperty, ifFunc, join,
-  length, map, negate, notrailing, or, print, push, recordtoarray, removeclass, replace, select, set,
+  and, append, at, call, clone, deleteproperties, equals, getproperties, getproperty, ifFunc, initialize,
+  join, length, map, negate, notrailing, or, print, push, recordtoarray, removeclass, replace, select, set,
   setproperty, sorton, split, toarray, toboolean, toelement, toggleclass, tonodelist, tonull, tonumber,
   toref, torecord, tostring, totext, transformselected, trim
 ])
@@ -102,7 +103,9 @@ export namespace Tree {
     static literalAttribute = '_literal'
 
     static defaultOptions: Types.Tree.Options = {
-      globalObject: {}
+      globalObject: {},
+      logger: null,
+      loggerThread: 'hyperjson'
     }
 
     static from (
@@ -131,6 +134,8 @@ export namespace Tree {
 
       // Bounds
       this.resolve = this.resolve.bind(this)
+      this.setVariable = this.setVariable.bind(this)
+      this.getVariable = this.getVariable.bind(this)
       this.performSafetyChecks = this.performSafetyChecks.bind(this)
       this.computeValue = this.computeValue.bind(this)
       this.enforceEvaluation = this.enforceEvaluation.bind(this)
@@ -192,7 +197,6 @@ export namespace Tree {
       else { this.smartTagData = SMART_TAGS_REGISTER.get(this.smartTagName) ?? null }
 
       // mode
-      // [WIP] rootNode cannot be in coalescion mode
       const hasModeAttribute = this.attributes?.find(attr => {
         return attr.name === Tree.modeAttribute
           && Utils.Tree.TypeChecks.isTreeMode(attr.value)
@@ -300,7 +304,6 @@ export namespace Tree {
       return deserialized
     }
 
-    // [WIP] bind this
     private performSafetyChecks () {
       const { node, smartTagData, isMethod, mode, isRoot } = this
       const { Text } = Window.get()
@@ -314,9 +317,17 @@ export namespace Tree {
       if (isRoot && mode === 'coalescion') throw new Error(`The root node cannot be used in coalescion mode`)
     }
 
-    // [WIP] bind this
     private computeValue (): Types.Tree.Value {
-      const { isolationInitType, subtrees, node, smartTagData, isMethod, mode, performSafetyChecks } = this
+      const {
+        isolationInitType,
+        subtrees,
+        node,
+        smartTagData,
+        isMethod,
+        mode,
+        performSafetyChecks,
+        options
+      } = this
       
       // Looks for impossible attributes configurations
       performSafetyChecks()
@@ -327,17 +338,18 @@ export namespace Tree {
 
       // Inner value calculation
       const initialInnerValue = Utils.Tree.getInitialValueFromTypeName(isolationInitType)
-      // console.log('INIT-INNER=', initialInnerValue)
+      console.log('INIT-INNER-TYPE=', isolationInitType)
+      console.log('INIT-INNER=', initialInnerValue)
       const innerValue = Array
         .from(subtrees)
         .reduce((reduced, [subpath, subtree]) => {
           const subvalue = subtree.evaluate()
           const coalesced = Utils.coalesceValues(reduced, subpath, subvalue)
-          // console.log('COALESCING...', reduced, subvalue, 'on:', subpath)
-          // console.log('COALESCED=', coalesced)
+          console.log('COALESCING...', reduced, subvalue, 'on:', subpath)
+          console.log('COALESCED=', coalesced)
           return coalesced
         }, initialInnerValue)
-      // console.log('INNER=', innerValue)
+      console.log('INNER=', innerValue)
 
       // If no smartTagData, then treat it as an HTMLElement
       if (smartTagData === null) {
@@ -363,7 +375,6 @@ export namespace Tree {
       return transformer
     }
 
-    // [WIP] bind this
     private enforceEvaluation (): Types.Tree.Value {
       const { isPreserved, node, computeValue, isLiteral, attributes } = this
       const { Element } = Window.get()
@@ -377,7 +388,6 @@ export namespace Tree {
 
     private cachedValue: Types.Tree.Serialized | undefined = undefined
 
-    // [WIP] bind this
     private getCachedValue (): Types.Tree.Value | undefined {
       const { cachedValue } = this
       if (cachedValue === undefined) return undefined
@@ -410,6 +420,7 @@ export namespace Tree {
 
     // [WIP] bind this
     printPerfCounters () {
+      const { options } = this
       const perfCounters = this.getPerfCounters()
         .sort((a, b) => {
           const aCalls = a[1].computed + a[1].cached
@@ -429,19 +440,35 @@ export namespace Tree {
 
     evaluate () {
       const start = Date.now()
-      const { smartTagName, tagName, pathString, getCachedValue, setCachedValue, enforceEvaluation, isRoot, isMethod, isPreserved, isLiteral, mode, subtrees, perfCounters } = this
+      const {
+        smartTagName,
+        tagName,
+        pathString,
+        getCachedValue,
+        setCachedValue,
+        enforceEvaluation,
+        perfCounters,
+        node,
+        isRoot,
+        isMethod,
+        isPreserved,
+        isLiteral,
+        mode,
+        subtrees
+      } = this
       console.group(smartTagName ?? tagName ?? '#text', '@', pathString)
-      // console.log('IS-ROOT=', isRoot)
-      // console.log('IS-METHOD=', isMethod)
-      // console.log('IS-PRESERVED=', isPreserved)
-      // console.log('IS-LITERAL', isLiteral)
-      // console.log('MODE=', mode)
-      // console.log('SUBTREES=', subtrees)
+      console.log('NODE=', node)
+      console.log('IS-ROOT=', isRoot)
+      console.log('IS-METHOD=', isMethod)
+      console.log('IS-PRESERVED=', isPreserved)
+      console.log('IS-LITERAL', isLiteral)
+      console.log('MODE=', mode)
+      console.log('SUBTREES=', subtrees)
       const cached = getCachedValue()
-      // console.log('CACHED=', cached)
+      console.log('CACHED=', cached)
       if (cached !== undefined) {
-        console.groupEnd()
         console.log('EVALUATED=', cached)
+        console.groupEnd()
         const end = Date.now()
         const time = end - start
         perfCounters.cached ++

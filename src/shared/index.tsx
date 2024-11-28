@@ -3,6 +3,7 @@ import { insertNode, InsertNodePosition } from '@design-edito/tools/agnostic/htm
 import { isRecord } from '@design-edito/tools/agnostic/objects/is-record'
 import { selectorToElement } from '@design-edito/tools/agnostic/html/selector-to-element'
 import { Logger } from '@design-edito/tools/agnostic/misc/logs/logger'
+import { Cast } from '@design-edito/tools/agnostic/misc/cast'
 import appConfig from '~/config'
 import { Apps } from '~/apps'
 import { Analytics } from '~/shared/analytics'
@@ -12,7 +13,6 @@ import { Externals } from '~/shared/externals'
 import { Globals } from '~/shared/globals'
 import { LmHtml } from '~/shared/lm-html'
 import { Slots } from '~/shared/slots'
-import { Cast } from '@design-edito/tools/agnostic/misc/cast'
 
 /* * * * * * * * * * * * * * * * * * * * * *
  * EXPORT & GLOBALS
@@ -35,7 +35,7 @@ Globals.expose(Globals.GlobalKey.EVENTS, Events)
 Globals.expose(Globals.GlobalKey.EXTERNALS, Externals)
 Globals.expose(Globals.GlobalKey.LM_HTML, LmHtml)
 Globals.expose(Globals.GlobalKey.SLOTS, Slots)
-Globals.expose(Globals.GlobalKey.LOGGER, logger as unknown as Logger)
+Globals.expose(Globals.GlobalKey.LOGGER, logger)
 Globals.expose(Globals.GlobalKey.INIT, init)
 export { meta, Analytics, Apps, Config, Events, Externals, LmHtml, Slots, Logger, logger, init }
 
@@ -95,15 +95,18 @@ async function init () {
     const nodes = document.querySelectorAll(appConfig.dataSourceSelector)
     return Array.from(nodes).map(e => e.cloneNode(true)) as Element[]
   }
-  const pageInlineDataValue = HyperJson.Tree.Tree.from(getPageInlineDataElements()/* [WIP] pass the globalObj at some point, {
-    globalObj: Globals.getHyperJsonGlobalObj()
-  }*/).evaluate()
-  logger.log('Inline data', pageInlineDataValue)
+  const pageInlineDataValue = HyperJson.Tree.Tree.from(
+    getPageInlineDataElements(), {
+      globalObject: Globals.getHyperJsonGlobalObj(),
+      logger: Globals.retrieve(Globals.GlobalKey.LOGGER) ?? null,
+      loggerThread: 'Inline HyperJson evaluation'
+    }).evaluate()
+  logger.log('Inline HyperJson value', pageInlineDataValue)
   const pageInlineDataValueIsRecord = isRecord(pageInlineDataValue)
   const pageDataConfigCollectionName = appConfig.dataSourcesReservedNames.config
   const pageInlineDataRawConfigInstructions = pageInlineDataValueIsRecord
     && Array.isArray(pageInlineDataValue[pageDataConfigCollectionName])
-    ? pageInlineDataValue[pageDataConfigCollectionName] as HyperJson.Types.Tree.Value[]
+    ? pageInlineDataValue[pageDataConfigCollectionName] as HyperJson.Types.Tree.RestingArrayValue
     : []
   const pageInlineDataConfigInstructions = pageInlineDataRawConfigInstructions.map(instruction => {
     const instructionIsRecord = isRecord(instruction)
@@ -153,11 +156,15 @@ async function init () {
       return wrapper
     })
   const pageFullTreeElements = [...getPageInlineDataElements(), ...pageRemoteDataNodes]
-  const pageFullDataTree = HyperJson.Tree.Tree.from(pageFullTreeElements, /* [WIP] pass the global obj at some point { globalObj: Globals.getHyperJsonGlobalObj() }*/)
+  const pageFullDataTree = HyperJson.Tree.Tree.from(pageFullTreeElements, {
+    globalObject: Globals.getHyperJsonGlobalObj(),
+    logger: Globals.retrieve(Globals.GlobalKey.LOGGER) ?? null,
+    loggerThread: 'Full HyperJson evaluation'
+  })
   Globals.expose(Globals.GlobalKey.TREE, pageFullDataTree)
   const pageFullDataValue = pageFullDataTree.evaluate()
   pageFullDataTree.printPerfCounters()
-  logger.log('Full data', pageFullDataValue)
+  logger.log('Full HyperJson value', pageFullDataValue)
   const pageFullDataValueIsRecord = isRecord(pageFullDataValue)
   const pageDataSlotsCollectionName = appConfig.dataSourcesReservedNames.slots
   const pageFullDataConfig = pageFullDataValueIsRecord ? pageFullDataValue[pageDataConfigCollectionName] : undefined
