@@ -13,7 +13,7 @@ export namespace Cast {
     if (typeof input === 'boolean') return input
     if (typeof input === 'number') return input !== 0
     if (typeof input === 'string' || input instanceof Text) {
-      const strInput = `${input}`
+      const strInput = toString(input)
       if (strInput.trim() === '') return false
       if (strInput.trim().toLowerCase() === 'false') return false
       return true

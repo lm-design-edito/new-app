@@ -95,12 +95,13 @@ async function init () {
     const nodes = document.querySelectorAll(appConfig.dataSourceSelector)
     return Array.from(nodes).map(e => e.cloneNode(true)) as Element[]
   }
+  const pageInlineDataElements = getPageInlineDataElements()
   const pageInlineDataValue = HyperJson.Tree.Tree.from(
-    getPageInlineDataElements(), {
-      globalObject: Globals.getHyperJsonGlobalObj(),
-      logger: Globals.retrieve(Globals.GlobalKey.LOGGER) ?? null,
-      loggerThread: 'Inline HyperJson evaluation'
-    }).evaluate()
+    pageInlineDataElements, {
+    globalObject: Globals.getHyperJsonGlobalObj(),
+    logger: Globals.retrieve(Globals.GlobalKey.LOGGER) ?? null,
+    loggerThread: 'Inline HyperJson evaluation'
+  }).evaluate()
   logger.log('Inline HyperJson value', pageInlineDataValue)
   const pageInlineDataValueIsRecord = isRecord(pageInlineDataValue)
   const pageDataConfigCollectionName = appConfig.dataSourcesReservedNames.config
@@ -163,6 +164,7 @@ async function init () {
   })
   Globals.expose(Globals.GlobalKey.TREE, pageFullDataTree)
   const pageFullDataValue = pageFullDataTree.evaluate()
+  console.log(pageFullDataValue)
   pageFullDataTree.printPerfCounters()
   logger.log('Full HyperJson value', pageFullDataValue)
   const pageFullDataValueIsRecord = isRecord(pageFullDataValue)

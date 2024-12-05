@@ -42,7 +42,10 @@ export const getproperty = SmartTags.makeSmartTag<Main, Args, Output>({
 })
 
 function deepGetProperty (record: Types.Tree.RestingRecordValue, pathString: string): Types.Tree.RestingRecordValue {
-  const pathChunks = pathString.split('.')
+  const pathChunks = pathString
+    .split('.')
+    .map(e => e.trim())
+    .filter(e => e !== '')
   let currentRecord = record
   let returned: Types.Tree.RestingValue = currentRecord
   pathChunks.forEach((chunk, pos) => {

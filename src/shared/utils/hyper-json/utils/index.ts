@@ -274,103 +274,56 @@ export namespace Utils {
   }
 
   export namespace Tree {
-    export function mergeNodes (nodes: Array<Element | Text>): Element | Text {
-      const [first, ...rest] = nodes
-      if (first === undefined) throw new Error('Expecting at least one node')
-      const { Text, Element, document } = Window.get()
-    
-      /* Local utils function */
-      const isTextOrElement = (node: Node): node is Text | Element => node instanceof Text || node instanceof Element
-  
-      /* Shallow merge nodes */
-      let CURRENT: Element | Text = first
-      rest.forEach(node => {
-        if (node instanceof Text) {
-          CURRENT.remove()
-          CURRENT = node
-          return;
-        }
-        const actionRaw = node.getAttribute(TreeNamespace.Tree.actionAttribute)
-        const action = isInEnum(Types.Tree.Merge.Action, actionRaw as any)
-          ? actionRaw as Types.Tree.Merge.Action
-          : Types.Tree.Merge.Action.REPLACE
-        if (action === Types.Tree.Merge.Action.REPLACE) {
-          CURRENT.remove()
-          CURRENT = node
-          return;
-        }
-        if (CURRENT instanceof Text) {
-          if (node instanceof Text) {
-            const appended = action === Types.Tree.Merge.Action.APPEND
-              ? document.createTextNode(`${CURRENT.textContent}${node.textContent}`)
-              : document.createTextNode(`${node.textContent}${CURRENT.textContent}`)
-            CURRENT.remove()
-            node.remove()
-            CURRENT = appended
-            return;
-          }
-          CURRENT.remove()
-          CURRENT = node
-          return;
-        }
-        if (node instanceof Text) {
-          CURRENT.remove()
-          CURRENT = node
-          return;
-        }
-        const currentAttributes = Array.from(CURRENT.attributes)
-        const nodeAttributes = Array.from(node.attributes)
-        const nodeChildren = Array.from(node.childNodes).filter(isTextOrElement)
-        const outputAttributes = action === Types.Tree.Merge.Action.APPEND
-          ? [...currentAttributes, ...nodeAttributes]
-          : [...nodeAttributes, ...currentAttributes]
-        if (action === Types.Tree.Merge.Action.APPEND) CURRENT.append(...nodeChildren)
-        else CURRENT.prepend(...nodeChildren)
-        outputAttributes.forEach(attr => (CURRENT as Element).setAttribute(attr.name, attr.value))
-        node.remove()
-        return;
+    export function mergeNodes (nodes: Element[]) {
+      const clones = nodes.map(node => node.cloneNode(true)) as Element[]
+      type ChildData = {
+        node: Element,
+        key: string | undefined
+      } | {
+        node: Text,
+        key: undefined
+      }
+      const allChildren: Array<ChildData> = []
+      clones.forEach(node => {
+        const actionAttribute = node.getAttribute(TreeNamespace.Tree.actionAttribute)?.trim().toLowerCase()
+        const actionAttrIsValid = isInEnum(Types.Tree.Merge.Action, actionAttribute ?? '')
+        const nodeAction = actionAttrIsValid
+          ? actionAttribute as Types.Tree.Merge.Action
+          : Types.Tree.Merge.Action.APPEND
+        const { Element, Text } = Window.get()
+        const children: typeof allChildren = Array
+          .from(node.childNodes)
+          .filter(child => child instanceof Text || child instanceof Element)
+          .map(child => {
+            if (child instanceof Text) return { node: child, key: undefined }
+            const childKey = child.getAttribute(TreeNamespace.Tree.keyAttribute) ?? undefined
+            return { node: child, key: childKey }
+          })
+        if (nodeAction === Types.Tree.Merge.Action.REPLACE) { allChildren.splice(0, allChildren.length) }
+        else if (nodeAction === Types.Tree.Merge.Action.PREPEND) { allChildren.unshift(...children) }
+        else { allChildren.push(...children) }
       })
-    
-      /* List child nodes sharing the same subpath */
-      const wrapperChildren = Array.from(CURRENT.childNodes).filter(isTextOrElement)
-      const subpaths = new Map<string | number, Array<Element | Text>>()
-      let positionnedChildrenCount = 0
-      wrapperChildren.forEach(child => {
-        if (child instanceof Text) {
-          const childKey = positionnedChildrenCount
-          const found = subpaths.get(childKey) ?? []
-          found.push(child)
-          subpaths.set(childKey, found)
-          positionnedChildrenCount += 1
-        } else {
-          const rawChildKey = child.getAttribute(TreeNamespace.Tree.keyAttribute)
-          const childKey = rawChildKey ?? positionnedChildrenCount
-          const found = subpaths.get(childKey) ?? []
-          found.push(child)
-          subpaths.set(childKey, found)
-          if (rawChildKey === null) { positionnedChildrenCount += 1 }
+      const mergedChildren: typeof allChildren = []
+      allChildren.forEach(childData => {
+        if (childData.key === undefined) mergedChildren.push(childData)
+        else {
+          const childKey = childData.key!
+          const alreadyMerged = mergedChildren.find(dat => dat.key === childKey)
+          if (alreadyMerged) return;
+          const toMerge = allChildren.filter(dat => dat.key === childKey)
+          if (toMerge.length === 0) return;
+          const merged = mergeNodes(toMerge.map(dat => dat.node) as [Element])
+          mergedChildren.push({ node: merged, key: childKey })
         }
       })
-    
-      /* For each node sharing a subpath, merge them */
-      subpaths.forEach(nodes => {
-        if (nodes.length < 2) return
-        return mergeNodes(nodes)
-      })
-    
-      /* At the end of the process, find and return wrapper's first child */
-      return CURRENT
-    }
-
-    export function mergeRoots (nodes: Array<Element | Text>): Element | Text {
-      const { Element } = Window.get()
-      const elements = nodes.filter((e): e is Element => e instanceof Element)
-      elements.forEach(element => {
-        const elementAction = element.getAttribute(TreeNamespace.Tree.actionAttribute) ?? Types.Tree.Merge.Action.APPEND
-        element.setAttribute(TreeNamespace.Tree.actionAttribute, elementAction)
-      })
-      const merged = mergeNodes(elements)
-      return merged
+      const allAttributes = clones.reduce((attributes, node) => ([
+        ...attributes,
+        ...node.attributes
+      ]), [] as Attr[])
+      const outWrapper = (clones[0]?.cloneNode() ?? document.createElement('div')) as Element
+      allAttributes.forEach(attr => outWrapper.setAttribute(attr.name, attr.value))
+      outWrapper.append(...mergedChildren.map(e => e.node))
+      return outWrapper
     }
 
     export function getInitialValueFromTypeName (name: Exclude<Types.Tree.ValueTypeName, 'transformer' | 'method'>): Types.Tree.RestingValue {

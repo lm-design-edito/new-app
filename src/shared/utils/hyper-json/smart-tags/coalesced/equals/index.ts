@@ -1,3 +1,4 @@
+import { Window } from '@design-edito/tools/agnostic/misc/crossenv/window'
 import { Outcome } from '@design-edito/tools/agnostic/misc/outcome'
 import { Cast } from '../../../cast'
 import { Types } from '../../../types'
@@ -24,8 +25,9 @@ export const equals = SmartTags.makeSmartTag<Main, Args, Output>({
     return Outcome.makeSuccess(returned)
   },
   func: (main, args) => {
-    const all = [main, ...args]
-    const returned = all.every(Cast.toBoolean)
-    return Outcome.makeSuccess(returned)
+    const { Text } = Window.get()
+    const normalizedMain = main instanceof Text ? Cast.toString(main) : main
+    const normalizedArgs = args.map(a => a instanceof Text ? Cast.toString(a) : a)
+    return Outcome.makeSuccess(normalizedArgs.every(arg => arg === normalizedMain))
   }
 })

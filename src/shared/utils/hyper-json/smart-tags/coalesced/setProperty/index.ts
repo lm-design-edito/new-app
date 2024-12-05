@@ -1,9 +1,9 @@
 import { Outcome } from '@design-edito/tools/agnostic/misc/outcome'
+import { isRecord } from '@design-edito/tools/agnostic/objects/is-record'
 import { Cast } from '../../../cast'
 import { Utils } from '../../../utils'
 import { Types } from '../../../types'
 import { SmartTags } from '../..'
-import { isRecord } from '@design-edito/tools/agnostic/objects/is-record'
 
 type Main = Types.Tree.RestingRecordValue
 type Args = [string | Text, Types.Tree.RestingValue]

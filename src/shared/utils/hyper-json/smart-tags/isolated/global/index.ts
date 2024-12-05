@@ -3,7 +3,7 @@ import { Types } from '../../../types'
 import { Utils } from '../../../utils'
 import { SmartTags } from '../..'
 
-type Main = Types.Tree.RestingValue
+type Main = Types.Tree.RestingValue // [WIP] Main is ignored in all cases, should typecheck that?
 type Args = Types.Tree.RestingArrayValue
 type Output = Types.Tree.RestingRecordValue
 

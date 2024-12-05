@@ -10,6 +10,7 @@ import { any } from '../smart-tags/isolated/any'
 import { array } from '../smart-tags/isolated/array'
 import { boolean } from '../smart-tags/isolated/boolean'
 import { element } from '../smart-tags/isolated/element'
+import { get } from '../smart-tags/isolated/get'
 import { global } from '../smart-tags/isolated/global'
 import { nodelist } from '../smart-tags/isolated/nodelist'
 import { nullFunc } from '../smart-tags/isolated/null'
@@ -45,6 +46,7 @@ import { removeclass } from '../smart-tags/coalesced/removeclass'
 import { replace } from '../smart-tags/coalesced/replace'
 import { select } from '../smart-tags/coalesced/select'
 import { set } from '../smart-tags/coalesced/set'
+import { setproperties } from '../smart-tags/coalesced/setproperties'
 import { setproperty } from '../smart-tags/coalesced/setproperty'
 import { sorton } from '../smart-tags/coalesced/sorton'
 import { split } from '../smart-tags/coalesced/split'
@@ -64,11 +66,11 @@ import { trim } from '../smart-tags/coalesced/trim'
 
 // [WIP] find a better place for this
 export const SMART_TAGS_REGISTER: Types.SmartTags.Register = new Map<string, Types.SmartTags.SmartTag<any, any, any>>([
-  any, array, boolean, element, global, nodelist, nullFunc, number, record, ref, string, text, add, addclass,
-  and, append, at, call, clone, deleteproperties, equals, getproperties, getproperty, ifFunc, initialize,
-  join, length, map, negate, notrailing, or, print, push, recordtoarray, removeclass, replace, select, set,
-  setproperty, sorton, split, toarray, toboolean, toelement, toggleclass, tonodelist, tonull, tonumber,
-  toref, torecord, tostring, totext, transformselected, trim
+  any, array, boolean, element, get, global, nodelist, nullFunc, number, record, ref, string, text, add, addclass,
+  and, append, at, call, clone, deleteproperties, equals, getproperties, getproperty, ifFunc, initialize, join,
+  length, map, negate, notrailing, or, print, push, recordtoarray, removeclass, replace, select, set,
+  setproperties, setproperty, sorton, split, toarray, toboolean, toelement, toggleclass, tonodelist, tonull,
+  tonumber, toref, torecord, tostring, totext, transformselected, trim
 ])
 
 // [WIP] eventually just export the Tree class here
@@ -109,9 +111,9 @@ export namespace Tree {
     }
 
     static from (
-      nodes: Array<Element | Text>,
+      nodes: Element[],
       options: Types.Tree.Options): Tree {
-      const merged = Utils.Tree.mergeRoots(nodes)
+      const merged = Utils.Tree.mergeNodes(nodes)
       return new Tree(merged, null, null, options)
     }
 
@@ -338,18 +340,18 @@ export namespace Tree {
 
       // Inner value calculation
       const initialInnerValue = Utils.Tree.getInitialValueFromTypeName(isolationInitType)
-      console.log('INIT-INNER-TYPE=', isolationInitType)
-      console.log('INIT-INNER=', initialInnerValue)
+      // console.log('INIT-INNER-TYPE=', isolationInitType)
+      // console.log('INIT-INNER=', initialInnerValue)
       const innerValue = Array
         .from(subtrees)
         .reduce((reduced, [subpath, subtree]) => {
           const subvalue = subtree.evaluate()
           const coalesced = Utils.coalesceValues(reduced, subpath, subvalue)
-          console.log('COALESCING...', reduced, subvalue, 'on:', subpath)
-          console.log('COALESCED=', coalesced)
+          // console.log('COALESCING...', reduced, subvalue, 'on:', subpath)
+          // console.log('COALESCED=', coalesced)
           return coalesced
         }, initialInnerValue)
-      console.log('INNER=', innerValue)
+      // console.log('INNER=', innerValue)
 
       // If no smartTagData, then treat it as an HTMLElement
       if (smartTagData === null) {
@@ -456,19 +458,19 @@ export namespace Tree {
         mode,
         subtrees
       } = this
-      console.group(smartTagName ?? tagName ?? '#text', '@', pathString)
-      console.log('NODE=', node)
-      console.log('IS-ROOT=', isRoot)
-      console.log('IS-METHOD=', isMethod)
-      console.log('IS-PRESERVED=', isPreserved)
-      console.log('IS-LITERAL', isLiteral)
-      console.log('MODE=', mode)
-      console.log('SUBTREES=', subtrees)
+      // console.group(smartTagName ?? tagName ?? '#text', '@', pathString)
+      // console.log('NODE=', node)
+      // console.log('IS-ROOT=', isRoot)
+      // console.log('IS-METHOD=', isMethod)
+      // console.log('IS-PRESERVED=', isPreserved)
+      // console.log('IS-LITERAL', isLiteral)
+      // console.log('MODE=', mode)
+      // console.log('SUBTREES=', subtrees)
       const cached = getCachedValue()
-      console.log('CACHED=', cached)
+      // console.log('CACHED=', cached)
       if (cached !== undefined) {
-        console.log('EVALUATED=', cached)
-        console.groupEnd()
+        // console.log('EVALUATED=', cached)
+        // console.groupEnd()
         const end = Date.now()
         const time = end - start
         perfCounters.cached ++
@@ -478,9 +480,9 @@ export namespace Tree {
         return cached
       }
       const evaluated = enforceEvaluation()
-      console.log('EVALUATED=', evaluated)
+      // console.log('EVALUATED=', evaluated)
       setCachedValue(evaluated)
-      console.groupEnd()
+      // console.groupEnd()
       const end = Date.now()
       const time = end - start
       perfCounters.computed ++
