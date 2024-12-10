@@ -32,14 +32,14 @@ export const transformselected = SmartTags.makeSmartTag<Main, Args, Output>({
     const returned = [firstChecked.payload, ...othersChecked.payload] as Args
     return makeSuccess(returned)
   },
-  func: (main, args, details) => {
+  func: (main, args) => {
     const { makeFailure, makeSuccess } = Outcome
     const { makeTransformationError } = Utils.SmartTags
     const { typeCheck } = Utils.Tree.TypeChecks
     const mainClone = Cast.toElement(main)
     const [selector, ...methods] = args
     const selectedElements = [...mainClone.querySelectorAll(Cast.toString(selector))]
-    const transformationMap = new Map<Element, Types.Tree.RestingValue>(selectedElements.map(s => ([s, s])))
+    const transformationMap = new Map<Element, Types.Tree.RestingValue>(selectedElements.map(s => ([s, Utils.clone(s)])))
     for (const method of methods) {
       for (const [selected, value] of transformationMap) {
         const transformer = method.transformer

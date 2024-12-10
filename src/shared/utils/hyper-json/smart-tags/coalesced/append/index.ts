@@ -24,7 +24,7 @@ export const append = SmartTags.makeSmartTag<Main, Args, Output>({
     }
     if (main instanceof NodeList) {
       const frag = document.createDocumentFragment()
-      frag.append(...main, ...Cast.toNodeList(main))
+      frag.append(...main, ...Cast.toNodeList(args))
       return Outcome.makeSuccess(frag.childNodes as NodeListOf<Element | Text>)
     }
     if (main instanceof Text) {

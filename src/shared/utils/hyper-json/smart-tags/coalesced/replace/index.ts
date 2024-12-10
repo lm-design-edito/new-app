@@ -31,7 +31,7 @@ export const replace = SmartTags.makeSmartTag<Main, Args, Output>({
     const strMain = Cast.toString(main)
     const strToReplace = Cast.toString(toReplace)
     const strReplacer = Cast.toString(replacer)
-    const strReplaced = replaceAll(strMain, strToReplace, strReplacer, 1e4)
+    const strReplaced = replaceAll(strMain, strToReplace, strReplacer)
     let returned: Output
     if (typeof main === 'string') { returned = strReplaced }
     else if (main instanceof Text) { returned = Cast.toText(strReplaced) }

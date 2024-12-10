@@ -29,6 +29,7 @@ import { call } from '../smart-tags/coalesced/call'
 import { clone } from '../smart-tags/coalesced/clone'
 import { deleteproperties } from '../smart-tags/coalesced/deleteproperties'
 import { equals } from '../smart-tags/coalesced/equals'
+import { getattribute } from '../smart-tags/coalesced/getattribute'
 import { getproperties } from '../smart-tags/coalesced/getproperties'
 import { getproperty } from '../smart-tags/coalesced/getproperty'
 import { ifFunc } from '../smart-tags/coalesced/if'
@@ -39,13 +40,17 @@ import { map } from '../smart-tags/coalesced/map'
 import { negate } from '../smart-tags/coalesced/negate'
 import { notrailing } from '../smart-tags/coalesced/notrailing'
 import { or } from '../smart-tags/coalesced/or'
+import { pickrandom } from '../smart-tags/coalesced/pickrandom'
 import { print } from '../smart-tags/coalesced/print'
 import { push } from '../smart-tags/coalesced/push'
 import { recordtoarray } from '../smart-tags/coalesced/recordtoarray'
+import { removeattribute } from '../smart-tags/coalesced/removeattribute'
 import { removeclass } from '../smart-tags/coalesced/removeclass'
+import { renameproperty } from '../smart-tags/coalesced/renameproperty'
 import { replace } from '../smart-tags/coalesced/replace'
 import { select } from '../smart-tags/coalesced/select'
 import { set } from '../smart-tags/coalesced/set'
+import { setattribute } from '../smart-tags/coalesced/setattribute'
 import { setproperties } from '../smart-tags/coalesced/setproperties'
 import { setproperty } from '../smart-tags/coalesced/setproperty'
 import { sorton } from '../smart-tags/coalesced/sorton'
@@ -67,10 +72,11 @@ import { trim } from '../smart-tags/coalesced/trim'
 // [WIP] find a better place for this
 export const SMART_TAGS_REGISTER: Types.SmartTags.Register = new Map<string, Types.SmartTags.SmartTag<any, any, any>>([
   any, array, boolean, element, get, global, nodelist, nullFunc, number, record, ref, string, text, add, addclass,
-  and, append, at, call, clone, deleteproperties, equals, getproperties, getproperty, ifFunc, initialize, join,
-  length, map, negate, notrailing, or, print, push, recordtoarray, removeclass, replace, select, set,
-  setproperties, setproperty, sorton, split, toarray, toboolean, toelement, toggleclass, tonodelist, tonull,
-  tonumber, toref, torecord, tostring, totext, transformselected, trim
+  and, append, at, call, clone, deleteproperties, equals, getattribute, getproperties, getproperty, ifFunc,
+  initialize, join, length, map, negate, notrailing, or, pickrandom, print, push, recordtoarray, removeattribute,
+  removeclass, renameproperty, replace, select, set, setattribute, setproperties, setproperty, sorton, split,
+  toarray, toboolean, toelement, toggleclass, tonodelist, tonull, tonumber, toref, torecord, tostring, totext,
+  transformselected, trim
 ])
 
 // [WIP] eventually just export the Tree class here
@@ -226,7 +232,7 @@ export namespace Tree {
       else {
         const initAttributeValue = hasInitAttribute?.value as Exclude<Types.Tree.ValueTypeName, 'transformer' | 'method'> | undefined
         if (initAttributeValue !== undefined) { this.isolationInitType = initAttributeValue }
-        else if (this.smartTagData !== undefined) { this.isolationInitType = this.smartTagData?.isolationInitType ?? 'array' }
+        else if (this.smartTagData !== null) { this.isolationInitType = this.smartTagData?.isolationInitType ?? 'array' }
         else { this.isolationInitType = 'nodelist' }
       }
 
@@ -312,11 +318,11 @@ export namespace Tree {
 
       // Checks for impossible configurations
       if (node instanceof Text || smartTagData === null) {
-        if (isMethod) throw new Error('A Text or HTMLElement node cannot be used as a method')
-        if (mode === 'coalescion') throw new Error('A Text or HTMLElement node cannot be used in coalescion mode')
+        if (isMethod) throw new Error(`A Text or HTMLElement node cannot be used as a method @ ${this.pathString}`)
+        if (mode === 'coalescion') throw new Error(`A Text or HTMLElement node cannot be used in coalescion mode @ ${this.pathString}`)
       }
 
-      if (isRoot && mode === 'coalescion') throw new Error(`The root node cannot be used in coalescion mode`)
+      if (isRoot && mode === 'coalescion') throw new Error(`The root node cannot be used in coalescion mode @ ${this.pathString}`)
     }
 
     private computeValue (): Types.Tree.Value {
@@ -422,13 +428,12 @@ export namespace Tree {
 
     // [WIP] bind this
     printPerfCounters () {
-      const { options } = this
       const perfCounters = this.getPerfCounters()
         .sort((a, b) => {
           const aCalls = a[1].computed + a[1].cached
           const bCalls = b[1].computed + b[1].cached
-          // return b[1].totalTime - a[1].totalTime
           return bCalls - aCalls
+          // return b[1].totalTime - a[1].totalTime
         })
         .map(e => ({
           path: e[0],
