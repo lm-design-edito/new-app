@@ -14,10 +14,7 @@ export const toggleclass = SmartTags.makeSmartTag<Main, Args, Output>({
   mainValueCheck: m => Utils.Tree.TypeChecks.typeCheck(m, 'element'),
   argsValueCheck: a => Utils.Tree.TypeChecks.typeCheckMany(a, 'string', 'text'),
   func: (main, args) => {
-    for (const arg of args) {
-      // [WIP] should meet the actual implementation ? Element.classList.toggle(token: string, force?: boolean)
-      main.classList.toggle(Cast.toString(arg))
-    }
+    for (const arg of args) main.classList.toggle(Cast.toString(arg))
     return Outcome.makeSuccess(main)
   }
 })

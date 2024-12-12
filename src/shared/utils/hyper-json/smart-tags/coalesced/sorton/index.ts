@@ -17,23 +17,26 @@ export const sorton = SmartTags.makeSmartTag<Main, Args, Output>({
   mainValueCheck: m => {
     const { makeMainValueError } = Utils.SmartTags
     const { getType } = Utils.Tree.TypeChecks
-    if (!Array.isArray(m)) return Outcome.makeFailure(makeMainValueError('array<record>', getType(m) ?? 'undefined'))
+    const { makeFailure, makeSuccess } = Outcome
+    if (!Array.isArray(m)) return makeFailure(makeMainValueError('array<record>', getType(m) ?? 'undefined'))
     for (const [itemPos, itemVal] of Object.entries(m)) {
       if (isRecord(itemVal)) continue
-      return Outcome.makeFailure(makeMainValueError('record', getType(itemVal), `At position ${parseInt(itemPos)} in main value`))
+      return makeFailure(makeMainValueError('record', getType(itemVal), `At position ${parseInt(itemPos)} in main value`))
     }
-    return Outcome.makeSuccess(m as Main)
+    return makeSuccess(m as Main)
   },
   argsValueCheck: a => {
+    const { makeFailure, makeSuccess } = Outcome
     const { makeArgsValueError } = Utils.SmartTags
-    const { getType } = Utils.Tree.TypeChecks
-    if (a.length === 0) return Outcome.makeFailure(makeArgsValueError('[string | text]', '[]', 0))
-    if (a.length > 1) return Outcome.makeFailure(makeArgsValueError('undefined', getType(a[1]) ?? 'undefined', 2))
-    const checked = Utils.Tree.TypeChecks.typeCheckMany(a as Args, 'string', 'text')
-    if (checked.success) return Outcome.makeSuccess(checked.payload as Args)
+    const { getType, typeCheckMany } = Utils.Tree.TypeChecks
+    if (a.length === 0) return makeFailure(makeArgsValueError('[string | text]', '[]', 0))
+    if (a.length > 1) return makeFailure(makeArgsValueError('undefined', getType(a[1]) ?? 'undefined', 2))
+    const checked = typeCheckMany(a as Args, 'string', 'text')
+    if (checked.success) return makeSuccess(checked.payload as Args)
     return checked
   },
   func: (main, args) => {
+    const { makeFailure, makeSuccess } = Outcome
     const strPropName = Cast.toString(args[0])
     const { getType } = Utils.Tree.TypeChecks
     const { makeTransformationError } = Utils.SmartTags
@@ -43,15 +46,15 @@ export const sorton = SmartTags.makeSmartTag<Main, Args, Output>({
       return { record, prop, type }
     })
     const firstItem = map[0]
-    if (firstItem === undefined) return Outcome.makeSuccess([])
+    if (firstItem === undefined) return makeSuccess([])
     const firstItemType = firstItem.type
-    if (firstItemType === undefined) return Outcome.makeFailure(makeTransformationError({
+    if (firstItemType === undefined) return makeFailure(makeTransformationError({
       message: 'Invalid property type',
       onItem: 0,
       found: firstItemType
     }))
     for (const [daytumPos, daytumVal] of Object.entries(map)) {
-      if (daytumVal.type !== firstItemType) return Outcome.makeFailure(makeTransformationError({
+      if (daytumVal.type !== firstItemType) return makeFailure(makeTransformationError({
         message: 'Invalid property type',
         onItem: parseInt(daytumPos),
         expected: firstItemType,
@@ -75,6 +78,6 @@ export const sorton = SmartTags.makeSmartTag<Main, Args, Output>({
       if (aProp instanceof NodeList) return aProp.length - Cast.toNodeList(bProp).length
       return 0
     })
-    return Outcome.makeSuccess(sorted)
+    return makeSuccess(sorted)
   }
 })

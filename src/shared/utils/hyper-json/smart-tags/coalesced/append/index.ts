@@ -16,24 +16,25 @@ export const append = SmartTags.makeSmartTag<Main, Args, Output>({
   mainValueCheck: m => Utils.Tree.TypeChecks.typeCheck(m, 'string', 'text', 'nodelist', 'element', 'array'),
   argsValueCheck: a => Utils.Tree.TypeChecks.typeCheckMany(a, 'string', 'text', 'nodelist', 'element', 'array'),
   func: (main, args) => {
+    const { makeSuccess } = Outcome
     const { Text, Element, NodeList, document } = Window.get()
-    if (Array.isArray(main)) return Outcome.makeSuccess([...main, ...args])
+    if (Array.isArray(main)) return makeSuccess([...main, ...args])
     if (main instanceof Element) {
       main.append(...Cast.toNodeList(args))
-      return Outcome.makeSuccess(main)
+      return makeSuccess(main)
     }
     if (main instanceof NodeList) {
       const frag = document.createDocumentFragment()
       frag.append(...main, ...Cast.toNodeList(args))
-      return Outcome.makeSuccess(frag.childNodes as NodeListOf<Element | Text>)
+      return makeSuccess(frag.childNodes as NodeListOf<Element | Text>)
     }
     if (main instanceof Text) {
       const reducedString = args.reduce<string>((reduced, arg) => {
         return `${reduced}${Cast.toString(arg)}`
       }, Cast.toString(main))
-      return Outcome.makeSuccess(Cast.toText(reducedString))
+      return makeSuccess(Cast.toText(reducedString))
     }
-    return Outcome.makeSuccess(args.reduce<string>((reduced, arg) => {
+    return makeSuccess(args.reduce<string>((reduced, arg) => {
       return `${reduced}${Cast.toString(arg)}`
     }, main))
   }

@@ -23,12 +23,11 @@ export const print = SmartTags.makeSmartTag<Main, Args, Output>({
   func: (main, args, details) => {
     // [WIP] maybe use the logger instead ?
     // Or think of a crossenv way to perform this ?
-    console.log(
-      main,
-      args.length === 0
-        ? { tree: details.sourceTree }
-        : { args, tree: details.sourceTree }
-    )
+    console.group('print')
+    console.log('Main:', main)
+    console.log('Args:', ...args)
+    console.log('Tree:', details.sourceTree)
+    console.groupEnd()
     return Outcome.makeSuccess(main)
   }
 })

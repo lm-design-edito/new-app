@@ -16,7 +16,7 @@ export namespace Config {
     PUBLISHED_ON = 'publishedOn',
     SOURCE = 'source'
   }
-  
+
   export enum RemoteInstructionName {
     HIDE_HEADER = 'hideHeader',
     TRACKING = 'tracking',
@@ -145,46 +145,20 @@ export namespace Config {
       }
       
       // CSS
-      if (name === RemoteInstructionName.CSS) {
-        const deprecationWarning = normalizeIndent(
-          `The use of config instruction css(value: NodeList) instruction is deprecated, support will be dropped after v1.echo. Use 'style' instead:
-          style(value: {
+      if (name === RemoteInstructionName.CSS) throw new Error(normalizeIndent(`'css' config instruction support has been dropped. Please use 'style' instead:
+        style(value: {
           ||content: NodeList,
           ||name?: string,
           ||position?: Slots.StylesPosition
-          })`)
-        console.warn(deprecationWarning)
-        let injected = '\n'
-        if (value instanceof NodeList) {
-          const styleElements = [...value].filter((node): node is HTMLStyleElement => {
-            if (!(node instanceof HTMLElement)) return false;
-            if (node.tagName.toLowerCase() !== 'style') return false;
-            return true
-          })
-          injected += styleElements.map(elt => elt.textContent?.trim()).join('\n')
-        } else {
-          injected += Cast.toString(value)
-        }
-        const elementName = 'lm-page-config-css'
-        const position = Slots.StylePosition.CUSTOM
-        Slots.injectStyles('css', injected, { name: elementName, position })
-        return logger?.log('Apply config', '%cCSS injected\n', 'font-weight: 800;', { name: elementName, position, content: injected })
-      }
+        })`))
 
       // STYLESHEET
-      if (name === RemoteInstructionName.STYLESHEET) {
-        const deprecationWarning = normalizeIndent(
-          `The use of config instruction stylesheet(value: string) instruction is deprecated, support will be dropped after v1.echo. Use 'style' instead:
-          style(value: {
+      if (name === RemoteInstructionName.STYLESHEET) throw new Error(normalizeIndent(`'stylesheet' config instruction support has been dropped. Please use 'style' instead:
+        style(value: {
           ||url: string,
           ||name?: string,
           ||position?: Slots.StylesPosition
-          })`)
-        console.warn(deprecationWarning)
-        const strValue = Cast.toString(value)
-        Slots.injectStyles('url', strValue, { name: 'lm-page-config-stylesheet', position: Slots.StylePosition.CUSTOM })
-        return logger?.log('Apply config', '%cStylesheet injected\n', 'font-weight: 800;', strValue)
-      }
+        })`))
       
       // SCALE
       if (name === RemoteInstructionName.SCALE) {

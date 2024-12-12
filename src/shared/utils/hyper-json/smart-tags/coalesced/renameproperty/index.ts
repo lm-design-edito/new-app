@@ -1,8 +1,8 @@
 import { Outcome } from '@design-edito/tools/agnostic/misc/outcome'
 import { Cast } from '../../../cast'
 import { Utils } from '../../../utils'
-import { SmartTags } from '../..'
 import { Types } from '../../../types'
+import { SmartTags } from '../..'
 
 type Main = Types.Tree.RestingRecordValue
 type Args = [string | Text, string | Text]
@@ -14,22 +14,24 @@ export const renameproperty = SmartTags.makeSmartTag<Main, Args, Output>({
   isolationInitType: 'array',
   mainValueCheck: m => Utils.Tree.TypeChecks.typeCheck(m, 'record'),
   argsValueCheck: a => {
-    const checked = Utils.Tree.TypeChecks.typeCheckMany(a, 'string', 'text')
+    const { makeFailure, makeSuccess } = Outcome
+    const { typeCheck, typeCheckMany } = Utils.Tree.TypeChecks
+    const checked = typeCheckMany(a, 'string', 'text')
     if (!checked.success) return checked
     const [first, second] = a
-    const firstChecked = Utils.Tree.TypeChecks.typeCheck(first, 'string', 'text')
-    if (!firstChecked.success) return Outcome.makeFailure(Utils.SmartTags.makeArgsValueError(
+    const firstChecked = typeCheck(first, 'string', 'text')
+    if (!firstChecked.success) return makeFailure(Utils.SmartTags.makeArgsValueError(
       firstChecked.error.expected,
       firstChecked.error.found,
       0
     ))
-    const secondChecked = Utils.Tree.TypeChecks.typeCheck(second, 'string', 'text')
-    if (!secondChecked.success) return Outcome.makeFailure(Utils.SmartTags.makeArgsValueError(
+    const secondChecked = typeCheck(second, 'string', 'text')
+    if (!secondChecked.success) return makeFailure(Utils.SmartTags.makeArgsValueError(
       secondChecked.error.expected,
       secondChecked.error.found,
       0
     ))
-    return Outcome.makeSuccess([firstChecked.payload, secondChecked.payload])
+    return makeSuccess([firstChecked.payload, secondChecked.payload])
   },
   func: (main, args) => {
     const [oldKey, newKey] = args.map(Cast.toString) as [string, string]

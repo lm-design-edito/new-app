@@ -15,12 +15,13 @@ export const length = SmartTags.makeSmartTag<Main, Args, Output>({
   mainValueCheck: m => Utils.Tree.TypeChecks.typeCheck(m, 'string', 'nodelist'),
   argsValueCheck: a => Utils.SmartTags.expectEmptyArgs(a),
   func: main => {
+    const { makeSuccess } = Outcome
     const { Text, NodeList, Element } = Window.get()
     if (typeof main === 'string'
       || main instanceof NodeList
       || main instanceof Text
-      || Array.isArray(main)) return Outcome.makeSuccess(main.length)
-    if (main instanceof Element) return Outcome.makeSuccess(main.childNodes.length)
-    return Outcome.makeSuccess(Object.keys(main).length)
+      || Array.isArray(main)) return makeSuccess(main.length)
+    if (main instanceof Element) return makeSuccess(main.childNodes.length)
+    return makeSuccess(Object.keys(main).length)
   }
 })

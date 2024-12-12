@@ -15,15 +15,17 @@ export const at = SmartTags.makeSmartTag<Main, Args, Output>({
   isolationInitType: 'array',
   mainValueCheck: m => Utils.Tree.TypeChecks.typeCheck(m, 'string', 'text', 'array', 'nodelist'),
   argsValueCheck: a => {
+    const { makeFailure, makeSuccess } = Outcome
     const { makeArgsValueError } = Utils.SmartTags
     const { getType, typeCheckMany } = Utils.Tree.TypeChecks
-    if (a.length === 0) return Outcome.makeFailure(makeArgsValueError('number | string | text', 'undefined', 0))
-    if (a.length > 1) return Outcome.makeFailure(makeArgsValueError('undefined', getType(a[1]) ?? 'undefined', 1))
+    if (a.length === 0) return makeFailure(makeArgsValueError('number | string | text', 'undefined', 0))
+    if (a.length > 1) return makeFailure(makeArgsValueError('undefined', getType(a[1]) ?? 'undefined', 1))
     const checked = typeCheckMany(a, 'number', 'string', 'text')
-    if (checked.success) return Outcome.makeSuccess(a as Args)
+    if (checked.success) return makeSuccess(a as Args)
     return checked
   },
   func: (main, args) => {
+    const { makeFailure, makeSuccess } = Outcome
     const { makeTransformationError } = Utils.SmartTags
     const pos = args[0]
     const numPos = Cast.toNumber(pos)
@@ -36,10 +38,10 @@ export const at = SmartTags.makeSmartTag<Main, Args, Output>({
       const strMain = Cast.toString(main)
       found = strMain[numPos]
     }
-    if (found === undefined) return Outcome.makeFailure(makeTransformationError({
+    if (found === undefined) return makeFailure(makeTransformationError({
       message: 'Property does not exist'
       // [WIP] maybe more details here ?
     }))
-    return Outcome.makeSuccess(found)
+    return makeSuccess(found)
   }
 })

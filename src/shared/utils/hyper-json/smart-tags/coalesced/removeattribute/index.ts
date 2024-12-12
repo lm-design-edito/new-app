@@ -27,11 +27,12 @@ export const removeattribute = SmartTags.makeSmartTag<Main, Args, Output>({
     return checked
   },
   func: (main, args) => {
+    const { makeSuccess } = Outcome
     const mainArr = Array.isArray(main) ? main : [main]
     const mainArrCloned = mainArr.map(e => Utils.clone(e))
     const name = Cast.toString(args[0])
     mainArrCloned.forEach(e => e.removeAttribute(name))
-    if (Array.isArray(main)) return Outcome.makeSuccess(mainArrCloned)
-    return Outcome.makeSuccess(mainArrCloned[0] as Element)
+    if (Array.isArray(main)) return makeSuccess(mainArrCloned)
+    return makeSuccess(mainArrCloned[0] as Element)
   }
 })

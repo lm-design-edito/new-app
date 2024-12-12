@@ -9,6 +9,7 @@ type Args = []
 type Output = Types.Tree.RestingValue
 
 export const func: Types.Transformations.Function<Main, Args, Output> = (main, _args, { sourceTree }) => {
+  const { makeFailure, makeSuccess } = Outcome
   const { makeTransformationError } = Utils.SmartTags
   const strMain = Cast.toString(main)
   const resolveFrom = strMain.startsWith('/') ? sourceTree.root : sourceTree
@@ -22,18 +23,18 @@ export const func: Types.Transformations.Function<Main, Args, Output> = (main, _
       return parsed
     })
   const resolved = resolveFrom.resolve(splitted)
-  if (resolved === undefined) return Outcome.makeFailure(makeTransformationError(`No value was found at path: ${strMain}`))
-  if (resolved === sourceTree) return Outcome.makeFailure(makeTransformationError('A ref node cannot reference itself.'))
-  if (resolved.parents.includes(sourceTree)) return Outcome.makeFailure(makeTransformationError('A ref node cannot reference one of its parents.'))
-  if (sourceTree.parents.includes(resolved)) return Outcome.makeFailure(makeTransformationError('A ref node cannot reference one of its children.'))
+  if (resolved === undefined) return makeFailure(makeTransformationError(`No value was found at path: ${strMain}`))
+  if (resolved === sourceTree) return makeFailure(makeTransformationError('A ref node cannot reference itself.'))
+  if (resolved.parents.includes(sourceTree)) return makeFailure(makeTransformationError('A ref node cannot reference one of its parents.'))
+  if (sourceTree.parents.includes(resolved)) return makeFailure(makeTransformationError('A ref node cannot reference one of its children.'))
   const evaluated = resolved.evaluate()
   const { getType } = Utils.Tree.TypeChecks
   if (getType(evaluated) === 'transformer') {
     // [WIP] implemented this without thinking of what it means to reference a transformer node
     const transformer = evaluated as Types.Tree.TransformerValue
-    return Outcome.makeSuccess(transformer.toMethod())
+    return makeSuccess(transformer.toMethod())
   }
-  return Outcome.makeSuccess(evaluated as Types.Tree.RestingValue)
+  return makeSuccess(evaluated as Types.Tree.RestingValue)
 }
 
 export const ref = SmartTags.makeSmartTag<Main, Args, Output>({

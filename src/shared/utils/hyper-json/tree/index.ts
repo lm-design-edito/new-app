@@ -6,6 +6,7 @@ import { Types } from '../types'
 import { Utils } from '../utils'
 import { Cast } from '../cast'
 
+// Isolated smart tags
 import { any } from '../smart-tags/isolated/any'
 import { array } from '../smart-tags/isolated/array'
 import { boolean } from '../smart-tags/isolated/boolean'
@@ -19,7 +20,7 @@ import { record } from '../smart-tags/isolated/record'
 import { ref } from '../smart-tags/isolated/ref'
 import { string } from '../smart-tags/isolated/string'
 import { text } from '../smart-tags/isolated/text'
-
+// Coalesced smart tags
 import { add } from '../smart-tags/coalesced/add'
 import { addclass } from '../smart-tags/coalesced/addclass'
 import { and } from '../smart-tags/coalesced/and'
@@ -42,7 +43,9 @@ import { notrailing } from '../smart-tags/coalesced/notrailing'
 import { or } from '../smart-tags/coalesced/or'
 import { pickrandom } from '../smart-tags/coalesced/pickrandom'
 import { print } from '../smart-tags/coalesced/print'
+import { populate } from '../smart-tags/coalesced/populate'
 import { push } from '../smart-tags/coalesced/push'
+import { pusheach } from '../smart-tags/coalesced/pusheach'
 import { recordtoarray } from '../smart-tags/coalesced/recordtoarray'
 import { removeattribute } from '../smart-tags/coalesced/removeattribute'
 import { removeclass } from '../smart-tags/coalesced/removeclass'
@@ -73,10 +76,10 @@ import { trim } from '../smart-tags/coalesced/trim'
 export const SMART_TAGS_REGISTER: Types.SmartTags.Register = new Map<string, Types.SmartTags.SmartTag<any, any, any>>([
   any, array, boolean, element, get, global, nodelist, nullFunc, number, record, ref, string, text, add, addclass,
   and, append, at, call, clone, deleteproperties, equals, getattribute, getproperties, getproperty, ifFunc,
-  initialize, join, length, map, negate, notrailing, or, pickrandom, print, push, recordtoarray, removeattribute,
-  removeclass, renameproperty, replace, select, set, setattribute, setproperties, setproperty, sorton, split,
-  toarray, toboolean, toelement, toggleclass, tonodelist, tonull, tonumber, toref, torecord, tostring, totext,
-  transformselected, trim
+  initialize, join, length, map, negate, notrailing, or, pickrandom, print, populate, push, pusheach,
+  recordtoarray, removeattribute, removeclass, renameproperty, replace, select, set, setattribute, setproperties,
+  setproperty, sorton, split, toarray, toboolean, toelement, toggleclass, tonodelist, tonull, tonumber, toref,
+  torecord, tostring, totext, transformselected, trim
 ])
 
 // [WIP] eventually just export the Tree class here
