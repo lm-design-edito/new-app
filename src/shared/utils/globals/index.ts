@@ -1,7 +1,7 @@
+import { HyperJson } from '@design-edito/tools/agnostic/html/hyper-json'
 import { recordMap } from '@design-edito/tools/agnostic/objects/record-map'
 import { isInEnum } from '@design-edito/tools/agnostic/objects/enums/is-in-enum'
 import { Logs } from '@design-edito/tools/agnostic/misc/logs'
-import { HyperJson } from '~/shared/hyper-json'
 import { init } from '~/shared'
 import appConfig from '~/config'
 import { Apps } from '~/apps'

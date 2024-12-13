@@ -36,7 +36,9 @@ const THEME_ICONS_ASSETS_DIR_PATH = '/icons/assets'
 const dataSourceSelector = 'record.hyperjson'
 
 // OTHER
-const eventHandlersAllowedUrlSchemes: Array<Partial<URL>> = [
+const eventHandlersAllowedUrlSchemes: Array<Partial<URL>> = env === 'production' ? [
+  { protocol: 'https:', hostname: 'assets-decodeurs.lemonde.fr' }
+] : [
   { protocol: 'http:', hostname: 'localhost' },
   { protocol: 'https:', hostname: 'localhost' },
   { protocol: 'http:', hostname: '127.0.0.1' },

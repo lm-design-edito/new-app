@@ -1,7 +1,7 @@
 import { VNode, createElement } from 'preact'
+import { HyperJson } from '@design-edito/tools/agnostic/html/hyper-json'
 import { isInEnum } from '@design-edito/tools/agnostic/objects/enums/is-in-enum'
 import { isRecord } from '@design-edito/tools/agnostic/objects/is-record'
-import { HyperJson } from '~/shared/hyper-json'
 import { Globals } from '~/shared/globals'
 import { Apps } from '~/apps'
 import MutedVideo from './MutedVideo'

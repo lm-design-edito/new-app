@@ -1,5 +1,5 @@
+import { HyperJson } from '@design-edito/tools/agnostic/html/hyper-json'
 import { isRecord } from '@design-edito/tools/agnostic/objects/is-record'
-import { HyperJson } from '~/shared/hyper-json'
 import { Cast } from '@design-edito/tools/agnostic/misc/cast'
 import { interpolate, exterpolate } from '@design-edito/tools/agnostic/numbers/interpolate'
 import { round } from '@design-edito/tools/agnostic/numbers/round'
@@ -144,22 +144,6 @@ export namespace Config {
         }
       }
       
-      // CSS
-      if (name === RemoteInstructionName.CSS) throw new Error(normalizeIndent(`'css' config instruction support has been dropped. Please use 'style' instead:
-        style(value: {
-          ||content: NodeList,
-          ||name?: string,
-          ||position?: Slots.StylesPosition
-        })`))
-
-      // STYLESHEET
-      if (name === RemoteInstructionName.STYLESHEET) throw new Error(normalizeIndent(`'stylesheet' config instruction support has been dropped. Please use 'style' instead:
-        style(value: {
-          ||url: string,
-          ||name?: string,
-          ||position?: Slots.StylesPosition
-        })`))
-      
       // SCALE
       if (name === RemoteInstructionName.SCALE) {
         const valueIsRecord = isRecord(value)
@@ -239,6 +223,26 @@ export namespace Config {
 
       // NO_SHADOW
       if (name === RemoteInstructionName.NO_SHADOW) Slots.setIsolationMode(!Cast.toBoolean(value))
+
+      /* * * * * * * * * * * * * * * * * * * * *
+       * DEPRECATED & OBSOLETE STUFF
+       * * * * * * * * * * * * * * * * * * * * */
+
+      // CSS
+      if (name === RemoteInstructionName.CSS) throw new Error(normalizeIndent(`'css' config instruction support has been dropped. Please use 'style' instead:
+        style(value: {
+          ||content: NodeList,
+          ||name?: string,
+          ||position?: Slots.StylesPosition
+        })`))
+
+      // STYLESHEET
+      if (name === RemoteInstructionName.STYLESHEET) throw new Error(normalizeIndent(`'stylesheet' config instruction support has been dropped. Please use 'style' instead:
+        style(value: {
+          ||url: string,
+          ||name?: string,
+          ||position?: Slots.StylesPosition
+        })`))
     })
   }
 }

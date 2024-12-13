@@ -1,4 +1,4 @@
-import { HyperJson } from '~/shared/hyper-json'
+import { HyperJson } from '@design-edito/tools/agnostic/html/hyper-json'
 import { insertNode, InsertNodePosition } from '@design-edito/tools/agnostic/html/insert-node'
 import { isRecord } from '@design-edito/tools/agnostic/objects/is-record'
 import { selectorToElement } from '@design-edito/tools/agnostic/html/selector-to-element'
