@@ -164,9 +164,17 @@ async function init () {
   })
   Globals.expose(Globals.GlobalKey.TREE, pageFullDataTree)
   const pageFullDataValue = pageFullDataTree.evaluate()
-  console.log(pageFullDataValue)
-  pageFullDataTree.printPerfCounters()
+  const pageFullDataTreePerfs = pageFullDataTree.getPerformanceData().map(([pathString, perfData]) => ({
+    tagName: perfData.tagName,
+    path: pathString,
+    totalMs: perfData.totalTime,
+    computeMs: perfData.computeTime,
+    cacheMs: perfData.cacheTime,
+    ops: `${perfData.evaluations}/${perfData.cached}`,
+    evaluated: perfData.evaluated
+  }))
   logger.log('Full HyperJson value', pageFullDataValue)
+  logger.table('Full HyperJson value', pageFullDataTreePerfs)
   const pageFullDataValueIsRecord = isRecord(pageFullDataValue)
   const pageDataSlotsCollectionName = appConfig.dataSourcesReservedNames.slots
   const pageFullDataConfig = pageFullDataValueIsRecord ? pageFullDataValue[pageDataConfigCollectionName] : undefined
