@@ -1,0 +1,31 @@
+{
+  "build": {
+    "version_number": "1.0.0-fuego.1",
+    "version_description": "Same that previous release, something seems to have failed while deploying 1.0.0-fuego.0",
+    "timestamp": "2024-12-13T15:37:39.017Z",
+    "latest_local_version_found": "1.0.0-fuego.0"
+  },
+  "git": {
+    "has_uncommited_changes": false,
+    "latest_commit_number": "34f9446b0927dd31646007ef41cc39d0963efdf0"
+  },
+  "bucket": {
+    "name": "gs://decodeurs/design-edito/v1.fuego",
+    "url": "https://assets-decodeurs.lemonde.fr/design-edito/v1.fuego",
+    "current_versions_json": {
+      "1.0.0-fuego.0": {
+        "description": "Dropped Darkdouille, use @design-edito/tools's HyperJson instead",
+        "deployedOn": 1734104101914,
+        "deployedOnReadable": "Fri, 13 Dec 2024 15:35:01 GMT",
+        "commit": "2adab32143847fca9412c598ecd276467fe94cd3"
+      }
+    },
+    "create_versions_json": false,
+    "latest_version_found": "1.0.0-fuego.0",
+    "published": true
+  },
+  "npm": {
+    "registry": "https://registry.npmjs.org",
+    "published": true
+  }
+}
