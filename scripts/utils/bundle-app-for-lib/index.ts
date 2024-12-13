@@ -7,12 +7,11 @@ import lmScssModulesToHeadPlugin from '../../esbuild-plugins/scss-modules-head-i
 const inlineImagePulgin = inlineImageModule as unknown as typeof inlineImageModule.default
 
 const componentsFiles = await listTsFiles(config.SRC_COMPONENTS, config.SRC)
-const utilsFiles = await listTsFiles(config.SRC_UTILS, config.SRC)
 
 export default async function bundleAppForLib (): Promise<void> {
   try {
     const entryPoints = Object
-      .entries({ ...componentsFiles, ...utilsFiles })
+      .entries({ ...componentsFiles })
       .reduce((reduced, [output, input]) => {
         return [...reduced, {
           in: input,
