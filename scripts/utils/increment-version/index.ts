@@ -10,6 +10,7 @@ enum PrereleaseFlag {
   DAYTONA = 'daytona',
   DELTA = 'delta',
   ECHO = 'echo',
+  FUEGO = 'fuego',
   RAVEN = 'raven',
   RC = 'rc',
   STABLE = 'stable'
