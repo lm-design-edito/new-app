@@ -37,7 +37,7 @@ async function toProps (input: unknown, id: string): Promise<Props> {
     }),
     subnavContent: i => Apps.ifNotUndefinedHelper(i, Apps.toStringOrVNodeHelper),
     panelContent: i => Apps.ifNotUndefinedHelper(i, Apps.toStringOrVNodeHelper)
-    // ctaOnClick, // Cannot handle functions from options
+    // ctaOnClick, // [WIP] Cannot handle functions from options
   }) ?? {}
 }
 
@@ -49,6 +49,7 @@ async function arrayToNavItems (array: unknown[]): Promise<Props['navItems']> {
       value: i => Apps.ifNotUndefinedHelper(i, Cast.toString),
       content: i => Apps.ifNotUndefinedHelper(i, Apps.toStringOrVNodeHelper),
       clickAction: i => Apps.ifNotUndefinedHelper(i, i => {
+        // [WIP] should handle this using Apps.makeHandlerHelper
         const strI = Cast.toString(i)
         if (strI === 'scroll-to-chapter') return strI
         return undefined

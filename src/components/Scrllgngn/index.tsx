@@ -72,7 +72,7 @@ export type PropsPageData = {
   id?: string
   bgColor?: JSX.CSSProperties['backgroundColor']
   blocks?: PropsBlockData[]
-  data?: Record<string, any>
+  data?: Record<string, any> // [WIP] Not sure what this prop does
 }
 
 export type Props = {

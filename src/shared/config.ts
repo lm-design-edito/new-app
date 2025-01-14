@@ -1,5 +1,6 @@
 // ENVIRONMENT VARIABLES
-const env = process.env.NODE_ENV === 'production' ? 'production' : 'developpment' as 'production' | 'developpment'
+const env = (process.env.NODE_ENV === 'production' ? 'production' : 'developpment') as 'production' | 'developpment'
+const userEnv = (['127.0.0.1', 'localhost'].includes(window.location.hostname) ? 'developpment' : 'production') as 'production' | 'developpment'
 const port = process.env.PORT ?? '3000'
 const builtOn = process.env.BUILT_ON ?? ''
 const builtOnReadable = process.env.BUILT_ON_READABLE ?? ''
@@ -36,7 +37,7 @@ const THEME_ICONS_ASSETS_DIR_PATH = '/icons/assets'
 const dataSourceSelector = 'record.hyperjson'
 
 // OTHER
-const eventHandlersAllowedUrlSchemes: Array<Partial<URL>> = env === 'production' ? [
+const eventHandlersAllowedUrlSchemes: Array<Partial<URL>> = userEnv === 'production' ? [
   { protocol: 'https:', hostname: 'assets-decodeurs.lemonde.fr' }
 ] : [
   { protocol: 'http:', hostname: 'localhost' },
@@ -49,6 +50,7 @@ const eventHandlersAllowedUrlSchemes: Array<Partial<URL>> = env === 'production'
 // Exports
 export default {
   env,
+  userEnv,
   port,
   builtOn,
   builtOnReadable,

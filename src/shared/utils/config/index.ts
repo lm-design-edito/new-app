@@ -9,6 +9,7 @@ import { Events } from '~/shared/events'
 import { Externals } from '~/shared/externals'
 import { Globals } from '~/shared/globals'
 import { Slots } from '~/shared/slots'
+import { Window } from '@design-edito/tools/agnostic/misc/crossenv/window'
 
 export namespace Config {
   export enum InlineOnlyInstructionName {
@@ -130,12 +131,18 @@ export namespace Config {
         } else {
           let injected = '\n'
           if (rawContent instanceof NodeList) {
+            // [WIP] should probably throw or log an error instead, we expect style element or raw text
             const styleElements = [...rawContent].filter((node): node is HTMLStyleElement => {
               if (!(node instanceof HTMLElement)) return false;
               if (node.tagName.toLowerCase() !== 'style') return false;
               return true
             })
             injected += styleElements.map(elt => elt.textContent?.trim()).join('\n')
+          } else if (rawContent instanceof Window.get().Element) {
+            if (rawContent.tagName.toLowerCase().trim() === 'style') { injected += Cast.toString(rawContent.textContent) }
+            else {
+              // [WIP] should probably throw or log an error instead
+              injected += Cast.toString(rawContent.textContent)}
           } else {
             injected += Cast.toString(rawContent)
           }
