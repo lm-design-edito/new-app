@@ -1,0 +1,37 @@
+{
+  "build": {
+    "version_number": "1.0.0-fuego.2",
+    "version_description": "-",
+    "timestamp": "2025-01-14T16:54:22.646Z",
+    "latest_local_version_found": "1.0.0-fuego.1"
+  },
+  "git": {
+    "has_uncommited_changes": false,
+    "latest_commit_number": "20c6ec593ecedc8979f84d45bb48b341c4c4ccda"
+  },
+  "bucket": {
+    "name": "gs://decodeurs/design-edito/v1.fuego",
+    "url": "https://assets-decodeurs.lemonde.fr/design-edito/v1.fuego",
+    "current_versions_json": {
+      "1.0.0-fuego.0": {
+        "description": "Dropped Darkdouille, use @design-edito/tools's HyperJson instead",
+        "deployedOn": 1734104101914,
+        "deployedOnReadable": "Fri, 13 Dec 2024 15:35:01 GMT",
+        "commit": "2adab32143847fca9412c598ecd276467fe94cd3"
+      },
+      "1.0.0-fuego.1": {
+        "description": "Same that previous release, something seems to have failed while deploying 1.0.0-fuego.0",
+        "deployedOn": 1734104259017,
+        "deployedOnReadable": "Fri, 13 Dec 2024 15:37:39 GMT",
+        "commit": "34f9446b0927dd31646007ef41cc39d0963efdf0"
+      }
+    },
+    "create_versions_json": false,
+    "latest_version_found": "1.0.0-fuego.1",
+    "published": true
+  },
+  "npm": {
+    "registry": "https://registry.npmjs.org",
+    "published": true
+  }
+}
