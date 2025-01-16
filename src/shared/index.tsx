@@ -96,12 +96,13 @@ async function init () {
     return Array.from(nodes).map(e => e.cloneNode(true)) as Element[]
   }
   const pageInlineDataElements = getPageInlineDataElements()
-  const pageInlineDataValue = HyperJson.Tree.Tree.from(
+  const pageInlineDataTree = HyperJson.Tree.Tree.from(
     pageInlineDataElements, {
     globalObject: Globals.getHyperJsonGlobalObj(),
     logger: Globals.retrieve(Globals.GlobalKey.LOGGER) ?? null,
     loggerThread: 'Inline HyperJson evaluation'
-  }).evaluate()
+  })
+  const pageInlineDataValue = pageInlineDataTree.evaluate()
   logger.log('Inline HyperJson value', pageInlineDataValue)
   const pageInlineDataValueIsRecord = isRecord(pageInlineDataValue)
   const pageDataConfigCollectionName = appConfig.dataSourcesReservedNames.config
@@ -148,6 +149,7 @@ async function init () {
 
   /* FULL CONFIG * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+  pageInlineDataValue
   const pageRemoteDataStrings = await Promise.all(pageInlineDataConfigSourcesPromises)
   const pageRemoteDataNodes = pageRemoteDataStrings
     .filter((data): data is string => data !== undefined)
@@ -157,13 +159,17 @@ async function init () {
       return wrapper
     })
   const pageFullTreeElements = [...getPageInlineDataElements(), ...pageRemoteDataNodes]
-  const pageFullDataTree = HyperJson.Tree.Tree.from(pageFullTreeElements, {
-    globalObject: Globals.getHyperJsonGlobalObj(),
-    logger: Globals.retrieve(Globals.GlobalKey.LOGGER) ?? null,
-    loggerThread: 'Full HyperJson evaluation'
-  })
+  const pageFullDataTree = pageRemoteDataNodes.length === 0
+    ? pageInlineDataTree
+    : HyperJson.Tree.Tree.from(pageFullTreeElements, {
+      globalObject: Globals.getHyperJsonGlobalObj(),
+      logger: Globals.retrieve(Globals.GlobalKey.LOGGER) ?? null,
+      loggerThread: 'Full HyperJson evaluation'
+    })
   Globals.expose(Globals.GlobalKey.TREE, pageFullDataTree)
-  const pageFullDataValue = pageFullDataTree.evaluate()
+  const pageFullDataValue = pageFullDataTree === pageInlineDataTree
+    ? pageInlineDataValue
+    : pageFullDataTree.evaluate()
   const pageFullDataTreePerfs = pageFullDataTree.getPerformanceData().map(([pathString, perfData]) => ({
     tagName: perfData.tagName,
     path: pathString,

@@ -70,7 +70,7 @@
     "typescript": "^5.6.3"
   },
   "dependencies": {
-    "@design-edito/tools": "^0.1.43",
+    "@design-edito/tools": "^0.1.45",
     "preact": "^10.18.1"
   }
 }
