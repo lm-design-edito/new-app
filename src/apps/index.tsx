@@ -17,6 +17,7 @@ export namespace Apps {
     _CAROUSEL = '_carousel',
     _SLIDESHOW = '_slideshow',
     AUDIOQUOTE = 'audioquote',
+    VIDEO_PLAYER = 'video-player',
     DRAWER = 'drawer',
     EVENT_LISTENER = 'event-listener',
     GALLERY = 'gallery',
@@ -45,6 +46,7 @@ export namespace Apps {
       if (name === Name._CAROUSEL) { loaded = (await import('~/apps/_carousel')).default }
       if (name === Name._SLIDESHOW) { loaded = (await import('~/apps/_slideshow')).default }
       if (name === Name.AUDIOQUOTE) { loaded = (await import('~/apps/audioquote')).default }
+      if (name === Name.VIDEO_PLAYER) { loaded = (await import('~/apps/video-player')).default }
       if (name === Name.DRAWER) { loaded = (await import('~/apps/drawer')).default }
       if (name === Name.EVENT_LISTENER) { loaded = (await import('~/apps/event-listener')).default }
       if (name === Name.GALLERY) { loaded = (await import('~/apps/gallery')).default }
@@ -109,7 +111,14 @@ export namespace Apps {
   }
 
   export async function render (name: Name, _id: string | null, unknownProps: unknown): Promise<VNode> {
+    console.log('render', name, _id, unknownProps)
+ 
     const logger = Globals.retrieve(Globals.GlobalKey.LOGGER)
+    logger?.log(
+      'App:renderer',
+      `%cname ${name}`,
+      'font-weight: 800;'
+    )
     const appRenderer = await load(name)
     if (appRenderer === undefined) {
       logger?.error('Render', '%cRenderer load error', 'font-weight: 800;', `\nNo renderer found for app '${name}'. Props:`, unknownProps)
