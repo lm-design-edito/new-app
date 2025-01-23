@@ -5,13 +5,11 @@ import VideoPlayer, { Props, State } from '~/components/VideoPlayer'
 export { Props, State }
 
 export default async function renderer (unknownProps: unknown, id: string): ReturnType<Apps.AsyncRendererModule<Props>> {
-    console.log({unknownProps})
-  const props = await toProps(unknownProps, id)
-  return { props, Component: VideoPlayer }
+    const props = await toProps(unknownProps, id)
+    return { props, Component: VideoPlayer }
 }
  
 async function toProps (input: unknown, id: string): Promise<Props> {
-    console.log({input})
     return await Apps.toPropsHelper(input, {
         source: i => Apps.ifNotUndefinedHelper(i, Cast.toString),
         poster_url: i => Apps.ifNotUndefinedHelper(i, Cast.toString),
