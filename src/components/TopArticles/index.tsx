@@ -3,6 +3,7 @@ import { Bem } from '@design-edito/tools/agnostic/css/bem'
 import { unknownToString } from '@design-edito/tools/agnostic/errors/unknown-to-string'
 import { isNonNullObject } from '@design-edito/tools/agnostic/objects/is-object'
 import { formatDate } from '@design-edito/tools/agnostic/time/dates/format-date'
+import Thumbnail from './Thumbnail'
 
 export type ForecastApiArticleData = {
   url?: string
@@ -149,18 +150,17 @@ export default class TopArticles extends Component<Props, State> {
         const [yearStr = '1970', monthStr = '01', dateStr = '01'] = fullDateStr.split('-')
         const [hoursStr = '00', minutesStr = '00', secondsStr = '00'] = timeStr.split(':')
         const publishedAtDate = new Date(parseInt(yearStr), parseInt(monthStr) - 1, parseInt(dateStr), parseInt(hoursStr), parseInt(minutesStr), parseInt(secondsStr))
-        const publishedAtFormatted = formatDate(publishedAtDate, props.dateFormat ?? '{{YYYY}}/{{MM}}/{{DD}}')
-        return <a href={url} key={url || i} className={articleClasses.join(' ')} target="_blank">
-          <img src={img} alt="" className={imgClasses.join(' ')}/>
-          <div className={contentClasses.join(' ')}>
-            <p className={titleClasses.join(' ')}>{title}</p>
-            <p className={descClasses.join(' ')}>{section}</p>
-            <p className={descClasses.join(' ')}>{subSection}</p>
-            <p className={descClasses.join(' ')}>{description}</p>
-            <p className={dateClasses.join(' ')}>{publishedAtFormatted}</p>
-            <p className={creditsClass.join(' ')}>{author}</p>
-          </div>
-        </a>
+        const publishedAtFormatted = formatDate(publishedAtDate, props.dateFormat ?? '{{YYYY}}/{{MM}}/{{DD}}', 'fr')
+        const thumbTextContent = <>
+          <p>{publishedAtFormatted}</p>
+          <h3>{title}</h3>
+          <p>{description}</p>
+        </>
+        return <Thumbnail
+          key={url}
+          targetUrl={url}
+          imageSrc={img}
+          contentBelow={thumbTextContent} />
       })
     }</div>
   }
