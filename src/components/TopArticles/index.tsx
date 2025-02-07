@@ -39,6 +39,7 @@ export type Props = {
   author?: string
   subsection?: string
   section?: string
+  keywords?: string
   excludedSections?: string
   excludedSubsections?: string
   itemNumber?: number
@@ -93,6 +94,7 @@ export default class TopArticles extends Component<Props, State> {
         author: props.author,
         subsection: props.subsection,
         section: props.section,
+        keywords: props.keywords,
         excludedSections: props.excludedSections,
         excludedSubsections: props.excludedSubsections,
         itemNumber: props.itemNumber,
@@ -101,7 +103,7 @@ export default class TopArticles extends Component<Props, State> {
       const requestUrlQueryString = Object
         .entries(requesUrlParams)
         .filter(([_, val]) => val !== undefined)
-        .map(([key, val]) => `${key}=${val}`)
+        .map(([key, val]) => `${key}=${encodeURIComponent(`${val ?? ''}`)}`)
         .join('&')
       const requestUrl = `${requestUrlRoot}${requestUrlQueryString}`
       const response = await window.fetch(requestUrl, {

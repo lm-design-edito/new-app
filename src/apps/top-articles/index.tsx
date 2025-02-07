@@ -60,6 +60,7 @@ async function toProps (input: unknown, id: string): Promise<Props> {
     author: i => Apps.ifNotUndefinedHelper(i, Cast.toString),
     subsection: i => Apps.ifNotUndefinedHelper(i, Cast.toString),
     section: i => Apps.ifNotUndefinedHelper(i, Cast.toString),
+    keywords: i => Apps.ifNotUndefinedHelper(i, Cast.toString),
     excludedSections: i => Apps.ifNotUndefinedHelper(i, Cast.toString),
     excludedSubsections: i => Apps.ifNotUndefinedHelper(i, Cast.toString),
     itemNumber: i => Apps.ifNotUndefinedHelper(i, Cast.toNumber),
