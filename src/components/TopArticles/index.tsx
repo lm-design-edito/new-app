@@ -116,8 +116,8 @@ export default class TopArticles extends Component<Props, State> {
       if (articlesData.some(article => !isNonNullObject(article))) throw `Some items in response array are not objects. ${JSON.stringify(articlesData)}`
       this.setState({ loading: false, error: null, articlesData: articlesData as ForecastApiArticleData[] })
     } catch (err) {
+      console.error(err)
       const errStr = unknownToString(err)
-      console.error(errStr)
       this.setState({ loading: false, error: errStr })
     }
   }
