@@ -2,6 +2,7 @@ import { Component } from 'preact'
 import { Bem } from '@design-edito/tools/agnostic/css/bem'
 import { unknownToString } from '@design-edito/tools/agnostic/errors/unknown-to-string'
 import { isNonNullObject } from '@design-edito/tools/agnostic/objects/is-object'
+import { formatDate } from '@design-edito/tools/agnostic/time/dates/format-date'
 import Thumbnail from './Thumbnail'
 
 export type ForecastApiArticleData = {
@@ -113,7 +114,7 @@ export default class TopArticles extends Component<Props, State> {
       this.setState({ loading: false, error: null, articlesData: articlesData as ForecastApiArticleData[] })
     } catch (err) {
       console.error(err)
-      // const errStr = unknownToString(err)
+      const errStr = unknownToString(err)
       // this.setState({ loading: false, error: errStr })
       this.setState({
         loading: false,
@@ -124,17 +125,39 @@ export default class TopArticles extends Component<Props, State> {
   }
 
   render() {
-    const { state, bemClss } = this
+    const { props, state, bemClss } = this
+    const { dateFormat, dateLocale } = props
     const lmClasses = [bemClss.value]
     if (state.error !== null || state.loading === true) return <></> // [WIP] better handling for loading & error states ?
     return <div className={lmClasses.join(' ')}>{
       state.articlesData?.map((articleData, i) => {
-        const { url, img, title } = articleData
+        const { url, img, title, publishedAt = '1970-01-01 00:00:00', free } = articleData
+        const [date = '1970-01-01', time = '00:00:00'] = publishedAt.split(' ')
+        const [year = '1970', month = '01', day = '01'] = date.split('-')
+        const [hour = '00', minute = '00', second = '00'] = time.split(':')
+        const publishedAtDate = new Date(
+          parseInt(year),
+          parseInt(month) - 1,
+          parseInt(day),
+          parseInt(hour),
+          parseInt(minute),
+          parseInt(second)
+        )
+        const formattedDate = formatDate(publishedAtDate, dateFormat ?? '{{YYYY}}-{{MM}}-{{DD}}', dateLocale)
         const thumbTextContent = <>
-          <h3>{title}</h3>
+          <h3 className='lm-top-articles__article-title'>{free === '0'
+            ? <svg style={{ verticalAlign: 'middle' }} xmlns='http://www.w3.org/2000/svg' width='26' height='18' viewBox='0 0 26 18'>
+              <g fill='none' fill-rule='evenodd'>
+                <path fill='#ffc600' d='M0 0h18v18H0z'/>
+                <path fill='#fff' d='M14.276 5.96c-.5.309-.667.727-.667 1.372v5.154c0 .324.039.471.205.566l.167.095.46-.284.155.324-1.602 1.01-.55-.391c-.244-.175-.347-.39-.347-.808V8.395c0-.86.257-1.319.616-1.6l.205-.162-1.512-.93-.678.431v6.702c0 .566-.077.647-.552.902 0 0-.37.189-.882.471h-.103V6.781c0-.363-.039-.445-.23-.606l-.538-.457-.654.39v3.849c0 .673-.102 1.157-.614 1.493l-1.28.848-.13-.228c.398-.324.488-.782.488-1.32V6.82c0-.578-.077-.807-.654-.699-.217.04-.55.094-.755.121-.846.121-1.205-.511-.628-1.305 0 0 .141-.202.5-.687l.282.202-.205.31c-.27.404-.052.62.384.457.205-.08.602-.241.883-.363 1.217-.498 1.665.323 1.73.808l1.511-.956 1.305 1.05 1.614-1.05 1.243.74c.422.256.627.148.922-.014l.243-.134.192.337zm-7.902 8.25c-.128-.378-.5-.768-1.166-.795-.628-.013-1.524.243-2.267.835l-.141-.189c.538-.62 1.793-1.614 3.112-1.628.692 0 1.179.242 1.525.633l.576-.337.167.35z'/>
+              </g>
+            </svg>
+            : ''}{title}
+          </h3>
+          <p className='lm-top-articles__article-date'>{formattedDate}</p>
         </>
         return <Thumbnail
-          key={url}
+          key={`${i}-${url}`}
           targetUrl={url}
           imageSrc={img}
           contentBelow={thumbTextContent} />

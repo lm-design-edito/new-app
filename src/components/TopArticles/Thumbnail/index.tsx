@@ -1,6 +1,7 @@
 import { Component, VNode } from 'preact'
 
 export type Props = {
+  customClass?: string
   targetUrl?: string
   imageSrc?: string
   imageAlt?: string
@@ -15,6 +16,7 @@ export type Props = {
 export default class Thumb extends Component<Props> {
   render () {
     const {
+      customClass,
       targetUrl,
       imageSrc,
       imageAlt,
@@ -26,8 +28,11 @@ export default class Thumb extends Component<Props> {
       onClick
     } = this.props
 
+    const classes = ['lm-thumbnail']
+    if (customClass !== undefined) classes.push(customClass)
+
     return <a
-      className="lm-thumbnail"
+      className={classes.join(' ')}
       href={targetUrl}
       onClick={onClick}>
       <div className="lm-thumbnail__content lm-thumbnail__content--above">{contentAbove}</div>
@@ -42,7 +47,6 @@ export default class Thumb extends Component<Props> {
     </a>
   }
 }
-
 
 /*
 This CSS is assumed to be provided by the consumer app for now:
@@ -60,22 +64,22 @@ a.lm-thumbnail {
   text-decoration: none;
 }
 
-lm-thumbnail__content lm-thumbnail__content--above {
+.lm-thumbnail__content lm-thumbnail__content--above {
   grid-area: above;
 }
 
-lm-thumbnail__content lm-thumbnail__content--left {
+.lm-thumbnail__content lm-thumbnail__content--left {
   grid-area: left;
   display: flex;
   justify-content: flex-end;
 }
 
-lm-thumbnail__content lm-thumbnail__content--right {
+.lm-thumbnail__content lm-thumbnail__content--right {
   grid-area: right;
   display: flex;
 }
 
-lm-thumbnail__content lm-thumbnail__content--below {
+.lm-thumbnail__content lm-thumbnail__content--below {
   grid-area: below;
 }
 
@@ -99,10 +103,9 @@ lm-thumbnail__content lm-thumbnail__content--below {
   user-select: none;
 }
 
-lm-thumbnail__content lm-thumbnail__content--overlay {
+.lm-thumbnail__content lm-thumbnail__content--overlay {
   position: absolute;
   top: 0;
 }
-
 
 */
