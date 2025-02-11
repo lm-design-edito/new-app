@@ -1,0 +1,79 @@
+{
+  "build": {
+    "version_number": "1.0.0-fuego.9",
+    "version_description": "~/components/TopArticles - include publication date & 'abo' marker on articles",
+    "timestamp": "2025-02-11T15:28:55.303Z",
+    "latest_local_version_found": "1.0.0-fuego.8"
+  },
+  "git": {
+    "has_uncommited_changes": false,
+    "latest_commit_number": "1427f8e2d0e8912c89654bb59770186c8243f68a"
+  },
+  "bucket": {
+    "name": "gs://decodeurs/design-edito/v1.fuego",
+    "url": "https://assets-decodeurs.lemonde.fr/design-edito/v1.fuego",
+    "current_versions_json": {
+      "1.0.0-fuego.0": {
+        "description": "Dropped Darkdouille, use @design-edito/tools's HyperJson instead",
+        "deployedOn": 1734104101914,
+        "deployedOnReadable": "Fri, 13 Dec 2024 15:35:01 GMT",
+        "commit": "2adab32143847fca9412c598ecd276467fe94cd3"
+      },
+      "1.0.0-fuego.1": {
+        "description": "Same that previous release, something seems to have failed while deploying 1.0.0-fuego.0",
+        "deployedOn": 1734104259017,
+        "deployedOnReadable": "Fri, 13 Dec 2024 15:37:39 GMT",
+        "commit": "34f9446b0927dd31646007ef41cc39d0963efdf0"
+      },
+      "1.0.0-fuego.2": {
+        "description": "-",
+        "deployedOn": 1736873662646,
+        "deployedOnReadable": "Tue, 14 Jan 2025 16:54:22 GMT",
+        "commit": "20c6ec593ecedc8979f84d45bb48b341c4c4ccda"
+      },
+      "1.0.0-fuego.3": {
+        "description": "Slight fix in hyper-json array smart-tag",
+        "deployedOn": 1737042388774,
+        "deployedOnReadable": "Thu, 16 Jan 2025 15:46:28 GMT",
+        "commit": "369a800043f848026f27219487887eae6d418356"
+      },
+      "1.0.0-fuego.4": {
+        "description": "stop logging hyper-json resolution paths ",
+        "deployedOn": 1738084832417,
+        "deployedOnReadable": "Tue, 28 Jan 2025 17:20:32 GMT",
+        "commit": "ecef914236917f9325f3290810b7625df4848b93"
+      },
+      "1.0.0-fuego.5": {
+        "description": "new perfs optims in hyper-json (@design-edito/tools)",
+        "deployedOn": 1738144643143,
+        "deployedOnReadable": "Wed, 29 Jan 2025 09:57:23 GMT",
+        "commit": "6d9f9e34f808aea90c1d47d89c2c6815edaa7435"
+      },
+      "1.0.0-fuego.6": {
+        "description": "~/components/TopArticles - created",
+        "deployedOn": 1738940765186,
+        "deployedOnReadable": "Fri, 07 Feb 2025 15:06:05 GMT",
+        "commit": "c8adf848fac91c6a04682268a7ced95c7bec1db7"
+      },
+      "1.0.0-fuego.7": {
+        "description": "~/components/TopArticles - more explicit error logging",
+        "deployedOn": 1738941824052,
+        "deployedOnReadable": "Fri, 07 Feb 2025 15:23:44 GMT",
+        "commit": "5ebd5bf753d7f47fe83bc962697757caf266716b"
+      },
+      "1.0.0-fuego.8": {
+        "description": "~/components/TopArticles - hardcoded data fallback if fetch error",
+        "deployedOn": 1738944822348,
+        "deployedOnReadable": "Fri, 07 Feb 2025 16:13:42 GMT",
+        "commit": "9a7bd2a512e90e32817fb73d50c854652d54e53b"
+      }
+    },
+    "create_versions_json": false,
+    "latest_version_found": "1.0.0-fuego.8",
+    "published": true
+  },
+  "npm": {
+    "registry": "https://registry.npmjs.org",
+    "published": true
+  }
+}
