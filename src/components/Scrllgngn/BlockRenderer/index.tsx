@@ -8,19 +8,21 @@ type Props = {
   content?: string|VNode
   context?: BlockContext
   injectStylesheet?: (url: string) => void
+  injectCss?: (css: string) => void
 }
 
 export default class BlockRenderer extends Component<Props> {
   render() {
     const { props } = this
-    const { type, content, context, injectStylesheet } = props
+    const { type, content, context, injectStylesheet, injectCss } = props
     switch (type) {
       case 'html':
       case undefined: return <HtmlBlockRenderer content={content} />
       case 'module': return <ModuleBlockRenderer
         url={typeof content === 'string' ? content : ''}
         context={context}
-        injectStylesheet={injectStylesheet} />
+        injectStylesheet={injectStylesheet}
+        injectCss={injectCss} />
       default: return <></>
     }
   }

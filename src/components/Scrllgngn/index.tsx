@@ -80,9 +80,9 @@ export type Props = {
   stickyBlocksLazyLoadDistance?: number
   stickyBlocksViewportHeight?: string // [WIP] No relative units, maybe some regex checks here?
   stickyBlocksOffsetTop?: number // [WIP] this does not work well
-  forceStickBlocks?: 'before'|'after'|'both'|'none'
+  forceStickBlocks?: 'before' | 'after' | 'both' | 'none'
   thresholdOffset?: string
-  bgColorTransitionDuration?: string|number
+  bgColorTransitionDuration?: string | number
   pages?: PropsPageData[]
   onPageChange?: (payload?: { state: State }) => void
   onScrollTrack?: (payload?: { state: State, nextState: State }) => void
@@ -91,11 +91,11 @@ export type Props = {
 /* Context stuff */
 
 export type BlockContext = {
-  width: number|null
-  height: number|null
-  page: number|null
-  progression: number|null
-  pageProgression: number|null
+  width: number | null
+  height: number | null
+  page: number | null
+  progression: number | null
+  pageProgression: number | null
 }
 
 export type PartialBlockContext = Partial<BlockContext>
@@ -1008,6 +1008,7 @@ export default class Scrollgneugneu extends Component<Props, State> {
       getBlockStatus,
       getBlockDistanceFromDisplay,
       injectStylesheet,
+      injectCss,
       throttledHandleBlockResize,
     } = this
     const { stickyBlocksLazyLoadDistance } = props
@@ -1093,7 +1094,8 @@ export default class Scrollgneugneu extends Component<Props, State> {
                     type={type}
                     content={content}
                     context={_context}
-                    injectStylesheet={injectStylesheet} />
+                    injectStylesheet={injectStylesheet}
+                    injectCss={injectCss} />
                 })()}
               </TransitionsWrapper>
             </div>

@@ -4,27 +4,30 @@ import { BlockContext, createBlockContext, diffContexts } from '../../'
 type Props = {
   url?: string
   injectStylesheet?: (url: string) => void
+  injectCss?: (css: string) => void
   context?: BlockContext
 }
 
 type ModuleData = {
-  init: (props: BlockContext) => HTMLElement|Promise<HTMLElement>
+  init: (context: BlockContext) => HTMLElement | Promise<HTMLElement>
   update: (wrapper: HTMLElement, context: BlockContext, prevContext: BlockContext) => void
-  styles?: string[]
+  styles?: string[] // DEPRECATED
+  css?: string[]
+  styleSheets?: string[]
 }
 
 type State = {
-  status: null|'loading'|'loaded'|'load-error'|'initializing'|'initialized'
-  moduleData: ModuleData|null
-  moduleLoadError: Error|null
-  moduleInitError: Error|null
-  moduleTarget: HTMLElement|null
+  status: null | 'loading' | 'loaded' | 'load-error' | 'initializing' | 'initialized'
+  moduleData: ModuleData | null
+  moduleLoadError: Error | null
+  moduleInitError: Error | null
+  moduleTarget: HTMLElement | null
   context: BlockContext
   prevContext: BlockContext
   updateIsAllowed: boolean
 }
 
-type StateSetter = ((s: State) => (State|null))|Partial<State>
+type StateSetter = ((s: State) => (State | null)) | Partial<State>
 
 export default class ModuleBlockRenderer extends Component<Props, State> {
   constructor (props: Props) {
@@ -50,7 +53,7 @@ export default class ModuleBlockRenderer extends Component<Props, State> {
     updateIsAllowed: false
   }
 
-  static getDerivedStateFromProps(props: Props, state: State): State|null {
+  static getDerivedStateFromProps(props: Props, state: State): State | null {
     const propsContext = props.context ?? createBlockContext()
     const stateContext = state.context
     const diff = diffContexts(stateContext, propsContext)
@@ -101,7 +104,7 @@ export default class ModuleBlockRenderer extends Component<Props, State> {
 
   async loadModule () {
     const { props, aSetState } = this
-    const { url, injectStylesheet } = props
+    const { url, injectStylesheet, injectCss } = props
     if (url === undefined) return await aSetState({
       status: null,
       moduleData: null,
@@ -122,13 +125,30 @@ export default class ModuleBlockRenderer extends Component<Props, State> {
       const importedHasUpdateFunc = 'update' in importedData && typeof importedDataAsAny.update === 'function'
       const importedHasStyles = 'styles' in importedData
         && Array.isArray(importedDataAsAny.styles)
-        && (importedDataAsAny?.styles as unknown[]|undefined)?.every(url => typeof url === 'string')
+        && (importedDataAsAny?.styles as unknown[] | undefined)?.every(url => typeof url === 'string')
+      const importedHasCss = 'css' in importedData
+        && Array.isArray(importedDataAsAny.css)
+        && (importedDataAsAny?.css as unknown[] | undefined)?.every(url => typeof url === 'string')
+      const importedHasStyleSheets = 'styleSheets' in importedData
+        && Array.isArray(importedDataAsAny.styleSheets)
+        && (importedDataAsAny?.styleSheets as unknown[] | undefined)?.every(url => typeof url === 'string')
       if (!importedHasInitFunc) throw new Error('Imported module must export a function named init')
       if (!importedHasUpdateFunc) throw new Error('Imported module must export a function named update')
       const moduleData = importedData as ModuleData
-      if (injectStylesheet !== undefined && importedHasStyles) {
-        const styles = (importedDataAsAny.styles as string[])
-        styles.forEach(url => injectStylesheet(url))
+      if (injectStylesheet !== undefined) {
+        if (importedHasStyleSheets) {
+          const styleSheets = (importedDataAsAny.styleSheets as string[])
+          styleSheets.forEach(url => injectStylesheet(url))
+        }
+        if (importedHasStyles) {
+          console.warn('DEPRECATED: styles is deprecated, use styleSheets instead (remote style sheets), or css for direct css injection')
+          const styles = (importedDataAsAny.styles as string[])
+          styles.forEach(url => injectStylesheet(url))
+        }
+      }
+      if (injectCss !== undefined && importedHasCss) {
+        const css = (importedDataAsAny.css as string[])
+        css.forEach(css => injectCss(css))
       }
       await aSetState({
         status: 'loaded',
@@ -238,7 +258,7 @@ export default class ModuleBlockRenderer extends Component<Props, State> {
     attachModuleTarget()
   }
 
-  $moduleWrapper: HTMLDivElement|null = null
+  $moduleWrapper: HTMLDivElement | null = null
 
   render () {
     const { state } = this
