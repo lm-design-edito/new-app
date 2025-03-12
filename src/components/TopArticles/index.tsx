@@ -1,51 +1,44 @@
 import { Component } from 'preact'
 import { Bem } from '@design-edito/tools/agnostic/css/bem'
-import { unknownToString } from '@design-edito/tools/agnostic/errors/unknown-to-string'
 import { isNonNullObject } from '@design-edito/tools/agnostic/objects/is-object'
 import { formatDate } from '@design-edito/tools/agnostic/time/dates/format-date'
 import Thumbnail from './Thumbnail'
 
 export type ForecastApiArticleData = {
-  url?: string
   title?: string
   description?: string
   img?: string
   free?: string
-  author?: string
+  author?: string | null
   section?: string
   subSection?: string
   keywords?: string
   publishedAt?: string
   modifiedAt?: string
+  url?: string
+  pageview?: string
+  uniquePageview?: string
+  readingRate?: string
+  readingTime?: string
+  totalShare?: string
+  shareRate?: string
+  shareFb?: string
+  shareTw?: string
+  shareMail?: string
+  comment?: string
+  commentRate?: string
+  gift?: string
+  tunnelAccess?: string
+  abortion?: string
+  conversion?: string
+  conversionRate?: string
+  unsubwill?: string
+  churn?: string
 }
-
-export const orderByOptions = ['pageview', 'uniquePageview', 'readingRate', 'readingTime', 'totalShare', 'shareRate', 'shareFb', 'shareTw', 'shareMail', 'comment', 'commentRate', 'gift', 'tunnelAccess', 'abortion', 'conversion', 'conversionRate', 'unsubwill', 'churn'] as const
-export const langOptions = ['fr', 'en'] as const
-export const deviceOptions = ['all', 'desktop', 'mobile', 'tablet', 'mobile_ios', 'mobile_android'] as const
-export const mediumOptions = ['all', 'search', 'social', 'direct', 'internal'] as const
-export const sinceOptions = ['1h', '1d', '2d', '7d', '30d'] as const
-export const publishedSinceOptions = ['1d', '2d', '3d', '4d', '5d', '6d', '7d', '30d'] as const
-export const orderByDirectionOptions = ['desc', 'asc'] as const
 
 export type Props = {
   dateFormat?: string
   dateLocale?: string
-  orderBy?: typeof orderByOptions[number]
-  lang?: typeof langOptions[number]
-  device?: typeof deviceOptions[number]
-  medium?: typeof mediumOptions[number]
-  since?: typeof sinceOptions[number]
-  publishedSince?: typeof publishedSinceOptions[number]
-  free?: boolean
-  author?: string
-  subsection?: string
-  section?: string
-  keywords?: string
-  excludedSections?: string
-  excludedSubsections?: string
-  itemNumber?: number
-  page?: number
-  orderByDirection?: typeof orderByDirectionOptions[number]
 }
 
 export type State = {
@@ -75,34 +68,9 @@ export default class TopArticles extends Component<Props, State> {
   }
 
   async fetchArticles () {
-    const { props } = this
     this.setState({ loading: true, error: null })
     try {
-      const requestUrlRoot = `https://forecast.lemonde.fr/api/v1/top-articles/${props.orderBy ?? 'pageview'}?`
-      const requesUrlParams = {
-        key: window.atob('QUl6YVN5REVKLW45NGNncXFTOGlwVlhOVmYwTzZRbnpieTUwaFRv'),
-        orderByDirection: props.orderBy,
-        lang: props.lang,
-        device: props.device,
-        medium: props.medium,
-        since: props.since,
-        publishedSince: props.publishedSince,
-        free: props.free,
-        author: props.author,
-        subsection: props.subsection,
-        section: props.section,
-        keywords: props.keywords,
-        excludedSections: props.excludedSections,
-        excludedSubsections: props.excludedSubsections,
-        itemNumber: props.itemNumber,
-        page: props.page
-      }
-      const requestUrlQueryString = Object
-        .entries(requesUrlParams)
-        .filter(([_, val]) => val !== undefined)
-        .map(([key, val]) => `${key}=${encodeURIComponent(`${val ?? ''}`)}`)
-        .join('&')
-      const requestUrl = `${requestUrlRoot}${requestUrlQueryString}`
+      const requestUrl = 'https://www.lemonde.fr/ajax/fetch-forecast?keywords=Covid,%20cinq%20ans%20apr%C3%A8s&since=2d&published=30d'
       const response = await window.fetch(requestUrl, {
         method: 'GET',
         headers: { 'Accept': 'application/json' }
@@ -111,109 +79,18 @@ export default class TopArticles extends Component<Props, State> {
       const articlesData = await response.json()
       if (!Array.isArray(articlesData)) throw `Response is not an array. ${JSON.stringify(articlesData)}`
       if (articlesData.some(article => !isNonNullObject(article))) throw `Some items in response array are not objects. ${JSON.stringify(articlesData)}`
-      this.setState({ loading: false, error: null, articlesData: articlesData as ForecastApiArticleData[] })
-    } catch (err) {
-      console.error(err)
-      const errStr = unknownToString(err)
-      // this.setState({ loading: false, error: errStr })
+      const [first, second, third] = articlesData as ForecastApiArticleData[]
       this.setState({
         loading: false,
         error: null,
-        articlesData: [
-          {
-            "title": "« Derrière vos décisions, ce sont des gens qui vont mourir » : découvrez les extraits du livre-enquête « Les Juges et l’Assassin » sur la gestion du Covid-19",
-            "description": "Dans leur livre à paraître mercredi 22 janvier chez Flammarion, les journalistes du « Monde » Gérard Davet et Fabrice Lhomme reviennent, éléments inédits à l’appui, sur la façon dont l’exécutif a géré la crise engendrée en 2020 par l’épidémie. Nous en publions des extraits.",
-            "img": "https://img.lemde.fr/2025/01/19/0/0/5394/3596/600/0/60/0/fc84e7b_ftp-import-images-1-wsq7omh3in2g-5779871-01-06.jpg",
-            "free": "0",
-            "author": "Gérard Davet, Fabrice Lhomme",
-            "section": "Débats",
-            "subSection": "Covid, cinq ans après",
-            "keywords": "Covid, cinq ans après,Coronavirus et pandémie de Covid-19,Société,Pandémies,Livres,Débats,Politique,Santé",
-            "publishedAt": "2025-01-21 05:00:20",
-            "modifiedAt": "2025-01-21 10:34:39",
-            "url": "https://www.lemonde.fr/idees/article/2025/01/21/derriere-vos-decisions-ce-sont-des-gens-qui-vont-mourir-decouvrez-les-extraits-du-livre-enquete-les-juges-et-l-assassin-sur-la-gestion-du-covid-19_6507882_3232.html",
-            "pageview": "226236",
-            "uniquePageview": "199184",
-            "readingRate": "37.1128",
-            "readingTime": "92.52327157798202",
-            "totalShare": "0",
-            "shareRate": "0",
-            "shareFb": "0",
-            "shareTw": "0",
-            "shareMail": "0",
-            "comment": "215",
-            "commentRate": "0.001079403970634433",
-            "gift": "0",
-            "tunnelAccess": "0",
-            "abortion": "0",
-            "conversion": "4",
-            "conversionRate": "0.00002008193364257459",
-            "unsubwill": "0",
-            "churn": "0"
-          },
-          {
-            "title": "Covid-19 : il y a cinq ans, ces semaines cruciales qui ont vu dirigeants mondiaux et scientifiques tâtonner face à une crise inédite",
-            "description": "Début 2020, une étrange épidémie virale, née en Chine, se propage à travers le monde. Pendant que les scientifiques cernent l’ennemi et définissent les meilleures défenses, les gouvernements tardent à réagir. Retour sur un pas de deux délicat entre science et politiques sanitaires.",
-            "img": "https://img.lemde.fr/2025/01/29/0/0/5749/3833/600/0/60/0/561c733_sirius-fs-upload-1-tvjxed48ovrq-1738168000763-lgeai-operation-chardon79.jpg",
-            "free": "0",
-            "author": "Florence Rosier",
-            "section": "Planète",
-            "subSection": "Covid, cinq ans après",
-            "keywords": "Covid, cinq ans après,Coronavirus et pandémie de Covid-19,Maladies infectieuses,Pathologies,Santé,Planète",
-            "publishedAt": "2025-01-30 04:45:07",
-            "modifiedAt": "2025-01-31 06:57:49",
-            "url": "https://www.lemonde.fr/planete/article/2025/01/30/covid-19-il-y-a-cinq-ans-ces-semaines-cruciales-qui-ont-vu-dirigeants-mondiaux-et-scientifiques-tatonner-face-a-une-crise-inedite_6522933_3244.html",
-            "pageview": "38562",
-            "uniquePageview": "36225",
-            "readingRate": "35.6757",
-            "readingTime": "76.57495602772926",
-            "totalShare": "0",
-            "shareRate": "0",
-            "shareFb": "0",
-            "shareTw": "0",
-            "shareMail": "0",
-            "comment": "26",
-            "commentRate": "0.0007177363666837548",
-            "gift": "0",
-            "tunnelAccess": "0",
-            "abortion": "0",
-            "conversion": "4",
-            "conversionRate": "0.00011042097987934274",
-            "unsubwill": "0",
-            "churn": "0"
-          },
-          {
-            "title": "Didier Raoult dans « Le Monde », de scientifique « anticonformiste » à « nouvelle égérie des complotistes »",
-            "description": "Le nom du microbiologiste apparaît pour la première fois dans le quotidien le 24 septembre 1994, à l’occasion de son élection à la tête de l’université Aix-Marseille-II. Depuis, le journal a documenté chaque étape de son parcours, jusqu’à ses récents démêlés avec l’ordre des médecins et la justice.",
-            "img": "https://img.lemde.fr/2025/01/14/127/0/7274/4849/600/0/60/0/13a61d4_sirius-fs-upload-1-ydslw7twzhpr-1736871890407-000-328l8vj.jpg",
-            "free": "0",
-            "author": "Yann Bouchez",
-            "section": "M le mag",
-            "subSection": "La première fois que « Le Monde » a écrit...",
-            "keywords": "Covid, cinq ans après,Coronavirus et pandémie de Covid-19,Maladies infectieuses,Pathologies,Santé,Société,La première fois que « Le Monde » a écrit...,M le mag",
-            "publishedAt": "2025-01-17 09:00:06",
-            "modifiedAt": "2025-01-17 09:00:06",
-            "url": "https://www.lemonde.fr/m-le-mag/article/2025/01/17/didier-raoult-dans-le-monde-de-scientifique-anticonformiste-a-nouvelle-egerie-des-complotistes_6502651_4500055.html",
-            "pageview": "33797",
-            "uniquePageview": "30942",
-            "readingRate": "54.6062",
-            "readingTime": "51.664480097095364",
-            "totalShare": "0",
-            "shareRate": "0",
-            "shareFb": "0",
-            "shareTw": "0",
-            "shareMail": "0",
-            "comment": "24",
-            "commentRate": "0.000775644780271428",
-            "gift": "0",
-            "tunnelAccess": "0",
-            "abortion": "0",
-            "conversion": "0",
-            "conversionRate": "0",
-            "unsubwill": "0",
-            "churn": "0"
-          }
-        ] as any
+        articlesData: [first, second, third].filter(e => e !== undefined) as ForecastApiArticleData[]
+      })
+    } catch (err) {
+      console.error(err)
+      this.setState({
+        loading: false,
+        error: null,
+        articlesData: defaultArticlesData
       })
     }
   }
@@ -259,3 +136,100 @@ export default class TopArticles extends Component<Props, State> {
     }</div>
   }
 }
+
+export const defaultArticlesData: [ForecastApiArticleData, ForecastApiArticleData, ForecastApiArticleData] = [
+  {
+    "title": "« Cinq ans plus tard, la grande désillusion du “monde d’après” la crise due au Covid-19 »",
+    "description": "Où est passée cette aspiration commune à transformer nos sociétés ? Dès que l’urgence sanitaire a été levée, nous sommes retombés dans nos ornières : culte de la croissance, exploitation aveugle des ressources, divisions géopolitiques. Pourtant, se réjouit Sylvie Matelly, directrice de l’Institut Jacques Delors, dans une tribune au « Monde », l’Europe a alors su serrer les rangs.",
+    "img": "https://img.lemde.fr/2023/04/13/0/0/3000/2000/600/0/60/0/9ca095a_1681404751794-000-1s29dk.jpg",
+    "free": "0",
+    "author": "Sylvie Matelly",
+    "section": "Débats",
+    "subSection": "Covid, cinq ans après",
+    "keywords": "Covid, cinq ans après,Coronavirus et pandémie de Covid-19,Maladies infectieuses,Pathologies,Santé,Société,Tribunes éco,Économie,Tribunes,Débats",
+    "publishedAt": "2025-03-07 11:00:03",
+    "modifiedAt": "2025-03-07 15:17:22",
+    "url": "https://www.lemonde.fr/idees/article/2025/03/07/cinq-ans-plus-tard-la-grande-desillusion-du-monde-d-apres-la-crise-due-au-covid-19_6577011_3232.html",
+    "pageview": "8028",
+    "uniquePageview": "3666",
+    "readingRate": "33.98593608271666",
+    "readingTime": "8457.12002182215",
+    "totalShare": "1",
+    "shareRate": "0.00025243625530426377",
+    "shareFb": "0",
+    "shareTw": "0",
+    "shareMail": "0",
+    "comment": "4",
+    "commentRate": "0.007478957769388066",
+    "gift": "0",
+    "tunnelAccess": "9",
+    "abortion": "0",
+    "conversion": "1",
+    "conversionRate": "0.00025243625530426377",
+    "unsubwill": "0",
+    "churn": "0"
+  },
+  {
+    "title": "Cinq ans après le Covid-19, « le télétravail semble déclencher une évolution de la répartition des tâches au sein des couples »",
+    "description": "Le travail à distance modifie la vie de l’entreprise – pas toujours pour le meilleur – et transforme aussi la vie privée, analyse l’économiste Claudia Senik dans une tribune au « Monde ». En France, les heures de travail domestique s’allongent pour les hommes qui télétravaillent, mais pas pour les femmes.",
+    "img": "https://img.lemde.fr/2023/12/08/0/0/4471/2981/600/0/60/0/c090fc5_1702027663780-pns-6733589.jpg",
+    "free": "0",
+    "author": "Claudia Senik",
+    "section": "Débats",
+    "subSection": "Covid, cinq ans après",
+    "keywords": "Tribunes éco,Économie,Travail,Conditions de travail,Emploi,Tribunes,Débats,Covid, cinq ans après,Coronavirus et pandémie de Covid-19,Maladies infectieuses,Société,Egalité femmes-hommes",
+    "publishedAt": "2025-03-07 5:00:19",
+    "modifiedAt": "2025-03-07 15:14:17",
+    "url": "https://www.lemonde.fr/idees/article/2025/03/07/cinq-ans-apres-le-covid-19-le-teletravail-semble-declencher-une-evolution-de-la-repartition-des-taches-au-sein-des-couples_6576874_3232.html",
+    "pageview": "6636",
+    "uniquePageview": "2605",
+    "readingRate": "42.460952470307156",
+    "readingTime": "6337.571976967371",
+    "totalShare": "1",
+    "shareRate": "0.0012667946445964807",
+    "shareFb": "0",
+    "shareTw": "0",
+    "shareMail": "0",
+    "comment": "1",
+    "commentRate": "0.0020672727833839846",
+    "gift": "0",
+    "tunnelAccess": "0",
+    "abortion": "0",
+    "conversion": "0",
+    "conversionRate": "0",
+    "unsubwill": "0",
+    "churn": "0"
+  },
+  {
+    "title": "Arnaud Fontanet, épidémiologiste : « 20 millions de vies ont été sauvées grâce à la vaccination contre le Covid-19 »",
+    "description": "Cinq ans après, la France est-elle mieux préparée pour la prochaine pandémie ? En avons-nous retenu les leçons ? Le professeur Arnaud Fontanet, médecin épidémiologiste des maladies émergentes, a répondu à vos questions lors d’un tchat.",
+    "img": "https://img.lemde.fr/2022/07/11/0/96/5280/3520/600/0/60/0/507d386_5679582-01-06.jpg",
+    "free": "1",
+    "author": null,
+    "section": "Société",
+    "subSection": "Covid, cinq ans après",
+    "keywords": "Covid, cinq ans après,Coronavirus et pandémie de Covid-19,Maladies infectieuses,Pathologies,Santé,Société",
+    "publishedAt": "2025-02-26 15:40:40",
+    "modifiedAt": "2025-02-26 17:03:56",
+    "url": "https://www.lemonde.fr/societe/article/2025/02/26/arnaud-fontanet-epidemiologiste-20-millions-de-vies-ont-ete-sauvees-grace-a-la-vaccination-contre-le-covid-19_6565378_3224.html",
+    "pageview": "2451",
+    "uniquePageview": "1205",
+    "readingRate": "34.25995034498793",
+    "readingTime": "22361.629875518673",
+    "totalShare": "0",
+    "shareRate": "0",
+    "shareFb": "0",
+    "shareTw": "0",
+    "shareMail": "0",
+    "comment": "2",
+    "commentRate": "0.004008774511145111",
+    "gift": "0",
+    "tunnelAccess": "0",
+    "abortion": "0",
+    "conversion": "0",
+    "conversionRate": "0",
+    "unsubwill": "0",
+    "churn": "0"
+  }
+]
+
