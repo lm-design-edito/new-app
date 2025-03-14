@@ -8,50 +8,29 @@ import Paginator, { State as PaginatorState } from '~/components/Paginator'
 import TransitionsWrapper from './TransitionsWrapper'
 import BlockRenderer from './BlockRenderer'
 import styles from './styles.module.scss'
+import { getNeighbourIntegersSeries } from './utils'
 
-export type LayoutSizeFormula = `${number}`|`${number}/${number}`
+/* Layout */
+export type LayoutSizeFormula = `${number}` | `${number}/${number}`
 export type LayoutOffsetFormula = `${number}/${number}`
-// [WIP] got rid of justif and align formulas
-// const layoutJustificationFormulas = ['left', 'center', 'right'] as const
-// type LayoutJustificationFormula = typeof layoutJustificationFormulas[number]
-// const layoutAlignFormulas = ['top', 'middle', 'bottom'] as const
-// type LayoutAlignFormula = typeof layoutAlignFormulas[number]
-export type LayoutHPosFormula = LayoutSizeFormula|`${LayoutSizeFormula}(${LayoutOffsetFormula})`
-export type LayoutVPosFormula = LayoutSizeFormula|`${LayoutSizeFormula}(${LayoutOffsetFormula})`
-export type LayoutPosFormula = LayoutHPosFormula|`${LayoutHPosFormula}_${LayoutVPosFormula}`
-// [WIP] got rid of justif and align formulas
-// type LayoutContentPosFormula = LayoutJustificationFormula|LayoutAlignFormula|`${LayoutJustificationFormula}_${LayoutAlignFormula}`|`${LayoutAlignFormula}_${LayoutJustificationFormula}`
-// type LayoutFormula = LayoutPosFormula|`${LayoutPosFormula}_${LayoutContentPosFormula}`
+export type LayoutHPosFormula = LayoutSizeFormula | `${LayoutSizeFormula}(${LayoutOffsetFormula})`
+export type LayoutVPosFormula = LayoutSizeFormula | `${LayoutSizeFormula}(${LayoutOffsetFormula})`
+export type LayoutPosFormula = LayoutHPosFormula | `${LayoutHPosFormula}_${LayoutVPosFormula}`
 export type LayoutFormula = LayoutPosFormula
+export type LayoutName = LayoutFormula | 'fullscreen' | 'full-screen' | 'left-half' | 'center-half' | 'right-half' // [WIP] columns
 
-export type LayoutName = LayoutFormula
-  |'fullscreen'
-  |'full-screen'
-  |'left-half'
-  |'center-half'
-  |'right-half'
-  // [WIP] columns
+/* Transition */
+export type TransitionName =  'fade' | 'grow' | 'whirl' | 'slide-up' | 'right-open' | 'left-open'
+export const isTransitionName = (input: string): input is TransitionName => ['fade', 'grow', 'whirl', 'slide-up', 'right-open', 'left-open'].includes(input)
+export type TransitionDuration = string | number
+export type TransitionDescriptor = [TransitionName] | [TransitionName, TransitionDuration]
 
-/* Transition types */
-export type TransitionName = 
-  'fade'
-  |'grow'
-  |'whirl'
-  |'slide-up'
-  |'right-open'
-  |'left-open'
-export function isTransitionName (input: string): input is TransitionName {
-  return ['fade', 'grow', 'whirl', 'slide-up', 'right-open', 'left-open'].includes(input)
-}
-export type TransitionDuration = string|number
-export type TransitionDescriptor = [TransitionName]|[TransitionName, TransitionDuration]
-
-/* Props stuff */
+/* Props */
 export type PropsCommonBlockData = {
   id?: string
   zIndex?: number
-  type?: 'html'|'module'
-  content?: string|VNode
+  type?: 'html' | 'module'
+  content?: string | VNode
   trackScroll?: boolean
 }
 export type PropsScrollBlockData = PropsCommonBlockData & {
@@ -60,13 +39,13 @@ export type PropsScrollBlockData = PropsCommonBlockData & {
   mobileLayout?: LayoutName
 }
 export type PropsStickyBlockData = PropsCommonBlockData & {
-  depth: 'back'|'front'
+  depth: 'back' | 'front'
   layout?: LayoutName // [WIP] Don't bring that back in PropsCommonBlockData before being sure there are not sticky blocks specific layout names
   mobileLayout?: LayoutName // [WIP] Don't bring that back in PropsCommonBlockData before being sure there are not sticky blocks specific layout names
   transitions?: TransitionDescriptor[]
   mobileTransitions?: TransitionDescriptor[]
 }
-export type PropsBlockData = PropsScrollBlockData|PropsStickyBlockData
+export type PropsBlockData = PropsScrollBlockData | PropsStickyBlockData
 
 export type PropsPageData = {
   id?: string
@@ -88,8 +67,7 @@ export type Props = {
   onScrollTrack?: (payload?: { state: State, nextState: State }) => void
 }
 
-/* Context stuff */
-
+/* Context */
 export type BlockContext = {
   width: number | null
   height: number | null
@@ -108,17 +86,14 @@ const nullContext: BlockContext = {
   pageProgression: null
 }
 
-export function createBlockContext (
-  partialContext?: PartialBlockContext
-): BlockContext {
+export function createBlockContext (partialContext?: PartialBlockContext): BlockContext {
   if (partialContext === undefined) return { ...nullContext }
   return { ...nullContext, ...partialContext }
 }
 
-// [WIP] add all return types
 export const diffContexts = (
   initialContext: BlockContext,
-  newContext: BlockContext) => {
+  newContext: BlockContext): Partial<BlockContext> => {
   const returned: Partial<BlockContext> = {}
   Object.entries(newContext).map(([key, val]) => {
     const valFromInitial = (initialContext as any)[key]
@@ -128,10 +103,7 @@ export const diffContexts = (
   return returned
 }
 
-export function contextsAreEqual (
-  contextA: BlockContext,
-  contextB: BlockContext
-): boolean {
+export function contextsAreEqual (contextA: BlockContext, contextB: BlockContext): boolean {
   return Object.keys(contextA).every(_key => {
     const keyInA = _key in contextA
     const keyInB = _key in contextB
@@ -141,46 +113,10 @@ export function contextsAreEqual (
   })
 }
 
-/* Inner component stuff */
-
+/* State */
 type BlockDisplayZone = number[]
 type BlockIdentifier = string
 
-function getNeighbourIntegersSeries (_array: number[]|Set<number>): number[][] {
-  const result: number[][] = []
-  const dedupedIntArray = [...new Set(_array)].filter(num => Number.isInteger(num))
-  dedupedIntArray.forEach(num => {
-    const numHasAlreadyASeries = result.some(series => series.includes(num))
-    if (numHasAlreadyASeries) return
-    const numSeries = getIntNeighboursInNumbersSet(num, dedupedIntArray)
-    result.push(numSeries)
-  })
-  return result
-}
-
-function getIntNeighboursInNumbersSet (
-  integer: number,
-  _array: number[]|Set<number>
-): number[] {
-  const dedupedIntArray = [...new Set(_array)].filter(num => Number.isInteger(num))
-  if (!dedupedIntArray.includes(integer)) return []
-  const result = [integer]
-  const lower = dedupedIntArray.filter(num => num < integer).sort((a, b) => b - a)
-  const higher = dedupedIntArray.filter(num => num > integer).sort((a, b) => a - b)
-  lower.forEach(num => {
-    const firstPos = result[0]
-    if (firstPos === undefined) return
-    if (firstPos - num === 1) result.unshift(num)
-  })
-  higher.forEach(num => {
-    const lastPos = result[result.length - 1] as number|undefined
-    if (lastPos === undefined) return
-    if (num - lastPos === 1) result.push(num)
-  })
-  return result
-}
-
-/* State stuff */
 type StateCommonBlockData = {
   _id: string
   _zIndex: number
@@ -189,7 +125,7 @@ type StateCommonBlockData = {
 }
 type StateScrollBlockData = PropsScrollBlockData & StateCommonBlockData
 type StateStickyBlockData = PropsStickyBlockData & StateCommonBlockData
-type StateBlockData = StateScrollBlockData|StateStickyBlockData
+type StateBlockData = StateScrollBlockData | StateStickyBlockData
 
 type StatePageData = PropsPageData & {
   _blocksIds: Set<BlockIdentifier>
@@ -211,13 +147,16 @@ export type State = {
   scrollingPanelWidth?: number
 }
 
-/* Actual Component */
-// [WIP] PureComponent one day??? PureComponents everywhere ???
+/* Component */
 export default class Scrollgneugneu extends Component<Props, State> {
+  /* * * * * * * * * * * * * * * * * * * * * *
+   * STATIC METHODS
+   * * * * * * * * * * * * * * * * * * * * * */
+
   static getDerivedStateFromProps (
     props: Props,
     state: State
-  ): State|null {
+  ): State | null {
     const {
       getBlockDisplayZones,
       getBlocksZIndexes,
@@ -263,21 +202,6 @@ export default class Scrollgneugneu extends Component<Props, State> {
       prevPropsPages: props.pages
     }
     return newState
-  }
-
-  static getBlockPages (
-    blockIdentifier: BlockIdentifier,
-    pagesData: PropsPageData[]
-  ): number[] {
-    const result: number[] = []
-    pagesData.forEach((pageData, pagePos) => {
-      const pageIncludesBlock = pageData.blocks?.some((blockData, blockPos) => {
-        const thisBlockId = blockData.id ?? `${pagePos}-${blockPos}`
-        return thisBlockId === blockIdentifier
-      })
-      if (pageIncludesBlock) result.push(pagePos)
-    })
-    return result
   }
 
   static getBlockDisplayZones (
@@ -343,16 +267,23 @@ export default class Scrollgneugneu extends Component<Props, State> {
     return zIndexes
   }
 
-  static layoutNameToFormula (name: string): LayoutFormula|undefined {
-    if (name === 'fullscreen') return '1_1'
-    if (name === 'full-screen') return '1_1'
-    if (name === 'left-half') return '1/2_1'
-    if (name === 'center-half') return '1/2(1/4)_1'
-    if (name === 'right-half') return '1/2(1/2)_1'
+  static getBlockPages (
+    blockIdentifier: BlockIdentifier,
+    pagesData: PropsPageData[]
+  ): number[] {
+    const result: number[] = []
+    pagesData.forEach((pageData, pagePos) => {
+      const pageIncludesBlock = pageData.blocks?.some((blockData, blockPos) => {
+        const thisBlockId = blockData.id ?? `${pagePos}-${blockPos}`
+        return thisBlockId === blockIdentifier
+      })
+      if (pageIncludesBlock) result.push(pagePos)
+    })
+    return result
   }
 
   generateLayoutClasses (
-    position: 'scrolling'|'sticky',
+    position: 'scrolling' | 'sticky',
     _layout?: LayoutName,
     _mobileLayout?: LayoutName
   ): string[] {
@@ -361,8 +292,8 @@ export default class Scrollgneugneu extends Component<Props, State> {
       layoutPosAndFormulaToCssProps: toCss
     } = Scrollgneugneu
     const { injectCss } = this
-    const layout = (toFormula(_layout ?? '') ?? _layout) as LayoutFormula|undefined
-    const mobileLayout = (toFormula(_mobileLayout ?? '') ?? _mobileLayout) as LayoutFormula|undefined
+    const layout = (toFormula(_layout ?? '') ?? _layout) as LayoutFormula | undefined
+    const mobileLayout = (toFormula(_mobileLayout ?? '') ?? _mobileLayout) as LayoutFormula | undefined
     const layoutCss = layout !== undefined ? toCss(position, layout) : undefined
     const mobileLayoutCss = mobileLayout !== undefined ? toCss(position, mobileLayout) : layoutCss
     const hasLayout = layout !== undefined
@@ -413,8 +344,16 @@ export default class Scrollgneugneu extends Component<Props, State> {
     return classes
   }
 
+  static layoutNameToFormula (name: string): LayoutFormula | undefined {
+    if (name === 'fullscreen') return '1_1'
+    if (name === 'full-screen') return '1_1'
+    if (name === 'left-half') return '1/2_1'
+    if (name === 'center-half') return '1/2(1/4)_1'
+    if (name === 'right-half') return '1/2(1/2)_1'
+  }
+
   static layoutPosAndFormulaToCssProps (
-    position: 'scrolling'|'sticky',
+    position: 'scrolling' | 'sticky',
     formula: LayoutFormula): string {
     const chunks = formula.split('_')
     // Get position chunks
@@ -458,6 +397,10 @@ export default class Scrollgneugneu extends Component<Props, State> {
     return cssProps.join('')
   }
 
+  /* * * * * * * * * * * * * * * * * * * * * *
+   * CONSTRUCTOR / STATE / LIFECYCLE
+   * * * * * * * * * * * * * * * * * * * * * */
+
   constructor (props: Props) {
     super(props)
     this.getBgColorTransitionDuration = this.getBgColorTransitionDuration.bind(this)
@@ -497,7 +440,7 @@ export default class Scrollgneugneu extends Component<Props, State> {
     currPagePos: 0
   }
 
-  boundsDetectionInterval: number|null = null
+  boundsDetectionInterval: number | null = null
 
   componentDidMount(): void {
     const {
@@ -525,475 +468,9 @@ export default class Scrollgneugneu extends Component<Props, State> {
     window.removeEventListener('scroll', handleWindowScroll)
   }
 
-  injectStylesheet (url: string): void {
-    this.setState(curr => {
-      const stylesheetsUrls = new Set<string>(curr.stylesheetsUrls)
-      stylesheetsUrls.add(url)
-      return { ...curr, stylesheetsUrls }
-    })
-  }
-
-  injectCss (cssString: string): void {
-    this.setState(curr => {
-      const cssStrings = new Set<string>(curr.cssStrings)
-      if (cssStrings.has(cssString)) return null
-      cssStrings.add(cssString)
-      return { ...curr, cssStrings }
-    })
-  }
-
   /* * * * * * * * * * * * * * * * * * * * * *
-   * GET BG COLOR TRANSITION DURATION
+   * RENDER - StickyBlocks & ScrollingBlocks
    * * * * * * * * * * * * * * * * * * * * * */
-  getBgColorTransitionDuration (): string {
-    const { bgColorTransitionDuration } = this.props
-    if (typeof bgColorTransitionDuration === 'number') return `${bgColorTransitionDuration}ms`
-    if (typeof bgColorTransitionDuration === 'string') return bgColorTransitionDuration
-    return '200ms'
-  }
-
-  /* * * * * * * * * * * * * * * * * * * * * *
-   * SCRLGNGN POSITION DETECTION IN WINDOW
-   * * * * * * * * * * * * * * * * * * * * * */
-  boundsDetection () {
-    const {
-      paginatorRef,
-      topBoundRef,
-      btmBoundRef,
-      props
-    } = this
-    const { stickyBlocksOffsetTop } = props
-    const refToStateKeyMap = new Map<
-      'topVisible'|'cntVisible'|'btmVisible',
-      HTMLDivElement|null
-    >([
-      ['topVisible', topBoundRef],
-      ['cntVisible', paginatorRef?.$scrollableArea ?? null],
-      ['btmVisible', btmBoundRef]
-    ])
-    const partialState: Partial<State> = {}
-    refToStateKeyMap.forEach((ref, stateKey) => {
-      if (ref === null) return
-      const { y, height } = ref.getBoundingClientRect()
-      const { innerHeight } = window
-      const isIntersecting = y <= innerHeight && y + height >= (stickyBlocksOffsetTop ?? 0);
-      partialState[stateKey] = isIntersecting
-    })
-    return this.setState(curr => {
-      const partialStateEntries = Object.keys(partialState) as (keyof State)[]
-      const hasChanges = partialStateEntries.some(key => {
-        const val = partialState[key]
-        return curr[key] !== val
-      })
-      if (!hasChanges) return null
-      return {
-        ...curr,
-        ...partialState
-      }
-    })
-  }
-
-  throttledBoundsDetection = throttle(
-    this.boundsDetection.bind(this),
-    50
-  ).throttled
-
-  getThresholdRect () {
-    const { paginatorRef } = this
-    if (paginatorRef === null) return;
-    return paginatorRef.getThresholdBarBoundingClientRect()
-  }
-
-  throttledGetThresholdRect = throttle(
-    this.getThresholdRect.bind(this),
-    1000
-  ).throttled
-
-  isBlockSticky (blockIdentifier: BlockIdentifier) {
-    const { state } = this
-    const { blocks } = state
-    const blockData = blocks.get(blockIdentifier)
-    if (blockData === undefined) return undefined
-    return blockData.depth === 'front'
-      || blockData.depth === 'back'
-  }
-
-  getBlockStatus (blockIdentifier: BlockIdentifier) {
-    const { getCurrentPageData, getPreviousPageData } = this
-    const currPageData = getCurrentPageData()
-    const prevPageData = getPreviousPageData()
-    if (currPageData?._blocksIds.has(blockIdentifier)) return 'current'
-    else if (prevPageData?._blocksIds.has(blockIdentifier)) return 'previous'
-    else return 'inactive'
-  }
-
-  getBlockDistanceFromDisplay (blockIdentifier: BlockIdentifier) {
-    const { state } = this
-    const { blocks, currPagePos } = state
-    if (currPagePos === undefined) return;
-    const blockData = blocks.get(blockIdentifier)
-    if (blockData === undefined) return;
-    const blockPages = blockData._displayZones.flat()
-    const pagesDistances = blockPages
-      .map(pagePos => Math.abs((pagePos - currPagePos)))
-      .sort((a, b) => a - b)
-    const nearestPageDistance = pagesDistances[0] as number|undefined
-    return nearestPageDistance
-  }
-
-  getPagesRects () {
-    const { state, pagesRefsMap } = this
-    const { pages } = state
-    return new Map([...pages].map(([pagePos]) => {
-      const pageRef = pagesRefsMap.get(pagePos) ?? undefined
-      if (pageRef === undefined) return [pagePos, undefined]
-      const pageRect = pageRef.getBoundingClientRect()
-      return [pagePos, pageRect]
-    }))
-  }
-
-  getCurrPagePos (inputPaginatorState?: PaginatorState) {
-    const { state, paginatorRef } = this
-    const paginatorState = inputPaginatorState !== undefined
-      ? inputPaginatorState
-      : paginatorRef?.state
-    let currPagePos = state.currPagePos
-    if (paginatorState !== undefined) {
-      currPagePos = paginatorState.value
-      const { coming, active, passed } = paginatorState
-      const pagesLength = active.length + coming.length + passed.length
-      const hasPages = pagesLength > 0
-      const noneComing = coming.length === 0
-      const nonePassed = passed.length === 0
-      const noneActive = active.length === 0
-      const isBeforeFirst = hasPages && noneActive && nonePassed
-      const isAfterLast = hasPages && noneActive && noneComing
-      if (isBeforeFirst) currPagePos = hasPages ? 0 : undefined
-      if (isAfterLast) currPagePos = hasPages ? pagesLength - 1 : undefined
-    }
-    return currPagePos
-  }
-
-  getBlocksContextMap () {
-    const { blocks } = this.state
-    return new Map([...blocks.entries()].map(([id, data]) => [id, data._context]))
-  }
-
-  getBlocksContextPage (inputPaginatorState?: PaginatorState): Map<string, Partial<BlockContext>> {
-    const { state, getCurrPagePos } = this
-    const currPagePos = getCurrPagePos(inputPaginatorState)
-    const { blocks } = state
-    const blocksWithPage = new Map<string, Partial<BlockContext>>()
-    for (const [blockId, blockData] of blocks) {
-      const currBlockContextPage = blockData._context.page
-      const blockPages = blockData._displayZones.flat()
-      let blockContextPage: number|null = null
-      if (currPagePos === undefined) blockContextPage = null
-      else {
-        const currPagePosInDisplayZone = blockPages.indexOf(currPagePos)
-        if (currPagePosInDisplayZone === -1) blockContextPage = null
-        else blockContextPage = currPagePosInDisplayZone
-      }
-      if (currBlockContextPage === blockContextPage) blocksWithPage.set(blockId, { page: blockData._context.page })
-      else blocksWithPage.set(blockId, { page: blockContextPage })
-    }
-    return blocksWithPage
-  }
-
-  getBlocksContextSize (): Map<string, Partial<BlockContext>> {
-    const { state, blocksRefsMap } = this
-    const { blocks } = state
-    const blocksWithSize = new Map<string, Partial<BlockContext>>()
-    Array.from(blocks).forEach(([blockId]) => {
-      const blockRef = blocksRefsMap.get(blockId)
-      if (blockRef === null || blockRef === undefined) return blocksWithSize.set(blockId, { width: null, height: null })
-      const { width, height } = blockRef.getBoundingClientRect()
-      blocksWithSize.set(blockId, { width, height })
-    })
-    return blocksWithSize
-  }
-
-  getBlocksContextProgression (inputPaginatorState?: PaginatorState): Map<string, Partial<BlockContext>> {
-    const {
-      state,
-      getCurrPagePos,
-      getCurrentPageData,
-      throttledGetThresholdRect,
-      getPagesRects
-    } = this
-    const currPagePos = getCurrPagePos(inputPaginatorState)
-    const { blocks } = state
-    const blocksWithProgression = new Map<string, Partial<BlockContext>>()
-    const currPageData = getCurrentPageData()
-    const thresholdRect = throttledGetThresholdRect().returnValue
-    // Not possible to calculate progressions
-    if (currPagePos === undefined
-      || currPageData === undefined
-      || currPageData._trackScroll !== true
-      || thresholdRect === undefined) {
-      for (const [blockId, blockData] of blocks) {
-        const currBlockContext = blockData._context
-        blocksWithProgression.set(blockId, {
-          progression: currBlockContext.progression,
-          pageProgression: currBlockContext.pageProgression
-        })
-      }
-      return blocksWithProgression
-    }
-    const pagesRects = getPagesRects()
-    const pagesScrollData = new Map([...pagesRects].map(([pos, domRect]) => {
-      if (domRect === undefined) return [pos, undefined]
-      const rawScrolled = thresholdRect.top - domRect.top
-      const rawProgression = rawScrolled / domRect.height
-      const progression = clamp(rawProgression, 0, 1)
-      const scrolled = clamp(rawScrolled, 0, domRect.height)
-      const { height } = domRect
-      return [pos, { height, scrolled, progression }]
-    }))
-    for (const [blockId, blockData] of blocks) {
-      const currBlockContext = blockData._context
-      const currBlockPartialContext: Partial<BlockContext> = {
-        progression: currBlockContext?.progression ?? null,
-        pageProgression: currBlockContext?.pageProgression ?? null
-      }
-      // Block doesnt need trackScroll
-      if (blockData.trackScroll !== true) {
-        blocksWithProgression.set(blockId, { progression: null, pageProgression: null })
-        continue
-      }
-      const displayZones = blockData._displayZones
-      const currDisplayZone = displayZones.find(dz => currPagePos !== undefined
-        ? dz.includes(currPagePos)
-        : false)
-      // Block is not currently displayed
-      if (currDisplayZone === undefined) {
-        blocksWithProgression.set(blockId, currBlockPartialContext)
-        continue
-      }
-      // Progressions calculation
-      const currDz = blockData._displayZones.find(dz => dz.includes(currPagePos))
-      if (currDz === undefined) {
-        blocksWithProgression.set(blockId, currBlockPartialContext)
-        continue
-      }
-      const dzProgression = currDz.reduce(
-        (acc, curr) => {
-          const pageScrollData = pagesScrollData.get(curr)
-          if (pageScrollData === undefined) return acc
-          const height = acc.height + pageScrollData.height
-          const scrolled = acc.scrolled + pageScrollData.scrolled
-          const progression = scrolled / height
-          return { height, scrolled, progression }
-        },
-        { height: 0, scrolled: 0, progression: 0 }
-      ).progression
-      const pageProgression = pagesScrollData.get(currPagePos)?.progression
-      blocksWithProgression.set(blockId, {
-        progression: dzProgression,
-        pageProgression: pageProgression ?? currBlockContext.pageProgression
-      }) 
-    }
-    return blocksWithProgression
-  }
-
-  mergeBlocksPartialContexts (...blocksPartialContextsMaps: Map<string, Partial<BlockContext>>[]) {
-    const merged: Map<string, BlockContext> = new Map()
-    blocksPartialContextsMaps.forEach(blocksPartialContextMap => {
-      blocksPartialContextMap.forEach((partialContext, blockId) => {
-        const contextInMerged = merged.get(blockId) ?? createBlockContext()
-        const toPushInMerged = createBlockContext({
-          ...contextInMerged,
-          ...partialContext
-        })
-        merged.set(blockId, toPushInMerged)
-      })
-    })
-    return merged
-  }
-
-  /* * * * * * * * * * * * * * * * * * * * * *
-   * HANDLE PAGINATOR RESIZE
-   * * * * * * * * * * * * * * * * * * * * * */
-  handlePaginatorResize (entries: ResizeObserverEntry[]) {
-    const $paginator = entries[0]
-    if ($paginator === undefined) return
-    const { contentRect } = $paginator
-    const { height, width } = contentRect
-    this.setState(curr => {
-      if (curr.scrollingPanelHeight === height
-        && curr.scrollingPanelWidth === width) return null
-      return {
-        ...curr,
-        scrollingPanelHeight: height,
-        scrollingPanelWidth: width
-      }
-    })
-  }
-
-  handlePageChange (paginatorState: PaginatorState) {
-    const {
-      state,
-      getCurrPagePos,
-      getBlocksContextMap,
-      getBlocksContextSize,
-      getBlocksContextPage,
-      mergeBlocksPartialContexts
-    } = this
-    const newCurrentPagePos = getCurrPagePos(paginatorState)
-    const blocksContextPage = getBlocksContextPage(paginatorState)
-    const blocksContextSize = getBlocksContextSize()
-    const currBlocksContext = getBlocksContextMap()
-    const newBlocksContexts = mergeBlocksPartialContexts(
-      currBlocksContext,
-      blocksContextPage,
-      blocksContextSize)
-    const { blocks } = state
-    const newBlocks = new Map(blocks)
-    newBlocksContexts.forEach((blockContext, blockId) => {
-      const blockData = newBlocks.get(blockId)
-      if (blockData === undefined) return;
-      newBlocks.set(blockId, {
-        ...blockData,
-        _context: blockContext
-      })
-    })
-    this.setState(curr => {
-      return {
-        ...curr,
-        currPagePos: newCurrentPagePos,
-        prevPagePos: curr.currPagePos,
-        blocks: newBlocks
-      }
-    }, () => {
-      const { onPageChange } = this.props
-      if (onPageChange !== undefined) onPageChange({ state: this.state })
-    })
-  }
-
-  handleWindowScroll () {
-    const {
-      props,
-      state,
-      getBlocksContextProgression,
-      getBlocksContextMap,
-      mergeBlocksPartialContexts,
-      getCurrentPageData,
-      getPreviousPageData
-    } = this
-    const currPageData = getCurrentPageData()
-    const prevPageData = getPreviousPageData()
-    const currentPageNeedsScrollTrack = currPageData?.blocks?.some(block => block.trackScroll === true)
-    const previousPageNeedsScrollTrack = prevPageData?.blocks?.some(block => block.trackScroll === true)
-    if (!currentPageNeedsScrollTrack && !previousPageNeedsScrollTrack) return
-    const blocksContextProgression = getBlocksContextProgression()
-    const currBlocksContext = getBlocksContextMap()
-    const newBlocksContexts = mergeBlocksPartialContexts(
-      currBlocksContext,
-      blocksContextProgression)
-    const { blocks } = state
-    const newBlocks = new Map(blocks)
-    newBlocksContexts.forEach((blockContext, blockId) => {
-      const blockData = newBlocks.get(blockId)
-      if (blockData === undefined) return;
-      newBlocks.set(blockId, {
-        ...blockData,
-        _context: blockContext
-      })
-    })
-    const shouldUpdate = Array.from(blocks).some(([blockId, blockData]) => {
-      const newContext = newBlocksContexts.get(blockId)
-      const currContext = blockData._context
-      if (newContext === undefined) return true
-      return !contextsAreEqual(currContext, newContext)
-    })
-    if (!shouldUpdate) return
-    return this.setState(curr => {
-      const nextState = { ...curr, blocks: newBlocks }
-      if (props.onScrollTrack !== undefined) props.onScrollTrack({ state, nextState })
-      return nextState
-    })
-  }
-
-  handleBlockResize () {
-    const {
-      state,
-      getBlocksContextMap,
-      getBlocksContextSize,
-      getBlocksContextPage,
-      getBlocksContextProgression,
-      mergeBlocksPartialContexts
-    } = this
-    const blocksContextSize = getBlocksContextSize()
-    const blocksContextPage = getBlocksContextPage()
-    const blocksContextProgression = getBlocksContextProgression()
-    const currBlocksContext = getBlocksContextMap()
-    const newBlocksContexts = mergeBlocksPartialContexts(
-      currBlocksContext,
-      blocksContextSize,
-      blocksContextPage,
-      blocksContextProgression
-    )
-    const { blocks } = state
-    const newBlocks = new Map(blocks)
-    const shouldUpdate = Array.from(newBlocks).some(([blockId, blockData]) => {
-      const newContext = newBlocksContexts.get(blockId)
-      const currContext = blockData._context
-      if (newContext === undefined) return true
-      return !contextsAreEqual(currContext, newContext)
-    })
-    if (!shouldUpdate) return
-    newBlocksContexts.forEach((blockContext, blockId) => {
-      const blockData = newBlocks.get(blockId)
-      if (blockData === undefined) return;
-      newBlocks.set(blockId, {
-        ...blockData,
-        _context: blockContext
-      })
-    })
-    return this.setState(curr => ({
-      ...curr,
-      blocks: newBlocks
-    }))
-  }
-
-  throttledHandleBlockResize = throttle(
-    this.handleBlockResize.bind(this),
-    500
-  ).throttled
-
-  paginatorRef: Paginator|null = null
-  topBoundRef: HTMLDivElement|null = null
-  btmBoundRef: HTMLDivElement|null = null
-  pagesRefsMap: Map<number, HTMLDivElement|null> = new Map()
-  blocksRefsMap: Map<BlockIdentifier, HTMLDivElement|null> = new Map()
-  
-  cleanRefsMaps () {
-    const { pagesRefsMap, blocksRefsMap } = this
-    new Map(pagesRefsMap).forEach((pageRef, pagePos) => {
-      if (pageRef !== null) return;
-      pagesRefsMap.delete(pagePos)
-    })
-    new Map(blocksRefsMap).forEach((blockRef, blockId) => {
-      if (blockRef !== null) return;
-      blocksRefsMap.delete(blockId)
-    })
-  }
-
-  getCurrentPageData () {
-    const { state } = this
-    const { currPagePos, pages } = state
-    return currPagePos !== undefined
-      ? pages.get(currPagePos)
-      : undefined
-  }
-
-  getPreviousPageData () {
-    const { state } = this
-    const { prevPagePos, pages } = state
-    return prevPagePos !== undefined
-      ? pages.get(prevPagePos)
-      : undefined
-  }
 
   wrapperBemClass = Bem.bem('lm-scrllgngn')
 
@@ -1204,10 +681,11 @@ export default class Scrollgneugneu extends Component<Props, State> {
   }
 
   /* * * * * * * * * * * * * * * * * * * * * *
-   * RENDER
+   * RENDER - Scrllgngn
    * * * * * * * * * * * * * * * * * * * * * */
+  renderCnt: number = 0
   render () {
-    // [WIP] TOO MANY RENDERS IT SEEMS
+    // [WIP] TOO MANY INITIAL RENDERS IT SEEMS
     const {
       props,
       state,
@@ -1309,4 +787,484 @@ export default class Scrollgneugneu extends Component<Props, State> {
       </div>
     </div>
   }
+
+  /* * * * * * * * * * * * * * * * * * * * * *
+   * CLEAN REF MAPS
+   * * * * * * * * * * * * * * * * * * * * * */
+
+  pagesRefsMap: Map<number, HTMLDivElement | null> = new Map()
+  blocksRefsMap: Map<BlockIdentifier, HTMLDivElement | null> = new Map()
+  
+  cleanRefsMaps () {
+    const { pagesRefsMap, blocksRefsMap } = this
+    new Map(pagesRefsMap).forEach((pageRef, pagePos) => {
+      if (pageRef !== null) return;
+      pagesRefsMap.delete(pagePos)
+    })
+    new Map(blocksRefsMap).forEach((blockRef, blockId) => {
+      if (blockRef !== null) return;
+      blocksRefsMap.delete(blockId)
+    })
+  }
+
+  /* * * * * * * * * * * * * * * * * * * * * *
+   * HANDLE WINDOW SCROLL
+   * * * * * * * * * * * * * * * * * * * * * */
+  handleWindowScroll () {
+    const {
+      props,
+      state,
+      getBlocksContextProgression,
+      getBlocksContextMap,
+      mergeBlocksPartialContexts,
+      getCurrentPageData,
+      getPreviousPageData
+    } = this
+    const currPageData = getCurrentPageData()
+    const prevPageData = getPreviousPageData()
+    // const currentPageNeedsScrollTrack = currPageData?.blocks?.some(block => block.trackScroll === true)
+    // const previousPageNeedsScrollTrack = prevPageData?.blocks?.some(block => block.trackScroll === true)
+    const currentPageNeedsScrollTrack = currPageData?._trackScroll
+    const previousPageNeedsScrollTrack = prevPageData?._trackScroll
+    if (!currentPageNeedsScrollTrack && !previousPageNeedsScrollTrack) return
+    const blocksContextProgression = getBlocksContextProgression()
+    const currBlocksContext = getBlocksContextMap()
+    const newBlocksContexts = mergeBlocksPartialContexts(
+      currBlocksContext,
+      blocksContextProgression)
+    const { blocks } = state
+    const newBlocks = new Map(blocks)
+    newBlocksContexts.forEach((blockContext, blockId) => {
+      const blockData = newBlocks.get(blockId)
+      if (blockData === undefined) return;
+      newBlocks.set(blockId, {
+        ...blockData,
+        _context: blockContext
+      })
+    })
+    const shouldUpdate = Array.from(blocks).some(([blockId, blockData]) => {
+      const newContext = newBlocksContexts.get(blockId)
+      const currContext = blockData._context
+      if (newContext === undefined) return true
+      return !contextsAreEqual(currContext, newContext)
+    })
+    if (!shouldUpdate) return
+    return this.setState(curr => {
+      const nextState = { ...curr, blocks: newBlocks }
+      if (props.onScrollTrack !== undefined) props.onScrollTrack({ state, nextState })
+      return nextState
+    })
+  }
+
+  getCurrentPageData () {
+    const { state } = this
+    const { currPagePos, pages } = state
+    return currPagePos !== undefined
+      ? pages.get(currPagePos)
+      : undefined
+  }
+
+  getPreviousPageData () {
+    const { state } = this
+    const { prevPagePos, pages } = state
+    return prevPagePos !== undefined
+      ? pages.get(prevPagePos)
+      : undefined
+  }
+
+  getBlocksContextProgression (inputPaginatorState?: PaginatorState): Map<string, Partial<BlockContext>> {
+    const {
+      state,
+      getCurrPagePos,
+      getCurrentPageData,
+      throttledGetThresholdRect,
+      getPagesRects
+    } = this
+    const currPagePos = getCurrPagePos(inputPaginatorState)
+    const { blocks } = state
+    const blocksWithProgression = new Map<string, Partial<BlockContext>>()
+    const currPageData = getCurrentPageData()
+    const thresholdRect = throttledGetThresholdRect().returnValue
+    // Not possible to calculate progressions
+    if (currPagePos === undefined
+      || currPageData === undefined
+      || currPageData._trackScroll !== true
+      || thresholdRect === undefined) {
+      for (const [blockId, blockData] of blocks) {
+        const currBlockContext = blockData._context
+        blocksWithProgression.set(blockId, {
+          progression: currBlockContext.progression,
+          pageProgression: currBlockContext.pageProgression
+        })
+      }
+      return blocksWithProgression
+    }
+    const pagesRects = getPagesRects()
+    const pagesScrollData = new Map([...pagesRects].map(([pos, domRect]) => {
+      if (domRect === undefined) return [pos, undefined]
+      const rawScrolled = thresholdRect.top - domRect.top
+      const rawProgression = rawScrolled / domRect.height
+      const progression = clamp(rawProgression, 0, 1)
+      const scrolled = clamp(rawScrolled, 0, domRect.height)
+      const { height } = domRect
+      return [pos, { height, scrolled, progression }]
+    }))
+    for (const [blockId, blockData] of blocks) {
+      const currBlockContext = blockData._context
+      const currBlockPartialContext: Partial<BlockContext> = {
+        progression: currBlockContext?.progression ?? null,
+        pageProgression: currBlockContext?.pageProgression ?? null
+      }
+      // Block doesnt need trackScroll
+      if (blockData.trackScroll !== true) {
+        blocksWithProgression.set(blockId, { progression: null, pageProgression: null })
+        continue
+      }
+      const displayZones = blockData._displayZones
+      const currDisplayZone = displayZones.find(dz => currPagePos !== undefined
+        ? dz.includes(currPagePos)
+        : false)
+      // Block is not currently displayed
+      if (currDisplayZone === undefined) {
+        blocksWithProgression.set(blockId, currBlockPartialContext)
+        continue
+      }
+      // Progressions calculation
+      const currDz = blockData._displayZones.find(dz => dz.includes(currPagePos))
+      if (currDz === undefined) {
+        blocksWithProgression.set(blockId, currBlockPartialContext)
+        continue
+      }
+      const dzProgression = currDz.reduce(
+        (acc, curr) => {
+          const pageScrollData = pagesScrollData.get(curr)
+          if (pageScrollData === undefined) return acc
+          const height = acc.height + pageScrollData.height
+          const scrolled = acc.scrolled + pageScrollData.scrolled
+          const progression = scrolled / height
+          return { height, scrolled, progression }
+        },
+        { height: 0, scrolled: 0, progression: 0 }
+      ).progression
+      const pageProgression = pagesScrollData.get(currPagePos)?.progression
+      blocksWithProgression.set(blockId, {
+        progression: dzProgression,
+        pageProgression: pageProgression ?? currBlockContext.pageProgression
+      }) 
+    }
+    return blocksWithProgression
+  }
+
+  getBlocksContextMap () {
+    const { blocks } = this.state
+    return new Map([...blocks.entries()].map(([id, data]) => [id, data._context]))
+  }
+
+  mergeBlocksPartialContexts (...blocksPartialContextsMaps: Map<string, Partial<BlockContext>>[]) {
+    const merged: Map<string, BlockContext> = new Map()
+    blocksPartialContextsMaps.forEach(blocksPartialContextMap => {
+      blocksPartialContextMap.forEach((partialContext, blockId) => {
+        const contextInMerged = merged.get(blockId) ?? createBlockContext()
+        const toPushInMerged = createBlockContext({
+          ...contextInMerged,
+          ...partialContext
+        })
+        merged.set(blockId, toPushInMerged)
+      })
+    })
+    return merged
+  }
+
+  injectStylesheet (url: string): void {
+    this.setState(curr => {
+      const stylesheetsUrls = new Set<string>(curr.stylesheetsUrls)
+      stylesheetsUrls.add(url)
+      return { ...curr, stylesheetsUrls }
+    })
+  }
+
+  injectCss (cssString: string): void {
+    this.setState(curr => {
+      const cssStrings = new Set<string>(curr.cssStrings)
+      if (cssStrings.has(cssString)) return null
+      cssStrings.add(cssString)
+      return { ...curr, cssStrings }
+    })
+  }
+
+  /* * * * * * * * * * * * * * * * * * * * * *
+   * GET BG COLOR TRANSITION DURATION
+   * * * * * * * * * * * * * * * * * * * * * */
+  getBgColorTransitionDuration (): string {
+    const { bgColorTransitionDuration } = this.props
+    if (typeof bgColorTransitionDuration === 'number') return `${bgColorTransitionDuration}ms`
+    if (typeof bgColorTransitionDuration === 'string') return bgColorTransitionDuration
+    return '200ms'
+  }
+
+  /* * * * * * * * * * * * * * * * * * * * * *
+   * SCRLGNGN POSITION DETECTION IN WINDOW
+   * * * * * * * * * * * * * * * * * * * * * */
+  boundsDetection () {
+    const {
+      paginatorRef,
+      topBoundRef,
+      btmBoundRef,
+      props
+    } = this
+    const { stickyBlocksOffsetTop } = props
+    const refToStateKeyMap = new Map<
+      'topVisible' | 'cntVisible' | 'btmVisible',
+      HTMLDivElement | null
+    >([
+      ['topVisible', topBoundRef],
+      ['cntVisible', paginatorRef?.$scrollableArea ?? null],
+      ['btmVisible', btmBoundRef]
+    ])
+    const partialState: Partial<State> = {}
+    refToStateKeyMap.forEach((ref, stateKey) => {
+      if (ref === null) return
+      const { y, height } = ref.getBoundingClientRect()
+      const { innerHeight } = window
+      const isIntersecting = y <= innerHeight && y + height >= (stickyBlocksOffsetTop ?? 0);
+      partialState[stateKey] = isIntersecting
+    })
+    return this.setState(curr => {
+      const partialStateEntries = Object.keys(partialState) as (keyof State)[]
+      const hasChanges = partialStateEntries.some(key => {
+        const val = partialState[key]
+        return curr[key] !== val
+      })
+      if (!hasChanges) return null
+      return {
+        ...curr,
+        ...partialState
+      }
+    })
+  }
+
+  throttledBoundsDetection = throttle(
+    this.boundsDetection.bind(this),
+    50
+  ).throttled
+
+  getThresholdRect () {
+    const { paginatorRef } = this
+    if (paginatorRef === null) return;
+    return paginatorRef.getThresholdBarBoundingClientRect()
+  }
+
+  throttledGetThresholdRect = throttle(
+    this.getThresholdRect.bind(this),
+    1000
+  ).throttled
+
+  isBlockSticky (blockIdentifier: BlockIdentifier) {
+    const { state } = this
+    const { blocks } = state
+    const blockData = blocks.get(blockIdentifier)
+    if (blockData === undefined) return undefined
+    return blockData.depth === 'front'
+      || blockData.depth === 'back'
+  }
+
+  getBlockStatus (blockIdentifier: BlockIdentifier) {
+    const { getCurrentPageData, getPreviousPageData } = this
+    const currPageData = getCurrentPageData()
+    const prevPageData = getPreviousPageData()
+    if (currPageData?._blocksIds.has(blockIdentifier)) return 'current'
+    else if (prevPageData?._blocksIds.has(blockIdentifier)) return 'previous'
+    else return 'inactive'
+  }
+
+  getBlockDistanceFromDisplay (blockIdentifier: BlockIdentifier) {
+    const { state } = this
+    const { blocks, currPagePos } = state
+    if (currPagePos === undefined) return;
+    const blockData = blocks.get(blockIdentifier)
+    if (blockData === undefined) return;
+    const blockPages = blockData._displayZones.flat()
+    const pagesDistances = blockPages
+      .map(pagePos => Math.abs((pagePos - currPagePos)))
+      .sort((a, b) => a - b)
+    const nearestPageDistance = pagesDistances[0] as number | undefined
+    return nearestPageDistance
+  }
+
+  getPagesRects () {
+    const { state, pagesRefsMap } = this
+    const { pages } = state
+    return new Map([...pages].map(([pagePos]) => {
+      const pageRef = pagesRefsMap.get(pagePos) ?? undefined
+      if (pageRef === undefined) return [pagePos, undefined]
+      const pageRect = pageRef.getBoundingClientRect()
+      return [pagePos, pageRect]
+    }))
+  }
+
+  getCurrPagePos (inputPaginatorState?: PaginatorState) {
+    const { state, paginatorRef } = this
+    const paginatorState = inputPaginatorState !== undefined
+      ? inputPaginatorState
+      : paginatorRef?.state
+    let currPagePos = state.currPagePos
+    if (paginatorState !== undefined) {
+      currPagePos = paginatorState.value
+      const { coming, active, passed } = paginatorState
+      const pagesLength = active.length + coming.length + passed.length
+      const hasPages = pagesLength > 0
+      const noneComing = coming.length === 0
+      const nonePassed = passed.length === 0
+      const noneActive = active.length === 0
+      const isBeforeFirst = hasPages && noneActive && nonePassed
+      const isAfterLast = hasPages && noneActive && noneComing
+      if (isBeforeFirst) currPagePos = hasPages ? 0 : undefined
+      if (isAfterLast) currPagePos = hasPages ? pagesLength - 1 : undefined
+    }
+    return currPagePos
+  }
+
+  getBlocksContextPage (inputPaginatorState?: PaginatorState): Map<string, Partial<BlockContext>> {
+    const { state, getCurrPagePos } = this
+    const currPagePos = getCurrPagePos(inputPaginatorState)
+    const { blocks } = state
+    const blocksWithPage = new Map<string, Partial<BlockContext>>()
+    for (const [blockId, blockData] of blocks) {
+      const currBlockContextPage = blockData._context.page
+      const blockPages = blockData._displayZones.flat()
+      let blockContextPage: number | null = null
+      if (currPagePos === undefined) blockContextPage = null
+      else {
+        const currPagePosInDisplayZone = blockPages.indexOf(currPagePos)
+        if (currPagePosInDisplayZone === -1) blockContextPage = null
+        else blockContextPage = currPagePosInDisplayZone
+      }
+      if (currBlockContextPage === blockContextPage) blocksWithPage.set(blockId, { page: blockData._context.page })
+      else blocksWithPage.set(blockId, { page: blockContextPage })
+    }
+    return blocksWithPage
+  }
+
+  getBlocksContextSize (): Map<string, Partial<BlockContext>> {
+    const { state, blocksRefsMap } = this
+    const { blocks } = state
+    const blocksWithSize = new Map<string, Partial<BlockContext>>()
+    Array.from(blocks).forEach(([blockId]) => {
+      const blockRef = blocksRefsMap.get(blockId)
+      if (blockRef === null || blockRef === undefined) return blocksWithSize.set(blockId, { width: null, height: null })
+      const { width, height } = blockRef.getBoundingClientRect()
+      blocksWithSize.set(blockId, { width, height })
+    })
+    return blocksWithSize
+  }
+
+  /* * * * * * * * * * * * * * * * * * * * * *
+   * HANDLE PAGINATOR RESIZE
+   * * * * * * * * * * * * * * * * * * * * * */
+  handlePaginatorResize (entries: ResizeObserverEntry[]) {
+    const $paginator = entries[0]
+    if ($paginator === undefined) return
+    const { contentRect } = $paginator
+    const { height, width } = contentRect
+    this.setState(curr => {
+      if (curr.scrollingPanelHeight === height
+        && curr.scrollingPanelWidth === width) return null
+      return {
+        ...curr,
+        scrollingPanelHeight: height,
+        scrollingPanelWidth: width
+      }
+    })
+  }
+
+  handlePageChange (paginatorState: PaginatorState) {
+    const {
+      state,
+      getCurrPagePos,
+      getBlocksContextMap,
+      getBlocksContextSize,
+      getBlocksContextPage,
+      mergeBlocksPartialContexts
+    } = this
+    const newCurrentPagePos = getCurrPagePos(paginatorState)
+    const blocksContextPage = getBlocksContextPage(paginatorState)
+    const blocksContextSize = getBlocksContextSize()
+    const currBlocksContext = getBlocksContextMap()
+    const newBlocksContexts = mergeBlocksPartialContexts(
+      currBlocksContext,
+      blocksContextPage,
+      blocksContextSize)
+    const { blocks } = state
+    const newBlocks = new Map(blocks)
+    newBlocksContexts.forEach((blockContext, blockId) => {
+      const blockData = newBlocks.get(blockId)
+      if (blockData === undefined) return;
+      newBlocks.set(blockId, {
+        ...blockData,
+        _context: blockContext
+      })
+    })
+    this.setState(curr => {
+      return {
+        ...curr,
+        currPagePos: newCurrentPagePos,
+        prevPagePos: curr.currPagePos,
+        blocks: newBlocks
+      }
+    }, () => {
+      const { onPageChange } = this.props
+      if (onPageChange !== undefined) onPageChange({ state: this.state })
+    })
+  }
+
+  handleBlockResize () {
+    const {
+      state,
+      getBlocksContextMap,
+      getBlocksContextSize,
+      getBlocksContextPage,
+      getBlocksContextProgression,
+      mergeBlocksPartialContexts
+    } = this
+    const blocksContextSize = getBlocksContextSize()
+    const blocksContextPage = getBlocksContextPage()
+    const blocksContextProgression = getBlocksContextProgression()
+    const currBlocksContext = getBlocksContextMap()
+    const newBlocksContexts = mergeBlocksPartialContexts(
+      currBlocksContext,
+      blocksContextSize,
+      blocksContextPage,
+      blocksContextProgression
+    )
+    const { blocks } = state
+    const newBlocks = new Map(blocks)
+    const shouldUpdate = Array.from(newBlocks).some(([blockId, blockData]) => {
+      const newContext = newBlocksContexts.get(blockId)
+      const currContext = blockData._context
+      if (newContext === undefined) return true
+      return !contextsAreEqual(currContext, newContext)
+    })
+    if (!shouldUpdate) return
+    newBlocksContexts.forEach((blockContext, blockId) => {
+      const blockData = newBlocks.get(blockId)
+      if (blockData === undefined) return;
+      newBlocks.set(blockId, {
+        ...blockData,
+        _context: blockContext
+      })
+    })
+    return this.setState(curr => ({
+      ...curr,
+      blocks: newBlocks
+    }))
+  }
+
+  throttledHandleBlockResize = throttle(
+    this.handleBlockResize.bind(this),
+    500
+  ).throttled
+
+  paginatorRef: Paginator | null = null
+  topBoundRef: HTMLDivElement | null = null
+  btmBoundRef: HTMLDivElement | null = null
 }
