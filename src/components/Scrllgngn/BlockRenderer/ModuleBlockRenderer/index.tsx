@@ -11,6 +11,7 @@ type Props = {
 type ModuleData = {
   init: (context: BlockContext) => HTMLElement | Promise<HTMLElement>
   update: (wrapper: HTMLElement, context: BlockContext, prevContext: BlockContext) => void
+  destroy?: (wrapper: HTMLElement) => void
   styles?: string[] // DEPRECATED
   css?: string[]
   styleSheets?: string[]
@@ -93,6 +94,14 @@ export default class ModuleBlockRenderer extends Component<Props, State> {
       else if (status === 'initializing') { this.updateIsPending = true }
       else updateAttachModule()
     }
+  }
+
+  componentWillUnmount(): void {
+    const { moduleTarget, moduleData } = this.state
+    if (moduleTarget === null) return
+    const destroy = moduleData?.destroy
+    if (destroy === undefined) return
+    destroy(moduleTarget)
   }
 
   async aSetState (stateSetter: StateSetter): Promise<StateSetter> {

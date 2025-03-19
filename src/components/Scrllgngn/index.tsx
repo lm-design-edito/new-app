@@ -822,8 +822,6 @@ export default class Scrollgneugneu extends Component<Props, State> {
     } = this
     const currPageData = getCurrentPageData()
     const prevPageData = getPreviousPageData()
-    // const currentPageNeedsScrollTrack = currPageData?.blocks?.some(block => block.trackScroll === true)
-    // const previousPageNeedsScrollTrack = prevPageData?.blocks?.some(block => block.trackScroll === true)
     const currentPageNeedsScrollTrack = currPageData?._trackScroll
     const previousPageNeedsScrollTrack = prevPageData?._trackScroll
     if (!currentPageNeedsScrollTrack && !previousPageNeedsScrollTrack) return
