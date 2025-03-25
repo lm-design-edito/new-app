@@ -12,10 +12,11 @@ export default async function renderer (unknownProps: unknown, id: string): Retu
 async function toProps (input: unknown, id: string): Promise<Props> {
     return await Apps.toPropsHelper(input, {
         source: i => Apps.ifNotUndefinedHelper(i, Cast.toString),
+        sourceMobile: i => Apps.ifNotUndefinedHelper(i, Cast.toString),
+        mobileDesktopThreshold: i => Apps.ifNotUndefinedHelper(i, Cast.toNumber),
         poster_url: i => Apps.ifNotUndefinedHelper(i, Cast.toString),
         credits: i => Apps.ifNotUndefinedHelper(i, Apps.toStringOrVNodeHelper),
         legend: i => Apps.ifNotUndefinedHelper(i, Apps.toStringOrVNodeHelper),
-        autoplay: i => Apps.ifNotUndefinedHelper(i, Cast.toBoolean),
         loop: i => Apps.ifNotUndefinedHelper(i, Cast.toBoolean),
         sound: i => Apps.ifNotUndefinedHelper(i, Cast.toBoolean),
         sound_controls: i => Apps.ifNotUndefinedHelper(i, Cast.toBoolean),

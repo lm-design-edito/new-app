@@ -4,6 +4,8 @@ import Icon, { Icons } from '../Icon';
 
 export type Props = {
     source?: string,
+    sourceMobile?: string,
+    mobileDesktopThreshold?: number,
     title?: string | VNode,
     kicker?: string | VNode,
     poster_url?: string,
@@ -184,12 +186,16 @@ export default class VideoPlayer extends Component<Props, State> {
             ...(props.autoplay ? { autoplay: props.autoplay } : {}),
             ...(props.loop ? { loop: props.loop } : {}),
         };
-        
+
+        const isMobile = window.innerWidth < (props.mobileDesktopThreshold || 768)
+        const source = isMobile
+            ? (props.sourceMobile ?? props.source)
+            : props.source
         return (
             <figure className={lmClasses.join(' ')} ref={n => { this.$root = n }}>
                 <div className={wrapperClasses.join(' ')}>
                     <video poster={props.poster_url} className={videoClasses.join(' ')} ref={n => { this.$video = n }} {...videoProps}>
-                        {props.source && <source src={props.source} />}
+                        {source && <source src={source} />}
                     </video>
                     <div className={overlayClasses.join(' ')}>
                         <div className={overlayTextClasses.join(' ')}>
