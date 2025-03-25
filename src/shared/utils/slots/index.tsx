@@ -85,14 +85,14 @@ export namespace Slots {
 
   export function styleDataToVNode (styleData: StyleData) {
     if (styleData.type === 'css') return <style
-      name={styleData.name}
+      data-lm-name={styleData.name}
       data-lm-id={styleData.id}
       data-lm-position={styleData.position}
       data-lm-details={styleData.details}>
       {styleData.content}
     </style>
     return <link
-      name={styleData.name}
+      data-lm-name={styleData.name}
       data-lm-id={styleData.id}
       data-lm-position={styleData.position}
       data-lm-details={styleData.details}
