@@ -1,6 +1,7 @@
 import { Component, VNode } from 'preact'
 import { Bem } from '@design-edito/tools/agnostic/css/bem'
 import Icon, { Icons } from '../Icon';
+import MutedVideo from './MutedVideo';
 
 export type Props = {
     source?: string,
@@ -191,12 +192,20 @@ export default class VideoPlayer extends Component<Props, State> {
         const source = isMobile
             ? (props.sourceMobile ?? props.source)
             : props.source
+
+        console.log(this.$video)
+
         return (
             <figure className={lmClasses.join(' ')} ref={n => { this.$root = n }}>
                 <div className={wrapperClasses.join(' ')}>
-                    <video poster={props.poster_url} className={videoClasses.join(' ')} ref={n => { this.$video = n }} {...videoProps}>
+                    <MutedVideo
+                        className={videoClasses.join(' ')}
+                        playsInline
+                        poster={props.poster_url}
+                        onRender={n => { this.$video = n }}
+                        {...videoProps}>
                         {source && <source src={source} />}
-                    </video>
+                    </MutedVideo>
                     <div className={overlayClasses.join(' ')}>
                         <div className={overlayTextClasses.join(' ')}>
                             {props.title &&  <div className={titleClasses.join(' ')}>{props.title}</div>}
