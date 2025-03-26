@@ -193,8 +193,6 @@ export default class VideoPlayer extends Component<Props, State> {
             ? (props.sourceMobile ?? props.source)
             : props.source
 
-        console.log(this.$video)
-
         return (
             <figure className={lmClasses.join(' ')} ref={n => { this.$root = n }}>
                 <div className={wrapperClasses.join(' ')}>
