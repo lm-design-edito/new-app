@@ -45,10 +45,10 @@ async function arrayToImages (array: unknown[], id: string): Promise<Media[]> {
   for (const imageData of array) {
     if (!isRecord(imageData)) continue
     const extractedImage: Media = await recordFormat(imageData, {
-      url: i => Apps.ifNotUndefinedHelper(i, toString),
-      mobileUrl: i => Apps.ifNotUndefinedHelper(i, toString),
-      type: i => Apps.ifNotUndefinedHelper(i, toString),
-      imageFit: i => Apps.ifNotUndefinedHelper(i, toString),
+      url: i => Apps.ifNotUndefinedHelper(i, Cast.toString),
+      mobileUrl: i => Apps.ifNotUndefinedHelper(i, Cast.toString),
+      type: i => Apps.ifNotUndefinedHelper(i, Cast.toString),
+      imageFit: i => Apps.ifNotUndefinedHelper(i, Cast.toString),
       description: i => Apps.ifNotUndefinedHelper(i, Apps.toStringOrVNodeHelper),
       credits: i => Apps.ifNotUndefinedHelper(i, Apps.toStringOrVNodeHelper)
     })
