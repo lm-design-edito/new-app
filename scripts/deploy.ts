@@ -43,7 +43,7 @@ async function deploy () {
   await retreiveBucketVersions()
   await buildSourceForLib()
   await buildSourceForDist()
-  await npmPublishLib()
+  // await npmPublishLib()
   await writeVersionCommentInBundle()
   await checkDistDirTree()
   await dryRunRsync()
@@ -368,7 +368,7 @@ async function buildSourceForLib () {
 /* * * * * * * * * * * * * * * * * * * * *
  * NPM publish lib
  * * * * * * * * * * * * * * * * * * * * */
-async function npmPublishLib () {
+// async function npmPublishLib () {
   console.log(styles.title(`Publishing lib to npm`))
   try {
     console.log(styles.regular(`Current npm registry lookup...\n`))
