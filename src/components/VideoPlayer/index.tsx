@@ -201,6 +201,7 @@ export default class VideoPlayer extends Component<Props, State> {
                         playsInline
                         poster={props.poster_url}
                         onRender={n => { this.$video = n }}
+                        onClick={this.togglePlay}
                         {...videoProps}>
                         {source && <source src={source} />}
                     </MutedVideo>
