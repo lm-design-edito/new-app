@@ -19,7 +19,7 @@ type Props = {
 } & ObserverOptions
 
 interface State {
-  io_entry: IOE|null
+  io_entry: IOE | null
 }
 
 class IntersectionObserverComponent extends Component<Props, State> {
@@ -81,8 +81,10 @@ class IntersectionObserverComponent extends Component<Props, State> {
   }
 
   observation (entries: IOE[], observer: IO): void {
-    if (this.props.onIntersection !== undefined) this.props.onIntersection({ ioEntry: entries[0], observer })
-    this.setState({ io_entry: entries[0] })
+    const thisEntry = entries[0]
+    if (thisEntry === undefined) return
+    if (this.props.onIntersection !== undefined) this.props.onIntersection({ ioEntry: thisEntry, observer })
+    this.setState({ io_entry: thisEntry })
   }
 
   /* * * * * * * * * * * * * * *
@@ -99,7 +101,10 @@ class IntersectionObserverComponent extends Component<Props, State> {
       : null
 
     // Classes
-    const classes = Bem.bem(this.mainClass).blk(props.customClass)
+    const classes = Bem
+      .bem(this.mainClass)
+      .mod({ 'is-intersecting': (state.io_entry?.isIntersecting ?? false) })
+      .blk(props.customClass)
     const inlineStyle = { ...props.style }
 
     // Display
