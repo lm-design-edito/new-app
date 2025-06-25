@@ -41,7 +41,7 @@ async function deploy () {
   await askForTargetVersion()
   await chooseAvailableBucket()
   await retreiveBucketVersions()
-  await buildSourceForLib()
+  // await buildSourceForLib()
   await buildSourceForDist()
   // await npmPublishLib()
   await writeVersionCommentInBundle()
