@@ -1,4 +1,4 @@
-@import './ui-variables.scss';
+@use './ui-variables.scss' as *;
 
 /* * * * * * * * * * * * * * * * * * * * * * * *
  *
@@ -1385,10 +1385,10 @@ h2.lmui-chart__title {
 // quand importés en inline dans la page
 
 // Icons grayscale
-.lmui-icon {
+// .lmui-icon {
   // filter: var(--lmui-ic-default);
   // opacity: var(--lmui-o-primary);
-}
+// }
 
 // Opacity range
 .lmui-icon.lmui-icon_secondary {
