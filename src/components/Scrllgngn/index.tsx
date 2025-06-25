@@ -512,9 +512,20 @@ export default class Scrollgneugneu extends Component<Props, State> {
         const blockIsAllOnPagesBelow = blockPages.every(pos => currPagePosIsDefined && pos > currPagePos)
         const blockIsOnSomePagesAbove = !blockIsAllOnPagesAbove && blockPages.some(pos => currPagePosIsDefined && pos < currPagePos)
         const blockIsOnSomePagesBelow = !blockIsAllOnPagesBelow && blockPages.some(pos => currPagePosIsDefined && pos > currPagePos)
+        const blockWrapperBemClass = wrapperBemClass
+          .elt('sticky-block-wrapper')
+          .mod(blockData.depth)
+          .mod({
+            [blockStatus]: true,
+            'all-above': blockIsAllOnPagesAbove,
+            'all-below': blockIsAllOnPagesBelow,
+            'some-above': blockIsOnSomePagesAbove,
+            'some-below': blockIsOnSomePagesBelow
+          })
         const blockBemClass = wrapperBemClass
           .elt('block')
           .mod('sticky')
+          .mod(blockData.depth)
           .mod({
             [blockStatus]: true,
             'all-above': blockIsAllOnPagesAbove,
@@ -551,7 +562,9 @@ export default class Scrollgneugneu extends Component<Props, State> {
           'data-context-progression': _context.progression,
           'data-context-page-progression': _context.pageProgression
         }
-        return <div key={blockIdentifier}>
+        return <div
+          key={blockIdentifier}
+          className={blockWrapperBemClass.value}>
           <ResizeObserverComponent
             onResize={() => throttledHandleBlockResize()}>
             <div

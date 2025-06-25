@@ -1,3 +1,5 @@
+// [WIP] take that to @design-edito/tools
+
 export function getNeighbourIntegersSeries (_array: number[] | Set<number>): number[][] {
   const result: number[][] = []
   const dedupedIntArray = [...new Set(_array)].filter(num => Number.isInteger(num))

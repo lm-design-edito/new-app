@@ -53,7 +53,7 @@
   top: 0;
   display: inline-flex;
   height: var(--sticky-blocks-viewport-height);
-  width: 100%;
+  width: var(--scrolling-block-width, 100%);
 }
 
 :where(.block.block_sticky > *) {
