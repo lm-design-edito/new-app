@@ -30,6 +30,8 @@ class IntersectionObserverComponent extends Component<Props, State> {
   $root: HTMLDivElement | null = null
   $pRoot: HTMLDivElement | null = null
   observer: IO = new IntersectionObserver(this.observation)
+  forceObservationTimeout1: number | null = null
+  forceObservationTimeout2: number | null = null
   state: State = {
     io_entry: null
   }
@@ -42,6 +44,14 @@ class IntersectionObserverComponent extends Component<Props, State> {
     this.getObserverOptions = this.getObserverOptions.bind(this)
     this.updateObserver = this.updateObserver.bind(this)
     this.observation = this.observation.bind(this)
+    this.forceObservation = this.forceObservation.bind(this)
+    this.forceObservationTimeout1 = window.setTimeout(() => this.forceObservation(), 100)
+    this.forceObservationTimeout2 = window.setTimeout(() => this.forceObservation(), 500)
+  }
+
+  componentWillUnmount (): void {
+    if (this.forceObservationTimeout1 !== null) window.clearTimeout(this.forceObservationTimeout1)
+    if (this.forceObservationTimeout2 !== null) window.clearTimeout(this.forceObservationTimeout2)
   }
 
   /* * * * * * * * * * * * * * *
@@ -82,9 +92,15 @@ class IntersectionObserverComponent extends Component<Props, State> {
 
   observation (entries: IOE[], observer: IO): void {
     const thisEntry = entries[0]
-    if (thisEntry === undefined) return
+    if (thisEntry === undefined) return this.setState({ io_entry: null })
     if (this.props.onIntersection !== undefined) this.props.onIntersection({ ioEntry: thisEntry, observer })
     this.setState({ io_entry: thisEntry })
+  }
+
+  forceObservation (): void {
+    if (this.$root === null) return
+    this.observer.unobserve(this.$root)
+    this.observer.observe(this.$root)
   }
 
   /* * * * * * * * * * * * * * *

@@ -65,7 +65,14 @@ export namespace Events {
 
   const fetchHandlersFile = async (url: string | URL): Promise<Map<string, HandlerFunc>> => {
     const logger = Globals.retrieve(Globals.GlobalKey.LOGGER)
-    const fileUrl = new URL(url)
+    let fileUrl: URL
+    // [WIP] this try/catch in order to preserve the original behavior of v1.fuego
+    // this should be removed at some point
+    try {
+      fileUrl = new URL(url)
+    } catch (err) {
+      fileUrl = new URL(url, window.location.href)
+    }
     const urlSchemeMatches = appConfig.eventHandlersAllowedUrlSchemes.some(scheme => {
       const schemeKeys = Object.keys(scheme) as Array<keyof URL>
       return schemeKeys.every(key => scheme[key] === fileUrl[key])
@@ -80,22 +87,7 @@ export namespace Events {
       )
       return new Map()
     }
-    let moduleDataLet: unknown = undefined
-    try {
-      const possiblyRelativeUrl = fileUrl
-      const absoluteUrl = new URL(possiblyRelativeUrl, window.location.href)
-      moduleDataLet = await import(absoluteUrl.toString())
-    } catch (err) {
-      logger?.error(
-        'Events',
-        `%cHandlers file not loaded - ${url.toString()}`,
-        'font-weight: 800;',
-        'Something went wrong while fetching',
-        err
-      )
-      return new Map()
-    }
-    const moduleData = moduleDataLet
+    const moduleData = await import(fileUrl.toString())
     if (!isRecord(moduleData)) {
       logger?.error(
         'Events',
@@ -111,7 +103,10 @@ export namespace Events {
         const [_name, handler] = entry
         return typeof handler === 'function'
       }))
-    Globals.dispatch(Globals.EventName.HANDLER_FILE_LOADED, { url: new URL(url), handlers: handlerExportsMap })
+    Globals.dispatch(Globals.EventName.HANDLER_FILE_LOADED, {
+      url: fileUrl,
+      handlers: handlerExportsMap
+    })
     logger?.log(
       'Events',
       `%cHandlers file loaded - ${url.toString().trim()}`,
