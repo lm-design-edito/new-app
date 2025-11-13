@@ -1,4 +1,4 @@
-import { Component, ComponentClass, VNode } from 'preact'
+import { Component, ComponentClass, FunctionComponent, VNode } from 'preact'
 import { Cast } from '@design-edito/tools/agnostic/misc/cast'
 import { isRecord } from '@design-edito/tools/agnostic/objects/is-record'
 import { isArrayOf } from '@design-edito/tools/agnostic/arrays/is-array-of'
@@ -25,9 +25,10 @@ export namespace Apps {
     NAVIGATION = 'navigation',
     RESIZE_OBSERVER = 'resize-observer',
     SCRLLGNGN = 'scrllgngn',
+    SVELTE_APP = 'svelte-app',
     TOP_ARTICLES = 'top-articles',
     UI = 'ui',
-    VIDEO_PLAYER = 'video-player',
+    VIDEO_PLAYER = 'video-player'
   }
 
   export const rendered: Array<{
@@ -37,7 +38,7 @@ export namespace Apps {
     app: App
   }> = []
 
-  type RendererModuleResult<T extends Record<string, unknown> = {}> = { props: T, Component: ComponentClass }
+  type RendererModuleResult<T extends Record<string, unknown> = {}> = { props: T, Component: ComponentClass | FunctionComponent }
   export type SyncRendererModule<T extends Record<string, unknown> = {}> = (unknownProps: unknown, id: string) => RendererModuleResult<T>
   export type AsyncRendererModule<T extends Record<string, unknown> = {}> = (unknownProps: unknown, id: string) => Promise<RendererModuleResult<T>>
   export type RendererModule<T extends Record<string, unknown> = {}> = SyncRendererModule<T> | AsyncRendererModule<T>
@@ -55,6 +56,7 @@ export namespace Apps {
       if (name === Name.NAVIGATION) { loaded = (await import('~/apps/navigation')).default }
       if (name === Name.RESIZE_OBSERVER) { loaded = (await import('~/apps/resize-observer')).default }
       if (name === Name.SCRLLGNGN) { loaded = (await import('~/apps/scrllgngn')).default }
+      if (name === Name.SVELTE_APP) { loaded = (await import('~/apps/svelte-app')).default }
       if (name === Name.TOP_ARTICLES) { loaded = (await import('~/apps/top-articles')).default }
       if (name === Name.UI) { loaded = (await import('~/apps/ui')).default }
       if (name === Name.VIDEO_PLAYER) { loaded = (await import('~/apps/video-player')).default }
@@ -66,7 +68,7 @@ export namespace Apps {
   }
 
   export type AppProps = {
-    component: ComponentClass
+    component: ComponentClass | FunctionComponent
     props: Record<string, unknown>
     identifier: string | null
     name: string | null

@@ -70,8 +70,8 @@ export default class AudioQuote extends Component<Props, State> {
   state: State = { timecodeInMs: 0 }
 
   /* * * * * * * * * * * * * * * * * * *
-     * CONSTRUCTOR
-     * * * * * * * * * * * * * * * * * * */
+   * CONSTRUCTOR
+   * * * * * * * * * * * * * * * * * * */
   constructor (props: Props) {
     super(props)
     this.videoElt = createRef()
@@ -97,8 +97,8 @@ export default class AudioQuote extends Component<Props, State> {
   }
 
   /* * * * * * * * * * * * * * * * * * *
-     * METHODS
-     * * * * * * * * * * * * * * * * * * */
+   * METHODS
+   * * * * * * * * * * * * * * * * * * */
   componentDidMount () {
     this.loadSubs()
     this.syncVideoState()
@@ -397,8 +397,8 @@ export default class AudioQuote extends Component<Props, State> {
   }
 
   /* * * * * * * * * * * * * * * * * * *
-     * RENDER
-     * * * * * * * * * * * * * * * * * * */
+   * RENDER
+   * * * * * * * * * * * * * * * * * * */
   render (): JSX.Element {
     const { props, state, bemClss } = this
     const wrapperBemClass = bemClss.mod({
