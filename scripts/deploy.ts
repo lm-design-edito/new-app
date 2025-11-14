@@ -258,7 +258,7 @@ async function retreiveBucketVersions () {
   await fs.mkdir(VERSIONS_JSON_DIR, { recursive: true })
   let versionsJsonExists = false
   await new Promise(resolve => exec(
-    `gsutil cp ${STATE.target_name}/versions.json ${VERSIONS_JSON_DIR}/versions.json`,
+    `gcloud --project=decodeurs-lemonde-io storage cp ${STATE.target_name}/versions.json ${VERSIONS_JSON_DIR}/versions.json`,
     (err, stdout, stderr) => {
       if (err !== null) console.error(styles.error(err.message))
       if (stderr !== '' && err === null) console.log(styles.regular(stderr))
@@ -513,7 +513,26 @@ async function checkDistDirTree() {
 async function dryRunRsync () {
   console.log(styles.title(`Dry running rsync to ${STATE.target_name}`))
   await new Promise(resolve => exec(
-    `gsutil -m -h "Cache-Control:public, max-age=60" rsync -ncrpj html,js,map,css,svg,png,jpg,gif,woff,woff2,eot,ttf ${config.DST_PROD}/ ${STATE.target_name}/`,
+    `gcloud --project=decodeurs-lemonde-io storage rsync \
+      --dry-run \
+      --recursive \
+      --checksum \
+      --preserve-posix \
+      --metadata="Cache-Control:public, max-age=60" \
+      --include="*.html" \
+      --include="*.js" \
+      --include="*.map" \
+      --include="*.css" \
+      --include="*.svg" \
+      --include="*.png" \
+      --include="*.jpg" \
+      --include="*.gif" \
+      --include="*.woff" \
+      --include="*.woff2" \
+      --include="*.eot" \
+      --include="*.ttf" \
+      "${config.DST_PROD}/" \
+      "${STATE.target_name}/"`,
     (err, stdout, stderr) => {
       if (err !== null) console.error(styles.error(err.message))
       if (stderr !== '' && err === null) console.log(styles.regular(stderr))
@@ -536,7 +555,26 @@ async function dryRunRsync () {
 async function actualRsync () {
   console.log(styles.title(`Rsyncing to ${STATE.target_name}`))
   await new Promise(resolve => exec(
-    `gsutil -m -h "Cache-Control:public, max-age=60" rsync -crpj html,js,map,css,svg,png,jpg,gif,woff,woff2,eot,ttf ${config.DST_PROD}/ ${STATE.target_name}/`,
+    `gcloud --project=decodeurs-lemonde-io storage rsync \
+      --dry-run \
+      --recursive \
+      --checksum \
+      --preserve-posix \
+      --metadata="Cache-Control:public, max-age=60" \
+      --include="*.html" \
+      --include="*.js" \
+      --include="*.map" \
+      --include="*.css" \
+      --include="*.svg" \
+      --include="*.png" \
+      --include="*.jpg" \
+      --include="*.gif" \
+      --include="*.woff" \
+      --include="*.woff2" \
+      --include="*.eot" \
+      --include="*.ttf" \
+      "${config.DST_PROD}/" \
+      "${STATE.target_name}/"`,
     (err, stdout, stderr) => {
       if (err !== null) console.error(styles.error(err.message))
       if (stderr !== '' && err === null) console.log(styles.regular(stderr))
@@ -545,7 +583,10 @@ async function actualRsync () {
     }
   ))
   await new Promise(resolve => exec(
-    `gsutil cp ${path.join(config.DST_PROD, 'versions.json')} ${STATE.target_name}/versions.json`,
+    `gcloud --project=decodeurs-lemonde-io storage cp \
+      --metadata="Cache-Control:public, max-age=60" \
+      "${path.join(config.DST_PROD, 'versions.json')}" \
+      "${STATE.target_name}/versions.json"`,
     (err, stdout, stderr) => {
       if (err !== null) console.error(styles.error(err.message))
       if (stderr !== '' && err === null) console.log(styles.regular(stderr))
@@ -643,7 +684,11 @@ async function createMilestoneCommit () {
 async function makeFilesPublic () {
   console.log(styles.title(`Making files public`))
   await new Promise(resolve => exec(
-    `gsutil -m acl -r ch -u allUsers:R ${STATE.target_name}`,
+    `gcloud --project=decodeurs-lemonde-io storage objects update \
+      --all-objects \
+      --bucket="${STATE.target_name}" \
+      --uniform-bucket-level-access \
+      --add-iam-policy-binding="allUsers:roles/storage.objectViewer"`,
     (err, stdout, stderr) => {
       if (err !== null) console.error(styles.error(err.message))
       if (stderr !== '' && err === null) console.log(styles.regular(stderr))
