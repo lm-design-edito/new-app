@@ -1,0 +1,24 @@
+{
+  "build": {
+    "version_number": "1.0.0-fuegonext.0",
+    "version_description": "Same as fuego but slight structural changes on scrllgngn + created SvelteApp so forking to be safe",
+    "timestamp": "2025-11-14T14:48:19.104Z",
+    "latest_local_version_found": "1.0.0-fuego.22"
+  },
+  "git": {
+    "has_uncommited_changes": false,
+    "latest_commit_number": "6131bfaecc1843caf73be19b358908b35a6abe32"
+  },
+  "bucket": {
+    "name": "gs://decodeurs/design-edito/v1.fuegonext",
+    "url": "https://assets-decodeurs.lemonde.fr/design-edito/v1.fuegonext",
+    "current_versions_json": null,
+    "create_versions_json": true,
+    "latest_version_found": null,
+    "published": true
+  },
+  "npm": {
+    "registry": null,
+    "published": false
+  }
+}
