@@ -11,6 +11,7 @@ enum PrereleaseFlag {
   DELTA = 'delta',
   ECHO = 'echo',
   FUEGO = 'fuego',
+  FUEGO_NEXT = 'fuego.next',
   RAVEN = 'raven',
   RC = 'rc',
   STABLE = 'stable'
