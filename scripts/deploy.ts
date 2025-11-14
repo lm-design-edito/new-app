@@ -516,7 +516,6 @@ async function dryRunRsync () {
     `gcloud --project=decodeurs-lemonde-io storage rsync \
       --dry-run \
       --recursive \
-      --checksum \
       --preserve-posix \
       --metadata="Cache-Control:public, max-age=60" \
       --include="*.html" \
@@ -556,9 +555,7 @@ async function actualRsync () {
   console.log(styles.title(`Rsyncing to ${STATE.target_name}`))
   await new Promise(resolve => exec(
     `gcloud --project=decodeurs-lemonde-io storage rsync \
-      --dry-run \
       --recursive \
-      --checksum \
       --preserve-posix \
       --metadata="Cache-Control:public, max-age=60" \
       --include="*.html" \
@@ -684,11 +681,7 @@ async function createMilestoneCommit () {
 async function makeFilesPublic () {
   console.log(styles.title(`Making files public`))
   await new Promise(resolve => exec(
-    `gcloud --project=decodeurs-lemonde-io storage objects update \
-      --all-objects \
-      --bucket="${STATE.target_name}" \
-      --uniform-bucket-level-access \
-      --add-iam-policy-binding="allUsers:roles/storage.objectViewer"`,
+    `gsutil -m acl -r ch -u allUsers:R ${STATE.target_name}`,
     (err, stdout, stderr) => {
       if (err !== null) console.error(styles.error(err.message))
       if (stderr !== '' && err === null) console.log(styles.regular(stderr))
