@@ -1,4 +1,4 @@
-import { Component, JSX, VNode } from 'preact'
+import { Component, JSX, VNode, TargetedMouseEvent } from 'preact'
 import { Bem } from '@design-edito/tools/agnostic/css/bem'
 import Logo from '~/components/Logo'
 import styles from './styles.module.scss'
@@ -8,7 +8,7 @@ export type NavItem = {
   content?: string|VNode
   isActive?: boolean
   clickAction?: 'scroll-to-chapter'
-  onClick?: (event: JSX.TargetedMouseEvent<HTMLButtonElement>) => void
+  onClick?: (event: TargetedMouseEvent<HTMLButtonElement>) => void
 }
 
 export enum CtaActionType {
@@ -27,7 +27,7 @@ export type Props = {
   navPosition?: 'top'|'below'
   ctaContent?: string|VNode
   ctaActionType?: CtaActionType
-  ctaOnClick?: (event: JSX.TargetedMouseEvent<HTMLButtonElement>) => void
+  ctaOnClick?: (event: TargetedMouseEvent<HTMLButtonElement>) => void
   subnavContent?: string|VNode
   panelContent?: string|VNode
 }
@@ -87,7 +87,7 @@ export default class Header extends Component<Props, State> {
     })
   }
 
-  handleCtaClick (event: JSX.TargetedMouseEvent<HTMLButtonElement>) {
+  handleCtaClick (event: TargetedMouseEvent<HTMLButtonElement>) {
     const { props } = this
     const { ctaActionType, ctaOnClick } = props
     if (ctaActionType === CtaActionType.TOGGLE_PANEL) {
@@ -99,7 +99,7 @@ export default class Header extends Component<Props, State> {
     if (ctaOnClick !== undefined) ctaOnClick(event)
   }
 
-  handleNavItemClick (navItem: NavItem, event: JSX.TargetedMouseEvent<HTMLButtonElement>) {
+  handleNavItemClick (navItem: NavItem, event: TargetedMouseEvent<HTMLButtonElement>) {
     const { value, clickAction, onClick } = navItem
     if (clickAction === 'scroll-to-chapter') {
       const targetNode = document.querySelector(`#${value}`)

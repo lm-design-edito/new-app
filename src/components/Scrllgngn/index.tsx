@@ -1,14 +1,14 @@
-import { Component, JSX, VNode } from 'preact'
-import { Bem } from '@design-edito/tools/agnostic/css/bem'
-import { throttle } from '@design-edito/tools/agnostic/optim/throttle-debounce'
-import { clamp } from '@design-edito/tools/agnostic/numbers/clamp'
-import IntersectionObserverComponent from '~/components/IntersectionObserver'
-import ResizeObserverComponent from '~/components/ResizeObserver'
-import Paginator, { State as PaginatorState } from '~/components/Paginator'
-import TransitionsWrapper from './TransitionsWrapper'
-import BlockRenderer from './BlockRenderer'
+import { Component, VNode, CSSProperties } from 'preact'
+import { Bem } from '@design-edito/tools/agnostic/css/bem/index.js'
+import { throttle } from '@design-edito/tools/agnostic/optim/throttle-debounce/index.js'
+import { clamp } from '@design-edito/tools/agnostic/numbers/clamp/index.js'
+import IntersectionObserverComponent from '~/components/IntersectionObserver/index.js'
+import ResizeObserverComponent from '~/components/ResizeObserver/index.js'
+import Paginator, { State as PaginatorState } from '~/components/Paginator/index.js'
+import TransitionsWrapper from './TransitionsWrapper/index.js'
+import BlockRenderer from './BlockRenderer/index.js'
 import styles from './styles.module.scss'
-import { getNeighbourIntegersSeries } from './utils'
+import { getNeighbourIntegersSeries } from './utils.js'
 
 /* Layout */
 export type LayoutSizeFormula = `${number}` | `${number}/${number}`
@@ -24,6 +24,53 @@ export type TransitionName =  'fade' | 'grow' | 'whirl' | 'slide-up' | 'right-op
 export const isTransitionName = (input: string): input is TransitionName => ['fade', 'grow', 'whirl', 'slide-up', 'right-open', 'left-open'].includes(input)
 export type TransitionDuration = string | number
 export type TransitionDescriptor = [TransitionName] | [TransitionName, TransitionDuration]
+
+/* Context */
+export type ModuleBlockContext = {
+  width: number | null
+  height: number | null
+  page: number | null
+  progression: number | null
+  pageProgression: number | null
+}
+
+export type PartialModuleBlockContext = Partial<ModuleBlockContext>
+
+const nullContext: ModuleBlockContext = {
+  width: null,
+  height: null,
+  page: null,
+  progression: null,
+  pageProgression: null
+}
+
+export function createModuleBlockContext (partialContext?: PartialModuleBlockContext): ModuleBlockContext {
+  if (partialContext === undefined) return { ...nullContext }
+  return { ...nullContext, ...partialContext }
+}
+
+export const diffContexts = (
+  initialContext: ModuleBlockContext,
+  newContext: ModuleBlockContext): Partial<ModuleBlockContext> => {
+  const returned: Partial<ModuleBlockContext> = {}
+  Object.entries(newContext).map(([key, val]) => {
+    const valFromInitial = (initialContext as any)[key]
+    const valFromNew = val
+    if (valFromNew !== valFromInitial) (returned as any)[key] = valFromNew
+  })
+  return returned
+}
+
+export function contextsAreEqual (contextA: ModuleBlockContext, contextB: ModuleBlockContext): boolean {
+  return Object.keys(contextA).every(_key => {
+    const keyInA = _key in contextA
+    const keyInB = _key in contextB
+    if (!keyInA || !keyInB) return false
+    const key = _key as keyof ModuleBlockContext
+    return contextA[key] === contextB[key]
+  })
+}
+
 
 /* Props */
 export type PropsCommonBlockData = {
@@ -49,7 +96,7 @@ export type PropsBlockData = PropsScrollBlockData | PropsStickyBlockData
 
 export type PropsPageData = {
   id?: string
-  bgColor?: JSX.CSSProperties['backgroundColor']
+  bgColor?: CSSProperties['backgroundColor']
   blocks?: PropsBlockData[]
   data?: Record<string, any> // [WIP] Not sure what this prop does
 }
@@ -67,52 +114,6 @@ export type Props = {
   onScrollTrack?: (payload?: { state: State, nextState: State }) => void
 }
 
-/* Context */
-export type BlockContext = {
-  width: number | null
-  height: number | null
-  page: number | null
-  progression: number | null
-  pageProgression: number | null
-}
-
-export type PartialBlockContext = Partial<BlockContext>
-
-const nullContext: BlockContext = {
-  width: null,
-  height: null,
-  page: null,
-  progression: null,
-  pageProgression: null
-}
-
-export function createBlockContext (partialContext?: PartialBlockContext): BlockContext {
-  if (partialContext === undefined) return { ...nullContext }
-  return { ...nullContext, ...partialContext }
-}
-
-export const diffContexts = (
-  initialContext: BlockContext,
-  newContext: BlockContext): Partial<BlockContext> => {
-  const returned: Partial<BlockContext> = {}
-  Object.entries(newContext).map(([key, val]) => {
-    const valFromInitial = (initialContext as any)[key]
-    const valFromNew = val
-    if (valFromNew !== valFromInitial) (returned as any)[key] = valFromNew
-  })
-  return returned
-}
-
-export function contextsAreEqual (contextA: BlockContext, contextB: BlockContext): boolean {
-  return Object.keys(contextA).every(_key => {
-    const keyInA = _key in contextA
-    const keyInB = _key in contextB
-    if (!keyInA || !keyInB) return false
-    const key = _key as keyof BlockContext
-    return contextA[key] === contextB[key]
-  })
-}
-
 /* State */
 type BlockDisplayZone = number[]
 type BlockIdentifier = string
@@ -121,7 +122,7 @@ type StateCommonBlockData = {
   _id: string
   _zIndex: number
   _displayZones: BlockDisplayZone[]
-  _context: BlockContext
+  _context: ModuleBlockContext
 }
 type StateScrollBlockData = PropsScrollBlockData & StateCommonBlockData
 type StateStickyBlockData = PropsStickyBlockData & StateCommonBlockData
@@ -174,7 +175,7 @@ export default class Scrollgneugneu extends Component<Props, State> {
         const _zIndex = zIndexes.get(blockIdentifier) ?? 0
         const _displayZones = getBlockDisplayZones(blockIdentifier, props.pages ?? [])
         const currentStateBlock = currentStateBlocks.get(blockIdentifier)
-        const _context = currentStateBlock?._context ?? createBlockContext()
+        const _context = currentStateBlock?._context ?? createModuleBlockContext()
         const stateBlockData: StateBlockData = {
           ...blockData,
           _id: blockIdentifier,
@@ -679,7 +680,7 @@ export default class Scrollgneugneu extends Component<Props, State> {
                   key={blockData._id}
                   className={blockClasses.join(' ')}
                   data-id={blockData._id}
-                  ref={node => blocksRefsMap.set(blockData._id, node)}
+                  ref={node => { blocksRefsMap.set(blockData._id, node) }}
                   style={{ '--z-index': blockData._zIndex }}>
                   <BlockRenderer
                     type={type}
@@ -770,6 +771,7 @@ export default class Scrollgneugneu extends Component<Props, State> {
         '--bg-color': currPageData?.bgColor
       }}>
       {/* STYLESHEETS & INLINE CSS */}
+      { /* [WIP] Maybe some security needed here ? */ }
       <>
         {[...state.stylesheetsUrls].map(url => <link rel='stylesheet' href={url} />)}
         {[...state.cssStrings].map(cssString => <style>{cssString}</style>)}
@@ -883,7 +885,7 @@ export default class Scrollgneugneu extends Component<Props, State> {
       : undefined
   }
 
-  getBlocksContextProgression (inputPaginatorState?: PaginatorState): Map<string, Partial<BlockContext>> {
+  getBlocksContextProgression (inputPaginatorState?: PaginatorState): Map<string, Partial<ModuleBlockContext>> {
     const {
       state,
       getCurrPagePos,
@@ -893,7 +895,7 @@ export default class Scrollgneugneu extends Component<Props, State> {
     } = this
     const currPagePos = getCurrPagePos(inputPaginatorState)
     const { blocks } = state
-    const blocksWithProgression = new Map<string, Partial<BlockContext>>()
+    const blocksWithProgression = new Map<string, Partial<ModuleBlockContext>>()
     const currPageData = getCurrentPageData()
     const thresholdRect = throttledGetThresholdRect().returnValue
     // Not possible to calculate progressions
@@ -902,10 +904,10 @@ export default class Scrollgneugneu extends Component<Props, State> {
       || currPageData._trackScroll !== true
       || thresholdRect === undefined) {
       for (const [blockId, blockData] of blocks) {
-        const currBlockContext = blockData._context
+        const currModuleBlockContext = blockData._context
         blocksWithProgression.set(blockId, {
-          progression: currBlockContext.progression,
-          pageProgression: currBlockContext.pageProgression
+          progression: currModuleBlockContext.progression,
+          pageProgression: currModuleBlockContext.pageProgression
         })
       }
       return blocksWithProgression
@@ -921,10 +923,10 @@ export default class Scrollgneugneu extends Component<Props, State> {
       return [pos, { height, scrolled, progression }]
     }))
     for (const [blockId, blockData] of blocks) {
-      const currBlockContext = blockData._context
-      const currBlockPartialContext: Partial<BlockContext> = {
-        progression: currBlockContext?.progression ?? null,
-        pageProgression: currBlockContext?.pageProgression ?? null
+      const currModuleBlockContext = blockData._context
+      const currBlockPartialContext: Partial<ModuleBlockContext> = {
+        progression: currModuleBlockContext?.progression ?? null,
+        pageProgression: currModuleBlockContext?.pageProgression ?? null
       }
       // Block doesnt need trackScroll
       if (blockData.trackScroll !== true) {
@@ -960,7 +962,7 @@ export default class Scrollgneugneu extends Component<Props, State> {
       const pageProgression = pagesScrollData.get(currPagePos)?.progression
       blocksWithProgression.set(blockId, {
         progression: dzProgression,
-        pageProgression: pageProgression ?? currBlockContext.pageProgression
+        pageProgression: pageProgression ?? currModuleBlockContext.pageProgression
       }) 
     }
     return blocksWithProgression
@@ -971,12 +973,12 @@ export default class Scrollgneugneu extends Component<Props, State> {
     return new Map([...blocks.entries()].map(([id, data]) => [id, data._context]))
   }
 
-  mergeBlocksPartialContexts (...blocksPartialContextsMaps: Map<string, Partial<BlockContext>>[]) {
-    const merged: Map<string, BlockContext> = new Map()
+  mergeBlocksPartialContexts (...blocksPartialContextsMaps: Map<string, Partial<ModuleBlockContext>>[]) {
+    const merged: Map<string, ModuleBlockContext> = new Map()
     blocksPartialContextsMaps.forEach(blocksPartialContextMap => {
       blocksPartialContextMap.forEach((partialContext, blockId) => {
-        const contextInMerged = merged.get(blockId) ?? createBlockContext()
-        const toPushInMerged = createBlockContext({
+        const contextInMerged = merged.get(blockId) ?? createModuleBlockContext()
+        const toPushInMerged = createModuleBlockContext({
           ...contextInMerged,
           ...partialContext
         })
@@ -1135,13 +1137,13 @@ export default class Scrollgneugneu extends Component<Props, State> {
     return currPagePos
   }
 
-  getBlocksContextPage (inputPaginatorState?: PaginatorState): Map<string, Partial<BlockContext>> {
+  getBlocksContextPage (inputPaginatorState?: PaginatorState): Map<string, Partial<ModuleBlockContext>> {
     const { state, getCurrPagePos } = this
     const currPagePos = getCurrPagePos(inputPaginatorState)
     const { blocks } = state
-    const blocksWithPage = new Map<string, Partial<BlockContext>>()
+    const blocksWithPage = new Map<string, Partial<ModuleBlockContext>>()
     for (const [blockId, blockData] of blocks) {
-      const currBlockContextPage = blockData._context.page
+      const currModuleBlockContextPage = blockData._context.page
       const blockPages = blockData._displayZones.flat()
       let blockContextPage: number | null = null
       if (currPagePos === undefined) blockContextPage = null
@@ -1150,16 +1152,16 @@ export default class Scrollgneugneu extends Component<Props, State> {
         if (currPagePosInDisplayZone === -1) blockContextPage = null
         else blockContextPage = currPagePosInDisplayZone
       }
-      if (currBlockContextPage === blockContextPage) blocksWithPage.set(blockId, { page: blockData._context.page })
+      if (currModuleBlockContextPage === blockContextPage) blocksWithPage.set(blockId, { page: blockData._context.page })
       else blocksWithPage.set(blockId, { page: blockContextPage })
     }
     return blocksWithPage
   }
 
-  getBlocksContextSize (): Map<string, Partial<BlockContext>> {
+  getBlocksContextSize (): Map<string, Partial<ModuleBlockContext>> {
     const { state, blocksRefsMap } = this
     const { blocks } = state
-    const blocksWithSize = new Map<string, Partial<BlockContext>>()
+    const blocksWithSize = new Map<string, Partial<ModuleBlockContext>>()
     Array.from(blocks).forEach(([blockId]) => {
       const blockRef = blocksRefsMap.get(blockId)
       if (blockRef === null || blockRef === undefined) return blocksWithSize.set(blockId, { width: null, height: null })

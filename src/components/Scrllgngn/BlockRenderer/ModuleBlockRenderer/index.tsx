@@ -1,18 +1,20 @@
 import { Component } from 'preact'
-import { BlockContext, createBlockContext, diffContexts } from '../../'
+import { Bem } from '@design-edito/tools/agnostic/css/bem'
+import { ModuleBlockContext, createModuleBlockContext, diffContexts } from '../../index.js'
 
 type Props = {
+  customClass?: string
   url?: string
+  context?: ModuleBlockContext
   injectStylesheet?: (url: string) => void
   injectCss?: (css: string) => void
-  context?: BlockContext
 }
 
 type ModuleData = {
-  init: (context: BlockContext) => HTMLElement | Promise<HTMLElement>
-  update: (wrapper: HTMLElement, context: BlockContext, prevContext: BlockContext) => void
+  init: (context: ModuleBlockContext) => HTMLElement | Promise<HTMLElement>
+  update?: (wrapper: HTMLElement, context: ModuleBlockContext, prevContext: ModuleBlockContext) => void
   destroy?: (wrapper: HTMLElement) => void
-  styles?: string[] // DEPRECATED
+  styles?: string[] // DEPRECATED, LEGACY after v1.fuego
   css?: string[]
   styleSheets?: string[]
 }
@@ -23,17 +25,21 @@ type State = {
   moduleLoadError: Error | null
   moduleInitError: Error | null
   moduleTarget: HTMLElement | null
-  context: BlockContext
-  prevContext: BlockContext
+  context: ModuleBlockContext
+  prevContext: ModuleBlockContext
   updateIsAllowed: boolean
+  localStyleSheets: Set<string>
+  localCssStrings: Set<string>
 }
 
 type StateSetter = ((s: State) => (State | null)) | Partial<State>
 
-export default class ModuleBlockRenderer extends Component<Props, State> {
+export default class ModuleRenderer extends Component<Props, State> {
   constructor (props: Props) {
     super(props)
     this.aSetState = this.aSetState.bind(this)
+    this.injectStylesheet = this.injectStylesheet.bind(this)
+    this.injectCss = this.injectCss.bind(this)
     this.loadModule = this.loadModule.bind(this)
     this.initModule = this.initModule.bind(this)
     this.updateModule = this.updateModule.bind(this)
@@ -49,20 +55,22 @@ export default class ModuleBlockRenderer extends Component<Props, State> {
     moduleLoadError: null,
     moduleInitError: null,
     moduleTarget: null,
-    context: createBlockContext(),
-    prevContext: createBlockContext(),
-    updateIsAllowed: false
+    context: createModuleBlockContext(),
+    prevContext: createModuleBlockContext(),
+    updateIsAllowed: false,
+    localStyleSheets: new Set(),
+    localCssStrings: new Set()
   }
 
   static getDerivedStateFromProps(props: Props, state: State): State | null {
-    const propsContext = props.context ?? createBlockContext()
+    const propsContext = props.context ?? createModuleBlockContext()
     const stateContext = state.context
     const diff = diffContexts(stateContext, propsContext)
     const contextHasChanged = Object.keys(diff).length > 0
     if (!contextHasChanged) return null
     return {
       ...state,
-      context: propsContext ?? createBlockContext(),
+      context: propsContext ?? createModuleBlockContext(),
       prevContext: state.context,
       updateIsAllowed: true
     }
@@ -111,9 +119,35 @@ export default class ModuleBlockRenderer extends Component<Props, State> {
     })
   }
 
+  injectStylesheet (url: string): void {
+    const { injectStylesheet } = this.props
+    if (injectStylesheet !== undefined) return injectStylesheet(url)
+    this.setState(curr => ({
+      ...curr,
+      localStyleSheets: new Set(
+        ...curr.localStyleSheets,
+        url
+      )
+    }))
+  }
+
+  injectCss (css: string): void {
+    const { injectCss } = this.props
+    if (injectCss !== undefined) return injectCss(css)
+    this.setState(curr => ({
+      ...curr,
+      localCssStrings: new Set(
+        ...curr.localCssStrings,
+        css
+      )
+    }))
+    // DEFAULT HERE
+  
+  }
+
   async loadModule () {
-    const { props, aSetState } = this
-    const { url, injectStylesheet, injectCss } = props
+    const { props, aSetState, injectStylesheet, injectCss } = this
+    const { url } = props
     if (url === undefined) return await aSetState({
       status: null,
       moduleData: null,
@@ -131,7 +165,6 @@ export default class ModuleBlockRenderer extends Component<Props, State> {
       if (importedIsNotObject || importedIsNullish) throw new Error('Imported module is not an object')
       const importedDataAsAny = importedData as any
       const importedHasInitFunc = 'init' in importedData && typeof importedDataAsAny.init === 'function'
-      const importedHasUpdateFunc = 'update' in importedData && typeof importedDataAsAny.update === 'function'
       const importedHasStyles = 'styles' in importedData
         && Array.isArray(importedDataAsAny.styles)
         && (importedDataAsAny?.styles as unknown[] | undefined)?.every(url => typeof url === 'string')
@@ -142,7 +175,6 @@ export default class ModuleBlockRenderer extends Component<Props, State> {
         && Array.isArray(importedDataAsAny.styleSheets)
         && (importedDataAsAny?.styleSheets as unknown[] | undefined)?.every(url => typeof url === 'string')
       if (!importedHasInitFunc) throw new Error('Imported module must export a function named init')
-      if (!importedHasUpdateFunc) throw new Error('Imported module must export a function named update')
       const moduleData = importedData as ModuleData
       if (injectStylesheet !== undefined) {
         if (importedHasStyleSheets) {
@@ -186,7 +218,7 @@ export default class ModuleBlockRenderer extends Component<Props, State> {
     if (moduleData === null) return;
     await aSetState({ status: 'initializing' })
     try {
-      const moduleTarget = await moduleData.init(context ?? createBlockContext()) as unknown
+      const moduleTarget = await moduleData.init(context ?? createModuleBlockContext()) as unknown
       const targetIsHTMLElement = moduleTarget instanceof HTMLElement
       if (!targetIsHTMLElement) throw new Error('Module\'s init exported function should return a HTMLElement object')
       return await aSetState({
@@ -215,11 +247,13 @@ export default class ModuleBlockRenderer extends Component<Props, State> {
     if (status !== 'initialized') return;
     if (!updateIsAllowed) return;
     const { moduleData, moduleTarget } = state
-    if (moduleData === null || moduleTarget === null) return;
+    if (moduleData === null
+      || moduleTarget === null
+      || moduleData.update === undefined) return;
     moduleData.update(
       moduleTarget,
-      context ?? createBlockContext({}),
-      prevContext ?? createBlockContext({})
+      context ?? createModuleBlockContext({}),
+      prevContext ?? createModuleBlockContext({})
     )
     this.updateIsPending = false
     this.setState(curr => {
@@ -270,11 +304,22 @@ export default class ModuleBlockRenderer extends Component<Props, State> {
   $moduleWrapper: HTMLDivElement | null = null
 
   render () {
-    const { state } = this
+    const { props, state } = this
     const { status } = state
     if (status !== 'initialized') return null
-    return <div
-      className={`lm-module-block-renderer`}
-      ref={n => { this.$moduleWrapper = n }} />
+    const bemClss = Bem.bem('lm-module-renderer').mod({ [status]: true })
+    const deprecatedBemClss = Bem.bem('lm-module-block-renderer')
+    const classNames: string[] = [
+      bemClss.val,
+      deprecatedBemClss.val,
+      props.customClass
+    ].filter((e): e is string => e !== undefined && e !== '')
+    const className = classNames.join(' ')
+    return <>
+        { /* [WIP] Maybe some security needed here ? */ }
+        {[...state.localStyleSheets].map(url => <link rel='stylesheet' href={url} />)}
+        {[...state.localCssStrings].map(cssString => <style>{cssString}</style>)}
+        <div className={className} ref={n => { this.$moduleWrapper = n }} />
+    </>
   }
 }

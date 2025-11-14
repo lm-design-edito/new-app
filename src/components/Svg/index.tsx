@@ -1,9 +1,9 @@
-import { Component, JSX } from 'preact'
+import { Component, JSX, CSSProperties, SVGAttributes } from 'preact'
 import { Bem } from '@design-edito/tools/agnostic/css/bem'
 
 interface Props {
   className?: string
-  style?: JSX.CSSProperties
+  style?: CSSProperties
   src?: string
   loader?: JSX.Element
   fallback?: JSX.Element
@@ -14,7 +14,7 @@ interface State {
   loading: boolean
   error: any
   contents: string | null
-  attributes: JSX.SVGAttributes<SVGElement> | null
+  attributes: SVGAttributes<SVGElement> | null
 }
 
 class Svg extends Component<Props, State> {
@@ -77,7 +77,7 @@ class Svg extends Component<Props, State> {
       const contents = $svg.innerHTML
       const attributes = Array
         .from($svg.attributes)
-        .reduce((acc, curr): JSX.SVGAttributes<SVGElement> => ({ ...acc, [curr.name]: curr.value }), {})
+        .reduce((acc, curr): SVGAttributes<SVGElement> => ({ ...acc, [curr.name]: curr.value }), {})
       this.setState({ loading: false, error: null, contents, attributes })
     } catch (err) {
       console.error(`Error while loading ${src}\n`, err)
@@ -85,9 +85,9 @@ class Svg extends Component<Props, State> {
     }
   }
 
-  stringToCSS (string: string): JSX.CSSProperties {
+  stringToCSS (string: string): CSSProperties {
     const properties = string.trim().split(';')
-    const cleanProperties: JSX.CSSProperties = {}
+    const cleanProperties: CSSProperties = {}
     properties
       .filter((property: string) => property !== '')
       .map((property: string) => {

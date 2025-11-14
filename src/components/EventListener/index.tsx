@@ -79,7 +79,7 @@ export default class EventListenerComponent extends Component<Props> {
     if (customClass !== undefined) wrapperClasses.push(customClass)
     return <div  
       className={wrapperClasses.join(' ')}
-      ref={(n) => this.$root = n}>
+      ref={(n) => { this.$root = n }}>
       {children}
       {content}
     </div>

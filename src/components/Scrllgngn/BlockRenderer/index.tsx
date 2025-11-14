@@ -1,12 +1,12 @@
 import { Component, VNode } from 'preact'
-import { BlockContext } from '..'
-import HtmlBlockRenderer from './HtmlBlockRenderer'
-import ModuleBlockRenderer from './ModuleBlockRenderer'
+import ModuleRenderer from './ModuleBlockRenderer/index.js'
+import { ModuleBlockContext } from '../index.js'
+import HtmlBlockRenderer from './HtmlBlockRenderer/index.js'
 
 type Props = {
   type?: 'module' | 'html'
-  content?: string|VNode
-  context?: BlockContext
+  content?: string | VNode
+  context?: ModuleBlockContext
   injectStylesheet?: (url: string) => void
   injectCss?: (css: string) => void
 }
@@ -18,7 +18,7 @@ export default class BlockRenderer extends Component<Props> {
     switch (type) {
       case 'html':
       case undefined: return <HtmlBlockRenderer content={content} />
-      case 'module': return <ModuleBlockRenderer
+      case 'module': return <ModuleRenderer
         url={typeof content === 'string' ? content : ''}
         context={context}
         injectStylesheet={injectStylesheet}

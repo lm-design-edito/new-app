@@ -1,4 +1,4 @@
-import { FunctionalComponent, JSX } from 'preact'
+import { FunctionalComponent, CSSProperties } from 'preact'
 import { Bem } from '@design-edito/tools/agnostic/css/bem'
 import Svg from '~/components/Svg'
 
@@ -21,7 +21,7 @@ const Icon: FunctionalComponent<Props> = (props: Props) => {
   const wrapperStyle = {
     '--img-url': `url('${props.url}')`,
     '--mask-color': props.maskColor
-  } as JSX.CSSProperties
+  } as CSSProperties
   const imageMaskBemClss = rootBemClss.elt('image-mask')
   const imageMaskClasses = [imageMaskBemClss.value]
   const maskedBemClss = rootBemClss.elt('masked')

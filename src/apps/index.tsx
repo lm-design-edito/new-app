@@ -179,10 +179,10 @@ export namespace Apps {
 
   type UnknownRecordFormatter = FormatterFormat<Record<string, unknown>>
 
-  export async function toPropsHelper<Format extends UnknownRecordFormatter = {}> (
+  export async function toPropsHelper<F extends UnknownRecordFormatter = {}> (
     input: unknown,
-    format: Format
-  ): Promise<FormatterFormatted<Format> | undefined> {
+    format: F
+  ): Promise<FormatterFormatted<F> | undefined> {
     if (!isRecord(input)) return undefined
     const props = await recordFormat(input, format)
     return props

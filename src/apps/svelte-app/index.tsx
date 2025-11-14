@@ -10,8 +10,6 @@ export default async function renderer (unknownProps: unknown, id: string): Retu
 async function toProps (input: unknown, id: string): Promise<Props> {
   return await Apps.toPropsHelper(input, {
     customClass: i => Apps.ifNotUndefinedHelper(i, Cast.toString),
-    content: i => Apps.ifNotUndefinedHelper(i, Apps.toStringOrVNodeHelper),
-    selector: i => Apps.ifNotUndefinedHelper(i, Cast.toString),
-    fileUrl: i => Apps.ifNotUndefinedHelper(i, Cast.toString)
+    url: i => Apps.ifNotUndefinedHelper(i, Cast.toString)
   }) ?? {}
 }

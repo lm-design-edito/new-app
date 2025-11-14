@@ -1,4 +1,4 @@
-import { Component, JSX, toChildArray, cloneElement } from 'preact'
+import { Component, JSX, CSSProperties, toChildArray, cloneElement } from 'preact'
 import { Bem } from '@design-edito/tools/agnostic/css/bem'
 import { throttle } from '@design-edito/tools/agnostic/optim/throttle-debounce'
 import Page, { Props as PageProps } from './Page'
@@ -11,7 +11,7 @@ export interface PagePositionAndValue {
 
 export interface Props {
   className?: string
-  style?: JSX.CSSProperties
+  style?: CSSProperties
   root?: 'self'|'window'
   direction?: 'horizontal'|'vertical'
   thresholdOffset?: string
@@ -247,7 +247,7 @@ export default class Paginator extends Component<Props, State> {
       Bem.bem(this.clss).elt('scrollable-area').value,
       styles['scrollable-area']
     ]
-    const wrapperStyle: JSX.CSSProperties = {
+    const wrapperStyle: CSSProperties = {
       ...props.style,
       '--threshold-offset': props.thresholdOffset ?? 0
     }

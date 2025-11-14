@@ -1,4 +1,4 @@
-import { Component, JSX, VNode } from 'preact'
+import { Component, JSX, VNode, CSSProperties } from 'preact'
 import { Bem } from '@design-edito/tools/agnostic/css/bem'
 
 export type IO = IntersectionObserver
@@ -12,7 +12,7 @@ type ObserverOptions = {
 
 type Props = {
   customClass?: string
-  style?: JSX.CSSProperties // [WIP] remove this
+  style?: CSSProperties // [WIP] remove this
   render?: JSX.Element | ((ioEntry: IOE | null) => JSX.Element) // [WIP] this is doable via onIntersection and render props
   content?: string | VNode
   onIntersection?: (details: { ioEntry?: IOE | undefined, observer: IO }) => void
