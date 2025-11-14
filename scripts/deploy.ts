@@ -518,18 +518,6 @@ async function dryRunRsync () {
       --recursive \
       --preserve-posix \
       --metadata="Cache-Control:public, max-age=60" \
-      --include="*.html" \
-      --include="*.js" \
-      --include="*.map" \
-      --include="*.css" \
-      --include="*.svg" \
-      --include="*.png" \
-      --include="*.jpg" \
-      --include="*.gif" \
-      --include="*.woff" \
-      --include="*.woff2" \
-      --include="*.eot" \
-      --include="*.ttf" \
       "${config.DST_PROD}/" \
       "${STATE.target_name}/"`,
     (err, stdout, stderr) => {
@@ -558,18 +546,6 @@ async function actualRsync () {
       --recursive \
       --preserve-posix \
       --metadata="Cache-Control:public, max-age=60" \
-      --include="*.html" \
-      --include="*.js" \
-      --include="*.map" \
-      --include="*.css" \
-      --include="*.svg" \
-      --include="*.png" \
-      --include="*.jpg" \
-      --include="*.gif" \
-      --include="*.woff" \
-      --include="*.woff2" \
-      --include="*.eot" \
-      --include="*.ttf" \
       "${config.DST_PROD}/" \
       "${STATE.target_name}/"`,
     (err, stdout, stderr) => {
