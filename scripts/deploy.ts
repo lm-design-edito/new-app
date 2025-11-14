@@ -513,13 +513,7 @@ async function checkDistDirTree() {
 async function dryRunRsync () {
   console.log(styles.title(`Dry running rsync to ${STATE.target_name}`))
   await new Promise(resolve => exec(
-    `gcloud --project=decodeurs-lemonde-io storage rsync \
-      --dry-run \
-      --recursive \
-      --preserve-posix \
-      --metadata="Cache-Control:public, max-age=60" \
-      "${config.DST_PROD}/" \
-      "${STATE.target_name}/"`,
+    `gsutil -m -h "Cache-Control:public, max-age=60" rsync -ncrpj html,js,map,css,svg,png,jpg,gif,woff,woff2,eot,ttf ${config.DST_PROD}/ ${STATE.target_name}/`,
     (err, stdout, stderr) => {
       if (err !== null) console.error(styles.error(err.message))
       if (stderr !== '' && err === null) console.log(styles.regular(stderr))
@@ -542,12 +536,7 @@ async function dryRunRsync () {
 async function actualRsync () {
   console.log(styles.title(`Rsyncing to ${STATE.target_name}`))
   await new Promise(resolve => exec(
-    `gcloud --project=decodeurs-lemonde-io storage rsync \
-      --recursive \
-      --preserve-posix \
-      --metadata="Cache-Control:public, max-age=60" \
-      "${config.DST_PROD}/" \
-      "${STATE.target_name}/"`,
+    `gsutil -m -h "Cache-Control:public, max-age=60" rsync -crpj html,js,map,css,svg,png,jpg,gif,woff,woff2,eot,ttf ${config.DST_PROD}/ ${STATE.target_name}/`,
     (err, stdout, stderr) => {
       if (err !== null) console.error(styles.error(err.message))
       if (stderr !== '' && err === null) console.log(styles.regular(stderr))
