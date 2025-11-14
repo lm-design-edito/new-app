@@ -11,7 +11,7 @@ enum PrereleaseFlag {
   DELTA = 'delta',
   ECHO = 'echo',
   FUEGO = 'fuego',
-  FUEGO_NEXT = 'fuego.next',
+  FUEGO_NEXT = 'fuegonext',
   RAVEN = 'raven',
   RC = 'rc',
   STABLE = 'stable'
@@ -150,6 +150,7 @@ export default async function promptIncrementVersion (inputVersion: string) {
   
   // Choose increment type
   const inputIsPrerelease = isPrerelease(inputVersion)
+
   const incrementTypeChoices: prompts.Choice[] = []
   if (inputIsPrerelease) {
     incrementTypeChoices.push(
