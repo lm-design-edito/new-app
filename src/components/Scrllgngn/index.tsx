@@ -656,7 +656,14 @@ export default class Scrollgneugneu extends Component<Props, State> {
           className={`${pageBemClass.value} ${styles['page']}`}
           pageRef={n => { pagesRefsMap.set(pagePos, n) }}>{
             pageBlocksData.map(blockData => {
-              const { type, content, layout, mobileLayout } = blockData
+              const {
+                type,
+                content,
+                layout,
+                mobileLayout,
+                _zIndex,
+                _context
+              } = blockData
               const blockStatus = getBlockStatus(blockData._id)
               const blockBemClass = wrapperBemClass
                 .elt('block')
@@ -674,6 +681,29 @@ export default class Scrollgneugneu extends Component<Props, State> {
                 ...generateLayoutClasses('scrolling', layout, mobileLayout)
               ]
               // [WIP] RSOComp adds complexity with its wrapper div, get rid of this
+
+              const blockStyle = {
+                '--z-index': _zIndex,
+                '--context-width': _context.width,
+                '--context-height': _context.height,
+                '--context-width-px': _context.width !== null
+                  ? `${_context.width}px`
+                  : undefined,
+                '--context-height-px': _context.height !== null
+                  ? `${_context.height}px`
+                  : undefined,
+                '--context-page': _context.page,
+                '--context-progression': _context.progression,
+                '--context-page-progression': _context.pageProgression
+              }
+              const blockDataAttributes = {
+                'data-context-width': _context.width,
+                'data-context-height': _context.height,
+                'data-context-page': _context.page,
+                'data-context-progression': _context.progression,
+                'data-context-page-progression': _context.pageProgression
+              }
+
               return <ResizeObserverComponent
                 onResize={throttledHandleBlockResize}>
                 <div
@@ -681,7 +711,8 @@ export default class Scrollgneugneu extends Component<Props, State> {
                   className={blockClasses.join(' ')}
                   data-id={blockData._id}
                   ref={node => { blocksRefsMap.set(blockData._id, node) }}
-                  style={{ '--z-index': blockData._zIndex }}>
+                  style={blockStyle}
+                  {...blockDataAttributes}>
                   <BlockRenderer
                     type={type}
                     content={content}
