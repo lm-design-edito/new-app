@@ -1,0 +1,31 @@
+{
+  "build": {
+    "version_number": "1.0.0-fuegonext.1",
+    "version_description": "Scrllgngn - Scroll blocks get context css variables too",
+    "timestamp": "2025-12-04T10:20:21.653Z",
+    "latest_local_version_found": "1.0.0-fuegonext.0"
+  },
+  "git": {
+    "has_uncommited_changes": false,
+    "latest_commit_number": "7d18568ef7ce4078d4e2af757f9b7c7634e97b2a"
+  },
+  "bucket": {
+    "name": "gs://decodeurs/design-edito/v1.fuegonext",
+    "url": "https://assets-decodeurs.lemonde.fr/design-edito/v1.fuegonext",
+    "current_versions_json": {
+      "1.0.0-fuegonext.0": {
+        "description": "Same as fuego but slight structural changes on scrllgngn + created SvelteApp so forking to be safe",
+        "deployedOn": 1763131699104,
+        "deployedOnReadable": "Fri, 14 Nov 2025 14:48:19 GMT",
+        "commit": "6131bfaecc1843caf73be19b358908b35a6abe32"
+      }
+    },
+    "create_versions_json": false,
+    "latest_version_found": "1.0.0-fuegonext.0",
+    "published": true
+  },
+  "npm": {
+    "registry": null,
+    "published": false
+  }
+}
