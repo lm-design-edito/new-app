@@ -1,0 +1,49 @@
+{
+  "build": {
+    "version_number": "1.0.0-fuegonext.4",
+    "version_description": "Upgrade @design-edito/tools (improve hyper-json smart-tag setproperty)",
+    "timestamp": "2025-12-12T16:28:20.690Z",
+    "latest_local_version_found": "1.0.0-fuegonext.3"
+  },
+  "git": {
+    "has_uncommited_changes": false,
+    "latest_commit_number": "ca0e9ecd1970b3bd95b2f32eece0217be1983a2c"
+  },
+  "bucket": {
+    "name": "gs://decodeurs/design-edito/v1.fuegonext",
+    "url": "https://assets-decodeurs.lemonde.fr/design-edito/v1.fuegonext",
+    "current_versions_json": {
+      "1.0.0-fuegonext.0": {
+        "description": "Same as fuego but slight structural changes on scrllgngn + created SvelteApp so forking to be safe",
+        "deployedOn": 1763131699104,
+        "deployedOnReadable": "Fri, 14 Nov 2025 14:48:19 GMT",
+        "commit": "6131bfaecc1843caf73be19b358908b35a6abe32"
+      },
+      "1.0.0-fuegonext.1": {
+        "description": "Scrllgngn - Scroll blocks get context css variables too",
+        "deployedOn": 1764843621653,
+        "deployedOnReadable": "Thu, 04 Dec 2025 10:20:21 GMT",
+        "commit": "7d18568ef7ce4078d4e2af757f9b7c7634e97b2a"
+      },
+      "1.0.0-fuegonext.2": {
+        "description": "Upgraded package.json + 2 new smart tags in @design-edito/tools's hyper-json",
+        "deployedOn": 1765376582731,
+        "deployedOnReadable": "Wed, 10 Dec 2025 14:23:02 GMT",
+        "commit": "b1cfdab8a74514fdfd10bf62467c535a10c159f9"
+      },
+      "1.0.0-fuegonext.3": {
+        "description": "package.json - new upgrades in @design-edito/tools, more on hjparse and hjstringify hyper-json smart tags",
+        "deployedOn": 1765384132110,
+        "deployedOnReadable": "Wed, 10 Dec 2025 16:28:52 GMT",
+        "commit": "c9c154dd2b024e9f0c7bc1d106c3fa25ff0712a3"
+      }
+    },
+    "create_versions_json": false,
+    "latest_version_found": "1.0.0-fuegonext.3",
+    "published": true
+  },
+  "npm": {
+    "registry": null,
+    "published": false
+  }
+}
