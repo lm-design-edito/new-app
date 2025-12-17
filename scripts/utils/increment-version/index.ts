@@ -12,6 +12,7 @@ enum PrereleaseFlag {
   ECHO = 'echo',
   FUEGO = 'fuego',
   FUEGO_NEXT = 'fuegonext',
+  GLITCHY = 'glitchy',
   RAVEN = 'raven',
   RC = 'rc',
   STABLE = 'stable'
