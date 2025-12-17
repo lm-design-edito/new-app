@@ -20,7 +20,8 @@ export enum Bucket {
   V1_DELTA = 'gs://decodeurs/design-edito/v1.delta',
   V1_ECHO = 'gs://decodeurs/design-edito/v1.echo',
   V1_FUEGO = 'gs://decodeurs/design-edito/v1.fuego',
-  V1_FUEGO_NEXT = 'gs://decodeurs/design-edito/v1.fuegonext'
+  V1_FUEGO_NEXT = 'gs://decodeurs/design-edito/v1.fuegonext',
+  V1_GLITCHY = 'gs://decodeurs/design-edito/v1.glitchy'
 }
 
 export type BucketMetaData = {
@@ -52,6 +53,10 @@ export const bucketsMetadataMap = new Map<Bucket, BucketMetaData>([
   [Bucket.V1_FUEGO_NEXT, {
     publicUrl: 'https://assets-decodeurs.lemonde.fr/design-edito/v1.fuegonext',
     versionRange: '>=1.0.0-fuegonext <=1.0.0-fuegonext.999999999'
+  }],
+  [Bucket.V1_GLITCHY, {
+    publicUrl: 'https://assets-decodeurs.lemonde.fr/design-edito/v1.glitchy',
+    versionRange: '>=1.0.0-glitchy <=1.0.0-glitchy.999999999'
   }]
 ])
 
