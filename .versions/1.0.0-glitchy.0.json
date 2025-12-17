@@ -1,0 +1,24 @@
+{
+  "build": {
+    "version_number": "1.0.0-glitchy.0",
+    "version_description": "lm-tools hyper-json's replace smart tag now replaces inside any type, not only strings and Nodes",
+    "timestamp": "2025-12-17T17:26:27.912Z",
+    "latest_local_version_found": "1.0.0-fuegonext.4"
+  },
+  "git": {
+    "has_uncommited_changes": false,
+    "latest_commit_number": "4c49802196787f28dc489085f9db2fedd3968407"
+  },
+  "bucket": {
+    "name": "gs://decodeurs/design-edito/v1.glitchy",
+    "url": "https://assets-decodeurs.lemonde.fr/design-edito/v1.glitchy",
+    "current_versions_json": null,
+    "create_versions_json": true,
+    "latest_version_found": null,
+    "published": true
+  },
+  "npm": {
+    "registry": null,
+    "published": false
+  }
+}
