@@ -1,0 +1,31 @@
+{
+  "build": {
+    "version_number": "1.0.0-glitchy.1",
+    "version_description": "fix in Scrllgngn forceStickBlock after",
+    "timestamp": "2025-12-18T15:08:04.080Z",
+    "latest_local_version_found": "1.0.0-glitchy.0"
+  },
+  "git": {
+    "has_uncommited_changes": false,
+    "latest_commit_number": "9fc88c48200f08b3876fd2ea13cb2a284262d7f3"
+  },
+  "bucket": {
+    "name": "gs://decodeurs/design-edito/v1.glitchy",
+    "url": "https://assets-decodeurs.lemonde.fr/design-edito/v1.glitchy",
+    "current_versions_json": {
+      "1.0.0-glitchy.0": {
+        "description": "lm-tools hyper-json's replace smart tag now replaces inside any type, not only strings and Nodes",
+        "deployedOn": 1765992387912,
+        "deployedOnReadable": "Wed, 17 Dec 2025 17:26:27 GMT",
+        "commit": "4c49802196787f28dc489085f9db2fedd3968407"
+      }
+    },
+    "create_versions_json": false,
+    "latest_version_found": "1.0.0-glitchy.0",
+    "published": true
+  },
+  "npm": {
+    "registry": null,
+    "published": false
+  }
+}
