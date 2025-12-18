@@ -765,7 +765,6 @@ export default class Scrollgneugneu extends Component<Props, State> {
       || (cntVisible && topVisible && (forceStickBlocks === 'before' || forceStickBlocks === 'both'))
       || (cntVisible && btmVisible && (forceStickBlocks === 'after' || forceStickBlocks === 'both'))
     const blocksShouldOffset = (!blocksShouldStick && btmVisible)
-      // || (cntVisible && btmVisible && ((forceStickBlocks === 'after' || forceStickBlocks === 'both')))
 
     // Wrapper CSS classes
     const wrapperClasses = [
