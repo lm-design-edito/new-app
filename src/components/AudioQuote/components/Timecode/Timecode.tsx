@@ -16,8 +16,6 @@ class Timecode extends Component<Props> {
     const seconds = Math.floor((timecodeInMs % (60 * 1000)) / 1000);
     const milliseconds = Math.floor(timecodeInMs % 1000); 
 
-    console.log({hours, minutes, seconds, milliseconds})
-
     const wrapperClasses = [bemClss.value]
     const hoursClasses = [bemClss.elt('hours').value]
     const minutesClasses = [bemClss.elt('minutes').value]

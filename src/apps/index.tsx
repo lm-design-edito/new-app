@@ -146,7 +146,7 @@ export namespace Apps {
 
   export async function toStringOrVNodeHelper (input: unknown): Promise<string | VNode> {
     if (input instanceof Node) return await LmHtml.render(input)
-    if (isArrayOf<Node>(input, [Node]) || input instanceof NodeList) {
+    if (input instanceof NodeList || (Array.isArray(input) && input.every(item => item instanceof Node))) {
       const renderingNodes = [...input].map(node => LmHtml.render(node))
       const renderedNodes = await Promise.all(renderingNodes)
       return <>{renderedNodes}</>
