@@ -25,6 +25,8 @@ async function toProps (input: unknown, id: string): Promise<Props> {
     loudButton: i => Apps.ifNotUndefinedHelper(i, Apps.toStringOrVNodeHelper),
     muteButton: i => Apps.ifNotUndefinedHelper(i, Apps.toStringOrVNodeHelper),
     hidePauseButton: i => Apps.ifNotUndefinedHelper(i, Cast.toBoolean),
+    showTimecodes: i => Apps.ifNotUndefinedHelper(i, Cast.toBoolean),
+    showTimeline: i => Apps.ifNotUndefinedHelper(i, Cast.toBoolean),
     
     // Handlers
     onSubsLoad: i => Apps.makeHandlerHelper<string | undefined>(Events.Type.AUDIOQUOTE_SUBS_LOAD, i, id),

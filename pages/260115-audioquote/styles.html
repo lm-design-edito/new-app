@@ -1,0 +1,226 @@
+<!-- Custom -->
+
+<array _key="CONFIG" _action="append">
+  <record>
+    <string _key="name">style</string>
+    <record _key="value">
+      <nodelist _key="content">
+        <style>
+          .custom-audio-quote.lm-audio-quote {
+            --lm-audio-c-light: #F6F2FF;
+            --lm-audio-c-dark: #352072;
+
+            background-color: var(--lm-audio-c-light);
+            color: var(--lm-audio-c-dark);
+
+            position: relative;
+            padding: 24px 16px;
+            font-family: var(--ff-marr-sans);
+
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+          }
+
+          .custom-audio-quote .lm-audio-quote__title {
+            font-weight: 600;
+            font-size: 17px;
+            line-height: 1.4em;
+            letter-spacing: 0.02em;
+            padding-right: 48px;
+          }
+
+          /* subs */
+
+          .custom-audio-quote .lm-audio-quote__subs-container {
+            font-family: var(--ff-the-antiqua-b);
+            font-weight: 300;
+            font-size: 30px;
+            line-height: 1.05em;
+            letter-spacing: -0.04em;
+          }
+
+          .custom-audio-quote .lm-audio-quote__sub {
+            opacity: 0;
+            transition: opacity 300ms;
+          }
+
+          .custom-audio-quote .lm-audio-quote__sub.lm-audio-quote__sub_pronounced {
+            opacity: 1;
+          }
+
+          .custom-audio-quote.lm-audio-quote.lm-audio-quote_is-ended .lm-audio-quote__sub {
+            opacity: 0.2;
+          }
+
+          /* boutons */
+
+          .custom-audio-quote .lm-audio-quote__play-button,
+          .custom-audio-quote .lm-audio-quote__pause-button,
+          .custom-audio-quote .lm-audio-quote__loud-button,
+          .custom-audio-quote .lm-audio-quote__mute-button {
+            cursor: pointer;
+            transition: opacity 300ms;
+          }
+
+          .custom-audio-quote .lm-audio-quote__play-button,
+          .custom-audio-quote .lm-audio-quote__pause-button {
+            background-repeat: no-repeat;
+            height: 24px;
+            width: 24px;
+            font-size: 0;
+            position: absolute;
+            top: 16px;
+            right: 16px;
+          }
+
+          .custom-audio-quote .lm-audio-quote__play-button {
+            background-image: url('https://assets-decodeurs.lemonde.fr/redacweb/2305-audio-quote-assets/playicon.svg');
+          }
+
+          .custom-audio-quote .lm-audio-quote__pause-button {
+            background-image: url('https://assets-decodeurs.lemonde.fr/redacweb/2305-audio-quote-assets/pauseicon.svg');
+          }
+
+          .custom-audio-quote .lm-audio-quote__loud-button,
+          .custom-audio-quote .lm-audio-quote__mute-button {
+            border: 1px solid var(--lm-audio-c-dark);
+            padding: 8px 16px;
+            border-radius: 100px;
+            font-weight: 500;
+            font-size: 14px;
+            line-height: 1em;
+            display: inline-block;
+            user-select: none;
+          }
+
+          .custom-audio-quote .lm-audio-quote__loud-button span,
+          .custom-audio-quote .lm-audio-quote__mute-button span {
+            display: flex;
+            align-items: center;
+          }
+
+          .custom-audio-quote .lm-audio-quote__loud-button span::before,
+          .custom-audio-quote .lm-audio-quote__mute-button span::before {
+            background-repeat: no-repeat;
+            display: inline-block;
+            content: '';
+            width: 14px;
+          }
+
+          .custom-audio-quote .lm-audio-quote__loud-button span::before {
+            width: 14px;
+            height: 11px;
+            background-image: url('https://assets-decodeurs.lemonde.fr/redacweb/2305-audio-quote-assets/loudicon.svg');
+            /* exception pour match le bouton couper le son */
+            margin: 2px 0;
+            margin-right: 6px;
+          }
+
+          .custom-audio-quote .lm-audio-quote__mute-button span::before {
+            width: 16px;
+            height: 16px;
+            background-image: url('https://assets-decodeurs.lemonde.fr/redacweb/2305-audio-quote-assets/muteicon.svg');
+            /* exception pour match le bouton activer le son */
+            margin-left: -1px;
+            margin-top: -1px;
+            margin-right: 5px;
+          }
+
+          /* boutons inactifs */
+
+          .custom-audio-quote.lm-audio-quote.lm-audio-quote_is-playing .lm-audio-quote__play-button,
+          .custom-audio-quote.lm-audio-quote:not(.lm-audio-quote_is-playing) .lm-audio-quote__pause-button,
+          .custom-audio-quote.lm-audio-quote.lm-audio-quote_is-loud .lm-audio-quote__loud-button,
+          .custom-audio-quote.lm-audio-quote:not(.lm-audio-quote_is-loud) .lm-audio-quote__mute-button {
+            /* wip - pour Ã©viter flash chargement ?? 
+            mais flash avec position absolute */
+
+            /* opacity: 0;
+            z-index: -1;
+            user-select: none;
+            position: absolute; */
+
+            display: none;
+          }
+
+          @media (hover: hover) {
+
+            .custom-audio-quote .lm-audio-quote__play-button:hover,
+            .custom-audio-quote .lm-audio-quote__pause-button:hover,
+            .custom-audio-quote .lm-audio-quote__loud-button:hover,
+            .custom-audio-quote .lm-audio-quote__mute-button:hover {
+              opacity: 0.6;
+            }
+          }
+
+          /* fix AEC */
+          .snippet-container:has(.custom-audio-quote.lm-audio-quote) {
+            padding: 0 !important;
+          }
+
+
+          /** Progress bar + Timings */
+          .custom-audio-quote .lm-audio-quote__timeline {
+            --progress-bar-v-height: 8px;
+            --v-padding: 4px;
+            --height: 6px;
+            width: 100%;
+            position: relative;
+            padding: var(--v-padding) 0;
+            cursor: pointer;
+          }
+
+          
+          .custom-audio-quote .lm-audio-quote__timeline-duration,
+          .custom-audio-quote .lm-audio-quote__timeline-tracker {
+            width: 100%;
+            height: var(--height);
+          }
+
+          .custom-audio-quote .lm-audio-quote__timeline-duration {
+            background-color: white;
+          }
+
+          .custom-audio-quote .lm-audio-quote__timeline-tracker {
+            position: absolute;
+            top: var(--v-padding);
+            background-color: var(--lm-audio-c-dark);
+          }
+
+          .custom-audio-quote .lm-audio-quote__timecodes  {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            font-family: sans-serif;
+            font-size: smaller;
+          }
+          
+          .custom-audio-quote .lm-audio-quote__timeline-cursor {
+            position: absolute;
+            top: var(--v-padding);
+            display: none;
+            pointer-events: none;
+
+            width: 10px;
+            margin-left: -5px;
+            padding: 0;
+            height: var(--height);
+            background-color: rgb(0, 132, 255);
+            border: none;
+          }
+
+          .custom-audio-quote .lm-audio-quote__timeline:hover .lm-audio-quote__timeline-cursor {
+            display: block;
+          }
+
+          .custom-audio-quote .lm-audio-quote-timecode__separator_s-ms, 
+          .custom-audio-quote .lm-audio-quote-timecode__subs-container {
+            opacity: .5;
+          }
+        </style>
+      </nodelist>
+    </record>
+  </record>
+</array>

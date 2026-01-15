@@ -3,6 +3,7 @@ import { Bem } from '@design-edito/tools/agnostic/css/bem'
 import { Cast } from '@design-edito/tools/agnostic/misc/cast'
 import IntersectionObserverComponent, { IO, IOE } from '~/components/IntersectionObserver'
 import styles from './styles.module.scss'
+import Timecode from './components/Timecode/Timecode'
 
 type SubGroupBoundaries = {
   startId: number
@@ -31,6 +32,9 @@ export type Props = {
   loudButton?: string|VNode
   muteButton?: string|VNode
   hidePauseButton?: boolean
+  showTimeline?: boolean
+  showTimecodes?: boolean
+
   // Handlers
   onSubsLoad?: (subs?: string) => void
   onSubsError?: (error?: Error) => void
@@ -54,6 +58,7 @@ export type Props = {
 
 export type State = {
   timecodeInMs: number
+  durationInMs: number
   subsContent?: SubData[]
   isPlaying?: boolean
   isLoud?: boolean
@@ -66,8 +71,9 @@ export type State = {
 export default class AudioQuote extends Component<Props, State> {
   bemClss = Bem.bem('lm-audio-quote')
   videoElt: RefObject<HTMLVideoElement> | null = null
+  timelineElt: RefObject<HTMLDivElement> | null = null
   videoStateInterval?: number
-  state: State = { timecodeInMs: 0 }
+  state: State = { timecodeInMs: 0, durationInMs: 0 }
 
   /* * * * * * * * * * * * * * * * * * *
    * CONSTRUCTOR
@@ -75,6 +81,7 @@ export default class AudioQuote extends Component<Props, State> {
   constructor (props: Props) {
     super(props)
     this.videoElt = createRef()
+    this.timelineElt = createRef()
     this.loadSubs = this.loadSubs.bind(this)
     this.handleTimeUpdate = this.handleTimeUpdate.bind(this)
     this.handleVideoEnded = this.handleVideoEnded.bind(this)
@@ -94,6 +101,9 @@ export default class AudioQuote extends Component<Props, State> {
     this.handleLoudClick = this.handleLoudClick.bind(this)
     this.handleMuteClick = this.handleMuteClick.bind(this)
     this.handleIntersection = this.handleIntersection.bind(this)
+    this.handleLoadedMetadata = this.handleLoadedMetadata.bind(this)
+    this.handleTimelineClick = this.handleTimelineClick.bind(this)
+    this.handleTimelineMouseMove = this.handleTimelineMouseMove.bind(this)
   }
 
   /* * * * * * * * * * * * * * * * * * *
@@ -145,6 +155,7 @@ export default class AudioQuote extends Component<Props, State> {
     this.props.onTimeUpdate?.(e)
     if (this.isPlaying() && currentTimeMs === 0) this.props.onStart?.(e)
     this.setState({ timecodeInMs: currentTimeMs })
+    this.updateTimeline(currentTimeMs);
   }
 
   handleVideoEnded (e: Event) {
@@ -164,6 +175,45 @@ export default class AudioQuote extends Component<Props, State> {
     result += parseInt(seconds) * 1000
     result += parseInt(milliseconds)
     return result
+  }
+
+  handleLoadedMetadata() {
+    if (this.videoElt == null || this.videoElt.current == null) return;
+    this.setState({ durationInMs: this.videoElt.current.duration * 1000 });
+  }
+
+  handleTimelineClick(e: MouseEvent) {
+    if (this.timelineElt == null || this.timelineElt.current == null) return;
+
+    const rect = this.timelineElt.current.getBoundingClientRect();
+    const offsetX = Math.min(Math.max(0, e.clientX - rect.left), rect.width);
+    const relativeOffsetX = offsetX / rect.width;
+
+    this.pickVideoTimecode(relativeOffsetX * this.state.durationInMs);
+    this.updateTimelineCursor(offsetX);
+  }
+
+  handleTimelineMouseMove(e: MouseEvent) {
+    if (this.timelineElt == null || this.timelineElt.current == null) return;
+
+    const rect = this.timelineElt.current.getBoundingClientRect();
+    const offsetX = Math.min(Math.max(0, e.clientX - rect.left), rect.width);
+    this.updateTimelineCursor(offsetX);
+  }
+
+  updateTimelineCursor(offsetX: number) {
+    if (this.timelineElt == null || this.timelineElt.current == null) return;
+    this.timelineElt.current.style.setProperty('--timeline-cursor-position', `${offsetX}px`);
+  }
+
+  updateTimeline(timecodeMs: number) {
+    if (this.timelineElt == null || this.timelineElt.current == null) return;
+    this.timelineElt.current.style.setProperty('--timeline-progress', (timecodeMs / this.state.durationInMs).toString());
+  } 
+
+  pickVideoTimecode(timecodeInMs: number) {
+    if (this.videoElt == null || this.videoElt.current == null) return;
+    this.videoElt.current.currentTime = timecodeInMs / 1000;
   }
 
   parseSubs (rawSubs: string): SubData[] {
@@ -418,6 +468,12 @@ export default class AudioQuote extends Component<Props, State> {
     const pauseButtonClasses = [bemClss.elt('pause-button').value, styles['pause-button']]
     const loudButtonClasses = [bemClss.elt('loud-button').value, styles['loud-button']]
     const muteButtonClasses = [bemClss.elt('mute-button').value, styles['mute-button']]
+    const timelineClasses = [bemClss.elt('timeline').value, styles['timeline']]
+    const timelineTrackerBarClasses = [bemClss.elt('timeline-tracker').value, styles['timeline-tracker']]
+    const timelineDurationBarClasses = [bemClss.elt('timeline-duration').value, styles['timeline-duration']]
+    const timelineCursorClasses = [bemClss.elt('timeline-cursor').value, styles['timeline-cursor']]
+    const timecodesClasses = [bemClss.elt('timecodes').value, styles['timecodes']]
+
     return <IntersectionObserverComponent
       threshold={0.3}
       onIntersection={this.handleIntersection}>
@@ -452,12 +508,31 @@ export default class AudioQuote extends Component<Props, State> {
           muted
           playsInline
           onLoad={props.onAudioLoad}
+          onLoadedMetadata={this.handleLoadedMetadata}
           onError={props.onAudioError}
           onPlay={props.onPlay} />
         <div
           className={subsContainerClasses.join(' ')}>
           {this.getDisplayedSubsContent()}
         </div>
+        {props.showTimecodes && 
+          <div className={timecodesClasses.join(' ')}>
+              <Timecode timecodeInMs={state.timecodeInMs} />
+              <Timecode timecodeInMs={state.durationInMs} />
+          </div>
+        }
+        {props.showTimeline && 
+          <div 
+            className={timelineClasses.join(' ')} 
+            ref={this.timelineElt}
+            onClick={this.handleTimelineClick}
+            onMouseMove={this.handleTimelineMouseMove}
+          >
+            <div className={timelineDurationBarClasses.join(' ')}></div>
+            <div className={timelineTrackerBarClasses.join(' ')}></div>
+            <button className={timelineCursorClasses.join(' ')}></button>
+          </div>
+        }
       </div>
     </IntersectionObserverComponent>
   }
