@@ -1,4 +1,4 @@
-import { Cast } from '@design-edito/tools/agnostic/misc/cast'
+import * as Cast from '@design-edito/tools/agnostic/misc/cast'
 import { Apps } from '~/apps'
 import Drawer, { Props } from '~/components/Drawer'
 

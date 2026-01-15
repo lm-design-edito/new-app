@@ -1,5 +1,5 @@
 import { Component, JSX, VNode } from 'preact'
-import { Bem } from '@design-edito/tools/agnostic/css/bem'
+import * as Bem from '@design-edito/tools/agnostic/css/bem';
 import Icon, { Icons } from '~/components/Icon'
 import Slide, { Media } from './components/Slide'
 import styles from './styles.module.scss'

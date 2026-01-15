@@ -1,6 +1,6 @@
 import { VNode, isValidElement } from 'preact'
 import { isRecord } from '@design-edito/tools/agnostic/objects/is-record'
-import { Cast } from '@design-edito/tools/agnostic/misc/cast'
+import * as Cast from '@design-edito/tools/agnostic/misc/cast'
 import { Apps } from '~/apps'
 import { Events } from '~/shared/events'
 import UI, { Component, Props } from '~/components/UI'

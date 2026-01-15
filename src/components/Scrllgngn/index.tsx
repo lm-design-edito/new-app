@@ -1,5 +1,5 @@
 import { Component, VNode, CSSProperties } from 'preact'
-import { Bem } from '@design-edito/tools/agnostic/css/bem/index.js'
+import * as Bem from '@design-edito/tools/agnostic/css/bem/index.js'
 import { throttle } from '@design-edito/tools/agnostic/optim/throttle-debounce/index.js'
 import { clamp } from '@design-edito/tools/agnostic/numbers/clamp/index.js'
 import IntersectionObserverComponent from '~/components/IntersectionObserver/index.js'

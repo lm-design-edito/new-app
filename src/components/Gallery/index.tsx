@@ -1,5 +1,5 @@
 import { Component, VNode } from 'preact'
-import { Bem } from '@design-edito/tools/agnostic/css/bem'
+import * as Bem from '@design-edito/tools/agnostic/css/bem';
 import { throttle } from '@design-edito/tools/agnostic/optim/throttle-debounce'
 import styles from './styles.module.scss'
 

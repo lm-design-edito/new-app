@@ -1,5 +1,5 @@
 import { Component } from 'preact'
-import { Bem } from '@design-edito/tools/agnostic/css/bem'
+import * as Bem from '@design-edito/tools/agnostic/css/bem';
 import Svg from '~/components/Svg'
 import logoUrl from './logo.svg'
 import styles from './styles.module.scss'

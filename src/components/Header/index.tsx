@@ -1,5 +1,5 @@
 import { Component, JSX, VNode, TargetedMouseEvent } from 'preact'
-import { Bem } from '@design-edito/tools/agnostic/css/bem'
+import * as Bem from '@design-edito/tools/agnostic/css/bem';
 import Logo from '~/components/Logo'
 import styles from './styles.module.scss'
 

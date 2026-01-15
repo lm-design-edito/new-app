@@ -1,5 +1,5 @@
 import { Component, JSX, createRef, RefObject, VNode } from 'preact'
-import { Bem } from '@design-edito/tools/agnostic/css/bem'
+import * as Bem from '@design-edito/tools/agnostic/css/bem';
 import Icon, { Icons } from '~/components/Icon'
 import CarouselElement, { Media } from './components/CarouselElement'
 import styles from './styles.module.scss'

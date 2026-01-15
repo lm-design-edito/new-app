@@ -1,5 +1,5 @@
 import { Component, ComponentClass, FunctionComponent, VNode } from 'preact'
-import { Cast } from '@design-edito/tools/agnostic/misc/cast'
+import * as Cast from '@design-edito/tools/agnostic/misc/cast'
 import { isRecord } from '@design-edito/tools/agnostic/objects/is-record'
 import { isArrayOf } from '@design-edito/tools/agnostic/arrays/is-array-of'
 import { randomUUID } from '@design-edito/tools/agnostic/random/uuid'

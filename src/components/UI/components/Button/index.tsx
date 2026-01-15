@@ -1,5 +1,5 @@
 import { VNode, FunctionalComponent } from 'preact'
-import { Bem } from '@design-edito/tools/agnostic/css/bem'
+import * as Bem from '@design-edito/tools/agnostic/css/bem';
 
 export type Props = {
   customClass?: string

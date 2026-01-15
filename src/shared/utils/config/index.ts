@@ -1,7 +1,7 @@
 import { HyperJson } from '@design-edito/tools/agnostic/html/hyper-json'
 import { isRecord } from '@design-edito/tools/agnostic/objects/is-record'
-import { Cast } from '@design-edito/tools/agnostic/misc/cast'
-import { interpolate, exterpolate } from '@design-edito/tools/agnostic/numbers/interpolate'
+import * as Cast from '@design-edito/tools/agnostic/misc/cast'
+import { interpolate, unlerp } from '@design-edito/tools/agnostic/numbers/interpolate'
 import { round } from '@design-edito/tools/agnostic/numbers/round'
 import { normalizeIndent } from '@design-edito/tools/agnostic/strings/normalize-indent'
 import { Analytics } from '~/shared/analytics'
@@ -9,7 +9,7 @@ import { Events } from '~/shared/events'
 import { Externals } from '~/shared/externals'
 import { Globals } from '~/shared/globals'
 import { Slots } from '~/shared/slots'
-import { Window } from '@design-edito/tools/agnostic/misc/crossenv/window'
+import * as Window from '@design-edito/tools/agnostic/misc/crossenv/window'
 
 export namespace Config {
   export enum InlineOnlyInstructionName {
@@ -190,7 +190,7 @@ export namespace Config {
           .map((_, breakpointPos) => breakpointPos)
           .map(breakpointPos => {
             const threshold = Math.round(lowBound + breakpointPos * breakpointSize)
-            const thresholdRatio = exterpolate(threshold, lowBound, highBound)
+            const thresholdRatio = unlerp(threshold, lowBound, highBound)
             const lowLevel = interpolate(thresholdRatio, lowLevelMin, lowLevelMax)
             const highLevel = interpolate(thresholdRatio, highLevelMin, highLevelMax)
             const highOverLow = highLevel / lowLevel

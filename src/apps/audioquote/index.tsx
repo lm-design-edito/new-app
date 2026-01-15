@@ -1,4 +1,4 @@
-import { Cast } from '@design-edito/tools/agnostic/misc/cast'
+import * as Cast from '@design-edito/tools/agnostic/misc/cast'
 import { Apps } from '~/apps'
 import { Events } from '~/shared/events'
 import AudioQuote, { Props, State } from '~/components/AudioQuote'

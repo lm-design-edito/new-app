@@ -1,5 +1,5 @@
 import { Component } from 'preact'
-import { Bem } from '@design-edito/tools/agnostic/css/bem'
+import * as Bem from '@design-edito/tools/agnostic/css/bem';
 import { isNonNullObject } from '@design-edito/tools/agnostic/objects/is-object'
 import { formatDate } from '@design-edito/tools/agnostic/time/dates/format-date'
 import Thumbnail from './Thumbnail'

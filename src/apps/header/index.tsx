@@ -1,4 +1,4 @@
-import { Cast } from '@design-edito/tools/agnostic/misc/cast'
+import * as Cast from '@design-edito/tools/agnostic/misc/cast'
 import { isRecord } from '@design-edito/tools/agnostic/objects/is-record'
 import { isInEnum } from '@design-edito/tools/agnostic/objects/enums/is-in-enum'
 import { recordFormat } from '@design-edito/tools/agnostic/objects/record-format'

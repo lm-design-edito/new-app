@@ -1,5 +1,5 @@
 import { Component } from 'preact'
-import { Bem } from '@design-edito/tools/agnostic/css/bem'
+import * as Bem from '@design-edito/tools/agnostic/css/bem';
 import { ModuleBlockContext, createModuleBlockContext, diffContexts } from '../../index.js'
 
 type Props = {

@@ -1,5 +1,5 @@
 import { Component, JSX, CSSProperties, toChildArray, cloneElement } from 'preact'
-import { Bem } from '@design-edito/tools/agnostic/css/bem'
+import * as Bem from '@design-edito/tools/agnostic/css/bem';
 import { throttle } from '@design-edito/tools/agnostic/optim/throttle-debounce'
 import Page, { Props as PageProps } from './Page'
 import styles from './styles.module.scss'

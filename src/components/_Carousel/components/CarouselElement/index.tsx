@@ -1,5 +1,5 @@
 import { Component, JSX, createRef, VNode, RefObject } from 'preact'
-import { Bem } from '@design-edito/tools/agnostic/css/bem'
+import * as Bem from '@design-edito/tools/agnostic/css/bem';
 import styles from './styles.module.scss'
 
 const isMobile = window.innerWidth < 768

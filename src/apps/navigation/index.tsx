@@ -1,4 +1,4 @@
-import { Cast } from '@design-edito/tools/agnostic/misc/cast'
+import * as Cast from '@design-edito/tools/agnostic/misc/cast'
 import { isRecord } from '@design-edito/tools/agnostic/objects/is-record'
 import { Apps } from '~/apps'
 import { Events } from '~/shared'

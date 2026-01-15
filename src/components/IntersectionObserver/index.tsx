@@ -1,5 +1,5 @@
 import { Component, JSX, VNode, CSSProperties } from 'preact'
-import { Bem } from '@design-edito/tools/agnostic/css/bem'
+import * as Bem from '@design-edito/tools/agnostic/css/bem';
 
 export type IO = IntersectionObserver
 export type IOE = IntersectionObserverEntry

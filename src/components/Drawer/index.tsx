@@ -1,5 +1,5 @@
 import { Component, createRef, RefObject, VNode } from 'preact'
-import { Bem } from '@design-edito/tools/agnostic/css/bem'
+import * as Bem from '@design-edito/tools/agnostic/css/bem';
 import ResizeObserverComponent from '~/components/ResizeObserver'
 import styles from './styles.module.scss'
 

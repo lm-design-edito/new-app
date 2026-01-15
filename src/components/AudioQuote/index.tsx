@@ -1,6 +1,6 @@
 import { Component, JSX, createRef, RefObject, VNode } from 'preact'
-import { Bem } from '@design-edito/tools/agnostic/css/bem'
-import { Cast } from '@design-edito/tools/agnostic/misc/cast'
+import * as Bem from '@design-edito/tools/agnostic/css/bem';
+import * as Cast from '@design-edito/tools/agnostic/misc/cast'
 import IntersectionObserverComponent, { IO, IOE } from '~/components/IntersectionObserver'
 import styles from './styles.module.scss'
 import Timecode from './components/Timecode/Timecode'

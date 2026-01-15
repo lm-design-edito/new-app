@@ -1,5 +1,5 @@
 import { Component, VNode } from 'preact'
-import { Bem } from '@design-edito/tools/agnostic/css/bem'
+import * as Bem from '@design-edito/tools/agnostic/css/bem';
 import Tab from '../UI/components/Tab'
 import Gallery from '../Gallery'
 

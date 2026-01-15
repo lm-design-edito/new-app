@@ -3,7 +3,7 @@ import { insertNode, InsertNodePosition } from '@design-edito/tools/agnostic/htm
 import { isRecord } from '@design-edito/tools/agnostic/objects/is-record'
 import { selectorToElement } from '@design-edito/tools/agnostic/html/selector-to-element'
 import { Logger } from '@design-edito/tools/agnostic/misc/logs/logger'
-import { Cast } from '@design-edito/tools/agnostic/misc/cast'
+import * as Cast from '@design-edito/tools/agnostic/misc/cast'
 import appConfig from '~/config'
 import { Apps } from '~/apps'
 import { Analytics } from '~/shared/analytics'
