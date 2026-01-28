@@ -63,7 +63,7 @@
     "typescript": "^5.9.3"
   },
   "dependencies": {
-    "@design-edito/tools": "^0.2.40",
+    "@design-edito/tools": "^0.3.2",
     "preact": "^10.28.0"
   }
 }
