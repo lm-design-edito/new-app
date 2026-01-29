@@ -24,8 +24,7 @@ async function toProps (input: unknown, id: string): Promise<Props> {
         sound: i => Apps.ifNotUndefinedHelper(i, Cast.toBoolean),
         sound_controls: i => Apps.ifNotUndefinedHelper(i, Cast.toBoolean),
         play_controls: i => Apps.ifNotUndefinedHelper(i, Cast.toBoolean),
-        time_controls: i => Apps.ifNotUndefinedHelper(i, Cast.toBoolean),    
-        sensitive_content: i => Apps.ifNotUndefinedHelper(i, Cast.toBoolean),
+        time_controls: i => Apps.ifNotUndefinedHelper(i, Cast.toBoolean),   
         disclaimer_text: i => Apps.ifNotUndefinedHelper(i, Apps.toStringOrVNodeHelper),
         disclaimer_button: i => Apps.ifNotUndefinedHelper(i, Apps.toStringOrVNodeHelper)
     }) ?? {}

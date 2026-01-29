@@ -2,6 +2,7 @@ import { Component, VNode } from 'preact'
 import * as Bem from '@design-edito/tools/agnostic/css/bem';
 import Icon, { Icons } from '../Icon';
 import MutedVideo from './MutedVideo';
+import Disclaimer, { Props as DisclaimerProps } from '../Disclaimer';
 
 export type Props = {
     source?: string,
@@ -19,8 +20,8 @@ export type Props = {
     play_controls?: boolean
     time_controls?: boolean
     sensitive_content?: boolean
-    disclaimer_text?: string | VNode
-    disclaimer_button?: string | VNode
+    disclaimer_text?: DisclaimerProps['text']
+    disclaimer_button?: DisclaimerProps['buttonText']
 }
 
 export type State = {
@@ -151,7 +152,7 @@ export default class VideoPlayer extends Component<Props, State> {
     render() {
         const { props, state, bemClss } = this
         const displayCaption = props.credits !== undefined || props.legend !== undefined;
-        const displaySensitiveContent = props.sensitive_content;
+        const displaySensitiveContent = props.disclaimer_text !== undefined || props.disclaimer_button !== undefined;
         const displayBottomBar = props.play_controls || props.time_controls;
         
         const wrapperClasses = [bemClss.elt('wrapper').value]
@@ -177,10 +178,6 @@ export default class VideoPlayer extends Component<Props, State> {
         const soundControlsClasses = [bemClss.elt('sound-controls').value]
         const soundControlMuteButtonClasses = [bemClss.elt('sound-controls-mute').value]
         const soundControlUnmuteButtonClasses = [bemClss.elt('sound-controls-unmute').value]
-        
-        const disclaimerClasses = [bemClss.elt('disclaimer-overlay').value]
-        const disclaimerTextClasses = [bemClss.elt('disclaimer-text').value]
-        const disclaimerButtonClasses = [bemClss.elt('disclaimer-button').value]
 
         const videoProps = {
             ...(props.sound ? {} : { muted: true }),
@@ -235,10 +232,10 @@ export default class VideoPlayer extends Component<Props, State> {
                         }
                     </div>
                     {displaySensitiveContent && 
-                        <div className={disclaimerClasses.join(' ')}>
-                            <div className={disclaimerTextClasses.join(' ')}>{props.disclaimer_text}</div>
-                            <button className={disclaimerButtonClasses.join(' ')} ref={n => { this.$disclaimerButton = n }}>{props.disclaimer_button}</button>
-                        </div>
+                        <Disclaimer 
+                            text={props.disclaimer_text}
+                            buttonText={props.disclaimer_button}
+                        />
                     }
                 </div>
 

@@ -28,7 +28,8 @@ export namespace Apps {
     SVELTE_APP = 'svelte-app',
     TOP_ARTICLES = 'top-articles',
     UI = 'ui',
-    VIDEO_PLAYER = 'video-player'
+    VIDEO_PLAYER = 'video-player',
+    DISCLAIMER = 'disclaimer'
   }
 
   export const rendered: Array<{
@@ -60,6 +61,7 @@ export namespace Apps {
       if (name === Name.TOP_ARTICLES) { loaded = (await import('~/apps/top-articles')).default }
       if (name === Name.UI) { loaded = (await import('~/apps/ui')).default }
       if (name === Name.VIDEO_PLAYER) { loaded = (await import('~/apps/video-player')).default }
+      if (name === Name.DISCLAIMER) { loaded = (await import('~/apps/disclaimer')).default }
       if (loaded === null) throw null
       return loaded
     } catch (err) {
