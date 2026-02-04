@@ -5,6 +5,7 @@ export type Props = {
     text?: string | VNode,
     buttonText?: string | VNode,
     content?: string | VNode
+    onDismiss?: () => void
 }
 
 export type State = {
@@ -44,6 +45,10 @@ export default class Disclaimer extends Component<Props, State> {
 
     handleDisclaimerClick = (): void => {
         this.setState({ isVisible: false });
+
+        if (this.props.onDismiss) {
+            this.props.onDismiss();
+        }
     }
 
     render() {

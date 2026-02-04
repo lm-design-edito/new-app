@@ -19,14 +19,12 @@ export type Props = {
     sound_controls?: boolean
     play_controls?: boolean
     time_controls?: boolean
-    sensitive_content?: boolean
     disclaimer_text?: DisclaimerProps['text']
     disclaimer_button?: DisclaimerProps['buttonText']
 }
 
 export type State = {
     isPlaying: boolean,
-    isDisclaimerVisible: boolean,
     isMuted: boolean,
 }
 
@@ -37,7 +35,6 @@ export default class VideoPlayer extends Component<Props, State> {
     $timeline: HTMLElement|null = null
     $playPauseControl: HTMLElement|null = null
     $soundControl: HTMLElement|null = null
-    $disclaimerButton: HTMLElement|null = null
 
     clss = VideoPlayer.clss
     bemClss = Bem.bem('lm-video')
@@ -45,7 +42,6 @@ export default class VideoPlayer extends Component<Props, State> {
     state: State = {
         isPlaying: false,
         isMuted: true,
-        isDisclaimerVisible: this.props.sensitive_content || false
     }
 
     componentDidMount(): void {
@@ -53,6 +49,8 @@ export default class VideoPlayer extends Component<Props, State> {
 
         this.toggleIsPlaying();
         this.toggleIsMuted();
+
+        this.handleDisclaimer();
     }
 
     addListeners() {
@@ -71,9 +69,6 @@ export default class VideoPlayer extends Component<Props, State> {
         if (this.$soundControl) {
             this.$soundControl.addEventListener('click', this.onClickSound)
         }
-        if (this.$disclaimerButton) {
-            this.$disclaimerButton.addEventListener('click', this.dismissDisclaimer)
-        }
     }
     
     removeListeners() {
@@ -91,9 +86,6 @@ export default class VideoPlayer extends Component<Props, State> {
         }
         if (this.$soundControl) {
             this.$soundControl.removeEventListener('click', this.onClickSound)
-        }
-        if (this.$disclaimerButton) {
-            this.$disclaimerButton.removeEventListener('click', this.dismissDisclaimer)
         }
     }
 
@@ -131,11 +123,17 @@ export default class VideoPlayer extends Component<Props, State> {
         this.$video.pause();
     }
 
-    dismissDisclaimer = () => {
-        this.setState({
-            isDisclaimerVisible: false
-        })
-        
+    handleDisclaimer = () => {
+        if (!this.$video) { return; }
+        if (this.props.disclaimer_text || this.props.disclaimer_button) {
+            this.$video.pause();
+        }
+    }
+
+    onDismissDisclaimer = () => {
+        if (!this.$video || !this.props.autoplay || !this.$video.paused) { return; }
+        this.$video.currentTime = 0;
+        this.$video.play();
     }
 
     onClickTimeline = (e: MouseEvent) => {
@@ -152,7 +150,6 @@ export default class VideoPlayer extends Component<Props, State> {
     render() {
         const { props, state, bemClss } = this
         const displayCaption = props.credits !== undefined || props.legend !== undefined;
-        const displaySensitiveContent = props.disclaimer_text !== undefined || props.disclaimer_button !== undefined;
         const displayBottomBar = props.play_controls || props.time_controls;
         
         const wrapperClasses = [bemClss.elt('wrapper').value]
@@ -160,7 +157,7 @@ export default class VideoPlayer extends Component<Props, State> {
         const captionClasses = [bemClss.elt('caption').value]
         const creditsClasses = [bemClss.elt('credits').value]
         
-        const lmClasses = [bemClss.mod(state.isPlaying ? 'playing' : '').mod(state.isMuted ? 'muted' : '').mod(state.isDisclaimerVisible ? 'disclaimer-visible' : '').value]
+        const lmClasses = [bemClss.mod(state.isPlaying ? 'playing' : '').mod(state.isMuted ? 'muted' : '')]
         const overlayClasses = [bemClss.elt('overlay').value]
         const overlayTextClasses = [bemClss.elt('overlay-text').value]
 
@@ -231,12 +228,11 @@ export default class VideoPlayer extends Component<Props, State> {
                             </div>
                         }
                     </div>
-                    {displaySensitiveContent && 
-                        <Disclaimer 
-                            text={props.disclaimer_text}
-                            buttonText={props.disclaimer_button}
-                        />
-                    }
+                    <Disclaimer 
+                        text={props.disclaimer_text}
+                        buttonText={props.disclaimer_button}
+                        onDismiss={this.onDismissDisclaimer}
+                    />
                 </div>
 
                 {displayCaption && 

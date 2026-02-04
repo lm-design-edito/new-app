@@ -49,6 +49,8 @@ export namespace Events {
     TABS_TAB_CLICK = 'tabs-tab-click',
     /* Toggle */
     TOGGLE_TOGGLED = 'toggle-toggled'
+    /* Disclaimer */,
+    DISCLAIMER_DISMISSED = 'disclaimer-dismissed'
   }
 
   export type HandlerName = string
