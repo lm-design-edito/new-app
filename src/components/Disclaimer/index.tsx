@@ -1,75 +1,90 @@
-import { Component, VNode } from "preact";
-import * as Bem from '@design-edito/tools/agnostic/css/bem';
+import { Component, VNode } from 'preact'
+import * as Bem from '@design-edito/tools/agnostic/css/bem'
+import { isNotFalsy } from "@design-edito/tools/agnostic/booleans/is-falsy"
 
 export type Props = {
-    text?: string | VNode,
-    buttonText?: string | VNode,
-    content?: string | VNode
-    onDismiss?: () => void
+  text?: string | VNode
+  buttonText?: string | VNode
+  content?: string | VNode
+  onDismiss?: () => void
 }
 
 export type State = {
-    isVisible: boolean
+  isDismissed: boolean
 }
 
 export default class Disclaimer extends Component<Props, State> {
-    bemClss = Bem.bem('lm-disclaimer')
-    $disclaimer: HTMLElement | null = null
-    $button: HTMLElement | null = null
+  bemClss = Bem.bem('lm-disclaimer')
+  $disclaimer: HTMLElement | null = null
+  $button: HTMLElement | null = null
   
-    state: State = {
-        isVisible: Boolean(this.props.text || this.props.buttonText || this.props.content) || false
-    }
+  state: State = {
+    isDismissed: (
+      this.props.text
+      ?? this.props.buttonText
+      ?? this.props.content
+    ) !== undefined
+  }
 
-    componentDidMount(): void {
-        this.addListeners();
-    }
+  constructor (props: Props) {
+    super(props)
+    this.addListeners = this.addListeners.bind(this)
+    this.removeListeners = this.removeListeners.bind(this)
+    this.handleDisclaimerClick = this.handleDisclaimerClick.bind(this)
+  }
 
-    componentWillUnmount(): void {
-        this.removeListeners();
-    }
+  componentDidMount (): void {
+    this.addListeners()
+  }
 
-    get $clickableElement(): HTMLElement | null {    
-        return this.$button || this.$disclaimer;
-    }
+  componentWillUnmount (): void {
+    this.removeListeners()
+  }
 
-    addListeners(): void {
-        if (this.$clickableElement === null) return;
-        this.$clickableElement.addEventListener('click', this.handleDisclaimerClick.bind(this));
-    }
-    
-    removeListeners(): void {
-        if (this.$clickableElement === null) return;
-        this.$clickableElement.removeEventListener('click', this.handleDisclaimerClick);
-    }
+  get $clickableElement (): HTMLElement | null {  
+    return this.$button ?? this.$disclaimer
+  }
 
-    handleDisclaimerClick = (): void => {
-        this.setState({ isVisible: false });
+  addListeners (): void {
+    if (this.$clickableElement === null) return;
+    this.$clickableElement.addEventListener(
+      'click',
+      this.handleDisclaimerClick.bind(this)
+    )
+  }
+  
+  removeListeners (): void {
+    if (this.$clickableElement === null) return;
+    this.$clickableElement.removeEventListener(
+      'click',
+      this.handleDisclaimerClick
+    )
+  }
 
-        if (this.props.onDismiss) {
-            this.props.onDismiss();
-        }
-    }
+  handleDisclaimerClick (): void {
+    this.setState({ isDismissed: false })
+    if (this.props.onDismiss) this.props.onDismiss()
+  }
 
-    render() {
-        const { bemClss, props, state } = this;
-        
-        const wrapperClasses = [bemClss.elt('wrapper').value,
-            bemClss.mod(state.isVisible ? 'visible' : 'hidden').value]
-        const textClasses = [bemClss.elt('text').value]
-        const buttonClasses = [bemClss.elt('button').value]
-
-        return (
-            <div className={wrapperClasses.join(' ')} ref={n => { this.$disclaimer = n }}>
-                {props.text && 
-                    <div className={textClasses.join(' ')}>{props.text}</div>
-                }
-                {props.buttonText &&
-                    <button className={buttonClasses.join(' ')} ref={n => { this.$button = n }}>{props.buttonText}</button>
-                }
-                {props.children}
-                {props.content}
-            </div>
-        )
-    }
+  render() {
+    const { bemClss, props, state } = this;
+    const wrapperClasses = [
+      bemClss.elt('wrapper').value,
+      bemClss.mod(state.isDismissed ? 'visible' : 'dismissed').value
+    ]
+    const textClasses = [bemClss.elt('text').value]
+    const buttonClasses = [bemClss.elt('button').value]
+    return <div
+      className={wrapperClasses.join(' ')}
+      ref={n => { this.$disclaimer = n }}>
+      {isNotFalsy(props.text) && <div className={textClasses.join(' ')}>{props.text}</div>}
+      {isNotFalsy(props.buttonText) && <button
+        className={buttonClasses.join(' ')}
+        ref={n => { this.$button = n }}>
+        {props.buttonText}
+      </button>}
+      {props.children}
+      {props.content}
+    </div>
+  }
 }
